@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Footer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .footer {
+            background-color: #000;
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: white;
+        }
+        
+        .footer-column p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: #ccc;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column ul li a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: white;
+        }
+        
+        .email-signup {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .email-input {
+            flex: 1;
+            padding: 12px 16px;
+            background-color: transparent;
+            border: 2px solid #333;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .email-input::placeholder {
+            color: #666;
+        }
+        
+        .email-btn {
+            background-color: transparent;
+            border: 2px solid #333;
+            border-left: none;
+            color: white;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .email-btn:hover {
+            background-color: #333;
+        }
+        
+        .app-downloads {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .qr-code {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            margin-bottom: 12px;
+        }
+        
+        .download-btn {
+            width: 120px;
+            height: 40px;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            background-color: #555;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: transparent;
+            border: 1px solid #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background-color: #333;
+            border-color: #555;
+        }
+        
+        .copyright {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+        }
+        
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .email-signup {
+                flex-direction: column;
+            }
+            
+            .email-btn {
+                border-left: 2px solid #333;
+                border-top: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <!-- Exclusive Column -->
+                <div class="footer-column">
+                    <h3>Exclusive</h3>
+                    <p>Subscribe</p>
+                    <p>Get 10% off your first order</p>
+                    <div class="email-signup">
+                        <input type="email" class="email-input" placeholder="Enter your email">
+                        <button class="email-btn">→</button>
+                    </div>
+                </div>
+                
+                <!-- Support Column -->
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li>Edathuruthikaran Holdings, 10/450-2, Kundannoor, Maradu, Ernakulam, Kerala 682304</li>
+                        <li><a href="mailto:exclusive@gmail.com">exclusive@gmail.com</a></li>
+                        <li><a href="tel:+88015-88888-9999">+88015-88888-9999</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Account Column -->
+                <div class="footer-column">
+                    <h3>Account</h3>
+                    <ul>
+                        <li><a href="#">My Account</a></li>
+                        <li><a href="#">Login / Register</a></li>
+                        <li><a href="#">Cart</a></li>
+                        <li><a href="#">Wishlist</a></li>
+                        <li><a href="#">Shop</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Quick Link Column -->
+                <div class="footer-column">
+                    <h3>Quick Link</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms Of Use</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Download App Column -->
+                <div class="footer-column">
+                    <h3>Download App</h3>
+                    <p>Save $3 with App New User Only</p>
+                    <div class="qr-code">
+                        <img src="" alt="QR Code" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="app-downloads">
+                        <a href="#" class="download-btn">
+                            <img src="" alt="Google Play" style="width: 100%; height: 100%; object-fit: contain;">
+                        </a>
+                        <a href="#" class="download-btn">
+                            <img src="" alt="App Store" style="width: 100%; height: 100%; object-fit: contain;">
+                        </a>
+                    </div>
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">
+                            <img src="" alt="Facebook" style="width: 20px; height: 20px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="" alt="Twitter" style="width: 20px; height: 20px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="" alt="Instagram" style="width: 20px; height: 20px;">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="" alt="LinkedIn" style="width: 20px; height: 20px;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                © Copyright Feelit 2025. All right reserved
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
