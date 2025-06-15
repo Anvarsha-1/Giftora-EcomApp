@@ -1,0 +1,63 @@
+<link rel="stylesheet" href="../../css/verify-otp.css">
+<body>
+    <div class="container">
+        <h1 class="title">Enter the OTP</h1>
+        <p class="subtitle">The OTP has sent to your registered email</p>
+        
+        <div class="input-container">
+            <input type="text" class="otp-input" placeholder="Enter the otp" maxlength="6">
+            <button class="resend-btn">Resend OTP</button>
+        </div>
+        
+        <div class="timer">
+            <span id="countdown">0 : 57</span> seconds remaining
+        </div>
+        
+        <div class="buttons">
+            <button class="go-back">Go back</button>
+            <button class="verify-btn">Verify</button>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 57;
+        const countdownElement = document.getElementById('countdown');
+        
+        function updateCountdown() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownElement.textContent = `${minutes} : ${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft > 0) {
+                timeLeft--;
+                setTimeout(updateCountdown, 1000);
+            } else {
+                countdownElement.textContent = '0 : 00';
+            }
+        }
+        
+        updateCountdown();
+        
+        // Add click handlers
+        document.querySelector('.resend-btn').addEventListener('click', function() {
+            timeLeft = 57;
+            updateCountdown();
+        });
+        
+        document.querySelector('.go-back').addEventListener('click', function() {
+            // Go back functionality
+            console.log('Go back clicked');
+        });
+        
+        document.querySelector('.verify-btn').addEventListener('click', function() {
+            const otpValue = document.querySelector('.otp-input').value;
+            console.log('Verify clicked with OTP:', otpValue);
+        });
+        
+        // Allow only numbers in OTP input
+        document.querySelector('.otp-input').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+    </script>
+</body>
+</html>
