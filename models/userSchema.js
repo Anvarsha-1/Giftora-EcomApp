@@ -5,11 +5,15 @@ const {Schema} = mongoose;
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: true
+        required: true,
+        minlength:4,
+        maxlength:20,
     },
     lastName: {
         type: String,
-        required: true
+        required: true,
+        minlength:1,
+        maxlength:20,
     },
     email: {
         type: String,
@@ -19,13 +23,14 @@ const userSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: false,
-        unique: false,
+        unique: true,
         sparse:true,
-        default:null
+        default:null,
     },
     googleId: {
         type: String,
-        unique:true
+        unique:true,
+        sparse: true
     },
     password: {
         type: String,

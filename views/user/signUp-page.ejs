@@ -2,146 +2,305 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/signup.css">
-    <title>Create Account</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="/css/user/signup.css">
 </head>
 
 <body>
-    <%- include("../partials/user/header.ejs") %>
-        <center>
-            <div class="signup-container">
-                <!-- Left side - Roses Image -->
-                <div class="image-section">
-                    <img src="../../images/header.img/pexels-budgeron-flower.png" alt="Red Roses Bouquet"
-                        class="roses-image">
-                </div>
+  <div class="signup-container">
+    <div class="left-section">
+      <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+      </div>
 
-                <!-- Right side - Signup Form -->
-                <div class="form-section">
-                    <div class="form-container">
-                        <div class="form-header">
-                            <h2>Create an account</h2>
-                            <p>Enter your details below</p>
-                        </div>
+      <div class="geometric-pattern">
+        <div class="logo-circle">
+          <div class="logo-inner">
+            <svg class="gift-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="boxTexture" patternUnits="userSpaceOnUse" width="4" height="4">
+                  <path d="M0 0h4v4h-4z" fill="#3F3D7A" />
+                  <path d="M0 0l4 4m0-4l-4 4" stroke="#2C2A4A" stroke-width="0.2" />
+                </pattern>
+                <linearGradient id="boxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#5C5B7C;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#2C2A4A;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="15" y="35" width="70" height="50" fill="url(#boxGradient)" stroke="#1A1840" stroke-width="1.5" />
+              <rect x="15" y="35" width="70" height="10" fill="rgba(0,0,0,0.2)" style="filter: url(#blur1)" />
+              <defs>
+                <filter id="blur1">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
+                </filter>
+              </defs>
+              <polygon points="85,35 95,28 95,78 85,85" fill="#2C2A4A" stroke="#1A1840" stroke-width="1" />
+              <defs>
+                <linearGradient id="ribbonVGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:#8D8DB4;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#5C5B7C;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#3F3D7A;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="45" y="25" width="10" height="60" fill="url(#ribbonVGradient)" stroke="#2C2A4A"
+                stroke-width="0.5" />
+              <rect x="47" y="25" width="6" height="60" fill="rgba(255,255,255,0.2)" />
+              <defs>
+                <linearGradient id="ribbonHGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#8D8DB4;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#5C5B7C;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#3F3D7A;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="10" y="45" width="80" height="10" fill="url(#ribbonHGradient)" stroke="#2C2A4A"
+                stroke-width="0.5" />
+              <rect x="10" y="47" width="80" height="6" fill="rgba(255,255,255,0.2)" />
+              <defs>
+                <radialGradient id="bowGradientLeft" cx="40%" cy="40%" r="50%">
+                  <stop offset="0%" style="stop-color:#B0B0D2;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#5C5B7C;stop-opacity:1" />
+                </radialGradient>
+              </defs>
+              <path d="M35 30 C30 25, 30 35, 25 30 Q30 32, 35 30" fill="url(#bowGradientLeft)" stroke="#2C2A4A"
+                stroke-width="0.5" />
+              <defs>
+                <radialGradient id="bowGradientRight" cx="60%" cy="40%" r="50%">
+                  <stop offset="0%" style="stop-color:#B0B0D2;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#5C5B7C;stop-opacity:1" />
+                </radialGradient>
+              </defs>
+              <path d="M65 30 C70 25, 70 35, 75 30 Q70 32, 65 30" fill="url(#bowGradientRight)" stroke="#2C2A4A"
+                stroke-width="0.5" />
+              <defs>
+                <radialGradient id="bowCenterGradient" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" style="stop-color:#D8D8E8;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#5C5B7C;stop-opacity:1" />
+                </radialGradient>
+              </defs>
+              <ellipse cx="50" cy="30" rx="8" ry="10" fill="url(#bowCenterGradient)" stroke="#2C2A4A"
+                stroke-width="0.5" />
+              <ellipse cx="45" cy="26" rx="3" ry="2" fill="#D8D8E8" opacity="0.8" />
+              <ellipse cx="55" cy="26" rx="3" ry="2" fill="#D8D8E8" opacity="0.8" />
+              <rect x="18" y="38" width="4" height="20" fill="rgba(255,255,255,0.3)" />
+              <rect x="18" y="38" width="25" height="3" fill="rgba(255,255,255,0.2)" />
+            </svg>
+          </div>
+        </div>
+        <div class="welcome-text">Join Us Today</div>
+        <div class="welcome-subtitle">Create your account now</div>
+      </div>
+    </div>
 
-                        <!-- ✅ START form tag -->
-                        <form method="POST" action="/signup" onsubmit="return validateForm(event)">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <input type="text" class="form-input" id="firstName" placeholder="First Name"
-                                        name="firstName">
-                                    <div id="err-fname" class="err-message"></div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-input" id="lastName" placeholder="Last Name"
-                                        name="lastName">
-                                    <div id="err-lname" class="err-message"></div>
-                                </div>
-                            </div>
+    <div class="right-section">
+      <div class="form-header">
+        <h2>Create an account</h2>
+        <p>Enter your details to get started</p>
+      </div>
 
-                            <div class="form-group">
-                                <input type="tel" class="form-input" id="phone" placeholder="Phone" name="phone">
-                                <div id="err-phone" class="err-message"></div>
-                            </div>
+      <form action="/signup" method="POST">
+        <% if (message && message.length> 0) { %>
+          <div class="error-message" style="text-align: center; margin-bottom: 12px;">
+            <%= message %>
+          </div>
+          <% } %>
 
-                            <div class="form-group">
-                                <input type="email" class="form-input" id="email" placeholder="Email" name="email">
-                                <div id="err-email" class="err-message"></div>
-                            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <input type="text" name="firstName"
+                  class="form-control <%= errors && errors.firstName ? 'error' : '' %>" placeholder="First Name"
+                  value="<%= formData && formData.firstName ? formData.firstName : '' %>">
+                <% if (errors && errors.firstName) { %>
+                  <span class="error-message">
+                    <%= errors.firstName %>
+                  </span>
+                  <% } else { %>
+                    <span class="error-message"></span>
+                    <% } %>
+              </div>
+              <div class="form-group">
+                <input type="text" name="lastName" class="form-control <%= errors && errors.lastName ? 'error' : '' %>"
+                  placeholder="Last Name" value="<%= formData && formData.lastName ? formData.lastName : '' %>">
+                <% if (errors && errors.lastName) { %>
+                  <span class="error-message">
+                    <%= errors.lastName %>
+                  </span>
+                  <% } else { %>
+                    <span class="error-message"></span>
+                    <% } %>
+              </div>
+            </div>
 
-                            <div class="form-group password-group">
-                                <input type="password" class="form-input" id="password" placeholder="Password"
-                                    name="password" >
-                                <span class="toggle-btn" onclick="toggleVisibility('password', 'eye1', 'eyeOff1')">
-                                    <!-- Eye (open) SVG -->
-                                    <svg id="eye1" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
-                                        stroke-width="2" viewBox="0 0 24 24">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z" />
-                                        <circle cx="12" cy="12" r="3" />
-                                    </svg>
-                                    <!-- Eye-off (hidden) SVG -->
-                                    <svg id="eyeOff1" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                                        style="display:none;">
-                                        <path
-                                            d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a20.44 20.44 0 0 1 5.17-5.94" />
-                                        <path d="M1 1l22 22" />
-                                    </svg>
-                                </span>
-                                <div id="err-pass" class="err-message"></div>
-                            </div>
-                             <div class="password-strength">
-                                <div id="strength-bar"></div>
-                                <span id="strength-text"></span>
-                            </div>
+            <div class="form-group">
+              <input type="tel" name="phone" class="form-control <%= errors && errors.phone ? 'error' : '' %>"
+                placeholder="Phone Number" value="<%= formData && formData.phone ? formData.phone : '' %>">
+              <% if (errors && errors.phone) { %>
+                <span class="error-message">
+                  <%= errors.phone %>
+                </span>
+                <% } else { %>
+                  <span class="error-message"></span>
+                  <% } %>
+            </div>
 
-                            <div class="form-group password-group">
-                                <input type="password" class="form-input" id="confirmPassword"
-                                    placeholder="Confirm Password" name="confirmPassword" >
-                                <span class="toggle-btn"
-                                    onclick="toggleVisibility('confirmPassword', 'eye2', 'eyeOff2')">
-                                    <!-- Eye (open) SVG -->
-                                    <svg id="eye2" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
-                                        stroke-width="2" viewBox="0 0 24 24">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z" />
-                                        <circle cx="12" cy="12" r="3" />
-                                    </svg>
-                                    <!-- Eye-off (hidden) SVG -->
-                                    <svg id="eyeOff2" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
-                                        style="display:none;">
-                                        <path
-                                            d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a20.44 20.44 0 0 1 5.17-5.94" />
-                                        <path d="M1 1l22 22" />
-                                    </svg>
-                                </span>
-                                <div id="err-cpass" class="err-message"></div>
-                            </div>
-                           
+            <div class="form-group">
+              <input type="email" name="email" class="form-control <%= errors && errors.email ? 'error' : '' %>"
+                placeholder="Email Address" value="<%= formData && formData.email ? formData.email : '' %>">
+              <% if (errors && errors.email) { %>
+                <span class="error-message">
+                  <%= errors.email %>
+                </span>
+                <% } else { %>
+                  <span class="error-message"></span>
+                  <% } %>
+            </div>
 
+            <div class="form-group password-field">
+              <input type="password" name="password" id="password"
+                class="form-control <%= errors && errors.password ? 'error' : '' %>" placeholder="Password">
+              <button type="button" class="eye-button" onclick="togglePassword('password')">
+                <svg class="eye-icon" id="eye-password" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+              <% if (errors && errors.password) { %>
+                <span class="error-message">
+                  <%= errors.password %>
+                </span>
+                <% } else { %>
+                  <span class="error-message"></span>
+                  <% } %>
+            </div>
 
+            <div class="form-group password-field">
+              <input type="password" name="confirmPassword" id="confirmPassword"
+                class="form-control <%= errors && errors.confirmPassword ? 'error' : '' %>"
+                placeholder="Confirm Password">
+              <button type="button" class="eye-button" onclick="togglePassword('confirmPassword')">
+                <svg class="eye-icon" id="eye-confirmPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+              <% if (errors && errors.confirmPassword) { %>
+                <span class="error-message">
+                  <%= errors.confirmPassword %>
+                </span>
+                <% } else { %>
+                  <span class="error-message"></span>
+                  <% } %>
+            </div>
 
-                            <button type="submit" class="btn-primary">
-                                Create Account
-                            </button>
-                        </form>
-                        <!-- ✅ END form tag -->
+            <div class="referral-toggle">
+              <a href="#" class="referral-link" onclick="toggleReferralField(event)">Have a referral code?</a>
+            </div>
 
-                        <button type="button" class="btn-google" onclick="handleGoogleSignup()">
-                            <svg class="google-icon" viewBox="0 0 24 24">
-                                <path fill="#4285F4"
-                                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                                <path fill="#34A853"
-                                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                                <path fill="#FBBC05"
-                                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                                <path fill="#EA4335"
-                                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                            </svg>
-                            Sign up with Google
-                        </button>
-                        <div class="login-link">
-                            Already have account? <a href="#" onclick="handleLogin()">Log in</a>
-                        </div>
-                    </div>
-                </div>
+            <div class="form-group referral-field <%= formData && formData.referralCode ? 'show' : '' %>"
+              id="referralField">
+              <input type="text" name="referralCode" id="referralCodeInput"
+                class="form-control <%= errors && errors.referralCode ? 'error' : '' %>"
+                placeholder="Enter referral code"
+                value="<%= formData && formData.referralCode ? formData.referralCode : '' %>">
+              <% if (errors && errors.referralCode) { %>
+                <span class="error-message">
+                  <%= errors.referralCode %>
+                </span>
+                <% } else { %>
+                  <span class="error-message"></span>
+                  <% } %>
+            </div>
 
-        </center>
-        <%- include("../partials/user/footer.ejs") %>
+            <button type="submit" class="btn-primary" href="/login">Create Account</button>
+      </form>
 
-<script src="/js/form-validation.js"></script>
-<script src="/js/strength-bar.js"></script>
+      <div class="divider">
+        <span>or continue with</span>
+      </div>
 
+      <a href="/auth/google" class="google-btn" onclick="signInWithGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24">
+          <path fill="#4285F4"
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+          <path fill="#34A853"
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+          <path fill="#FBBC05"
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+          <path fill="#EA4335"
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+        </svg>
+        Sign in with Google
+      </a>
 
+      <div class="login-link">
+        Already have an account? <a href="/login">Sign in here</a>
+      </div>
+    </div>
+  </div>
 
-            
+  <script>
+    function togglePassword(fieldId) {
+      const field = document.getElementById(fieldId);
+      const eyeIcon = document.getElementById('eye-' + fieldId);
+      if (field.type === 'password') {
+        field.type = 'text';
+        eyeIcon.innerHTML = `
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+          <line x1="1" y1="1" x2="23" y2="23"/>
+        `;
+      } else {
+        field.type = 'password';
+        eyeIcon.innerHTML = `
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+          <circle cx="12" cy="12" r="3" />
+        `;
+      }
+    }
 
-           
+    function toggleReferralField(event) {
+      event.preventDefault();
+      const referralField = document.getElementById('referralField');
+      const referralLink = event.target;
+      if (referralField.classList.contains('show')) {
+        referralField.classList.remove('show');
+        referralLink.textContent = 'Have a referral code?';
+      } else {
+        referralField.classList.add('show');
+        referralLink.textContent = 'Hide referral code';
+        setTimeout(() => {
+          document.getElementById('referralCodeInput').focus();
+        }, 400);
+      }
+    }
 
+    function signInWithGoogle() {
+      window.location.href = '/auth/google';
+    }
 
+    document.addEventListener('DOMContentLoaded', function () {
+      const referralField = document.getElementById('referralField');
+      const referralLink = document.querySelector('.referral-link');
+      if (referralField.classList.contains('show')) {
+        referralLink.textContent = 'Hide referral code';
+      }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const referralCode = urlParams.get('ref');
+      if (referralCode && !document.getElementById('referralCodeInput').value) {
+        document.getElementById('referralCodeInput').value = referralCode;
+        if (!referralField.classList.contains('show')) {
+          referralField.classList.add('show');
+          referralLink.textContent = 'Hide referral code';
+        }
+      }
+    });
+  </script>
 </body>
 
 </html>

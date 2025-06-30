@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giftora Admin Dashboard - User Listing</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/admin/nav-sidebar.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+        }
+
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            margin-left: 250px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            width: calc(100% - 250px);
+        }
+
+        .sidebar {
+            transition: width 0.3s ease, margin 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar.collapsed+.content-wrapper {
+            margin-left: 70px;
+            width: calc(100% - 70px);
+        }
+
+        .navbar {
+            background-color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-icon {
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
+
+        .admin-text {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 20px auto;
+            width: 90%;
+        }
+
+        .table-search {
+            margin-bottom: 15px;
+        }
+
+        .table-search form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .table-search input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr {
+            display: table-row;
+        }
+
+        td {
+            word-break: break-word;
+            /* Allow word breaks for long text */
+            max-width: 0;
+            /* Ensure content doesn't overflow */
+        }
+
+        /* Specific styling for email column */
+        td[data-label="Email"] {
+            max-width: 200px;
+            /* Set a reasonable max width for email */
+            word-wrap: break-word;
+            /* Break long words if necessary */
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-align: center;
+            white-space: nowrap;
+            /* Prevent button text wrapping */
+        }
+
+        .status-btn.blocked {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .status-btn.unblocked {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .status-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .status-btn a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1000px) {
+            .table-container {
+                width: 95%;
+            }
+
+            th,
+            td {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+
+            .status-btn {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
+
+            td[data-label="Email"] {
+                max-width: 150px;
+                /* Reduce max width on medium screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+
+            .table-container {
+                width: 100%;
+                margin: 10px;
+                padding: 10px;
+            }
+
+            table {
+                display: table;
+                width: 100%;
+            }
+
+            th,
+            td {
+                display: table-cell;
+                width: auto;
+                padding: 8px;
+            }
+
+            td {
+                word-break: break-word;
+                /* Ensure breaking on small screens */
+                max-width: 100px;
+                /* Smaller max width for better fit */
+            }
+
+            td[data-label="Email"] {
+                max-width: 120px;
+                /* Adjusted for small screens */
+            }
+
+            .status-btn {
+                width: auto;
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            td {
+                font-size: 0.8rem;
+                padding: 6px;
+            }
+
+            .table-search input {
+                max-width: 100%;
+            }
+
+            .table-search form {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .table-search button {
+                width: 100%;
+            }
+
+            td[data-label="Email"] {
+                max-width: 100px;
+                /* Further reduce on very small screens */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo-section">
+                <img src="/images/header.img/gifttora.png" alt="Giftora Logo" class="logo-img">
+                <button type="button" class="toggle-sidebar" aria-label="Toggle sidebar">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <nav class="nav-section">
+                <a href="/admin/dashboard" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/products" class="nav-item">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-list-alt"></i>
+                    <span>Order Lists</span>
+                </a>
+                <a href="/admin/user" class="nav-item active">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Sales</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>Coupons</span>
+                </a>
+                <a href="/admin/category" class="nav-item">
+                    <i class="fas fa-tags"></i>
+                    <span>Category</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-image"></i>
+                    <span>Banner</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-percent"></i>
+                    <span>Offer</span>
+                </a>
+            </nav>
+            <div class="logout-section">
+                <a href="/admin/logout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- User Listing Table -->
+        <div class="content-wrapper">
+            <div class="navbar">
+                <div class="navbar-left">
+                    <i class="fas fa-user-shield admin-icon"></i>
+                    <span class="admin-text">Admin</span>
+                </div>
+            </div>
+            <div class="table-container">
+                <div class="table-search">
+                    <form action="/admin/users" method="GET">
+                        <input type="text" id="searchInput" name="search" placeholder="Search users..."
+                            value="<%= search %>" class="form-control">
+                        <button type="submit" class="btn btn-primary ms-2">Search</button>
+                        <button type="button" id="clearSearch" class="btn btn-secondary ms-2">Clear</button>
+                    </form>
+                </div>
+                <h2 class="mb-4">User Listing</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (users && users.length) { %>
+                            <% for(let i=0; i<users.length; i++) { %>
+                                <tr>
+                                    <td data-label="ID">
+                                        <%= i + 1 %>
+                                    </td>
+                                    <td data-label="First Name">
+                                        <%= users[i].firstName %>
+                                    </td>
+                                    <td data-label="Last Name">
+                                        <%= users[i].lastName %>
+                                    </td>
+                                    <td data-label="Email">
+                                        <%= users[i].email %>
+                                    </td>
+                                    <td data-label="Phone Number">
+                                        <%= users[i].phone || 'N/A' %>
+                                    </td>
+                                    <td data-label="Status">
+                                        <% if (!users[i].isBlocked) { %>
+                                            <!-- User is NOT blocked — show "Block" option -->
+                                            <button class="status-btn unblocked">
+                                                <a href="/admin/blockUser?id=<%= users[i]._id %>">Block</a>
+                                            </button>
+                                            <% } else { %>
+                                                <!-- User IS blocked — show "Unblock" option -->
+                                                <button class="status-btn blocked">
+                                                    <a href="/admin/blockUser?id=<%= users[i]._id %>">Unblock</a>
+                                                </button>
+                                                <% } %>
+
+                                                    <% } %>
+                                    </td>
+                                </tr>
+                                <% } %>
+
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination">
+                    <% if (totalPages> 1) { %>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                <% if (currentPage> 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>"
+                                            aria-label="Previous">
+                                            <span aria-hidden="true">«</span>
+                                        </a>
+                                    </li>
+                                    <% } %>
+                                        <% for(let i=0; i < totalPages; i++) { %>
+                                            <li
+                                                class="page-item <%= (i === parseInt(currentPage) - 1) ? 'active' : '' %>">
+                                                <a class="page-link" href="?page=<%= i + 1 %>&search=<%= search %>">
+                                                    <%= i + 1 %>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                                                <% if (currentPage < totalPages) { %>
+                                                    <li class="page-item">
+                                                        <a class="page-link"
+                                                            href="?page=<%= currentPage + 1 %>&search=<%= search %>"
+                                                            aria-label="Next">
+                                                            <span aria-hidden="true">»</span>
+                                                        </a>
+                                                    </li>
+                                                    <% } %>
+                            </ul>
+                        </nav>
+                        <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const toggleSidebar = document.querySelector('.toggle-sidebar');
+        const sidebar = document.querySelector('.sidebar');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchButton = document.getElementById('clearSearch');
+
+        function updateSidebarState() {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('collapsed'); // Automatically collapse on small screens
+            } else {
+                sidebar.classList.remove('collapsed'); // Expand on larger screens
+            }
+        }
+
+        updateSidebarState();
+        window.addEventListener('resize', updateSidebarState);
+
+        if (toggleSidebar) {
+            toggleSidebar.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+            });
+        }
+
+
+        if (clearSearchButton) {
+            clearSearchButton.addEventListener('click', () => {
+                searchInput.value = ''; 
+                const url = new URL(window.location);
+                url.searchParams.delete('search');
+                window.location.href = url.pathname + url.search; 
+            });
+        }
+
+
+
+        document.querySelectorAll(".status-btn a").forEach(link => {
+            link.addEventListener('click', async (e) => {
+                e.preventDefault()
+
+
+                const url = link.getAttribute('href');
+                const action = link.innerHTML.trim().toLowerCase()
+
+                Swal.fire({
+                    title: `Are you sure you want to ${action} this user?`,
+                    icon: 'waring',
+                    showCancelButton: true,
+                    confirmButton: 'Yes, do it!',
+                    cancelButtonText: 'cancel'
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            const res = await fetch(url);
+                            const data = await res.json();
+
+                            if (!res.ok) throw new Error(data.message || "Sever error");
+
+                            Swal.fire('Success', data.message, 'success').then(() => {
+                                location.reload();
+                            })
+                        } catch (error) {
+                            Swal.fire('Error', err.message || 'Something went wrong', 'error');
+                        }
+                    }
+                })
+            })
+        })
+
+
+
+
+    </script>
+</body>
+
+</html>

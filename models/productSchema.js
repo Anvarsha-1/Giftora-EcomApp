@@ -20,23 +20,26 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
       },
-      salePrice: {
-        type :Number,
-        required: true
-      },
       productOffer: {
         type: Number,
         default: 0,           
       },
       quantity: {
         type: Number,
-        default:true
+        require:true,
+        default:0,
       },
-      productImage:{
-        type: [String],
-        required: true,
-      },
+      productImage:[
+      {
+        url:String,
+        public_id:String, 
+      }
+      ],
       isBlocked: {
+        type:Boolean,
+        default:false,
+      },
+      isDeleted:{
         type:Boolean,
         default:false,
       },

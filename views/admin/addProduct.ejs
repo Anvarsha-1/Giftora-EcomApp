@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giftora Admin Dashboard - Add New Product</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" as="style" />
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/sweetalert2@11" as="script" />
+  <link rel="stylesheet" href="/css/admin/addproduct.css" />
+  
+</head>
+
+<body>
+  <div class="main-wrapper">
+    <%- include('../partials/admin/header.ejs') %>
+      <div class="content-wrapper">
+        <div class="navbar">
+          <div class="navbar-left">
+            <i class="fas fa-user-shield admin-icon"></i>
+            <span class="admin-text">Admin</span>
+          </div>
+          <div>
+            <button class="add-product-btn" onclick="window.location.href='/admin/products'">Back to Products</button>
+          </div>
+        </div>
+        <div class="form-container">
+          <h2>Add Product</h2>
+          <% if (typeof error !=='undefined' && error) { %>
+            <div class="server-error" id="server-error" style="display: block;">
+              <%= error %>
+            </div>
+            <% } else { %>
+              <div class="server-error" id="server-error" style="display: none;"></div>
+              <% } %>
+                <form id="productForm" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName" name="productName"
+                      value="<%= typeof formData !== 'undefined' ? formData.productName : '' %>" />
+                    <span class="error" id="productName-error"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description"
+                      name="description"><%= typeof formData !== 'undefined' ? formData.description : '' %></textarea>
+                    <span class="error" id="description-error"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category">
+                      <option value="" disabled <%=typeof formData==='undefined' || !formData.category ? 'selected' : ''
+                        %>>Select Category</option>
+                      <% cat.forEach((category)=> { %>
+                        <option value="<%= category._id %>" <%=typeof formData !=='undefined' &&
+                          formData.category===category._id.toString() ? 'selected' : '' %>>
+                          <%= category.name %>
+                        </option>
+                        <% }) %>
+                    </select>
+                    <span class="error" id="categoryError"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="quantity">Stock Quantity</label>
+                    <input type="number" id="quantity" name="quantity" min="0"
+                      value="<%= typeof formData !== 'undefined' ? formData.quantity : '' %>" />
+                    <span class="error" id="quantity-error"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="regularPrice">Regular Price</label>
+                    <input type="number" id="regularPrice" name="regularPrice" min="0" step="1"
+                      value="<%= typeof formData !== 'undefined' ? formData.regularPrice : '' %>" />
+                    <span class="error" id="regularPrice-error"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                      <option value="Available" <%=typeof formData !=='undefined' && formData.status==='Available'
+                        ? 'selected' : '' %>>Available</option>
+                      <option value="Out Of Stock" <%=typeof formData !=='undefined' && formData.status==='Out Of Stock'
+                        ? 'selected' : '' %>>Out Of Stock</option>
+                      <option value="Discontinued" <%=typeof formData !=='undefined' && formData.status==='Discontinued'
+                        ? 'selected' : '' %>>Discontinued</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Product Images (3 required)</label>
+                    <span class="error" id="imagesError"></span>
+                    <div class="image-upload">
+                      <% for (let i=0; i < 3; i++) { %>
+                        <div style="position: relative;">
+                          <input type="file" id="image<%= i + 1 %>" name="productImage"
+                            accept="image/png,image/jpeg,image/jpg" />
+                          <img class="image-preview" id="preview<%= i + 1 %>" src="#" alt="Preview <%= i + 1 %>"
+                            style="display: none;" />
+                          <button type="button" class="remove-image-btn" data-index="<%= i + 1 %>"
+                            style="display: none;">×</button>
+                        </div>
+                        <% } %>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" class="form-submit-btn" id="submitButton">Add Product</button>
+                  </div>
+                </form>
+        </div>
+      </div>
+  </div>
+  <div class="crop-modal" id="cropModal">
+    <div class="crop-container">
+      <h3>Crop Image</h3>
+      <div class="cropper-container">
+        <img id="cropImage" src="#" alt="Crop Image" style="max-width: 100%; display: block;" />
+      </div>
+      <div>
+        <button id="cropButton">Crop & Save</button>
+        <button id="cancelCrop">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.12/dist/cropper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    let cropper = null;
+    let currentInputIndex = null;
+
+    const cropModal = document.getElementById('cropModal');
+    const cropImage = document.getElementById('cropImage');
+    const cropButton = document.getElementById('cropButton');
+    const cancelCrop = document.getElementById('cancelCrop');
+    const submitButton = document.getElementById('submitButton');
+    const serverError = document.getElementById('server-error');
+
+    // Function to validate images
+    function validateImages() {
+      const imagesError = document.getElementById('imagesError');
+      const imageInputs = ['image1', 'image2', 'image3'].map(id => document.getElementById(id));
+      const imageCount = imageInputs.filter(input => input.files && input.files.length > 0).length;
+    
+      if (imageCount !== 3) {
+        imagesError.textContent = `Please upload exactly 3 images. Current count: ${imageCount}.`;
+        return false;
+      }
+      imagesError.textContent = '';
+      return true;
+    }
+
+    // Initialize file inputs
+    document.querySelectorAll('input[type="file"]').forEach((input, index) => {
+      input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+          if (!validTypes.includes(file.type)) {
+            document.getElementById('imagesError').textContent = 'Please upload a valid image (PNG, JPEG, JPG).';
+            input.value = '';
+            validateImages();
+            return;
+          }
+          document.getElementById('imagesError').textContent = '';
+          currentInputIndex = index + 1;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            cropImage.src = event.target.result;
+            cropModal.style.display = 'flex';
+            if (cropper) {
+              cropper.destroy();
+            }
+            cropper = new Cropper(cropImage, {
+              aspectRatio: 1,
+              viewMode: 1,
+              autoCropArea: 0.8,
+              responsive: true,
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    });
+
+    // Crop button event
+    cropButton.addEventListener('click', () => {
+      if (cropper) {
+        const canvas = cropper.getCroppedCanvas({
+          width: 300,
+          height: 300,
+          imageSmoothingQuality: 'high',
+        });
+        const preview = document.getElementById(`preview${currentInputIndex}`);
+        const removeBtn = document.querySelector(`.remove-image-btn[data-index="${currentInputIndex}"]`);
+        canvas.toBlob((blob) => {
+          preview.src = URL.createObjectURL(blob);
+          preview.style.display = 'block';
+          removeBtn.style.display = 'block';
+          const fileInput = document.getElementById(`image${currentInputIndex}`);
+          const dataTransfer = new DataTransfer();
+          const file = new File([blob], `cropped_image${currentInputIndex}.jpg`, { type: 'image/jpeg' });
+          dataTransfer.items.add(file);
+          fileInput.files = dataTransfer.files;
+          validateImages();
+        }, 'image/jpeg');
+        cropModal.style.display = 'none';
+        cropper.destroy();
+        cropper = null;
+        currentInputIndex = null;
+      }
+    });
+
+    // Cancel crop event
+    cancelCrop.addEventListener('click', () => {
+      cropModal.style.display = 'none';
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+      const fileInput = document.getElementById(`image${currentInputIndex}`);
+      fileInput.value = '';
+      currentInputIndex = null;
+      validateImages();
+    });
+
+    // Remove image button event
+    document.querySelector('.image-upload').addEventListener('click', (e) => {
+      if (e.target.classList.contains('remove-image-btn')) {
+        const index = e.target.getAttribute('data-index');
+        const fileInput = document.getElementById(`image${index}`);
+        const preview = document.getElementById(`preview${index}`);
+        fileInput.value = '';
+        preview.src = '#';
+        preview.style.display = 'none';
+        e.target.style.display = 'none';
+        validateImages();
+      }
+    });
+
+    document.getElementById('productForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        let valid = true;
+
+        // Reset error messages
+        document.querySelectorAll('.error').forEach((err) => (err.textContent = ''));
+        serverError.style.display = 'none';
+
+        // Validate fields
+        const productName = document.getElementById('productName');
+        if (!productName.value.trim()) {
+          document.getElementById('productName-error').textContent = 'Product name is required.';
+          valid = false;
+        }
+        const description = document.getElementById('description');
+        if (!description.value.trim()) {
+          document.getElementById('description-error').textContent = 'Description is required.';
+          valid = false;
+        }
+        const category = document.getElementById('category');
+        if (!category.value) {
+          document.getElementById('categoryError').textContent = 'Please select a category.';
+          valid = false;
+        }
+        const quantity = document.getElementById('quantity');
+        if (!quantity.value || quantity.value < 0) {
+          document.getElementById('quantity-error').textContent = 'Please enter a valid quantity.';
+          valid = false;
+        }
+        const regularPrice = document.getElementById('regularPrice');
+        if (!regularPrice.value || regularPrice.value < 0) {
+          document.getElementById('regularPrice-error').textContent = 'Please enter a valid price.';
+          valid = false;
+        }
+        if (!validateImages()) {
+          valid = false;
+        }
+
+        if (!valid) {
+          return;
+        }
+
+        // Show loading alert
+        Swal.fire({
+          title: 'Adding Product...',
+          text: 'Please wait while we process your request.',
+          allowOutsideClick: false,
+          showClass: { popup: 'swal2-show fast-animation' },
+          hideClass: { popup: 'swal2-hide fast-animation' },
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Adding...';
+
+        const formData = new FormData(document.getElementById('productForm'));
+
+        try {
+          const response = await fetch('/admin/addProducts', {
+            method: 'POST',
+            body: new FormData(document.getElementById('productForm')),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            await Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: result.message || 'Product added successfully!',
+              timer: 1500,
+              showConfirmButton: false,
+              showClass: { popup: 'swal2-show fast-animation' },
+              hideClass: { popup: 'swal2-hide fast-animation' }
+            });
+            window.location.href = '/admin/products';
+          } else {
+            if (result.formData) {
+              document.getElementById('productName').value = result.formData.productName || '';
+              document.getElementById('description').value = result.formData.description || '';
+              document.getElementById('category').value = result.formData.category || '';
+              document.getElementById('quantity').value = result.formData.quantity || '';
+              document.getElementById('regularPrice').value = result.formData.regularPrice || '';
+              document.getElementById('status').value = result.formData.status || 'Available';
+                 }
+              await Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: result.error || 'Failed to add product.',
+              showConfirmButton: true,
+              showClass: { popup: 'swal2-show fast-animation' },
+              hideClass: { popup: 'swal2-hide fast-animation' }
+            });
+            serverError.textContent = result.error || 'Failed to add product.';
+            serverError.style.display = 'block';
+          }
+        } catch (error) {
+          await Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An error occurred while adding the product: ' + error.message,
+            showConfirmButton: true,
+            showClass: { popup: 'swal2-show fast-animation' },
+            hideClass: { popup: 'swal2-hide fast-animation' }
+          });
+          serverError.textContent = 'An error occurred while adding the product.';
+          serverError.style.display = 'block';
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Add Product';
+        }
+     });
+  </script>
+</body>
+
+</html>

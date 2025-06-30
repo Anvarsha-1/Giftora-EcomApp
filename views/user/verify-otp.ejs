@@ -1,63 +1,260 @@
-<link rel="stylesheet" href="../../css/verify-otp.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="/css/user/verify-otp.css">
+</head>
 <body>
-    <div class="container">
-        <h1 class="title">Enter the OTP</h1>
-        <p class="subtitle">The OTP has sent to your registered email</p>
-        
-        <div class="input-container">
-            <input type="text" class="otp-input" placeholder="Enter the otp" maxlength="6">
-            <button class="resend-btn">Resend OTP</button>
+  <div class="otp-container">
+    <div class="left-section">
+      <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+      </div>
+      <div class="geometric-pattern">
+        <div class="logo-circle">
+          <div class="logo-inner">
+            <svg class="gift-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="boxTexture" patternUnits="userSpaceOnUse" width="4" height="4">
+                  <path d="M0 0h4v4h-4z" fill="#3F3D7A"/>
+                  <path d="M0 0l4 4m0-4l-4 4" stroke="#2C2A4A" stroke-width="0.2"/>
+                </pattern>
+                <linearGradient id="boxGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#5C5B7C;stop-opacity:1"/>
+                  <stop offset="100%" style="stop-color:#2C2A4A;stop-opacity:1"/>
+                </linearGradient>
+              </defs>
+              <rect x="15" y="35" width="70" height="50" fill="url(#boxGradient)" stroke="#1A1840" stroke-width="1.5"/>
+              <rect x="15" y="35" width="70" height="10" fill="rgba(0,0,0,0.2)" style="filter: url(#blur1)"/>
+              <defs>
+                <filter id="blur1">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="1"/>
+                </filter>
+              </defs>
+              <polygon points="85,35 95,28 95,78 85,85" fill="#2C2A4A" stroke="#1A1840" stroke-width="1"/>
+              <defs>
+                <linearGradient id="ribbonVGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:#8D8DB4;stop-opacity:1"/>
+                  <stop offset="50%" style="stop-color:#5C5B7C;stop-opacity:1"/>
+                  <stop offset="100%" style="stop-color:#3F3D7A;stop-opacity:1"/>
+                </linearGradient>
+              </defs>
+              <rect x="45" y="25" width="10" height="60" fill="url(#ribbonVGradient)" stroke="#2C2A4A" stroke-width="0.5"/>
+              <rect x="47" y="25" width="6" height="60" fill="rgba(255,255,255,0.2)"/>
+              <defs>
+                <linearGradient id="ribbonHGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#8D8DB4;stop-opacity:1"/>
+                  <stop offset="50%" style="stop-color:#5C5B7C;stop-opacity:1"/>
+                  <stop offset="100%" style="stop-color:#3F3D7A;stop-opacity:1"/>
+                </linearGradient>
+              </defs>
+              <rect x="10" y="45" width="80" height="10" fill="url(#ribbonHGradient)" stroke="#2C2A4A" stroke-width="0.5"/>
+              <rect x="10" y="47" width="80" height="6" fill="rgba(255,255,255,0.2)"/>
+              <defs>
+                <radialGradient id="bowGradientLeft" cx="40%" cy="40%" r="50%">
+                  <stop offset="0%" style="stop-color:#B0B0D2;stop-opacity:1"/>
+                  <stop offset="100%" style="stop-color:#5C5B7C;stop-opacity:1"/>
+                </radialGradient>
+              </defs>
+              <path d="M35 30 C30 25, 30 35, 25 30 Q30 32, 35 30" fill="url(#bowGradientLeft)" stroke="#2C2A4A" stroke-width="0.5"/>
+              <defs>
+                <radialGradient id="bowGradientRight" cx="60%" cy="40%" r="50%">
+                  <stop offset="0%" style="stop-color:#B0B0D2;stop-opacity:1"/>
+                  <stop offset="100%" style="stop-color:#5C5B7C;stop-opacity:1"/>
+                </radialGradient>
+              </defs>
+              <path d="M65 30 C70 25, 70 35, 75 30 Q70 32, 65 30" fill="url(#bowGradientRight)" stroke="#2C2A4A" stroke-width="0.5"/>
+              <defs>
+                <radialGradient id="bowCenterGradient" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" style="stop-color:#D8D8E8;stop-opacity:1"/>
+                  <stop offset="100%" style="stop-color:#5C5B7C;stop-opacity:1"/>
+                </radialGradient>
+              </defs>
+              <ellipse cx="50" cy="30" rx="8" ry="10" fill="url(#bowCenterGradient)" stroke="#2C2A4A" stroke-width="0.5"/>
+              <ellipse cx="45" cy="26" rx="3" ry="2" fill="#D8D8E8" opacity="0.8"/>
+              <ellipse cx="55" cy="26" rx="3" ry="2" fill="#D8D8E8" opacity="0.8"/>
+              <rect x="18" y="38" width="4" height="20" fill="rgba(255,255,255,0.3)"/>
+              <rect x="18" y="38" width="25" height="3" fill="rgba(255,255,255,0.2)"/>
+            </svg>
+          </div>
         </div>
-        
-        <div class="timer">
-            <span id="countdown">0 : 57</span> seconds remaining
-        </div>
-        
-        <div class="buttons">
-            <button class="go-back">Go back</button>
-            <button class="verify-btn">Verify</button>
-        </div>
+        <div class="welcome-text">Verify Your OTP</div>
+        <div class="welcome-subtitle">Enter the code sent to your email</div>
+      </div>
     </div>
 
-    <script>
-        let timeLeft = 57;
-        const countdownElement = document.getElementById('countdown');
-        
-        function updateCountdown() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            countdownElement.textContent = `${minutes} : ${seconds.toString().padStart(2, '0')}`;
-            
-            if (timeLeft > 0) {
-                timeLeft--;
-                setTimeout(updateCountdown, 1000);
-            } else {
-                countdownElement.textContent = '0 : 00';
-            }
+    <div class="right-section">
+      <div class="form-header">
+        <h2>Enter the OTP</h2>
+        <p>The OTP has been sent to <%= email %></p>
+      </div>
+
+      <form method="POST" action="/verify-otp" id="otp-form">
+        <div class="input-container">
+          <input type="text" name="otp" class="otp-input" id="otp" placeholder="Enter the OTP" maxlength="6" required>
+          <button type="button" class="resend-btn" onclick="resendOTP()" disabled>Resend OTP</button>
+        </div>
+        <div class="timer">
+          <span id="countdown">0 : 60</span> seconds remaining
+        </div>
+        <div class="buttons">
+          <button type="button" class="go-back" onclick="window.location.href='/signup'">Go back</button>
+          <button type="submit" class="verify-btn">Verify</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let timeLeft = 60;
+    let countdownInterval = null;
+    let resendCooldown = false;
+    const countdownElement = document.getElementById('countdown');
+    const resendButton = document.querySelector('.resend-btn');
+
+    function updateCountdown() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      countdownElement.textContent = `${minutes} : ${seconds.toString().padStart(2, '0')}`;
+      
+      if (timeLeft > 0) {
+        timeLeft--;
+        resendButton.disabled = true;
+      } else {
+        countdownElement.textContent = '0 : 00';
+        if (!resendCooldown) {
+          resendButton.disabled = false;
         }
-        
-        updateCountdown();
-        
-        // Add click handlers
-        document.querySelector('.resend-btn').addEventListener('click', function() {
-            timeLeft = 57;
-            updateCountdown();
+        clearInterval(countdownInterval);
+      }
+    }
+
+    function startCountdown() {
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+      timeLeft = 60;
+      countdownInterval = setInterval(updateCountdown, 1000);
+      updateCountdown();
+    }
+
+    function resendOTP() {
+      if (resendCooldown) {
+        console.log("Cooldown active. Ignoring multiple clicks.");
+        return;
+      }
+
+      resendCooldown = true;
+      resendButton.disabled = true;
+
+      $.ajax({
+        type: 'POST',
+        url: '/resent-otp',
+        success: function (response) {
+          console.log('Resend OTP Success:', response);
+          if (response.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'OTP Resent',
+              text: 'A new OTP has been sent to your email.',
+              redirectUrl:"/login",
+              timer: 1500
+            });
+            startCountdown();
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: response.message || 'Failed to resend OTP.'
+            });
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error('Resend OTP Error:', { status, error, response: xhr.responseJSON });
+          let message = 'Something went wrong. Please try again.';
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            message = xhr.responseJSON.message;
+          }
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message
+          });
+        },
+        complete: function() {
+          setTimeout(function() {
+            resendCooldown = false;
+            if (timeLeft === 0) {
+              resendButton.disabled = false;
+            }
+          }, 5000);
+        }
+      });
+    }
+
+    startCountdown();
+
+    document.querySelector('.otp-input').addEventListener('input', function (e) {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+
+    document.querySelector('#otp-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const otpValue = document.getElementById('otp').value;
+
+      if (otpValue.length !== 6) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Invalid OTP',
+          text: 'Please enter a 6-digit OTP'
         });
-        
-        document.querySelector('.go-back').addEventListener('click', function() {
-            // Go back functionality
-            console.log('Go back clicked');
-        });
-        
-        document.querySelector('.verify-btn').addEventListener('click', function() {
-            const otpValue = document.querySelector('.otp-input').value;
-            console.log('Verify clicked with OTP:', otpValue);
-        });
-        
-        // Allow only numbers in OTP input
-        document.querySelector('.otp-input').addEventListener('input', function(e) {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
-    </script>
+        return;
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: '/verify-otp',
+        data: { otp: otpValue },
+        success: function (response) {
+          console.log('AJAX Success:', response);
+          if (response.success) {
+            Swal.fire({
+              icon: 'success',
+              title: 'OTP Verified Successfully',
+              showConfirmButton: false,
+              timer: 1500
+            }).then(() => {
+              window.location.href = response.redirectUrl || '/login';
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: response.message || 'An error occurred.'
+            });
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error('AJAX Error:', { status, error, response: xhr.responseJSON });
+          let message = 'Something went wrong. Please try again.';
+          if (xhr.responseJSON && xhr.responseJSON.message) {
+            message = xhr.responseJSON.message;
+          }
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message
+          });
+        }
+      });
+    });
+  </script>
 </body>
 </html>
