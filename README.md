@@ -44,3 +44,11 @@ Giftora is a full-stack e-commerce website built for a modern gift shopping expe
 
 ## 📂 Folder Structure (Important ones)
 
+
+/models
+/views
+/controllers
+/public
+/routes
+
+
