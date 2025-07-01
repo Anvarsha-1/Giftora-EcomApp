@@ -52,3 +52,15 @@ Giftora is a full-stack e-commerce website built for a modern gift shopping expe
 /routes
 
 
+UI 
+![image](https://github.com/user-attachments/assets/83d6f6a1-2a5b-4bb0-b052-6615f2bdf1c5)
+![image](https://github.com/user-attachments/assets/def6c542-1af8-44ef-a888-021d5477a74d)
+![image](https://github.com/user-attachments/assets/6a61a684-b491-4280-ad20-80c1bb463602)
+![image](https://github.com/user-attachments/assets/c215c1ab-3e87-4e94-92be-5a6924f9e0b7)
+![image](https://github.com/user-attachments/assets/b8f1fd54-3d56-4dfc-80ed-d2e7bfd0a281)
+
+
+
+
+
+
