@@ -59,8 +59,8 @@ UI
 ![image](https://github.com/user-attachments/assets/c215c1ab-3e87-4e94-92be-5a6924f9e0b7)
 ![image](https://github.com/user-attachments/assets/b8f1fd54-3d56-4dfc-80ed-d2e7bfd0a281)
 
-![GitHub repo size](https://img.shields.io/github/repo-size/your-username/giftora)
-![Made with Node.js](https://img.shields.io/badge/Made%20with-Node.js-brightgreen)
+
+
 
 
 
