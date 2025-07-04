@@ -18,13 +18,8 @@ router.get("/login",authUserController.loadLogin)
 router.post('/login',authUserController.login)
 router.get("/auth/google",passport.authenticate("google",{scope:['profile','email']}))
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:"/signup"}),(req,res)=>{
-<<<<<<< HEAD
     req.session.user = req.user._id
-    console.log("🔥 req.user after login:", req.user)
     res.redirect("/home")
-=======
-    res.redirect("/")
->>>>>>> e3d1b9fd589f953e478a2819f45acf715ff2701d
 })
 
 
