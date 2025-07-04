@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giftora Admin Dashboard - Category Management</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .content-wrapper {
+      flex: 1;
+      margin-left: 250px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: margin-left 0.3s ease, width 0.3s ease;
+      width: calc(100% - 250px);
+    }
+
+    .navbar {
+      background-color: white;
+      padding: 15px 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-icon {
+      font-size: 1.2em;
+      color: #2c3e50;
+    }
+
+    .admin-text {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .search-container {
+      display: flex;
+      gap: 10px;
+      margin: 20px;
+    }
+
+    .search-container input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .search-container button {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .search-container button:hover {
+      background-color: #34495e;
+    }
+
+    .search-container button.clear {
+      background-color: #6c757d;
+    }
+
+    .search-container button.clear:hover {
+      background-color: #5a6268;
+    }
+
+    .category-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      margin: 20px;
+    }
+
+    .category-table th,
+    .category-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e1e8ed;
+      font-size: 0.95rem;
+    }
+
+    .category-table th {
+      background-color: #f5f5f5;
+      color: #2c3e50;
+    }
+
+    .action-btn {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 5px;
+      transition: background-color 0.2s ease;
+      font-size: 0.85rem;
+    }
+
+    .action-btn:hover {
+      background-color: #34495e;
+    }
+
+    .action-btn.delete {
+      background-color: #dc3545;
+    }
+
+    .action-btn.delete:hover {
+      background-color: #c82333;
+    }
+
+    .list-button {
+      text-decoration: none;
+      background-color: #0cbe23;
+      color: white;
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+
+    .list-button:hover {
+      background-color: #1eb300;
+      text-decoration: none;
+    }
+
+    .list-button.list {
+      background-color: #28a745;
+    }
+
+    .list-button.unlist {
+      background-color: #dc3545;
+    }
+
+    .list-button.list:hover {
+      background-color: #218838;
+    }
+
+    .list-button.unlist:hover {
+      background-color: #c82333;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      margin: 20px;
+    }
+
+    .pagination a {
+      background-color: #2c3e50;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .pagination a:hover {
+      background-color: #34495e;
+    }
+
+    .pagination a.active {
+      background-color: #34495e;
+      font-weight: bold;
+    }
+
+    .pagination a.disabled {
+      background-color: #ddd;
+      color: #888;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      padding: 0;
+      border-radius: 8px;
+      width: 450px;
+      max-width: 90%;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      transform: scale(0.9);
+      animation: popIn 0.3s ease forwards;
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .modal-content h2 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #2c3e50;
+      outline: none;
+    }
+
+    .form-group textarea {
+      height: 100px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      padding: 0 20px 20px;
+    }
+
+    .form-actions button {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .form-actions button:hover {
+      background-color: #34495e;
+    }
+
+    .form-actions .cancel-btn {
+      background-color: #6c757d;
+    }
+
+    .form-actions .cancel-btn:hover {
+      background-color: #5a6268;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 0.85rem;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .add-category-btn {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 20px;
+      transition: background-color 0.2s ease;
+      font-size: 1rem;
+    }
+
+    .add-category-btn:hover {
+      background-color: #34495e;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.9);
+      }
+
+      to {
+        transform: scale(1);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .content-wrapper {
+        margin-left: 70px;
+        width: calc(100% - 70px);
+      }
+
+      .category-table th,
+      .category-table td {
+        padding: 8px;
+        font-size: 0.85rem;
+      }
+
+      .form-actions button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+
+      .search-container,
+      .pagination {
+        margin: 10px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .content-wrapper {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .navbar {
+        padding: 10px;
+      }
+
+      .category-table th,
+      .category-table td {
+        padding: 6px;
+        font-size: 0.75rem;
+      }
+
+      .search-container {
+        flex-direction: column;
+      }
+
+      .search-container button {
+        width: 100%;
+      }
+
+      .modal-content {
+        width: 95%;
+      }
+
+      .add-category-btn {
+        margin: 10px;
+        width: calc(100% - 20px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <%- include('../partials/admin/header.ejs') %>
+    <div class="content-wrapper">
+      <div class="navbar">
+        <div class="navbar-left">
+          <i class="fas fa-user-shield admin-icon"></i>
+          <span class="admin-text">Admin</span>
+        </div>
+      </div>
+      <button class="add-category-btn" onclick="openCategoryModal('add')">Add Category</button>
+      <div class="search-container">
+        <form action="/admin/category" method="GET" id="searchForm">
+          <input type="text" id="searchInput" name="search" placeholder="Search Categories..."
+            value="<%= typeof search !== 'undefined' ? search : '' %>" />
+          <button type="submit" class="clear" name="clear" value="1">Clear</button>
+          <button type="submit">Search</button>
+        </form>
+      </div>
+      <table class="category-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Category Name</th>
+            <th>Category Description</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% cat.forEach((category, index)=> { %>
+            <tr>
+              <td>
+                <%= index + 1 %>
+              </td>
+              <td>
+                <%= category.name %>
+              </td>
+              <td>
+                <%= category.description %>
+              </td>
+              <td>
+                <%= category.isListed ? 'Listed' : 'Unlisted' %>
+              </td>
+              <td>
+                <a href="#" onclick="toggleCategory(event, '<%= category._id %>','<%= category.isListed %>')"
+                  class="list-button <%= category.isListed ? 'unlist' : 'list' %>">
+                  <%= category.isListed ? 'Unlist' : 'List' %>
+                </a>
+                <button class="action-btn edit" data-id="<%= category._id %>"
+                  data-name="<%= category.name.replace(/'/g, " \\'") %>"
+                  data-description="<%= category.description.replace(/'/g, "\\'" ) %>">
+                    Edit
+                </button>
+                <button class="action-btn delete" data-id="<%= category._id %>">
+                  Delete
+                </button>
+              </td>
+            </tr>
+            <% }) %>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <% 
+          const total=Number(totalPages) || 1; const searchQuery=typeof search !=='undefined' ?
+          encodeURIComponent(search) : '' ; %>
+          <% if (currentPage> 1) { %>
+            <a href="?page=<%= currentPage - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">Previous</a>
+            <% } else { %>
+              <a class="disabled">Previous</a>
+              <% } %>
+                <% for (let i=1; i <=total; i++) { %>
+                  <a href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>" <%=i===currentPage
+                    ? 'class="active"' : '' %>><%= i %></a>
+                  <% } %>
+                    <% if (currentPage < total) { %>
+                      <a href="?page=<%= currentPage + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">Next</a>
+                      <% } else { %>
+                        <a class="disabled">Next</a>
+                        <% } %>
+      </div>
+      <div id="categoryModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="modalTitle">Add Category</h2>
+          </div>
+          <div class="modal-body">
+            <form id="categoryForm" onsubmit="handleFormSubmit(event)">
+              <input type="hidden" id="categoryId" name="categoryId" />
+              <div class="form-group">
+                <label for="categoryName">Category Name</label>
+                <input type="text" id="categoryName" name="Name" placeholder="Enter Category Name" />
+                <span id="name-error" class="error-message"></span>
+              </div>
+              <div class="form-group">
+                <label for="categoryDescription">Category Description</label>
+                <textarea id="categoryDescription" name="Description"
+                  placeholder="Enter Category Description"></textarea>
+                <span id="description-error" class="error-message"></span>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="closeCategoryModal()">Cancel</button>
+                <button type="submit" class="action-btn">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      // Sidebar toggle
+      window.addEventListener("sidebarToggle", (e) => {
+        updateLayout(e.detail.collapsed);
+      });
+
+      // Initialize layout and event listeners
+      document.addEventListener("DOMContentLoaded", () => {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-item");
+        navLinks.forEach((link) => {
+          if (link.getAttribute("href") === currentPath) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+
+        // Initialize button event listeners
+        document.querySelectorAll(".action-btn.edit").forEach((button) => {
+          button.addEventListener("click", () => {
+            const id = button.dataset.id;
+            const name = button.dataset.name;
+            const description = button.dataset.description;
+            openCategoryModal("edit", id, name, description);
+          });
+        });
+
+        document.querySelectorAll(".action-btn.delete").forEach((button) => {
+          button.addEventListener("click", () => {
+            const id = button.dataset.id;
+            deleteCategory(id);
+          });
+        });
+
+        // Initialize layout
+        const isCollapsed = document.body.classList.contains("sidebar-collapsed");
+        updateLayout(isCollapsed);
+
+        // Handle pagination clicks
+        document.querySelectorAll(".pagination a").forEach((link) => {
+          link.addEventListener("click", (e) => {
+            if (link.classList.contains("disabled")) {
+              e.preventDefault();
+              return;
+            }
+            const href = link.getAttribute("href");
+            const pageNum = parseInt(new URLSearchParams(href.split("?")[1]).get("page"));
+            const totalPages ='<%= totalPages || 1 %>';
+            if (pageNum < 1 || pageNum > totalPages) {
+              e.preventDefault();
+              Swal.fire({
+                icon: "error",
+                title: "Invalid Page",
+                text: "The requested page does not exist.",
+              });
+              return;
+            }
+            window.location.href = href;
+          });
+        });
+
+        // Handle search form submission
+        const searchForm = document.getElementById("searchForm");
+        searchForm.addEventListener("submit", (e) => {
+          const clearButton = e.submitter && e.submitter.name === "clear";
+          if (clearButton) {
+            e.preventDefault();
+            window.location.href = "/admin/category?page=1";
+          } else {
+            // Reset to page 1 on new search
+            const searchInput = document.getElementById("searchInput").value.trim();
+            if (searchInput) {
+              e.preventDefault();
+              window.location.href = `/admin/category?page=1&search=${encodeURIComponent(searchInput)}`;
+            }
+          }
+        });
+      });
+
+      // Responsive layout
+      function updateLayout(isCollapsed = false) {
+        const contentWrapper = document.querySelector(".content-wrapper");
+        if (window.innerWidth <= 576) {
+          contentWrapper.style.marginLeft = "0";
+          contentWrapper.style.width = "100%";
+        } else if (window.innerWidth <= 768 || isCollapsed) {
+          contentWrapper.style.marginLeft = "70px";
+          contentWrapper.style.width = "calc(100% - 70px)";
+        } else {
+          contentWrapper.style.marginLeft = "250px";
+          contentWrapper.style.width = "calc(100% - 250px)";
+        }
+      }
+      window.addEventListener("resize", () => updateLayout(document.body.classList.contains("sidebar-collapsed")));
+
+      // Modal handling
+      function openCategoryModal(mode, id = "", name = "", description = "") {
+        const modal = document.getElementById("categoryModal");
+        const form = document.getElementById("categoryForm");
+        const title = document.getElementById("modalTitle");
+        const categoryIdInput = document.getElementById("categoryId");
+        const nameInput = document.getElementById("categoryName");
+        const descriptionInput = document.getElementById("categoryDescription");
+
+        clearErrorMessages();
+        form.reset();
+        categoryIdInput.value = id;
+        nameInput.value = name;
+        descriptionInput.value = description;
+        title.textContent = mode === "add" ? "Add Category" : "Edit Category";
+        modal.style.display = "flex";
+      }
+
+      function closeCategoryModal() {
+        const modal = document.getElementById("categoryModal");
+        modal.style.display = "none";
+        clearErrorMessages();
+        document.getElementById("categoryForm").reset();
+      }
+
+      // Form submission
+      function handleFormSubmit(event) {
+        event.preventDefault();
+
+        if (!validateForm()) {
+          return;
+        }
+
+        const id = document.getElementById("categoryId").value;
+        const name = document.getElementsByName("Name")[0].value.trim();
+        const description = document.getElementsByName("Description")[0].value.trim();
+        const url = id ? `/admin/category/${id}` : "/admin/category";
+        const method = id ? "PATCH" : "POST";
+
+        // Preserve pagination and search parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get("page") || "1";
+        const search = urlParams.get("search") || "";
+        const redirectUrl = `/admin/category?page=${page}${search ? "&search=" + encodeURIComponent(search) : ""}`;
+
+        fetch(url, {
+          method: method,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, description }),
+        })
+          .then((response) => {
+            if (!response.ok) {
+              return response.json().then((err) => {
+                throw new Error(err.error || "Unknown error");
+              });
+            }
+            return response.json();
+          })
+          .then((data) => {
+            Swal.fire({
+              icon: "success",
+              title: "Success",
+              text: data.message || `Category ${id ? "updated" : "added"} successfully`,
+            }).then(() => {
+              closeCategoryModal();
+              window.location.href = redirectUrl;
+            });
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Oops",
+              text: error.message === "Category already exists"
+                ? "Category name already exists"
+                : `An error occurred while ${id ? "updating" : "adding"} the category`,
+            });
+          });
+      }
+
+      // Form validation
+      function validateForm() {
+        clearErrorMessages();
+        const name = document.getElementsByName("Name")[0].value.trim();
+        const description = document.getElementsByName("Description")[0].value.trim();
+        let isValid = true;
+
+        if (name === "") {
+          displayErrorMessage("name-error", "Please enter a name");
+          isValid = false;
+        } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+          displayErrorMessage("name-error", "Name should contain only alphabetic characters");
+          isValid = false;
+        }
+
+        if (description === "") {
+          displayErrorMessage("description-error", "Please enter a description");
+          isValid = false;
+        } else if (!/^[a-zA-Z\s]+$/.test(description)) {
+          displayErrorMessage("description-error", "Description should contain only alphabetic characters");
+          isValid = false;
+        }
+
+        return isValid;
+      }
+
+      function displayErrorMessage(elementId, message) {
+        const errorElement = document.getElementById(elementId);
+        if (errorElement) {
+          errorElement.innerText = message;
+          errorElement.style.display = "block";
+        }
+      }
+
+      function clearErrorMessages() {
+        const errorElements = document.getElementsByClassName("error-message");
+        Array.from(errorElements).forEach((element) => {
+          element.innerText = "";
+          element.style.display = "none";
+        });
+      }
+
+      // Toggle List/Unlist
+      function toggleCategory(event, id, isListed) {
+        event.preventDefault();
+
+        // Preserve pagination and search parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = urlParams.get("page") || "1";
+        const search = urlParams.get("search") || "";
+        const redirectUrl = `/admin/category?page=${page}${search ? "&search=" + encodeURIComponent(search) : ""}`;
+
+        Swal.fire({
+          title: `Are you sure you want to ${isListed ? "unlist" : "list"} this category?`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          cancelButtonText: "No",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/admin/category/toggle`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id, isListed: !isListed }),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  return response.json().then((err) => {
+                    throw new Error(err.error || "Unknown error");
+                  });
+                }
+                return response.json();
+              })
+              .then((data) => {
+                Swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: data.message,
+                }).then(() => {
+                  window.location.href = redirectUrl;
+                });
+              })
+              .catch((error) => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops",
+                  text: error.message || "An error occurred while toggling the category",
+                });
+              });
+          }
+        });
+      }
+
+      // Delete Category
+      function deleteCategory(id) {
+        // Preserve pagination and search parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const page = parseInt(urlParams.get("page")) || 1;
+        const search = urlParams.get("search") || "";
+        const totalPages = `<%= totalPages || 1 %>`;
+
+        Swal.fire({
+          title: "Are you sure you want to delete this category?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Yes, delete it",
+          cancelButtonText: "No",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/admin/category/${id}`, {
+              method: "DELETE",
+              headers: { "Content-Type": "application/json" },
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  return response.json().then((err) => {
+                    throw new Error(err.error || "Unknown error");
+                  });
+                }
+                return response.json();
+              })
+              .then((data) => {
+                Swal.fire({
+                  icon: "success",
+                  title: "Success",
+                  text: data.message,
+                }).then(() => {
+                  // Adjust page if current page exceeds totalPages after deletion
+                  const totalCategories =` <%= totalCategory || 0 %>`;
+                  const limit = 4; // Match backend limit
+                  const newTotalPages = Math.ceil((totalCategories - 1) / limit);
+                  const newPage = page > newTotalPages ? (newTotalPages > 0 ? newTotalPages : 1) : page;
+                  window.location.href = `/admin/category?page=${newPage}${search ? "&search=" + encodeURIComponent(search) : ""}`;
+                });
+              })
+              .catch((error) => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops",
+                  text: error.message || "An error occurred while deleting the category",
+                });
+              });
+          }
+        });
+      }
+    </script>
+</body>
+
+</html>

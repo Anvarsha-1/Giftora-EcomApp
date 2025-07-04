@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  integrity="sha512-dTfge4HUZKcKPSq3TJZV9UFrzsnvNdUmlcZSYmAQJw+hF/FqE9TuEWrSC5E/j34kY6nHKtJzXhqJ6OrMxB3pGA=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+/>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+   />
+  <title>Header Replica</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .top-banner {
+      background-color: #000;
+      color: white;
+      text-align: center;
+      padding: 8px 0;
+      font-size: 14px;
+      position: relative;
+      z-index: 200;
+    }
+
+    .banner-content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .shop-now {
+      color: white;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .language-selector {
+      position: absolute;
+      right: 20px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 250;
+    }
+
+    .language-selector::after {
+      content: '▼';
+      margin-left: 5px;
+      font-size: 10px;
+    }
+
+    .main-header {
+      background-color: white;
+      padding: 15px 0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      position: relative;
+      z-index: 100;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #333;
+      font-size: 24px;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background-color: #333;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fa-regular{
+        font-weight:900
+    }
+
+    .logo-img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+    .search-icon {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+    #heart-icon{
+      width: 24px;
+      height: 24px;
+      cursor:pointer;
+      object-fit: contain;
+    }
+    #cart-icon {
+     cursor:pointer
+    }
+
+    .logo-img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #333;
+      font-size: 16px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-menu a:hover {
+      color: #666;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .search-container {
+      position: relative;
+    }
+
+    .search-input {
+      padding: 10px 15px;
+      padding-right: 45px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      width: 250px;
+      font-size: 14px;
+      outline: none;
+      background-color: #f8f8f8;
+    }
+
+    .search-input::placeholder {
+      color: #999;
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #666;
+      font-size: 16px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      padding: 8px;
+      color: #333;
+      font-size: 20px;
+      transition: color 0.3s ease;
+    }
+
+    .icon-btn:hover {
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .header-container {
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .nav-menu {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 15px;
+      }
+
+      .search-input {
+        width: 200px;
+      }
+
+      .language-selector {
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top banner -->
+  <div class="top-banner">
+    <div class="banner-content">
+      <span>Summer Sale For All Books And Free Express Delivery - OFF 10%!</span>
+      <span class="shop-now">ShopNow</span>
+    </div>
+  </div>
+
+  <!-- Main header -->
+  <header class="main-header">
+    <div class="header-container">
+      <!-- Logo -->
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <img src="../../../images/header.img/gifttora.png" alt="Logo" class="logo-img" />
+        </div>
+      </a>
+
+      <!-- Navigation -->
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Sign Up</a></li>
+        </ul>
+      </nav>
+
+      <!-- Right section -->
+      <div class="header-right">
+        <div class="search-container">
+          <input type="text" class="search-input" placeholder="What are you looking for?" />
+          <button class="search-btn">
+            <i class="fa-solid fa-magnifying-glass" style="color: #000000;" id="search-icon"></i>
+          </button>
+        </div>
+        <button class="icon-btn">
+           <i class="fa-regular fa-heart" style="color: #000000;" id="heart-icon"></i>
+        </button>
+
+         <i class="fa-regular fa-cart-shopping" id="cart-icon"></i>
+        
+      </div>
+    </div>
+  </header>
+</body>
+</html>
