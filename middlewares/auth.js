@@ -2,12 +2,20 @@ const User = require("../models/userSchema");
 
 const userAuth = async (req, res, next) => {
   try {
+<<<<<<< HEAD
     const userId = req.session.user || req.session?.passport?.user
     if (!userId) {
       return res.redirect("/login");
     }
 
     const userData = await User.findById(userId);
+=======
+    if (!req.session.user) {
+      return res.redirect("/login");
+    }
+
+    const userData = await User.findById(req.session.user);
+>>>>>>> e3d1b9fd589f953e478a2819f45acf715ff2701d
 
     if (!userData) {
       req.session.destroy((err) => {
@@ -31,9 +39,15 @@ const userAuth = async (req, res, next) => {
       return;
     }
 
+<<<<<<< HEAD
     // if (userData.isAdmin) {
     //   return res.redirect("/admin/dashboard");
     // }
+=======
+    // if (userData.isAdmin) {
+    //   return res.redirect("/admin/dashboard");
+    // }
+>>>>>>> e3d1b9fd589f953e478a2819f45acf715ff2701d
 
     req.user = userData;
     next();

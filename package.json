@@ -7,8 +7,12 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "start": "nodemon app.js",
     "dev": "nodemon index.js"
+=======
+    "start": "nodemon app.js"
+>>>>>>> e3d1b9fd589f953e478a2819f45acf715ff2701d
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -21,7 +25,11 @@
     "express-validator": "^7.2.1",
     "fastest-levenshtein": "^1.0.16",
     "flash": "^1.1.0",
+<<<<<<< HEAD
     "mongoose": "^8.16.1",
+=======
+    "mongoose": "^8.15.1",
+>>>>>>> e3d1b9fd589f953e478a2819f45acf715ff2701d
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^7.0.3",
