@@ -33,14 +33,11 @@ const validateSignupForm = async (formData) => {
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Optional: Check for duplicate phone number
+
   // const existingPhone = await User.findOne({ phone });
   // if (existingPhone) {
   //   errors.phone = "Phone number already registered";
   // }
->>>>>>> e3d1b9fd589f953e478a2819f45acf715ff2701d
 
   if (!password || password.length < 6) {
     errors.password = "Password must be at least 6 characters";

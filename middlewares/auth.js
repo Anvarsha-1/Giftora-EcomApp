@@ -2,105 +2,72 @@ const User = require("../models/userSchema");
 
 const userAuth = async (req, res, next) => {
   try {
-<<<<<<< HEAD
-    const userId = req.session.user || req.session?.passport?.user
+    const userId = req.session.user || req.session?.passport?.user;
     if (!userId) {
+      if (req.headers.accept?.includes('application/json')) {
+        return res.status(401).json({ success: false, message: 'Unauthorized: Please login' });
+      }
       return res.redirect("/login");
     }
 
     const userData = await User.findById(userId);
-=======
-    if (!req.session.user) {
-      return res.redirect("/login");
-    }
-
-    const userData = await User.findById(req.session.user);
->>>>>>> e3d1b9fd589f953e478a2819f45acf715ff2701d
-
-    if (!userData) {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log("Error destroying session:", err);
-        }
+    if (!userData || userData.isBlocked) {
+      req.session.destroy(err => {
+        if (err) console.log("Session destroy error:", err);
         res.clearCookie("connect.sid");
-        res.redirect("/login");
+        if (req.headers.accept?.includes('application/json')) {
+          return res.status(403).json({ success: false, message: 'Access denied or user blocked' });
+        }
+        return res.redirect("/login");
       });
       return;
     }
-
-    if (userData.isBlocked) {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log("Error destroying session:", err);
-        }
-        res.clearCookie("connect.sid");
-        res.redirect("/login");
-      });
-      return;
-    }
-
-<<<<<<< HEAD
-    // if (userData.isAdmin) {
-    //   return res.redirect("/admin/dashboard");
-    // }
-=======
-    // if (userData.isAdmin) {
-    //   return res.redirect("/admin/dashboard");
-    // }
->>>>>>> e3d1b9fd589f953e478a2819f45acf715ff2701d
 
     req.user = userData;
     next();
   } catch (error) {
     console.log("Error in user auth middleware:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };
 
+
 const adminAuth = async (req, res, next) => {
   try {
+    const isApiRequest = req.headers.accept?.includes('application/json');
+
     if (!req.session.admin) {
+      if (isApiRequest) {
+        return res.status(401).json({ success: false, message: 'Unauthorized: Admin login required' });
+      }
       return res.redirect("/admin/login");
     }
+
     const adminData = await User.findById(req.session.admin);
-    if (!adminData) {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log("Error destroying session:", err);
-        }
+    if (!adminData || adminData.isBlocked || !adminData.isAdmin) {
+      req.session.destroy(err => {
+        if (err) console.log("Error destroying session:", err);
         res.clearCookie("connect.sid");
-        res.redirect("/admin/login");
-      });
-      return;
-    }
-    if (adminData.isBlocked) {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log("Error destroying session:", err);
+
+        if (isApiRequest) {
+          return res.status(403).json({ success: false, message: 'Access denied: Invalid or blocked admin' });
         }
-        res.clearCookie("connect.sid");
-        res.redirect("/admin/login");
+        return res.redirect("/admin/login");
       });
       return;
     }
 
-    if (!adminData.isAdmin) {
-      req.session.destroy((err) => {
-        if (err) {
-          console.log("Error destroying session:", err);
-        }
-        res.clearCookie("connect.sid");
-        res.redirect("/admin/login");
-      });
-      return;
-    }
     req.admin = adminData;
     next();
   } catch (error) {
     console.log("Error in admin auth middleware:", error);
+    if (req.headers.accept?.includes('application/json')) {
+      return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
     res.status(500).send("Internal Server Error");
   }
 };
+ 
 
 module.exports = {
   userAuth,

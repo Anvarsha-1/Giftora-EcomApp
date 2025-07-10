@@ -16,6 +16,7 @@ router.post("/resent-otp",authUserController.resendOtp)
 router.post("/verify-otp",authUserController.verifyOtp)
 router.get("/login",authUserController.loadLogin)
 router.post('/login',authUserController.login)
+router.get('/logout',authUserController.logout)
 router.get("/auth/google",passport.authenticate("google",{scope:['profile','email']}))
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:"/signup"}),(req,res)=>{
     req.session.user = req.user._id
@@ -25,8 +26,8 @@ router.get('/auth/google/callback',passport.authenticate('google',{failureRedire
 
 
 router.get('/home',userAuth,authUserController.loadHomePage)
-router.get('/viewProducts',userAuth,authUserController.loadProductListingPage)
-router.get('/logout',authUserController.logout)
+router.get('/viewProducts/',userAuth,authUserController.loadProductListingPage)
+
 
 
 module.exports=router;

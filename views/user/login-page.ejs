@@ -259,51 +259,49 @@
 
            
 
-            $.ajax({
-                method: "POST",
-                url: "/login",
-                contentType: 'application/json',
-                data: JSON.stringify({ email, password }),
+            fetch("/login", {
+                   method: "POST",
+                   headers: {
+                       "Content-Type": "application/json"
+                   },
+                   body: JSON.stringify({ email, password })
+               })
+                   .then(async (res) => {
+                       const response = await res.json();
 
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            icon: "success",
-                            title: "Login Successful",
-                            text: "Redirecting...",
-                            timer: 1500,
-                            showConfirmButton: false,
-                            timerProgressBar: true,
-                            showClass: { popup: 'animate__animated animate__zoomIn' },
-                            hideClass: { popup: 'animate__animated animate__zoomOut' }
-                        }).then(() => {
-                            window.location.href = response.redirectUrl || '/';
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Login Failed',
-                            text: response.message || 'Invalid email or password.',
-                            confirmButtonText: 'Try Again',
-                            showClass: { popup: 'animate__animated animate__shakeX' }
-                        });
-                    }
-                },
-
-                error: function (xhr, status, error) {
-                    let msg = 'Something went wrong. Please try again later.';
-                    if (xhr.responseJSON?.message) {
-                        msg = xhr.responseJSON.message;
-                    }
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Server Error',
-                        text: msg,
-                        showClass: { popup: 'animate__animated animate__fadeInDown' },
-                        hideClass: { popup: 'animate__animated animate__fadeOutUp' }
-                    });
-                }
-            });
+                       if (res.ok && response.success) {
+                           Swal.fire({
+                               icon: "success",
+                               title: "Login Successful",
+                               text: "Redirecting...",
+                               timer: 1500,
+                               showConfirmButton: false,
+                               timerProgressBar: true,
+                               showClass: { popup: 'animate__animated animate__zoomIn' },
+                               hideClass: { popup: 'animate__animated animate__zoomOut' }
+                           }).then(() => {
+                               window.location.href = response.redirectUrl || '/home';
+                           });
+                       } else {
+                           Swal.fire({
+                               icon: 'error',
+                               title: 'Login Failed',
+                               text: response.message || 'Invalid email or password.',
+                               confirmButtonText: 'Try Again',
+                               showClass: { popup: 'animate__animated animate__shakeX' }
+                           });
+                       }
+                   })
+                   .catch((error) => {
+                       Swal.fire({
+                           icon: 'error',
+                           title: 'Server Error',
+                           text: 'Something went wrong. Please try again later.',
+                           showClass: { popup: 'animate__animated animate__fadeInDown' },
+                           hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+                       });
+                   });
+            
         })
         
 

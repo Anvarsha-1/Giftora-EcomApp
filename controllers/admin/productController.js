@@ -6,7 +6,8 @@ const deleteUploadedImages = require('../../helpers/deleteImage')
 
 const viewProduct = async (req, res) => {
   try {
-    const search  = req.query.search || "";
+    const isClear = req.query.clear==="1"
+    const search  = isClear ? "" : req.query.search?.trim() || "";
     const page =parseInt(req.query.page) || 1
     const limit = 4;
 
@@ -99,7 +100,7 @@ const addProduct = async (req, res) => {
     if(!validNameRegex.test(productName)){
       return res.status(400).json({
         success:false,
-        error:"Product only contain alphabets",
+        error:"Product Name only contain alphabets",
         message:"Product only contain alphabets",
         formData: req.body,
         cat: await Category.find({ isListed: true, isDeleted: false }),

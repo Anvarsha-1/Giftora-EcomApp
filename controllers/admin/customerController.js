@@ -2,7 +2,8 @@ const User =  require('../../models/userSchema');
 
 const loadUserList = async (req, res) => {
     try {
-        const search = req.query.search || '';
+        const isClear =  req.query.clear==="1";
+        const search = isClear ? "" : req.query.search?.trim() || '';
         const page = parseInt(req.query.page) || 1;
         const limit = 4;
 

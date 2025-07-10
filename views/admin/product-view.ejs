@@ -11,7 +11,7 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/admin/nav-sidebar.css" />
+
   <style>
     * {
       margin: 0;
@@ -556,6 +556,27 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
+
+    const searchForm = document.getElementById("searchForm");
+      searchForm.addEventListener("submit", (e) => {
+        const clearButton = e.submitter && e.submitter.name === "clear";
+        if (clearButton) {
+          e.preventDefault();
+          window.location.href = "/admin/products?page=1";
+        } else {
+          // Reset to page 1 on new search
+          const searchInput = document.getElementById("searchInput").value.trim();
+          if (searchInput) {
+            e.preventDefault();
+            window.location.href = `/admin/products?page=1&search=${encodeURIComponent(searchInput)}`;
+          }
+        }
+      })
+    
+ 
+
+
+
     // Sidebar toggle
     window.addEventListener("sidebarToggle", (e) => {
       updateLayout(e.detail.collapsed);
@@ -772,7 +793,9 @@
                   text: 'Product has been deleted.',
                   showConfirmButton: false,
                   timer: 1500
-                });
+                }).then(()=>{
+                  location.reload()
+                })
               } else {
                 Swal.fire({
                   icon: 'error',

@@ -296,8 +296,14 @@ const login = async (req, res) => {
    
     const { email, password } = req.body;
     console.log(email, password);
-    const findUser = await User.findOne({ isAdmin: 0, email: email });
-    console.log(findUser);
+    const findUser = await User.findOne({ email: email });
+    
+    if(findUser.isAdmin==='true'){
+      return res
+      .status(404)
+      .json("Access Denied please login through admin side") 
+    }
+
     if (!findUser) {
       return res
         .status(404)
@@ -382,58 +388,110 @@ const loadHomePage = async (req, res) => {
   }
 };
 
-const logout = async(req,res)=>{
-  try{
-       req.session.destroy((err)=>{
-        if(err){
-          console.log("error while user logout ",err.message)
-          res.render('user/error-page')
-        }
-        res.clearCookie('connect.sid'); 
-        res.redirect('/login');
-       })
-  }catch(error){
-    console.log("server error while logout",error.message)
-    res.render('user/error-page')
+const logout = async (req, res) => {
+  try {
+    delete req.session.user;
+    res.clearCookie('connect.sid');
+    res.redirect('/login');
+  } catch (error) {
+    console.log("server error while logout", error.message);
+    res.render('user/error-page');
   }
 }
 
 
-const loadProductListingPage = async(req,res)=>{
-    try{
-      const search = req.query?.search || "";
-      const userData = req.session.user;
-      const categories = await category.find({ isListed: true });
-      
-      let productData = await product.find({
-        productName:{$regex:new  RegExp(".*"+search+".*","i")},
-        isBlocked: false,
-        isDeleted: false,
-        category: { $in: categories.map(category => category._id) },
-        quantity: { $exists: true, $gt: 0 },
-        
-      });
-      
+const loadProductListingPage = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    
+    const clearFilter = req.query.clearFilter==='1'
+    const clearSearch  = req.query.clearSearch==='1'
+    const search = clearSearch ? "" : req.query?.search || '';
+    const selectedCategory = clearFilter ? "" :req.query?.category || '';
+    const minPrice = clearFilter ? "" : parseFloat(req.query?.minPrice) || 0;
+    const maxPrice = clearFilter ? "" : parseFloat(req.query?.maxPrice) || Number.MAX_VALUE;
+    const sortOption = clearFilter ? "" : req.query.sort || 'createdAt-desc';
 
-      productData = productData.map(pro => {
-        const imageUrl = pro.productImage?.[0]?.url;
-        return {
-          ...pro._doc,
-          productImage: imageUrl || null
-        };
+    const userData = req.session.user;
+    const categories = await category.find({ isListed: true, isDeleted: false });
+
+    let query = {
+      isBlocked: false,
+      isDeleted: false,
+      quantity: { $gt: 0 },
+      regularPrice: { $gte: minPrice, $lte: maxPrice },
+    };
+
+    if (search) {
+      query.productName = { $regex: search, $options: 'i' };
+    }
+
+    if (selectedCategory) {
+      query.category = selectedCategory; 
+    }
+
+    // 🔀 Handle sort logic
+    let sort = {};
+    switch (sortOption) {
+      case 'name-asc':
+        sort = { productName: 1 };
+        break;
+      case 'name-desc':
+        sort = { productName: -1 };
+        break;
+      case 'price-asc':
+        sort = { regularPrice: 1 };
+        break;
+      case 'price-desc':
+        sort = { regularPrice: -1 };
+        break;
+      default:
+        sort = { createdAt: -1 };
+    }
+
+    const total = await product.countDocuments(query);
+
+    let productData = await product.find(query)
+      .skip(skip)
+      .limit(limit)
+      .sort(sort);
+
+    productData = productData.map(pro => ({
+      ...pro._doc,
+      productImage: pro.productImage?.[0]?.url || null,
+    }));
+
+    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      return res.json({
+        products: productData,
+        page,
+        total,
+        totalPages: Math.ceil(total / limit)
       });
-           
-      
-    if(userData){
-      res.render('user/productListingPage', { user: userData, products: productData })
     }
-        
-    }catch(error){
-      console.log("Error in loadProductListingPage:", error.message);
-      res.status(500).json({ error: "Internal server error" });
-      
-    }
-}
+
+    res.render('user/productListingPage', {
+      user: userData,
+      products: productData,
+      cat: categories,
+      currentPage: page,
+      totalPage: Math.ceil(total / limit),
+      totalProduct: total,
+      search,
+      categoryFilter: selectedCategory,
+      minPrice: req.query.minPrice || '',
+      maxPrice: req.query.maxPrice || '',
+      sort: sortOption
+    });
+
+  } catch (error) {
+    console.error("Error in loadProductListingPage:", error.message);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
 
 

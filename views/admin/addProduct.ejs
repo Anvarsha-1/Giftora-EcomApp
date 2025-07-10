@@ -44,7 +44,7 @@
                   <div class="form-group">
                     <label for="productName">Product Name</label>
                     <input type="text" id="productName" name="productName"
-                      value="<%= typeof formData !== 'undefined' ? formData.productName : '' %>" />
+                      value="<%= typeof productName !== 'undefined' ? productName : '' %>" />
                     <span class="error" id="productName-error"></span>
                   </div>
                   <div class="form-group">
@@ -97,7 +97,7 @@
                       <% for (let i=0; i < 3; i++) { %>
                         <div style="position: relative;">
                           <input type="file" id="image<%= i + 1 %>" name="productImage"
-                            accept="image/png,image/jpeg,image/jpg" />
+                           />
                           <img class="image-preview" id="preview<%= i + 1 %>" src="#" alt="Preview <%= i + 1 %>"
                             style="display: none;" />
                           <button type="button" class="remove-image-btn" data-index="<%= i + 1 %>"
@@ -138,6 +138,42 @@
     const cancelCrop = document.getElementById('cancelCrop');
     const submitButton = document.getElementById('submitButton');
     const serverError = document.getElementById('server-error');
+    const imagesError = document.getElementById('imagesError');
+
+
+      // Initialize file inputs
+        document.querySelectorAll('input[type="file"]').forEach((input, index) => {
+          input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+              if (!file.type || !validTypes.includes(file.type)) {
+                imagesError.textContent = 'Please upload a valid image (PNG, JPEG, JPG).';
+                input.value = '';
+                return;
+              }
+              document.getElementById('imagesError').textContent = '';
+              currentInputIndex = index + 1;
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                cropImage.src = event.target.result;
+                cropModal.style.display = 'flex';
+                if (cropper) {
+                  cropper.destroy();
+                }
+                cropper = new Cropper(cropImage, {
+                  aspectRatio: 1,
+                  viewMode: 1,
+                  autoCropArea: 0.8,
+                  responsive: true,
+                });
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        });
+
+
 
     // Function to validate images
     function validateImages() {
@@ -153,38 +189,7 @@
       return true;
     }
 
-    // Initialize file inputs
-    document.querySelectorAll('input[type="file"]').forEach((input, index) => {
-      input.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-          if (!validTypes.includes(file.type)) {
-            document.getElementById('imagesError').textContent = 'Please upload a valid image (PNG, JPEG, JPG).';
-            input.value = '';
-            validateImages();
-            return;
-          }
-          document.getElementById('imagesError').textContent = '';
-          currentInputIndex = index + 1;
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            cropImage.src = event.target.result;
-            cropModal.style.display = 'flex';
-            if (cropper) {
-              cropper.destroy();
-            }
-            cropper = new Cropper(cropImage, {
-              aspectRatio: 1,
-              viewMode: 1,
-              autoCropArea: 0.8,
-              responsive: true,
-            });
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-    });
+  
 
     // Crop button event
     cropButton.addEventListener('click', () => {
