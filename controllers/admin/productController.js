@@ -253,7 +253,7 @@ const uploadEditProduct = async (req, res) => {
     }
 
     
-    if (!productName || !description || !category || !quantity || !regularPrice) {
+    if (!productName.trim() || !description.trim() || !category || !quantity.trim() || !regularPrice.trim()) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success:false,

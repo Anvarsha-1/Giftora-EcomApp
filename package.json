@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ",
-    "dev":"nodemon index.js"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -17,10 +17,13 @@
     "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-flash": "^0.0.2",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "fastest-levenshtein": "^1.0.16",
     "flash": "^1.1.0",
+    "jquery": "^3.7.1",
+    "jquery-zoom": "^1.7.21",
     "mongoose": "^8.16.1",
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^4.0.0",

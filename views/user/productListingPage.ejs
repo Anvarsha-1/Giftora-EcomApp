@@ -47,7 +47,7 @@
               </label>
               <select id="categoryFilter" class="filter-select">
 
-                <option value="">All Categories</option>
+                <option value="" >All Categories</option>
                 <% cat.forEach((category)=> { %>
                   <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : '' %>>
                     <%= category.name %>
@@ -74,7 +74,7 @@
                 <i class="fas fa-sort"></i> Sort By
               </label>
               <select id="sortBy" class="filter-select">
-                <option value="">Sort by (default)</option>
+                <option value="createdAt-desc">Newest First</option>
                 <option value="name-asc">Name: A to Z</option>
                 <option value="name-desc">Name: Z to A</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -109,11 +109,13 @@
                 <i class="fas fa-sort"></i> Sort By
               </label>
               <select id="sortByMobile" class="filter-select">
+                <option value="createdAt-desc">Newest First</option>
                 <option value="name-asc">Name: A to Z</option>
                 <option value="name-desc">Name: Z to A</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
               </select>
+
             </div>
 
             <div class="filter-group">
@@ -163,7 +165,7 @@
           <div class="products-grid">
             <% if (products && products.length> 0) { %>
               <% for(let i=0; i < products.length; i++) { %>
-                <div class="product-card">
+                <div class="product-card" data-id="<%=products[i]._id %>">
                   <div class="product-image">
                     <% if (products[i].productImage) { %>
                       <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>"
@@ -285,48 +287,68 @@
           };
         };
 
+          const parseFloatSafe = (value, fallback = 0) => {
+              const num = parseFloat(value);
+              return isNaN(num) ? fallback : num;
+            };
+
+
         // Fetch products with filters and page
         async function fetchProducts(page = 1) {
-          const search = searchInput.value.trim();
-          const category = categoryFilter.value;
-          let min = parseFloat(minPrice.value) || parseFloat(minPriceSlider.value) || 0;
-          let max = parseFloat(maxPrice.value) || parseFloat(maxPriceSlider.value) || 1000;
-          const sort = sortBy.value || sortByMobile.value || 'name-asc';
+            const search = searchInput.value.trim();
+            const category = categoryFilter.value;
+            const sort = sortBy.value || sortByMobile.value || 'name-asc';
 
-          // Ensure minPrice <= maxPrice
-          if (min > max) [min, max] = [max, min];
+            const params = new URLSearchParams({ search, category, sort, page });
 
-          const params = new URLSearchParams({
-            search,
-            category,
-            minPrice: min,
-            maxPrice: max,
-            sort,
-            page
-          });
+            const parseFloatSafe = (value, fallback = 0) => {
+              const num = parseFloat(value);
+              return isNaN(num) ? fallback : num;
+            };
 
-          try {
-            productGrid.innerHTML = '<div class="loading">Loading...</div>';
-            const res = await fetch(`/viewProducts?${params.toString()}`, {
-              headers: { Accept: 'application/json' }
-            });
-            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-            const data = await res.json();
+            const minInput = minPrice.value.trim();
+            const maxInput = maxPrice.value.trim();
 
-            renderProducts(data.products);
-            resultsCount.textContent = data.total;
-            currentPage = data.page;
-            renderPagination(data.page, data.totalPages, params);
-          } catch (err) {
-            console.error('Error fetching:', err.message);
-            productGrid.innerHTML = `
-                      <div class="no-results">
-                        <i class="fas fa-box-open"></i>
-                        <h3>Error Loading Products</h3>
-                        <p>Please try again or adjust your filters</p>
-                      </div>`;
+            const hasMin = minInput !== '';
+            const hasMax = maxInput !== '';
+
+            let min = hasMin ? parseFloatSafe(minInput, 0) : null;
+            let max = hasMax ? parseFloatSafe(maxInput, 0) : null;
+
+            // If either price field is filled, apply filtering
+            if (hasMin || hasMax) {
+              if (!hasMin) min = 0;
+              if (!hasMax) max = 100000; // Arbitrary large max, adjust as needed
+
+              if (min > max) [min, max] = [max, min];
+
+              params.append('minPrice', min);
+              params.append('maxPrice', max);
+            }
+
+            try {
+              productGrid.innerHTML = '<div class="loading">Loading...</div>';
+              const res = await fetch(`/viewProducts?${params.toString()}`, {
+                headers: { Accept: 'application/json' }
+              });
+              if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+              const data = await res.json();
+
+              renderProducts(data.products);
+              resultsCount.textContent = data.total;
+              currentPage = data.page;
+              renderPagination(data.page, data.totalPages, params);
+            } catch (err) {
+              console.error('Error fetching:', err.message);
+              productGrid.innerHTML = `
+      <div class="no-results">
+        <i class="fas fa-box-open"></i>
+        <h3>Error Loading Products</h3>
+        <p>Please try again or adjust your filters</p>
+      </div>`;
+            }
           }
-        }
+
 
         // Render products
         function renderProducts(products) {
@@ -341,7 +363,7 @@
           }
 
           productGrid.innerHTML = products.map(p => `
-                    <div class="product-card">
+                    <div class="product-card" data-id="${p._id}">
                       <div class="product-image">
                         <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" />
                         <div class="discount-badge">-40%</div>
@@ -368,6 +390,23 @@
                     </div>
                   `).join('');
         }
+
+
+
+       //redirecting to product details page
+      productGrid.addEventListener('click', (e) => {
+  const card = e.target.closest('.product-card');
+  if (card) {
+    const id = card.dataset.id;
+    window.location.href = `/productsDetails/${id}`;
+  }
+});
+
+
+
+
+
+
 
         // Render pagination
         function renderPagination(currentPage, totalPages, params) {
@@ -427,8 +466,8 @@
             document.getElementById('maxPriceSlider').value = 1000;
             document.getElementById('minPriceValue').textContent = '0';
             document.getElementById('maxPriceValue').textContent = '1000';
-            document.getElementById('categoryFilter').textContent = ''
-            document.getElementById('sortBy').value = ''
+            document.getElementById('categoryFilter').value = ''
+            document.getElementById('sortBy').value = 'createdAt-desc'
           }
         
 
@@ -461,11 +500,11 @@
 
         clearFiltersBtn.addEventListener('click', () => {
             const params = new URLSearchParams({clearFilter:1})
-            fetch(`/viewProducts?id${params.toString()}`,{
+            fetch(`/viewProducts?${params.toString()}`,{
               headers:{Accept:'application/json'}
             }).then((res)=>{
               if(!res.ok) throw new Error('failed to fetch')
-              console.log("fetch clear filter error",res.message)
+              console.log("fetch clear filter error",res)
                return res.json()
             }).then((data)=>{
               renderProducts(data.products);
@@ -473,6 +512,7 @@
               currentPage=data.page;
               renderPagination(data.page,data.totalPages,params)
               resetPriceFilters()
+              updateSliderValues();
             })
           });
 

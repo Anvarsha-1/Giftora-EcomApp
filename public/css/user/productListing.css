@@ -651,7 +651,7 @@ body {
 
 .add-to-cart {
     width: 100%;
-    background: var(--primary-color);
+    background: #2c3e50;
     color: white;
     border: none;
     padding: 12px;
@@ -667,7 +667,7 @@ body {
 }
 
 .add-to-cart:hover {
-    background: var(--primary-hover);
+    background: #1a252f;
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
 }

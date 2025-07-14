@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Giftora Header</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
         * {
             margin: 0;
@@ -18,53 +18,6 @@
             background-color: #f5f5f5;
         }
 
-        /* Top banner */
-        .top-banner {
-            background-color: #1a1a1a;
-            color: white;
-            padding: 8px 0;
-            font-size: 13px;
-            text-align: center;
-            position: relative;
-        }
-
-        .banner-content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .banner-text {
-            margin-right: auto;
-            margin-left: auto;
-        }
-
-        .shop-now {
-            color: white;
-            text-decoration: underline;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        .language-selector {
-            position: absolute;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            color: white;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .language-selector i {
-            margin-left: 5px;
-            font-size: 10px;
-        }
-
-        /* Main header */
         .main-header {
             background-color: white;
             border-bottom: 1px solid #e0e0e0;
@@ -80,58 +33,29 @@
             padding: 0 20px;
         }
 
-        /* Logo */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: #333;
+        .logo img {
+            height: 50px;
+            width: auto;
         }
 
-        .logo-icon {
-            width: 24px;
-            height: 24px;
-            background-color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-        }
-
-        .logo-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        /* Navigation */
         .nav-menu {
             display: flex;
             list-style: none;
             gap: 40px;
-            margin: 0;
-        }
-
-        .nav-item {
-            position: relative;
         }
 
         .nav-link {
             text-decoration: none;
             color: #333;
             font-size: 15px;
-            font-weight: 400;
-            transition: color 0.3s ease;
             padding: 10px 0;
+            transition: color 0.3s ease;
         }
 
         .nav-link:hover {
             color: #666;
         }
 
-        /* Right section */
         .header-right {
             display: flex;
             align-items: center;
@@ -145,15 +69,6 @@
             padding: 8px;
             color: #333;
             font-size: 18px;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .icon-button:hover {
-            color: #666;
-        }
-
-        .cart-icon {
             position: relative;
         }
 
@@ -190,7 +105,6 @@
 
         .profile-button:hover {
             background-color: #f5f5f5;
-            color: #666;
         }
 
         .dropdown-menu {
@@ -209,7 +123,7 @@
             transition: all 0.3s ease;
         }
 
-        .profile-dropdown:hover .dropdown-menu {
+        .profile-dropdown.active .dropdown-menu {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -239,115 +153,96 @@
             font-size: 12px;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
-            }
 
-            .header-container {
-                padding: 0 15px;
-            }
-
-            .banner-content {
-                padding: 0 15px;
-            }
-
-            .language-selector {
-                right: 15px;
-            }
-
+            .nav-menu,
             .header-right {
-                gap: 15px;
+                display: none;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Top Banner -->
-    <div class="top-banner">
-        <div class="banner-content">
-            <div class="banner-text">
-                Summer Sale For All Gifts And Free Express Delivery - OFF 10%!
-                <span class="shop-now">ShopNow</span>
-            </div>
-            <div class="language-selector">
-                English
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-    </div>
 
-    <!-- Main Header -->
+    <!-- Header -->
     <header class="main-header">
         <div class="header-container">
             <!-- Logo -->
-            <a href="#" class="logo">
-                <img src="/images/header.img/gifttora.png" alt="Giftora" style="height: 50px; width: auto;">
+            <a href="/home" class="logo">
+                <img src="/images/header.img/gifttora.png" alt="Giftora Logo">
             </a>
 
             <!-- Navigation -->
             <nav>
                 <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="/home" class="nav-link">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/viewProducts" class="nav-link">Shop</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">About</a>
-                    </li>
-                   <% if(!user){ %>
-                    <li class="nav-item">
-                        <a href="/login" class="nav-link">Sign Up</a>
-                    </li>
+                    <li><a href="/home" class="nav-link">Home</a></li>
+                    <li><a href="/viewProducts" class="nav-link">Shop</a></li>
+                    <li><a href="#" class="nav-link">Contact</a></li>
+                    <li><a href="#" class="nav-link">About</a></li>
+                    <% if (!user) { %>
+                        <li><a href="/login" class="nav-link">Sign Up</a></li>
+                        <% } %>
                 </ul>
             </nav>
-            <% }else{ %>
 
-            <!-- Right Section -->
-            <div class="header-right">
-                <!-- Wishlist -->
-                <button class="icon-button">
-                    <i class="far fa-heart"></i>
-                </button>
-
-                <!-- Cart -->
-                <button class="icon-button cart-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </button>
-
-                <!-- Profile Dropdown -->
-                <div class="profile-dropdown">
-                    <button class="profile-button icon-button">
-                        <i class="fas fa-user"></i>
+            <% if (typeof(user)!==undefined ? user : null) { %>
+                <div class="header-right">
+                    <!-- Wishlist -->
+                    <button class="icon-button" aria-label="Wishlist">
+                        <i class="far fa-heart"></i>
                     </button>
 
-                    <div class="dropdown-menu" id="profileDropdown">
-                        <a href="#" class="dropdown-item">
+                    <!-- Cart -->
+                    <button class="icon-button cart-icon" aria-label="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge">0</span>
+                    </button>
+
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <button class="profile-button icon-button" id="profileToggle" aria-label="Profile">
                             <i class="fas fa-user"></i>
-                            My Account
-                        </a>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-box"></i>
-                            My Orders
-                        </a>
-                        <a href="/logout" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Logout
-                        </a>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="/my-account" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                My Account
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-box"></i> My Orders
+                            </a>
+                            <a href="/logout" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <% } %>
-            </div>
         </div>
     </header>
-   
-    
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const profileDropdown = document.getElementById('profileDropdown');
+            const profileToggle = document.getElementById('profileToggle');
+
+            if (profileDropdown && profileToggle) {
+                profileToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    profileDropdown.classList.toggle('active');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!profileDropdown.contains(e.target)) {
+                        profileDropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
+
 </body>
+
 </html>

@@ -7,6 +7,7 @@ const userRouter = require("./routers/user/userRouter");
 const adminRouter = require('./routers/admin/adminRouter');
 const session = require('express-session');
 const app = express();
+const flash = require('express-flash');
 const passport = require("./config/passport");
 
 DB();
@@ -33,6 +34,8 @@ app.use(
     }, 
   })
 );
+
+app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());

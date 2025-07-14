@@ -329,12 +329,16 @@
 
         /* Product Grid */
         .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+         display: grid;
+         grid-template-columns: repeat(4, 1fr); /* Changed to 4 columns */
+         gap: 2rem;
+
         }
 
         .product-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
             background: var(--white);
             border-radius: var(--border-radius);
             overflow: hidden;
@@ -448,6 +452,9 @@
         }
 
         .product-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
             padding: 1.5rem;
         }
 
@@ -523,6 +530,7 @@
         }
 
         .add-to-cart {
+            margin-top: auto;
             width: 100%;
             background: var(--primary-color);
             color: var(--white);
@@ -542,6 +550,7 @@
             background: #1a252f;
             transform: translateY(-1px);
         }
+
 
         /* Categories Grid */
         .categories-grid {
@@ -576,6 +585,258 @@
 
         .category-card:hover::before {
             opacity: 0.05;
+        }
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(26, 35, 126, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(48, 63, 159, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 40% 60%;
+            gap: 4rem;
+            align-items: center;
+            min-height: 600px;
+        }
+
+        .text-content {
+            padding-right: 2rem;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .main-headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1A237E;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #1A237E 0%, #303F9F 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subheading {
+            font-size: 1.5rem;
+            color: #6B7280;
+            margin-bottom: 2.5rem;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #1A237E 0%, #303F9F 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(26, 35, 126, 0.4);
+        }
+
+        .arrow-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover .arrow-icon {
+            transform: translateX(5px);
+        }
+
+        .image-container {
+            position: relative;
+            height: 500px;
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        .featured-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .featured-image:hover {
+            transform: scale(1.02);
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            background: rgba(26, 35, 126, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-element:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+
+        .floating-element:nth-child(3) {
+            width: 40px;
+            height: 40px;
+            bottom: 20%;
+            left: 30%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 1rem;
+                min-height: auto;
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                min-height: auto;
+            }
+
+            .text-content {
+                padding-right: 0;
+                text-align: center;
+            }
+
+            .main-headline {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+
+            .subheading {
+                font-size: 1.125rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .cta-button {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .image-container {
+                height: 300px;
+                order: -1;
+            }
+
+            .floating-element {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-headline {
+                font-size: 1.75rem;
+            }
+
+            .subheading {
+                font-size: 1rem;
+            }
+
+            .image-container {
+                height: 250px;
+            }
         }
 
         .category-card:hover {
@@ -704,18 +965,26 @@
         <section class="hero-section">
             <div class="container">
                 <div class="hero-content">
-                    <div class="hero-text">
-                        <h1>Elevate Your Gifting Experience</h1>
-                        <p>Discover timeless gifts curated to make every moment unforgettable. From elegant surprises to personalized treasures,
-                        Giftora helps you deliver joy with confidence.</p>
-                        <a href="#" class="cta-button">
-                            <span>Shop Now</span>
-                            <i class="fas fa-arrow-right"></i>
+                    <div class="text-content">
+                        <h1 class="main-headline">Transform Ordinary Moments into Extraordinary Memories</h1>
+                        <p class="subheading">Discover thoughtfully curated gifts that create lasting joy, handpicked just for
+                            your special someone</p>
+                        <a href="/viewProducts" class="cta-button">
+                            Shop Now
+                            <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7" />
+                            </svg>
                         </a>
                     </div>
-                    <div class="hero-image">
-                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop&crop=center"
-                            alt="Premium Products" style="background: #f8f9fa; border: 1px solid #dee2e6;">
+                    <div class="image-container">
+                        <img src="/images/header.img/Black and Brown Minimalist Birthday Gift YouTube Thumbnail.png"
+                            alt="Elegantly arranged gift items" class="featured-image">
+                        <div class="floating-elements">
+                            <div class="floating-element"></div>
+                            <div class="floating-element"></div>
+                            <div class="floating-element"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -724,25 +993,6 @@
         <div class="container">
             <!-- Flash Sales Section -->
             <section class="section">
-                <div class="flash-sale-banner">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">⚡ Flash Sale - Limited Time Only!</h3>
-                    <p>Grab these exclusive deals before they're gone</p>
-                    <div class="timer-display">
-                        <div class="timer-unit">
-                            <span class="timer-number" id="hours">23</span>
-                            <span class="timer-label">Hours</span>
-                        </div>
-                        <div class="timer-unit">
-                            <span class="timer-number" id="minutes">45</span>
-                            <span class="timer-label">Minutes</span>
-                        </div>
-                        <div class="timer-unit">
-                            <span class="timer-number" id="seconds">32</span>
-                            <span class="timer-label">Seconds</span>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="section-header">
                     <div>
                         <h2 class="section-title">
@@ -751,7 +1001,7 @@
                         </h2>
                         <p class="section-subtitle">Limited time offers on premium products</p>
                     </div>
-                    <a href="#" class="view-all-btn">
+                    <a href="/viewProducts" class="view-all-btn">
                         <span>View All Products</span>
                         <i class="fas fa-arrow-right"></i>
                     </a>
@@ -763,8 +1013,10 @@
                             <div class="product-card">
                                 <div class="product-image">
                                     <% if (flashSales[i].productImage ) { %>
-                                        <img src="<%= flashSales[i].productImage %>" alt="<%= flashSales[i].productName %>"
-                                            class="product-img">
+                                        <a href="/productsDetails/<%=flashSales[i]._id%>">
+                                            <img src="<%= flashSales[i].productImage %>"
+                                                alt="<%= flashSales[i].productName %>" class="product-img">
+                                        </a>
                                         <% } else { %>
                                             <div
                                                 style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
@@ -796,10 +1048,12 @@
                                     </div>
                                     <div class="product-prices">
                                         <span class="current-price">$<%= flashSales[i].regularPrice %></span>
-                                        <span class="original-price">$<%= (flashSales[i].regularPrice * 1.4).toFixed(0) %>
-                                                </span>
-                                        <span class="price-savings">Save $<%= (flashSales[i].regularPrice * 0.4).toFixed(0) %>
-                                                </span>
+                                        <span class="original-price">$<%= (flashSales[i].regularPrice * 1.4).toFixed(0)
+                                                %>
+                                        </span>
+                                        <span class="price-savings">Save $<%= (flashSales[i].regularPrice *
+                                                0.4).toFixed(0) %>
+                                        </span>
                                     </div>
                                     <button class="add-to-cart">
                                         <i class="fas fa-shopping-cart"></i>
@@ -815,7 +1069,7 @@
                                             style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                                         <p style="font-size: 1.2rem;">No products available</p>
                                     </div>
-                         <% } %>
+                                    <% } %>
                 </div>
             </section>
 
@@ -887,8 +1141,10 @@
                             <div class="product-card">
                                 <div class="product-image">
                                     <% if (products[i].productImage ) { %>
-                                        <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>"
-                                            class="product-img">
+                                        <a href="/productsDetails/<%=products[i]._id%>">
+                                            <img src="<%= products[i].productImage %>"
+                                                alt="<%= products[i].productName %>" class="product-img"></a>
+
                                         <% } else { %>
                                             <div
                                                 style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
@@ -922,7 +1178,8 @@
                                         <span class="current-price">$<%= products[i].regularPrice %></span>
                                         <span class="original-price">$<%= (products[i].regularPrice * 1.4).toFixed(0) %>
                                         </span>
-                                        <span class="price-savings">Save $<%= (products[i].regularPrice * 0.4).toFixed(0) %>
+                                        <span class="price-savings">Save $<%= (products[i].regularPrice *
+                                                0.4).toFixed(0) %>
                                         </span>
                                     </div>
                                     <button class="add-to-cart">
@@ -933,17 +1190,19 @@
                             </div>
                             <% }; %>
                                 <% } else { %>
-                                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
-                                        <i class="fas fa-box-open" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                    <div
+                                        style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
+                                        <i class="fas fa-box-open"
+                                            style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                                         <p style="font-size: 1.2rem;">No products available</p>
                                     </div>
                                     <% } %>
-                        </div>
-                     
-                    
-                
+                </div>
+
+
+
             </section>
-    
+
             <!-- Best Selling Products Section -->
             <section class="section">
                 <div class="section-header">
@@ -959,15 +1218,16 @@
                         <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
-    
+
                 <div class="products-grid">
                     <% if (bestselling && bestselling.length> 0) { %>
                         <% for(let i=0;i<bestselling.length;i++) { %>
                             <div class="product-card">
                                 <div class="product-image">
                                     <% if (bestselling[i].productImage ) { %>
-                                        <img src="<%= bestselling[i].productImage %>" alt="<%= bestselling[i].productName %>"
-                                            class="product-img">
+                                        <a href="/productsDetails/<%=bestselling[i]._id %>">
+                                            <img src="<%= bestselling[i].productImage %>"
+                                                alt="<%= bestselling[i].productName %>" class="product-img"></a>
                                         <% } else { %>
                                             <div
                                                 style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
@@ -999,9 +1259,11 @@
                                     </div>
                                     <div class="product-prices">
                                         <span class="current-price">$<%= bestselling[i].regularPrice %></span>
-                                        <span class="original-price">$<%= (bestselling[i].regularPrice * 1.4).toFixed(0) %>
+                                        <span class="original-price">$<%= (bestselling[i].regularPrice * 1.4).toFixed(0)
+                                                %>
                                         </span>
-                                        <span class="price-savings">Save $<%= (bestselling[i].regularPrice * 0.4).toFixed(0) %>
+                                        <span class="price-savings">Save $<%= (bestselling[i].regularPrice *
+                                                0.4).toFixed(0) %>
                                         </span>
                                     </div>
                                     <button class="add-to-cart">
@@ -1012,8 +1274,10 @@
                             </div>
                             <% }; %>
                                 <% } else { %>
-                                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
-                                        <i class="fas fa-box-open" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                    <div
+                                        style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
+                                        <i class="fas fa-box-open"
+                                            style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
                                         <p style="font-size: 1.2rem;">No products available</p>
                                     </div>
                                     <% } %>
@@ -1021,123 +1285,104 @@
             </section>
         </div>
         <%-include('../partials/user/footer.ejs') %>
-    
-        <script>
-            // Flash Sale Timer
-            function updateTimer() {
-                const now = new Date();
-                const endOfDay = new Date();
-                endOfDay.setHours(23, 59, 59, 999);
 
-                const timeLeft = endOfDay.getTime() - now.getTime();
+            <script>
+              
 
-                if (timeLeft > 0) {
-                    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+              
 
-                    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-                    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-                    document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+                // Category filter function
+                function filterByCategory(category) {
+                    // Add visual feedback
+                    const categoryCards = document.querySelectorAll('.category-card');
+                    categoryCards.forEach(card => {
+                        card.style.transform = 'translateY(0)';
+                        card.style.boxShadow = 'var(--shadow-light)';
+                    });
+
+                    // Highlight selected category
+                    event.target.closest('.category-card').style.transform = 'translateY(-4px)';
+                    event.target.closest('.category-card').style.boxShadow = 'var(--shadow-heavy)';
+
+                    showNotification(`Showing ${category} products`);
                 }
-            }
-
-            // Update timer every second
-            setInterval(updateTimer, 1000);
-            updateTimer();
-
-            // Category filter function
-            function filterByCategory(category) {
-                // Add visual feedback
-                const categoryCards = document.querySelectorAll('.category-card');
-                categoryCards.forEach(card => {
-                    card.style.transform = 'translateY(0)';
-                    card.style.boxShadow = 'var(--shadow-light)';
-                });
-
-                // Highlight selected category
-                event.target.closest('.category-card').style.transform = 'translateY(-4px)';
-                event.target.closest('.category-card').style.boxShadow = 'var(--shadow-heavy)';
-
-                showNotification(`Showing ${category} products`);
-            }
 
 
 
-            if (user) {
+                if (user) {
 
-                // Wishlist functionality
-                document.querySelectorAll('.wishlist-btn').forEach(btn => {
-                    btn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        const icon = this.querySelector('i');
-                        if (icon.classList.contains('far')) {
-                            icon.classList.remove('far');
-                            icon.classList.add('fas');
-                            this.style.backgroundColor = 'var(--accent-color)';
-                            this.style.color = 'var(--white)';
-                            showNotification('Added to wishlist');
-                        } else {
-                            icon.classList.remove('fas');
-                            icon.classList.add('far');
-                            this.style.backgroundColor = 'var(--white)';
-                            this.style.color = 'var(--dark-gray)';
-                            showNotification('Removed from wishlist');
+                    // Wishlist functionality
+                    document.querySelectorAll('.wishlist-btn').forEach(btn => {
+                        btn.addEventListener('click', function (e) {
+                            e.stopPropagation();
+                            const icon = this.querySelector('i');
+                            if (icon.classList.contains('far')) {
+                                icon.classList.remove('far');
+                                icon.classList.add('fas');
+                                this.style.backgroundColor = 'var(--accent-color)';
+                                this.style.color = 'var(--white)';
+                                showNotification('Added to wishlist');
+                            } else {
+                                icon.classList.remove('fas');
+                                icon.classList.add('far');
+                                this.style.backgroundColor = 'var(--white)';
+                                this.style.color = 'var(--dark-gray)';
+                                showNotification('Removed from wishlist');
+                            }
+                        });
+                    });
+                }
+
+
+
+                // Product card click handler
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.addEventListener('click', function (e) {
+                        if (!e.target.closest('.wishlist-btn') && !e.target.closest('.add-to-cart') && !e.target.closest('.quick-btn')) {
+                            const productName = this.querySelector('.product-name').textContent;
+                            showNotification(`Viewing ${productName}`);
                         }
                     });
                 });
-            }
 
 
 
-            // Product card click handler
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.addEventListener('click', function (e) {
-                    if (!e.target.closest('.wishlist-btn') && !e.target.closest('.add-to-cart') && !e.target.closest('.quick-btn')) {
-                        const productName = this.querySelector('.product-name').textContent;
-                        showNotification(`Viewing ${productName}`);
-                    }
-                });
-            });
+                // Image loading simulation
+                document.querySelectorAll('.product-img').forEach(img => {
+                    img.addEventListener('load', function () {
+                        this.classList.remove('loading');
+                    });
 
-
-
-            // Image loading simulation
-            document.querySelectorAll('.product-img').forEach(img => {
-                img.addEventListener('load', function () {
-                    this.classList.remove('loading');
+                    // Remove loading class after a delay if image doesn't load
+                    setTimeout(() => {
+                        img.classList.remove('loading');
+                    }, 2000);
                 });
 
-                // Remove loading class after a delay if image doesn't load
-                setTimeout(() => {
-                    img.classList.remove('loading');
-                }, 2000);
-            });
-
-            // Smooth scrolling for navigation
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
+                // Smooth scrolling for navigation
+                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const target = document.querySelector(this.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
                 });
-            });
 
-            // Mobile menu toggle (for responsive design)
-            function createMobileMenu() {
-                const header = document.querySelector('.header-content');
-                const navLinks = document.querySelector('.nav-links');
+                // Mobile menu toggle (for responsive design)
+                function createMobileMenu() {
+                    const header = document.querySelector('.header-content');
+                    const navLinks = document.querySelector('.nav-links');
 
-                if (window.innerWidth <= 768) {
-                    if (!document.querySelector('.mobile-menu-btn')) {
-                        const menuBtn = document.createElement('button');
-                        menuBtn.className = 'mobile-menu-btn';
-                        menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                        menuBtn.style.cssText = `
+                    if (window.innerWidth <= 768) {
+                        if (!document.querySelector('.mobile-menu-btn')) {
+                            const menuBtn = document.createElement('button');
+                            menuBtn.className = 'mobile-menu-btn';
+                            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                            menuBtn.style.cssText = `
                             display: block;
                             background: none;
                             border: none;
@@ -1146,19 +1391,19 @@
                             color: var(--dark-gray);
                         `;
 
-                        menuBtn.addEventListener('click', () => {
-                            navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-                        });
+                            menuBtn.addEventListener('click', () => {
+                                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+                            });
 
-                        header.appendChild(menuBtn);
+                            header.appendChild(menuBtn);
+                        }
                     }
                 }
-            }
 
-            // Initialize mobile menu on load and resize
-            window.addEventListener('load', createMobileMenu);
-            window.addEventListener('resize', createMobileMenu);
-        </script>
-    </body>
-    
-    </html>
+                // Initialize mobile menu on load and resize
+                window.addEventListener('load', createMobileMenu);
+                window.addEventListener('resize', createMobileMenu);
+            </script>
+</body>
+
+</html>

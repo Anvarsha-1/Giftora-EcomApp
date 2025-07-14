@@ -1,6 +1,6 @@
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const passport = require('passport');
-const User = require('../models/userSchema'); // adjust the path to your User model
+const User = require('../models/userSchema');
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
@@ -9,7 +9,7 @@ passport.use(new GoogleStrategy({
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
-      console.log('🌟 Google profile:', profile);
+      console.log('Google profile:', profile);
       const existingUser = await User.findOne({ googleId: profile.id });
 
       if (existingUser) {

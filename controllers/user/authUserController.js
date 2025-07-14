@@ -27,7 +27,7 @@ const PageNotFound = async (req, res) => {
 
 
 const loadPLandingPage = async (req, res) => {
-  if(req.session.user) return res.redirect('/home')
+  if (req.session.user) return res.redirect('/home')
   try {
     const categories = await category.find({ isListed: true });
 
@@ -38,7 +38,7 @@ const loadPLandingPage = async (req, res) => {
       quantity: { $exists: true, $gt: 0 }
     });
 
-   
+
     productData = productData.map(pro => {
       const imageUrl = pro.productImage?.[0]?.url;
       return {
@@ -48,9 +48,9 @@ const loadPLandingPage = async (req, res) => {
     });
 
     productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    const  newProductData = productData.slice(0, 4);
-    const  bestsellingData = productData.slice(4,8);
-    const  flashSalesData  =productData.slice(8,12);
+    const newProductData = productData.slice(0, 4);
+    const bestsellingData = productData.slice(4, 8);
+    const flashSalesData = productData.slice(8, 12);
 
 
 
@@ -69,7 +69,7 @@ const loadPLandingPage = async (req, res) => {
 
 
 const loadSignUp = async (req, res) => {
-  if(req.session.user) return res.redirect('/home')
+  if (req.session.user) return res.redirect('/home')
   try {
     return res.render("user/signUp-page", {
       formData: {},
@@ -85,7 +85,7 @@ const loadSignUp = async (req, res) => {
 };
 
 const signUp = async (req, res) => {
-  if(req.session.user) return res.redirect('/home')
+  if (req.session.user) return res.redirect('/home')
   try {
 
     const {
@@ -107,7 +107,7 @@ const signUp = async (req, res) => {
         message: "",
       });
     }
-   
+
     const otp = generateOtp().toString();
     console.log("Generated OTP:", otp);
 
@@ -131,6 +131,7 @@ const signUp = async (req, res) => {
       confirmPassword,
       referralCode,
     };
+
     console.log("Session data saved:", {
       userOtp: req.session.userOtp,
       userData: req.session.userData,
@@ -158,7 +159,7 @@ const signUp = async (req, res) => {
 };
 
 const renderVerifyOtp = async (req, res) => {
-  if(req.session.user) return res.redirect('/Home')
+  if (req.session.user) return res.redirect('/Home')
   try {
     const email = req.session.userData?.email;
 
@@ -183,7 +184,7 @@ const renderVerifyOtp = async (req, res) => {
 };
 
 const verifyOtp = async (req, res) => {
-  if(req.session.user) return res.redirect('/Home')
+  if (req.session.user) return res.redirect('/Home')
   try {
     const { otp } = req.body;
     console.log("Received OTP:", otp, typeof otp);
@@ -223,9 +224,11 @@ const verifyOtp = async (req, res) => {
       if (err) console.error("Session save error:", err);
     });
 
+    req.session.user = newUser._id
+   
     return res.status(200).json({
       success: true,
-      redirectUrl: "/login",
+      redirectUrl: "/home",
       message: "OTP verified successfully",
     });
   } catch (error) {
@@ -238,7 +241,7 @@ const verifyOtp = async (req, res) => {
 };
 
 const resendOtp = async (req, res) => {
-  if(req.session.user) return res.redirect('/Home')
+  if (req.session.user) return res.redirect('/Home')
   try {
     const { email } = req.session.userData || {};
     if (!email) {
@@ -281,9 +284,9 @@ const resendOtp = async (req, res) => {
 };
 
 const loadLogin = async (req, res) => {
-  if(req.session.user) return res.redirect('/home')
-  try {  
-      res.render("login-page");
+  if (req.session.user) return res.redirect('/home')
+  try {
+    res.render("login-page");
   } catch (error) {
     console.log("Error loading login page");
     return res.redirect("/PageNotFound").status(404);
@@ -291,35 +294,35 @@ const loadLogin = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  if(req.session.user) return res.redirect('/Home')
+  if (req.session.user) return res.redirect('/Home')
   try {
-   
+
     const { email, password } = req.body;
     console.log(email, password);
     const findUser = await User.findOne({ email: email });
-    
-    if(findUser.isAdmin==='true'){
+
+    if(findUser.isAdmin){
       return res
       .status(404)
-      .json("Access Denied please login through admin side") 
+      .json({success:false ,message:"Access Denied please login through admin side"}) 
     }
 
     if (!findUser) {
       return res
         .status(404)
-        .json({ success: "false", message: "User not Found" });
+        .json({ success: false, message: "User not Found" });
     }
     if (findUser.isBlocked) {
       return res
         .status(403)
-        .json({ success: "false", message: "User is blocked by admin" });
+        .json({ success: false, message: "User is blocked by admin" });
     }
     const passwordMatch = await bcrypt.compare(password, findUser.password);
-   
+
     if (!passwordMatch) {
       return res
         .status(401)
-        .json({ success: "false", message: "Incorrect Password" });
+        .json({ success: false, message: "Incorrect Password" });
     }
     req.session.user = findUser._id;
     return res.json({
@@ -329,12 +332,180 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.error("login error", error.message);
-    res.json({success: false,
-      message: "Login failed. Please try again later",})
-      
-    
+    res.json({
+      success: false,
+      message: "Login failed. Please try again later",
+    })
+
+
   }
 };
+
+
+const forgotPassword = async (req, res) => {
+  if (req.session.email) return res.redirect('/otp-forgot-password')
+  if (req.session.user) return res.redirect('/home')
+  try {
+    return res.render('user/forgotPassword', { error: req.flash('error'), success: req.flash('success') })
+  } catch (error) {
+    console.log("error while loading forgot password:", error.message)
+    return res.status(500).render('user/error-page')
+  }
+}
+
+
+const forgotPasswordValidation = async (req, res) => {
+  try {
+    const email = req.body.email
+    if (!email) {
+      req.flash("error", "email required")
+      return res.redirect('/forgot-password')
+    }
+
+
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+    if (!isValidEmail(email)) {
+      req.flash('error', 'Please enter a valid email address.')
+      return redirect('/forgot-password')
+    }
+
+    const findUser = await User.findOne({ email: email })
+
+    if (!findUser) {
+      req.flash('error', "User not found")
+      return res.redirect('/forgot-password')
+    }
+
+    const otp = generateOtp()
+    console.log("generated OTP",otp)
+    sendVerificationEmail(email,otp);
+
+    req.session.otp = otp;
+    req.session.otpCreatedAt = Date.now()
+    req.session.email = email
+
+    req.flash('success', "redirecting to reset password page")
+
+    return res.redirect('/otp-forgot-password')
+  } catch (error) {
+    console.log("Error while forgot password validation", error.message)
+    return res.status(500).render('user/error-page')
+  }
+}
+
+
+const otpForgotPassword = async (req, res) => {
+  if (!req.session.email) return res.redirect('/forgot-password')
+  try { 
+    return res.render('user/otpForgotPassword',{error:req.flash('error'),success:req.flash('success')})
+  } catch (error) {
+     console.log('error while loading otpForgotPassword',error.message);
+     return res.render('user/error-page')
+  }
+}
+
+
+  const verifyForgotPasswordOtp = async (req, res) => {
+    if (!req.session.email) return res.redirect('/forgot-password');
+
+    try {
+
+      const Expiration = Date.now() - req.session.otpCreatedAt > 5 * 60 * 1000
+
+      if (Expiration) {
+        req.session.otp = null;
+        req.session.otpCreatedAt = null;
+        req.flash('error', 'OTP expired. Request a new one.');
+        return res.redirect('/otp-forgot-password')
+      }
+
+      const otp = (req.body.otp || []).join('').trim();
+        console.log("otp",otp)
+      if (!otp || otp.length !== 6) {
+        req.flash('error', 'Please enter a valid 6-digit OTP');
+        return res.redirect('/otp-forgot-password'); 
+      }
+  
+      if (otp !== req.session.otp) {
+        req.flash('error', 'Incorrect OTP');
+        return res.redirect('/otp-forgot-password');
+      }
+      
+     
+
+    req.session.otpVerified = true
+    req.flash('success', 'OTP verified successfully!');
+    return res.redirect('/reset-password');
+  } catch (error) {
+    console.log('Error verifying OTP:', error.message);
+    return res.render('user/error-page');
+  }
+};
+
+
+const loadResetPassword  = async(req,res)=>{
+  if (!req.session.email || !req.session.otpVerified) return res.redirect('/forgot-password')
+  try{
+    return res.render('resetPassword',{
+      error:req.flash('error'),
+      success:req.flash('success'), 
+    })
+  }catch(error){
+
+  }
+}
+
+
+const validateResetPassword = async(req,res)=>{
+  try{
+    const { newPassword , confirmPassword }  = req.body
+    console.log("new password",newPassword)
+    if(!newPassword || !confirmPassword){
+      req.flash('error','All fields required..!')
+      return res.render('user/resetPassword',{error:req.flash('error')})
+    } 
+
+    if(newPassword.length<6){
+      req.flash('error','Password must be at least 6 character long');
+      return res.render('user/resetPassword', { error: req.flash('error') });
+    }
+
+    if(newPassword!==confirmPassword){
+      req.flash('error',"Password does not match");
+      return res.render('resetPassword',{ error:req.flash('error')});
+    }
+     
+    const hashPassword = await securePassword(newPassword)
+  
+    const user = await User.findOne({email:req.session.email})
+
+    if (!user) {
+      req.flash('error', 'User not found.');
+      return res.redirect('/reset-password');
+    }
+
+    
+    user.password = hashPassword
+
+    await user.save()
+
+    
+
+    req.flash('success', 'Password updated successfully.');
+    delete req.session.email
+    delete req.session.otpVerified
+
+    res.redirect('/login');
+
+  }catch(error){
+
+      console.log('error while reset password',error.message)
+      return res.status(500).render('user/error-page')
+  }
+}
 
 const loadHomePage = async (req, res) => {
   try {
@@ -347,7 +518,7 @@ const loadHomePage = async (req, res) => {
       quantity: { $exists: true, $gt: 0 }
     });
 
-   
+
     productData = productData.map(pro => {
       const imageUrl = pro.productImage?.[0]?.url;
       return {
@@ -357,17 +528,17 @@ const loadHomePage = async (req, res) => {
     });
 
     productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    const  newProductData = productData.slice(0, 4);
-    const  bestsellingData = productData.slice(4,8);
-    const  flashSalesData  =productData.slice(8,12);
+    const newProductData = productData.slice(0, 4);
+    const bestsellingData = productData.slice(4, 8);
+    const flashSalesData = productData.slice(8, 12);
 
-  
+
 
     const user = req.session.user;
-    
+
     if (user) {
       const userData = await User.findById(user);
-      
+
       return res.render("user/Home-page", {
         user: userData,
         products: newProductData,
@@ -388,6 +559,21 @@ const loadHomePage = async (req, res) => {
   }
 };
 
+
+const myAccountDetails = async(req,res)=>{
+  try{
+    const id  = req.session.user
+      
+    const userData = await User.findById(id);
+   
+    return res.render('myAccount',{user:userData})
+
+  }
+  catch(error){
+
+  }
+}
+
 const logout = async (req, res) => {
   try {
     delete req.session.user;
@@ -398,104 +584,6 @@ const logout = async (req, res) => {
     res.render('user/error-page');
   }
 }
-
-
-const loadProductListingPage = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
-    
-    const clearFilter = req.query.clearFilter==='1'
-    const clearSearch  = req.query.clearSearch==='1'
-    const search = clearSearch ? "" : req.query?.search || '';
-    const selectedCategory = clearFilter ? "" :req.query?.category || '';
-    const minPrice = clearFilter ? "" : parseFloat(req.query?.minPrice) || 0;
-    const maxPrice = clearFilter ? "" : parseFloat(req.query?.maxPrice) || Number.MAX_VALUE;
-    const sortOption = clearFilter ? "" : req.query.sort || 'createdAt-desc';
-
-    const userData = req.session.user;
-    const categories = await category.find({ isListed: true, isDeleted: false });
-
-    let query = {
-      isBlocked: false,
-      isDeleted: false,
-      quantity: { $gt: 0 },
-      regularPrice: { $gte: minPrice, $lte: maxPrice },
-    };
-
-    if (search) {
-      query.productName = { $regex: search, $options: 'i' };
-    }
-
-    if (selectedCategory) {
-      query.category = selectedCategory; 
-    }
-
-    // 🔀 Handle sort logic
-    let sort = {};
-    switch (sortOption) {
-      case 'name-asc':
-        sort = { productName: 1 };
-        break;
-      case 'name-desc':
-        sort = { productName: -1 };
-        break;
-      case 'price-asc':
-        sort = { regularPrice: 1 };
-        break;
-      case 'price-desc':
-        sort = { regularPrice: -1 };
-        break;
-      default:
-        sort = { createdAt: -1 };
-    }
-
-    const total = await product.countDocuments(query);
-
-    let productData = await product.find(query)
-      .skip(skip)
-      .limit(limit)
-      .sort(sort);
-
-    productData = productData.map(pro => ({
-      ...pro._doc,
-      productImage: pro.productImage?.[0]?.url || null,
-    }));
-
-    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
-      return res.json({
-        products: productData,
-        page,
-        total,
-        totalPages: Math.ceil(total / limit)
-      });
-    }
-
-    res.render('user/productListingPage', {
-      user: userData,
-      products: productData,
-      cat: categories,
-      currentPage: page,
-      totalPage: Math.ceil(total / limit),
-      totalProduct: total,
-      search,
-      categoryFilter: selectedCategory,
-      minPrice: req.query.minPrice || '',
-      maxPrice: req.query.maxPrice || '',
-      sort: sortOption
-    });
-
-  } catch (error) {
-    console.error("Error in loadProductListingPage:", error.message);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-
-
-
-
 
 
 
@@ -510,8 +598,14 @@ module.exports = {
   logout,
   PageNotFound,
   loadPLandingPage,
+  forgotPassword,
+  forgotPasswordValidation,
+  otpForgotPassword,
+  verifyForgotPasswordOtp,
+  loadResetPassword,
+  validateResetPassword,
   loadHomePage,
-  loadProductListingPage,
+  myAccountDetails,
 };
 
 

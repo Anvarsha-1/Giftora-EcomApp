@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Gift Box - Luxury Collection</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Card layout: full height, vertical stack */
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Card hover effect */
+        .product-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: none;
+            padding: 8px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .wishlist-btn:hover {
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Info container grows to fill space */
+        .product-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .stars {
+            display: flex;
+            color: #facc15;
+            margin-right: 0.5rem;
+        }
+
+        .rating-count {
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .product-prices {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .current-price {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .original-price {
+            font-size: 0.875rem;
+            color: #6b7280;
+            text-decoration: line-through;
+        }
+
+        .price-savings {
+            font-size: 0.75rem;
+            color: #ef4444;
+            font-weight: 500;
+        }
+
+        /* Button pushed to bottom of the card */
+        .add-to-cart {
+            margin-top: auto;
+            width: 100%;
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background: #2563eb;
+        }
+
+        /* Empty state */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: #6b7280;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .no-results h3 {
+            font-size: 1.25rem;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <%-include('../partials/user/newheader.ejs') %>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+                <a href="/home" class="hover:text-primary transition-colors">Home</a>
+                <span>/</span>
+                <a href="/viewProducts" class="hover:text-primary transition-colors">Shop</a>
+                <span>/</span>
+                <span class="text-gray-900">Product Details</span>
+            </nav>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+                <div class="space-y-4">
+                    <!-- Main Image -->
+                    <div id="image-Container" class="zoom w-full max-w-md border overflow-hidden bg-white">
+                        <img id="mainImage" src="<%= mainImage.url %>" alt=""
+                            class="w-full max-h-[440px] object-contain object-center bg-white" />
+                    </div>
+
+                    <!-- Thumbnails including Main Image first -->
+                    <div class="grid grid-cols-3 gap-4">
+                        <!-- Main Image as first thumbnail -->
+                        <div class="relative w-[170px] h-[170px] overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
+                            data-image="<%= mainImage.url %>">
+                            <img src="<%= mainImage.url %>" alt="" class="w-full h-full object-contain p-2" />
+                        </div>
+
+                        <!-- Sub Images -->
+                        <% subImage.forEach((img)=> { %>
+                            <div class="relative w-[170px] h-[170px] overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
+                                data-image="<%= img.url %>">
+                                <img src="<%= img.url %>" alt="" class="w-full h-full object-contain p-2" />
+                            </div>
+                            <% }) %>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                            <%=product.productName %>
+                        </h1>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="flex items-center">
+                                <div class="flex text-yellow-400">
+                                    <i class="ri-star-fill"></i>
+                                    <i class="ri-star-fill"></i>
+                                    <i class="ri-star-fill"></i>
+                                    <i class="ri-star-fill"></i>
+                                    <i class="ri-star-half-fill"></i>
+                                </div>
+                                <span class="ml-2 text-sm text-gray-600">(247 reviews)</span>
+                            </div>
+                            <% if (product.status?.toLowerCase().trim()==="available" ) { %>
+                                <span class="text-green-600 text-sm font-medium flex items-center">
+                                    <div class="w-2 h-2 bg-green-600 rounded-full mr-2"></div>
+                                    In Stock
+                                </span>
+                                <% } else { %>
+                                    <span class="text-red-600 text-sm font-medium flex items-center">
+                                        <div class="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
+                                        Out of Stock
+                                    </span>
+                                    <% } %>
+                        </div>
+                        <div class="flex items-center space-x-4 mb-6">
+                            <span class="text-3xl font-bold text-gray-900">$<%=product.regularPrice%></span>
+                            <span class="text-xl text-gray-500 line-through">$<%=(product.regularPrice*1.4).toFixed() %>
+                                    </span>
+                            <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-2 rounded">
+                                <%= Math.round(((product.regularPrice * 1.4 - product.regularPrice) /
+                                    (product.regularPrice * 1.4)) * 100)%>%OFF
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-900 mb-2">Quantity</h3>
+                            <div class="flex items-center space-x-3">
+                                <button
+                                    class="w-10 h-10 border border-gray-300 rounded-button flex items-center justify-center hover:border-primary transition-colors">
+                                    <i class="ri-subtract-line"></i>
+                                </button>
+                                <span class="w-12 text-center font-medium">1</span>
+                                <button
+                                    class="w-10 h-10 border border-gray-300 rounded-button flex items-center justify-center hover:border-primary transition-colors">
+                                    <i class="ri-add-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4">
+                        <% const inStock=product.status?.toLowerCase().trim()==="available" ; %>
+                            <!-- Add to Cart Button -->
+                            <button
+                                class="flex-1 py-3 px-6 rounded-button font-medium whitespace-nowrap transition-colors 
+                             <%= inStock ? 'bg-primary text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed' %>"
+                                <%=inStock ? '' : 'disabled' %>>
+                                Add to Cart
+                            </button>
+
+                            <!-- Buy Now Button -->
+                            <button
+                                class="flex-1 py-3 px-6 rounded-button font-medium whitespace-nowrap transition-colors 
+                             <%= inStock ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-gray-300 text-gray-500 cursor-not-allowed' %>"
+                                <%=inStock ? '' : 'disabled' %>>
+                                Buy Now
+                            </button>
+
+                            <button
+                                class="p-3 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition-colors">
+                                <div class="w-6 h-6 flex items-center justify-center">
+                                    <i class="ri-heart-line"></i>
+                                </div>
+                            </button>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Product Features</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <div class="w-5 h-5 flex items-center justify-center mt-0.5 mr-3">
+                                    <i class="ri-check-line text-green-600"></i>
+                                </div>
+                                Premium quality materials with elegant finish
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-5 h-5 flex items-center justify-center mt-0.5 mr-3">
+                                    <i class="ri-check-line text-green-600"></i>
+                                </div>
+                                Perfect for special occasions and celebrations
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-5 h-5 flex items-center justify-center mt-0.5 mr-3">
+                                    <i class="ri-check-line text-green-600"></i>
+                                </div>
+                                Customizable with personal message card
+                            </li>
+                            <li class="flex items-start">
+                                <div class="w-5 h-5 flex items-center justify-center mt-0.5 mr-3">
+                                    <i class="ri-check-line text-green-600"></i>
+                                </div>
+                                Eco-friendly packaging and materials
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
+                <div class="products-grid">
+                    <% if (relatedProducts && relatedProducts.length> 0) { %>
+                        <% for (let i=0; i < relatedProducts.length; i++) { %>
+                            <div class="product-card">
+                                <div class="product-image w-full overflow-hidden rounded-md">
+                                    <% if (relatedProducts[i].productImage) { %>
+                                        <a href="/productsDetails/<%=relatedProducts[i]._id %>">
+                                        <img src="<%= relatedProducts[i].productImage[0]?.url %>"
+                                            alt="<%= relatedProducts[i].productName %>"
+                                            class="w-full h-60 object-cover object-center rounded-t-md">
+                                            </a>
+                                        <% } else { %>
+                                            <div class="no-image-placeholder">
+                                                <i class="fas fa-image"></i>
+                                            </div>
+                                            <% } %>
+                                              
+                                                <button class="wishlist-btn" title="Add to Wishlist">
+                                                    <i class="far fa-heart"></i>
+                                                </button>
+                                </div>
+
+                                <!-- Make this container grow to fill space -->
+                                <div class="product-info">
+                                    <h3 class="product-name">
+                                        <%= relatedProducts[i].productName %>
+                                    </h3>
+                                    <div class="product-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star star"></i><i class="fas fa-star star"></i><i
+                                                class="fas fa-star star"></i><i class="fas fa-star star"></i><i
+                                                class="fas fa-star star"></i>
+                                        </div>
+                                        <span class="rating-count">(247 reviews)</span>
+                                    </div>
+                                    <div class="product-prices">
+                                        <span class="current-price">$<%= relatedProducts[i].regularPrice %></span>
+                                        <span class="original-price">$<%= (relatedProducts[i].regularPrice *
+                                                1.4).toFixed(0) %></span>
+                                        <span class="price-savings">Save $<%= (relatedProducts[i].regularPrice *
+                                                0.4).toFixed(0) %></span>
+                                    </div>
+
+                                    <!-- 👇 Add mt-auto class to push this down -->
+                                    <button class="add-to-cart">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <% } %>
+                                <% } else { %>
+                                    <div class="no-results">
+                                        <i class="fas fa-box-open"></i>
+                                        <h3>No Products Found</h3>
+                                        <p>Try adjusting your filters or search terms</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </section>
+
+            <div class="bg-white rounded-lg shadow-sm border p-8 mb-16">
+                <div class="flex border-b mb-8">
+                    <button class="px-6 py-3 border-b-2 border-primary text-primary font-medium tab-button active"
+                        data-tab="description">Description</button>
+                    <button class="px-6 py-3 text-gray-600 hover:text-primary transition-colors tab-button"
+                        data-tab="specifications">Specifications</button>
+                    <button class="px-6 py-3 text-gray-600 hover:text-primary transition-colors tab-button"
+                        data-tab="reviews">Reviews</button>
+                </div>
+
+                <div id="description" class="tab-content">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Product Description</h3>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        Our Premium Luxury Gift Box Collection represents the pinnacle of elegant packaging design.
+                        Crafted
+                        with meticulous attention to detail, each box features premium materials and sophisticated
+                        finishing
+                        that makes every gift-giving moment truly special.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed mb-4">
+                        The collection includes various sizes to accommodate different gift types, from jewelry and
+                        accessories to gourmet treats and personal items. The interior features soft velvet lining that
+                        protects your precious gifts while adding an extra touch of luxury.
+                    </p>
+                    <p class="text-gray-700 leading-relaxed">
+                        Whether you're celebrating birthdays, anniversaries, holidays, or any special occasion, these
+                        gift
+                        boxes elevate the presentation and create lasting memories for your loved ones.
+                    </p>
+                </div>
+
+                <div id="specifications" class="tab-content hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Specifications</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">Dimensions</h4>
+                            <ul class="text-gray-700 space-y-1">
+                                <li>Small: 6" × 4" × 2"</li>
+                                <li>Medium: 8" × 6" × 3"</li>
+                                <li>Large: 10" × 8" × 4"</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">Materials</h4>
+                            <ul class="text-gray-700 space-y-1">
+                                <li>Premium cardboard exterior</li>
+                                <li>Velvet interior lining</li>
+                                <li>Satin ribbon closure</li>
+                                <li>Magnetic closure system</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="reviews" class="tab-content hidden">
+                    <div class="flex items-center justify-between mb-8">
+                        <h3 class="text-xl font-semibold text-gray-900">Customer Reviews</h3>
+                        <button id="writeReviewBtn"
+                            class="bg-primary text-white px-6 py-2 rounded-button font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
+                            Write a Review
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                        <div class="text-center">
+                            <div class="text-4xl font-bold text-gray-900 mb-2">4.6</div>
+                            <div class="flex justify-center text-yellow-400 mb-2">
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-half-fill"></i>
+                            </div>
+                            <div class="text-sm text-gray-600">Based on 247 reviews</div>
+                        </div>
+                        <div class="col-span-2">
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-600 w-8">5★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 68%"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-600 w-8">168</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-600 w-8">4★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 20%"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-600 w-8">49</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-600 w-8">3★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 8%"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-600 w-8">20</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-600 w-8">2★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 3%"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-600 w-8">7</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm text-gray-600 w-8">1★</span>
+                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 1%"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-600 w-8">3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-medium">
+                                    SM
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">Sarah Mitchell</h4>
+                                            <div class="flex items-center space-x-2">
+                                                <div class="flex text-yellow-400 text-sm">
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                </div>
+                                                <span class="text-sm text-gray-600">• Verified Purchase</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm text-gray-500">2 days ago</span>
+                                    </div>
+                                    <h5 class="font-medium text-gray-900 mb-2">Absolutely Beautiful!</h5>
+                                    <p class="text-gray-700 mb-4">
+                                        The quality exceeded my expectations. The box feels premium and the velvet
+                                        interior
+                                        is so soft. Perfect for gifting jewelry to my sister. She was thrilled with the
+                                        presentation!
+                                    </p>
+                                    <div class="flex items-center space-x-4 text-sm">
+                                        <button
+                                            class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
+                                            <div class="w-4 h-4 flex items-center justify-center">
+                                                <i class="ri-thumb-up-line"></i>
+                                            </div>
+                                            <span>Helpful (12)</span>
+                                        </button>
+                                        <button
+                                            class="text-gray-600 hover:text-primary transition-colors">Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-white font-medium">
+                                    JD
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">James Davidson</h4>
+                                            <div class="flex items-center space-x-2">
+                                                <div class="flex text-yellow-400 text-sm">
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-line"></i>
+                                                </div>
+                                                <span class="text-sm text-gray-600">• Verified Purchase</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm text-gray-500">1 week ago</span>
+                                    </div>
+                                    <h5 class="font-medium text-gray-900 mb-2">Great for Corporate Gifts</h5>
+                                    <p class="text-gray-700 mb-4">
+                                        Ordered several for our company's client appreciation gifts. The professional
+                                        look
+                                        and feel made a great impression. Only minor issue was delivery took a day
+                                        longer
+                                        than expected.
+                                    </p>
+                                    <div class="flex items-center space-x-4 text-sm">
+                                        <button
+                                            class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
+                                            <div class="w-4 h-4 flex items-center justify-center">
+                                                <i class="ri-thumb-up-line"></i>
+                                            </div>
+                                            <span>Helpful (8)</span>
+                                        </button>
+                                        <button
+                                            class="text-gray-600 hover:text-primary transition-colors">Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <div class="flex items-start space-x-4">
+                                <div
+                                    class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-medium">
+                                    ER
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-medium text-gray-900">Emily Rodriguez</h4>
+                                            <div class="flex items-center space-x-2">
+                                                <div class="flex text-yellow-400 text-sm">
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                </div>
+                                                <span class="text-sm text-gray-600">• Verified Purchase</span>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm text-gray-500">2 weeks ago</span>
+                                    </div>
+                                    <h5 class="font-medium text-gray-900 mb-2">Perfect Wedding Favor Boxes</h5>
+                                    <p class="text-gray-700 mb-4">
+                                        Used these for our wedding favors and they were a hit! The elegant design
+                                        matched
+                                        our theme perfectly. Guests kept asking where we got them. Definitely recommend
+                                        for
+                                        special events.
+                                    </p>
+                                    <div class="flex items-center space-x-4 text-sm">
+                                        <button
+                                            class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
+                                            <div class="w-4 h-4 flex items-center justify-center">
+                                                <i class="ri-thumb-up-line"></i>
+                                            </div>
+                                            <span>Helpful (15)</span>
+                                        </button>
+                                        <button
+                                            class="text-gray-600 hover:text-primary transition-colors">Report</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reviewModal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-lg max-w-md w-full p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-gray-900">Write a Review</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                            <div class="w-6 h-6 flex items-center justify-center">
+                                <i class="ri-close-line"></i>
+                            </div>
+                        </button>
+                    </div>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                            <div class="flex space-x-1" id="starRating">
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="1">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="2">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="3">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="4">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="5">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
+                            <input type="text"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Give your review a title">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
+                            <textarea rows="4"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Share your experience with this product"></textarea>
+                        </div>
+                        <div class="flex space-x-3 pt-4">
+                            <button type="button" id="cancelReview"
+                                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition-colors whitespace-nowrap">Cancel</button>
+                            <button type="submit"
+                                class="flex-1 px-4 py-2 bg-primary text-white rounded-button hover:bg-blue-700 transition-colors whitespace-nowrap">Submit
+                                Review</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <section class="bg-white rounded-lg shadow-sm border p-8">
+                <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Why Choose Us</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                <i class="ri-truck-line text-green-600 text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Secure Delivery</h3>
+                        <p class="text-gray-600 text-sm">Fast and secure delivery with tracking. Your orders are
+                            protected
+                            every step of the way.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                <i class="ri-shield-check-line text-blue-600 text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Trusted Site</h3>
+                        <p class="text-gray-600 text-sm">SSL encrypted and verified by thousands of satisfied customers
+                            worldwide.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                <i class="ri-refresh-line text-orange-600 text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Easy Returns</h3>
+                        <p class="text-gray-600 text-sm">30-day return policy with no questions asked. Your satisfaction
+                            is
+                            guaranteed.</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <div class="w-8 h-8 flex items-center justify-center">
+                                <i class="ri-secure-payment-line text-purple-600 text-2xl"></i>
+                            </div>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Payment Safety</h3>
+                        <p class="text-gray-600 text-sm">Multiple secure payment options including PayPal, Stripe, and
+                            major
+                            credit cards.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <%-include('../partials/user/footer.ejs') %>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/jquery-zoom/jquery.zoom.min.js"></script>
+
+            <script>
+                $(function () {
+                    const imageContainer = $('#image-Container');
+                    const mainImage = $('#mainImage');
+
+                    // Function to bind zoom
+                    function initZoom() {
+                        imageContainer.trigger('zoom.destroy'); // Destroy existing
+                        imageContainer.zoom({ magnify: 2.5 });   // Re-initialize
+                    }
+
+                    // Initialize on first load
+                    initZoom();
+
+                    // Thumbnail click handler
+                    $('.thumbnail').on('click', function () {
+                        const newSrc = $(this).data('image');
+                        mainImage.attr('src', newSrc); // ✅ update image
+
+                        // Wait a tiny bit for the image to load, then rebind zoom
+                        setTimeout(() => {
+                            initZoom();
+                        }, 100);
+                    });
+                });
+            </script>
+
+            <script id="imageGallery">
+                document.addEventListener('DOMContentLoaded', function () {
+                    const mainImage = document.getElementById('mainImage');
+                    const thumbnails = document.querySelectorAll('.thumbnail');
+                    thumbnails.forEach(thumbnail => {
+                        thumbnail.addEventListener('click', function () {
+                            const newImageSrc = this.getAttribute('data-image');
+                            mainImage.src = newImageSrc;
+
+                            thumbnails.forEach(t => t.classList.remove('ring-2', 'ring-primary'));
+                            this.classList.add('ring-2', 'ring-primary');
+                        });
+                    });
+
+                    thumbnails[0].classList.add('ring-2', 'ring-primary');
+                });
+            </script>
+
+            <script id="tabNavigation">
+                document.addEventListener('DOMContentLoaded', function () {
+                    const tabButtons = document.querySelectorAll('.tab-button');
+                    const tabContents = document.querySelectorAll('.tab-content');
+
+                    tabButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const targetTab = this.getAttribute('data-tab');
+
+                            tabButtons.forEach(btn => {
+                                btn.classList.remove('border-primary', 'text-primary', 'active');
+                                btn.classList.add('text-gray-600');
+                            });
+
+                            this.classList.add('border-primary', 'text-primary', 'active');
+                            this.classList.remove('text-gray-600');
+
+                            tabContents.forEach(content => {
+                                content.classList.add('hidden');
+                            });
+
+                            document.getElementById(targetTab).classList.remove('hidden');
+                        });
+                    });
+                });
+            </script>
+
+            <script id="reviewModal">
+                document.addEventListener('DOMContentLoaded', function () {
+                    const writeReviewBtn = document.getElementById('writeReviewBtn');
+                    const reviewModal = document.getElementById('reviewModal');
+                    const closeModal = document.getElementById('closeModal');
+                    const cancelReview = document.getElementById('cancelReview');
+                    const starButtons = document.querySelectorAll('.star-btn');
+                    let selectedRating = 0;
+
+                    writeReviewBtn.addEventListener('click', function () {
+                        reviewModal.classList.remove('hidden');
+                    });
+
+                    closeModal.addEventListener('click', function () {
+                        reviewModal.classList.add('hidden');
+                    });
+
+                    cancelReview.addEventListener('click', function () {
+                        reviewModal.classList.add('hidden');
+                    });
+
+                    reviewModal.addEventListener('click', function (e) {
+                        if (e.target === reviewModal) {
+                            reviewModal.classList.add('hidden');
+                        }
+                    });
+                    starButtons.forEach((button, index) => {
+                        button.addEventListener('click', function () {
+                            selectedRating = parseInt(this.getAttribute('data-rating'));
+                            updateStarDisplay();
+                        });
+
+                        button.addEventListener('mouseenter', function () {
+                            const hoverRating = parseInt(this.getAttribute('data-rating'));
+                            updateStarDisplay(hoverRating);
+                        });
+                    });
+
+                    document.getElementById('starRating').addEventListener('mouseleave', function () {
+                        updateStarDisplay();
+                    });
+
+                    function updateStarDisplay(hoverRating = null) {
+                        const rating = hoverRating || selectedRating;
+                        starButtons.forEach((button, index) => {
+                            const starIcon = button.querySelector('i');
+                            if (index < rating) {
+                                starIcon.className = 'ri-star-fill';
+                                button.classList.remove('text-gray-300');
+                                button.classList.add('text-yellow-400');
+                            } else {
+                                starIcon.className = 'ri-star-line';
+                                button.classList.remove('text-yellow-400');
+                                button.classList.add('text-gray-300');
+                            }
+                        });
+                    }
+                });
+            </script>
+
+            <script id="quantityControls">
+                document.addEventListener('DOMContentLoaded', function () {
+                    const decreaseBtn = document.querySelector('.w-10.h-10:first-of-type');
+                    const increaseBtn = document.querySelector('.w-10.h-10:last-of-type');
+                    const quantityDisplay = document.querySelector('.w-12.text-center');
+                    let quantity = 1;
+
+                    decreaseBtn.addEventListener('click', function () {
+                        if (quantity > 1) {
+                            quantity--;
+                            quantityDisplay.textContent = quantity;
+                        }
+                    });
+
+                    increaseBtn.addEventListener('click', function () {
+                        quantity++;
+                        quantityDisplay.textContent = quantity;
+                    });
+                });
+            </script>
+</body>
+
+</html>
