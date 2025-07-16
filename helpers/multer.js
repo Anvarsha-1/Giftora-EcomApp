@@ -13,7 +13,9 @@ const storage = new CloudinaryStorage({
     transformation:[
       {
         width:300,height:300,
-        crop:"limit",
+        crop: 'fill',
+        gravity: 'auto',
+
       }
     ]
   }
@@ -21,7 +23,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, //2 mb
+  limits: { fileSize: 2 * 1024 * 1024 }, 
 });
 
 module.exports = upload;

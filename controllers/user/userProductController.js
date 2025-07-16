@@ -77,9 +77,10 @@ const loadProductListingPage = async (req, res) => {
         totalPages: Math.ceil(total / limit)
       });
     }
-
+     
     res.render('user/productListingPage', {
       user: userData,
+      firstName:userData?.firstName || "",
       products: productData,
       cat: categories,
       currentPage: page,
@@ -94,7 +95,7 @@ const loadProductListingPage = async (req, res) => {
 
   } catch (error) {
     console.error("Error in loadProductListingPage:", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).render('user/error-page')
   }
 };
 
@@ -103,9 +104,13 @@ const viewProductDetails = async (req, res) => {
   try {
     const userData = req.session?.user ? await User.findById(req.session?.user) : undefined
     const id = req.params.id
-    const productData = await Products.findById(id)
-     
+    const productData = await Products.findById(id)  
     if (!productData) return res.status(404).json("product not found")
+
+
+      if(productData.isBlocked || productData.isDeleted){     
+        return res.status(404).render('error-page',{message:"product is blocked or deleted by admin",showSwal:true}) 
+      }
       
     const relatedProducts = await Products.find({
       category: productData.category,
@@ -120,6 +125,7 @@ const viewProductDetails = async (req, res) => {
         
      return res.render('user/productDetails', {
       user:userData,
+       firstName: userData?.firstName || "",
       product:productData,
       relatedProducts:relatedProducts,
       mainImage,

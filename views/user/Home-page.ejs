@@ -1047,11 +1047,11 @@
                                         <span class="rating-count">(247 reviews)</span>
                                     </div>
                                     <div class="product-prices">
-                                        <span class="current-price">$<%= flashSales[i].regularPrice %></span>
-                                        <span class="original-price">$<%= (flashSales[i].regularPrice * 1.4).toFixed(0)
+                                        <span class="current-price">₹<%= flashSales[i].regularPrice %></span>
+                                        <span class="original-price">₹<%= (flashSales[i].regularPrice * 1.4).toFixed(0)
                                                 %>
                                         </span>
-                                        <span class="price-savings">Save $<%= (flashSales[i].regularPrice *
+                                        <span class="price-savings">Save ₹<%= (flashSales[i].regularPrice *
                                                 0.4).toFixed(0) %>
                                         </span>
                                     </div>
@@ -1175,10 +1175,10 @@
                                         <span class="rating-count">(247 reviews)</span>
                                     </div>
                                     <div class="product-prices">
-                                        <span class="current-price">$<%= products[i].regularPrice %></span>
-                                        <span class="original-price">$<%= (products[i].regularPrice * 1.4).toFixed(0) %>
+                                        <span class="current-price">₹<%= products[i].regularPrice %></span>
+                                        <span class="original-price">₹<%= (products[i].regularPrice * 1.4).toFixed(0) %>
                                         </span>
-                                        <span class="price-savings">Save $<%= (products[i].regularPrice *
+                                        <span class="price-savings">Save ₹<%= (products[i].regularPrice *
                                                 0.4).toFixed(0) %>
                                         </span>
                                     </div>
@@ -1224,7 +1224,7 @@
                         <% for(let i=0;i<bestselling.length;i++) { %>
                             <div class="product-card">
                                 <div class="product-image">
-                                    <% if (bestselling[i].productImage ) { %>
+                                    <% if (bestselling[i].productImage ) {zzzzzzzzzzzzzzzz %>
                                         <a href="/productsDetails/<%=bestselling[i]._id %>">
                                             <img src="<%= bestselling[i].productImage %>"
                                                 alt="<%= bestselling[i].productName %>" class="product-img"></a>
@@ -1258,11 +1258,11 @@
                                         <span class="rating-count">(247 reviews)</span>
                                     </div>
                                     <div class="product-prices">
-                                        <span class="current-price">$<%= bestselling[i].regularPrice %></span>
-                                        <span class="original-price">$<%= (bestselling[i].regularPrice * 1.4).toFixed(0)
+                                        <span class="current-price">₹<%= bestselling[i].regularPrice %></span>
+                                        <span class="original-price">₹<%= (bestselling[i].regularPrice * 1.4).toFixed(0)
                                                 %>
                                         </span>
-                                        <span class="price-savings">Save $<%= (bestselling[i].regularPrice *
+                                        <span class="price-savings">Save ₹<%= (bestselling[i].regularPrice *
                                                 0.4).toFixed(0) %>
                                         </span>
                                     </div>
@@ -1374,31 +1374,34 @@
 
                 // Mobile menu toggle (for responsive design)
                 function createMobileMenu() {
-                    const header = document.querySelector('.header-content');
-                    const navLinks = document.querySelector('.nav-links');
+                        const header = document.querySelector('.header-content');
+                        const navLinks = document.querySelector('.nav-links');
 
-                    if (window.innerWidth <= 768) {
-                        if (!document.querySelector('.mobile-menu-btn')) {
-                            const menuBtn = document.createElement('button');
-                            menuBtn.className = 'mobile-menu-btn';
-                            menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                            menuBtn.style.cssText = `
-                            display: block;
-                            background: none;
-                            border: none;
-                            font-size: 1.5rem;
-                            cursor: pointer;
-                            color: var(--dark-gray);
-                        `;
+                        if (!header || !navLinks) return; // ✅ prevent error if elements not found
 
-                            menuBtn.addEventListener('click', () => {
-                                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
-                            });
+                        if (window.innerWidth <= 768) {
+                            if (!document.querySelector('.mobile-menu-btn')) {
+                                const menuBtn = document.createElement('button');
+                                menuBtn.className = 'mobile-menu-btn';
+                                menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                                menuBtn.style.cssText = `
+                display: block;
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--dark-gray);
+            `;
 
-                            header.appendChild(menuBtn);
+                                menuBtn.addEventListener('click', () => {
+                                    navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+                                });
+
+                                header.appendChild(menuBtn);
+                            }
                         }
                     }
-                }
+
 
                 // Initialize mobile menu on load and resize
                 window.addEventListener('load', createMobileMenu);

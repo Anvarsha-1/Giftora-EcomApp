@@ -158,7 +158,7 @@ const deleteCategory = async (req, res) => {
     console.log("Error occured while delete user", error.message);
     res.status(500).json({ error: "Internal server error" });
   }
-};
+}; 
 
 module.exports = {
   categoryManagement,

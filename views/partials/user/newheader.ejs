@@ -90,6 +90,9 @@
 
         .profile-dropdown {
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .profile-button {
@@ -107,6 +110,23 @@
             background-color: #f5f5f5;
         }
 
+        .user-name {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            font-size: 15px;
+            transform: translateX(-50%);
+            margin-top: 2px;
+            font-size: 10px;
+            color: #333;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2px 6px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
         .dropdown-menu {
             position: absolute;
             top: 100%;
@@ -121,9 +141,17 @@
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
+            margin-top: 25px;
+            /* Account for user name space */
         }
 
         .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-menu.show {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -165,7 +193,6 @@
 
 <body>
 
-    <!-- Header -->
     <header class="main-header">
         <div class="header-container">
             <!-- Logo -->
@@ -176,17 +203,18 @@
             <!-- Navigation -->
             <nav>
                 <ul class="nav-menu">
-                    <li><a href="/home" class="nav-link">Home</a></li>
+                    <li><a href="/" class="nav-link">Home</a></li>
                     <li><a href="/viewProducts" class="nav-link">Shop</a></li>
                     <li><a href="#" class="nav-link">Contact</a></li>
                     <li><a href="#" class="nav-link">About</a></li>
+
                     <% if (!user) { %>
                         <li><a href="/login" class="nav-link">Sign Up</a></li>
                         <% } %>
                 </ul>
             </nav>
 
-            <% if (typeof(user)!==undefined ? user : null) { %>
+            <% if (user) { %>
                 <div class="header-right">
                     <!-- Wishlist -->
                     <button class="icon-button" aria-label="Wishlist">
@@ -200,16 +228,18 @@
                     </button>
 
                     <!-- Profile Dropdown -->
-                    <div class="profile-dropdown" id="profileDropdown">
-                        <button class="profile-button icon-button" id="profileToggle" aria-label="Profile">
+                    <div class="profile-dropdown" id="profileDropdown1">
+                        <button class="profile-button" id="profileToggle1" aria-label="Profile">
                             <i class="fas fa-user"></i>
                         </button>
-                        <div class="dropdown-menu">
+                        <div class="user-name" id="userName1">
+                            <%= firstName %>
+                        </div>
+                        <div class="dropdown-menu" id="dropdownMenu1">
                             <a href="/my-account" class="dropdown-item">
-                                <i class="fas fa-user"></i>
-                                My Account
+                                <i class="fas fa-user"></i> My Account
                             </a>
-                            <a href="#" class="dropdown-item">
+                            <a href="/my-orders" class="dropdown-item">
                                 <i class="fas fa-box"></i> My Orders
                             </a>
                             <a href="/logout" class="dropdown-item">
@@ -221,27 +251,49 @@
                 <% } %>
         </div>
     </header>
-
-    <!-- JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const profileDropdown = document.getElementById('profileDropdown');
-            const profileToggle = document.getElementById('profileToggle');
+        const user ='<% - JSON.stringify(user || null) %>';
+    </script>
 
-            if (profileDropdown && profileToggle) {
-                profileToggle.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    profileDropdown.classList.toggle('active');
-                });
+    <script>
+        function toggleDropdown(toggleId, menuId) {
+            const toggle = document.getElementById(toggleId);
+            const menu = document.getElementById(menuId);
 
-                document.addEventListener('click', (e) => {
-                    if (!profileDropdown.contains(e.target)) {
-                        profileDropdown.classList.remove('active');
+            if (!toggle || !menu) return;
+
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                menu.classList.toggle('show');
+
+                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                    if (dropdown !== menu) {
+                        dropdown.classList.remove('show');
                     }
                 });
-            }
+            });
+        }
+
+        // Initialize dropdowns only if they exist
+        toggleDropdown('profileToggle1', 'dropdownMenu1');
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function () {
+            document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
         });
+
+        function updateUserName(userName) {
+            const nameEl = document.getElementById('userName1');
+            if (nameEl) {
+                nameEl.textContent = userName;
+            }
+        }
+
+      
     </script>
+
 
 </body>
 

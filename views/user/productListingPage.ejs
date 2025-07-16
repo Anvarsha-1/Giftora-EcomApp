@@ -16,9 +16,20 @@
 <body>
   <%-include('../partials/user/newheader.ejs') %>
 
+
+
+
+
     <div class="container">
       <!-- Sidebar Filters (Desktop) -->
       <aside class="sidebar">
+
+        <nav class="breadcrumb">
+          <a href="/home">Home</a>
+          <span class="breadcrumb-separator">/</span>
+          <span>Shop</span>
+        </nav>
+
         <div class="filters-section">
           <div class="filters-header">
             <h2 class="filters-title">
@@ -34,7 +45,7 @@
               <button class="search-btn" id="searchBtn" title="Search">
                 <i class="fas fa-search"></i>
               </button>
-              <button class="clear-search-btn" id="clearSearchBtn" title="Clear Search" >
+              <button class="clear-search-btn" id="clearSearchBtn" title="Clear Search">
                 <i class="fas fa-times"></i>
               </button>
             </div>
@@ -47,7 +58,7 @@
               </label>
               <select id="categoryFilter" class="filter-select">
 
-                <option value="" >All Categories</option>
+                <option value="">All Categories</option>
                 <% cat.forEach((category)=> { %>
                   <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : '' %>>
                     <%= category.name %>
@@ -165,11 +176,12 @@
           <div class="products-grid">
             <% if (products && products.length> 0) { %>
               <% for(let i=0; i < products.length; i++) { %>
-                <div class="product-card" data-id="<%=products[i]._id %>">
+                <div class="product-card" data-id="<%= products[i]._id %>">
                   <div class="product-image">
                     <% if (products[i].productImage) { %>
-                      <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>"
-                        class="product-img">
+                      <a href="/productsDetails/<%= products[i]._id %>">
+                        <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>" class="product-img">
+                      </a>
                       <% } else { %>
                         <div
                           style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
@@ -177,10 +189,15 @@
                         </div>
                         <% } %>
                           <div class="discount-badge">-40%</div>
-                          <button class="wishlist-btn" title="Add to Wishlist"><i class="far fa-heart"></i></button>
+                          <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                          <div class="product-overlay">
+                            <div class="quick-actions">
+                              <button class="quick-btn">Quick View</button>
+                            </div>
+                          </div>
                   </div>
                   <div class="product-info">
-
+                    <div class="product-brand">PREMIUM</div>
                     <h3 class="product-name">
                       <%= products[i].productName %>
                     </h3>
@@ -195,9 +212,9 @@
                       <span class="rating-count">(247 reviews)</span>
                     </div>
                     <div class="product-prices">
-                      <span class="current-price">$<%= products[i].regularPrice %></span>
-                      <span class="original-price">$<%= (products[i].regularPrice * 1.4).toFixed(0) %></span>
-                      <span class="price-savings">Save $<%= (products[i].regularPrice * 0.4).toFixed(0) %></span>
+                      <span class="current-price">₹<%= products[i].regularPrice %></span>
+                      <span class="original-price">₹<%= (products[i].regularPrice * 1.4).toFixed(0) %></span>
+                      <span class="price-savings">Save ₹<%= (products[i].regularPrice * 0.4).toFixed(0) %></span>
                     </div>
                     <button class="add-to-cart">
                       <i class="fas fa-shopping-cart"></i>
@@ -207,10 +224,9 @@
                 </div>
                 <% } %>
                   <% } else { %>
-                    <div class="no-results">
-                      <i class="fas fa-box-open"></i>
-                      <h3>No Products Found</h3>
-                      <p>Try adjusting your filters or search terms</p>
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
+                      <i class="fas fa-box-open" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                      <p style="font-size: 1.2rem;">No products available</p>
                     </div>
                     <% } %>
           </div>
@@ -287,67 +303,67 @@
           };
         };
 
-          const parseFloatSafe = (value, fallback = 0) => {
-              const num = parseFloat(value);
-              return isNaN(num) ? fallback : num;
-            };
+        const parseFloatSafe = (value, fallback = 0) => {
+          const num = parseFloat(value);
+          return isNaN(num) ? fallback : num;
+        };
 
 
         // Fetch products with filters and page
         async function fetchProducts(page = 1) {
-            const search = searchInput.value.trim();
-            const category = categoryFilter.value;
-            const sort = sortBy.value || sortByMobile.value || 'name-asc';
+          const search = searchInput.value.trim();
+          const category = categoryFilter.value;
+          const sort = sortBy.value || sortByMobile.value || 'name-asc';
 
-            const params = new URLSearchParams({ search, category, sort, page });
+          const params = new URLSearchParams({ search, category, sort, page });
 
-            const parseFloatSafe = (value, fallback = 0) => {
-              const num = parseFloat(value);
-              return isNaN(num) ? fallback : num;
-            };
+          const parseFloatSafe = (value, fallback = 0) => {
+            const num = parseFloat(value);
+            return isNaN(num) ? fallback : num;
+          };
 
-            const minInput = minPrice.value.trim();
-            const maxInput = maxPrice.value.trim();
+          const minInput = minPrice.value.trim();
+          const maxInput = maxPrice.value.trim();
 
-            const hasMin = minInput !== '';
-            const hasMax = maxInput !== '';
+          const hasMin = minInput !== '';
+          const hasMax = maxInput !== '';
 
-            let min = hasMin ? parseFloatSafe(minInput, 0) : null;
-            let max = hasMax ? parseFloatSafe(maxInput, 0) : null;
+          let min = hasMin ? parseFloatSafe(minInput, 0) : null;
+          let max = hasMax ? parseFloatSafe(maxInput, 0) : null;
 
-            // If either price field is filled, apply filtering
-            if (hasMin || hasMax) {
-              if (!hasMin) min = 0;
-              if (!hasMax) max = 100000; // Arbitrary large max, adjust as needed
+          // If either price field is filled, apply filtering
+          if (hasMin || hasMax) {
+            if (!hasMin) min = 0;
+            if (!hasMax) max = 100000; // Arbitrary large max, adjust as needed
 
-              if (min > max) [min, max] = [max, min];
+            if (min > max) [min, max] = [max, min];
 
-              params.append('minPrice', min);
-              params.append('maxPrice', max);
-            }
+            params.append('minPrice', min);
+            params.append('maxPrice', max);
+          }
 
-            try {
-              productGrid.innerHTML = '<div class="loading">Loading...</div>';
-              const res = await fetch(`/viewProducts?${params.toString()}`, {
-                headers: { Accept: 'application/json' }
-              });
-              if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
-              const data = await res.json();
+          try {
+            productGrid.innerHTML = '<div class="loading">Loading...</div>';
+            const res = await fetch(`/viewProducts?${params.toString()}`, {
+              headers: { Accept: 'application/json' }
+            });
+            if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+            const data = await res.json();
 
-              renderProducts(data.products);
-              resultsCount.textContent = data.total;
-              currentPage = data.page;
-              renderPagination(data.page, data.totalPages, params);
-            } catch (err) {
-              console.error('Error fetching:', err.message);
-              productGrid.innerHTML = `
+            renderProducts(data.products);
+            resultsCount.textContent = data.total;
+            currentPage = data.page;
+            renderPagination(data.page, data.totalPages, params);
+          } catch (err) {
+            console.error('Error fetching:', err.message);
+            productGrid.innerHTML = `
       <div class="no-results">
         <i class="fas fa-box-open"></i>
         <h3>Error Loading Products</h3>
         <p>Please try again or adjust your filters</p>
       </div>`;
-            }
           }
+        }
 
 
         // Render products
@@ -363,10 +379,15 @@
           }
 
           productGrid.innerHTML = products.map(p => `
-                    <div class="product-card" data-id="${p._id}">
+                    <div class="product-card" >
                       <div class="product-image">
-                        <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" />
-                        <div class="discount-badge">-40%</div>
+                        <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
+                        ${p.status === 'Available' ? `
+  <div class="discount-badge">-40%</div>
+` : `
+  <div class="discount-badge out-of-stock">Out of Stock</div>
+`}
+
                         <button class="wishlist-btn" title="Add to Wishlist"><i class="far fa-heart"></i></button>
                       </div>
                       <div class="product-info">
@@ -378,14 +399,20 @@
                           <span class="rating-count">(247 reviews)</span>
                         </div>
                         <div class="product-prices">
-                          <span class="current-price">$${p.regularPrice}</span>
-                          <span class="original-price">$${(p.regularPrice * 1.4).toFixed(0)}</span>
-                          <span class="price-savings">Save $${(p.regularPrice * 0.4).toFixed(0)}</span>
+                          <span class="current-price">₹${p.regularPrice}</span>
+                          <span class="original-price">₹${(p.regularPrice * 1.4).toFixed(0)}</span>
+                          <span class="price-savings">Save ₹${(p.regularPrice * 0.4).toFixed(0)}</span>
                         </div>
-                        <button class="add-to-cart">
-                          <i class="fas fa-shopping-cart"></i>
-                          <span>Add to Cart</span>
-                        </button>
+                        ${p.status === 'Available' ? `
+                    <button class="add-to-cart">
+                      <i class="fas fa-shopping-cart"></i>
+                      <span>Add to Cart</span>
+                    </button>`: `
+                      <button class="add-to-cart" disabled>
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Add to Cart</span>
+                        </button>`
+            }
                       </div>
                     </div>
                   `).join('');
@@ -393,15 +420,14 @@
 
 
 
-       //redirecting to product details page
-      productGrid.addEventListener('click', (e) => {
-  const card = e.target.closest('.product-card');
-  if (card) {
-    const id = card.dataset.id;
-    window.location.href = `/productsDetails/${id}`;
-  }
-});
+       
 
+  document.addEventListener('click', function (e) {
+    const img = e.target.closest('.product-img');
+    if (img && img.dataset.id) {
+      window.location.href = `/productsDetails/${img.dataset.id}`;
+    }
+  });
 
 
 
@@ -450,7 +476,7 @@
           maxPriceValue.textContent = maxPriceSlider.value;
         }
 
-       
+
 
         // Toggle mobile filter panel
         filterToggleBtn.addEventListener('click', () => {
@@ -459,68 +485,85 @@
 
 
         function resetPriceFilters() {
-            
-            document.getElementById('minPrice').value = '';
-            document.getElementById('maxPrice').value = '';
-            document.getElementById('minPriceSlider').value = 0;
-            document.getElementById('maxPriceSlider').value = 1000;
-            document.getElementById('minPriceValue').textContent = '0';
-            document.getElementById('maxPriceValue').textContent = '1000';
-            document.getElementById('categoryFilter').value = ''
-            document.getElementById('sortBy').value = 'createdAt-desc'
-          }
-        
+
+          document.getElementById('minPrice').value = '';
+          document.getElementById('maxPrice').value = '';
+          document.getElementById('minPriceSlider').value = 0;
+          document.getElementById('maxPriceSlider').value = 1000;
+          document.getElementById('minPriceValue').textContent = '0';
+          document.getElementById('maxPriceValue').textContent = '1000';
+          document.getElementById('categoryFilter').value = ''
+          document.getElementById('sortBy').value = 'createdAt-desc'
+        }
+
 
         // Event listeners
         searchBtn.addEventListener('click', () => fetchProducts(1));
 
-        clearSearchBtn.addEventListener('click',()=>{
-          const params= new URLSearchParams({clearSearch:1});
-          fetch(`viewProducts?${params.toString()}`,{
-            headers:{Accept:'application/json'}
-          }).then(res => {
-            if (!res.ok) throw new Error("Failed to fetch");
-            return res.json();
+        clearSearchBtn.addEventListener('click', () => {
+          const category = categoryFilter.value;
+          const min = minPrice.value;
+          const max = maxPrice.value;
+          const sort = sortBy.value;
+
+          const params = new URLSearchParams();
+
+          // Keep filters
+          if (category) params.set('category', category);
+          if (min) params.set('minPrice', min);
+          if (max) params.set('maxPrice', max);
+          if (sort) params.set('sort', sort);
+
+
+          params.set('clearSearch', '1');
+
+          fetch(`/viewProducts?${params.toString()}`, {
+            headers: { Accept: 'application/json' }
           })
+            .then((res) => {
+              if (!res.ok) throw new Error("Failed to fetch");
+              return res.json();
+            })
             .then((data) => {
               renderProducts(data.products);
               resultsCount.textContent = data.total;
               currentPage = data.page;
               renderPagination(data.page, data.totalPages, params);
-              document.getElementById('searchInput').value = "";
+              searchInput.value = "";
             })
             .catch((err) => {
               console.error("Search clear error:", err.message);
             });
-          });
-         
-        
+        });
+
+
+
 
         applyFiltersBtn.addEventListener('click', () => fetchProducts(1));
 
         clearFiltersBtn.addEventListener('click', () => {
-            const params = new URLSearchParams({clearFilter:1})
-            fetch(`/viewProducts?${params.toString()}`,{
-              headers:{Accept:'application/json'}
-            }).then((res)=>{
-              if(!res.ok) throw new Error('failed to fetch')
-              console.log("fetch clear filter error",res)
-               return res.json()
-            }).then((data)=>{
-              renderProducts(data.products);
-              resultsCount.textContent=data.total,
-              currentPage=data.page;
-              renderPagination(data.page,data.totalPages,params)
-              resetPriceFilters()
-              updateSliderValues();
-            })
-          });
+          const params = new URLSearchParams({ clearFilter: 1 })
+          fetch(`/viewProducts?${params.toString()}`, {
+            headers: { Accept: 'application/json' }
+          }).then((res) => {
+            if (!res.ok) throw new Error('failed to fetch')
+            console.log("fetch clear filter error", res)
+            return res.json()
+          }).then((data) => {
+            renderProducts(data.products);
+            resultsCount.textContent = data.total,
+              currentPage = data.page;
+            renderPagination(data.page, data.totalPages, params)
+            resetPriceFilters()
+            updateSliderValues();
+          })
+        });
 
-        
+
         applyFiltersMobile.addEventListener('click', () => fetchProducts(1));
         clearFiltersMobile.addEventListener('click', () => {
-            window.location.href = '/viewProducts?clear=1';
-             });
+          window.location.href = '/viewProducts?clear=1';
+        });
 
         // Sync mobile sort with desktop
         sortBy.addEventListener('change', () => {

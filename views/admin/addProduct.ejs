@@ -308,6 +308,9 @@
         try {
           const response = await fetch('/admin/addProducts', {
             method: 'POST',
+            headers :{
+                  Accept:'application/json'
+            },
             body: new FormData(document.getElementById('productForm')),
           });
 

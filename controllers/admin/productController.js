@@ -161,6 +161,14 @@ const addProduct = async (req, res) => {
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
     }
+    
+    console.log("Files received:");
+    console.log(req.files.map(file => ({
+      path: file.path,
+      size: file.size,
+      type: file.mimetype
+    })));
+
 
  
     const images = extractImageData(req.files);
@@ -196,7 +204,7 @@ const addProduct = async (req, res) => {
 
 const getEditProduct = async (req, res) => {
   try {
-    const id = req.params.id;
+    const {id} = req.params
     const product = await Product.findOne({ _id: id });
     const category = await Category.find({
       isDeleted: { $ne: true },

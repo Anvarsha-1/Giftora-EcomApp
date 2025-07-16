@@ -161,6 +161,10 @@
             opacity: 0.3;
             margin-bottom: 1rem;
         }
+        .zoom {
+  cursor: zoom-in;
+}
+
 
         .no-results h3 {
             font-size: 1.25rem;
@@ -214,17 +218,19 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                 <div class="space-y-4">
                     <!-- Main Image -->
-                    <div id="image-Container" class="zoom w-full max-w-md border overflow-hidden bg-white">
-                        <img id="mainImage" src="<%= mainImage.url %>" alt=""
-                            class="w-full max-h-[440px] object-contain object-center bg-white" />
-                    </div>
+                <div id="image-Container" class="zoom cursor-zoom-in w-full max-w-md border overflow-hidden bg-white">
+                    <img id="mainImage" src="<%= mainImage.url %>" alt=""
+                        class="w-full max-h-[440px] object-cover object-center bg-white" />
+                </div>
+
 
                     <!-- Thumbnails including Main Image first -->
                     <div class="grid grid-cols-3 gap-4">
                         <!-- Main Image as first thumbnail -->
                         <div class="relative w-[170px] h-[170px] overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
                             data-image="<%= mainImage.url %>">
-                            <img src="<%= mainImage.url %>" alt="" class="w-full h-full object-contain p-2" />
+                            <img src="<%= mainImage.url %>" alt="" class="w-full h-full object-cover p-1" />
+
                         </div>
 
                         <!-- Sub Images -->
@@ -258,6 +264,16 @@
                                     <div class="w-2 h-2 bg-green-600 rounded-full mr-2"></div>
                                     In Stock
                                 </span>
+
+                                <% if (product.quantity <=10) { %>
+                                    <span class="ml-6 text-xs text-orange-600">Hurry! Only <%= product.quantity %> left</span>
+                                    <% } %>
+
+                                <%if (product.quantity> 10) { %>
+                                    <span class="ml-6 text-xs text-gray-600">Only <%= product.quantity %> left!</span>
+                                    <% } %>
+                                    
+   
                                 <% } else { %>
                                     <span class="text-red-600 text-sm font-medium flex items-center">
                                         <div class="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
@@ -266,13 +282,14 @@
                                     <% } %>
                         </div>
                         <div class="flex items-center space-x-4 mb-6">
-                            <span class="text-3xl font-bold text-gray-900">$<%=product.regularPrice%></span>
-                            <span class="text-xl text-gray-500 line-through">$<%=(product.regularPrice*1.4).toFixed() %>
+                            <span class="text-3xl font-bold text-gray-900">₹<%=product.regularPrice%></span>
+                            <span class="text-xl text-gray-500 line-through">₹<%=(product.regularPrice*1.4).toFixed() %>
                                     </span>
                             <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-2 rounded">
                                 <%= Math.round(((product.regularPrice * 1.4 - product.regularPrice) /
                                     (product.regularPrice * 1.4)) * 100)%>%OFF
                             </span>
+                            
                         </div>
                     </div>
 
@@ -389,10 +406,10 @@
                                         <span class="rating-count">(247 reviews)</span>
                                     </div>
                                     <div class="product-prices">
-                                        <span class="current-price">$<%= relatedProducts[i].regularPrice %></span>
-                                        <span class="original-price">$<%= (relatedProducts[i].regularPrice *
+                                        <span class="current-price">₹<%= relatedProducts[i].regularPrice %></span>
+                                        <span class="original-price">₹<%= (relatedProducts[i].regularPrice *
                                                 1.4).toFixed(0) %></span>
-                                        <span class="price-savings">Save $<%= (relatedProducts[i].regularPrice *
+                                        <span class="price-savings">Save ₹<%= (relatedProducts[i].regularPrice *
                                                 0.4).toFixed(0) %></span>
                                     </div>
 

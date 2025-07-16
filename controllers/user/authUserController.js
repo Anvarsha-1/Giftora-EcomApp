@@ -30,7 +30,6 @@ const loadPLandingPage = async (req, res) => {
   if (req.session.user) return res.redirect('/home')
   try {
     const categories = await category.find({ isListed: true });
-
     let productData = await product.find({
       isBlocked: false,
       isDeleted: false,
@@ -56,6 +55,7 @@ const loadPLandingPage = async (req, res) => {
 
     return res.render("user/Home-page", {
       user: null,
+      firstName:null,
       products: productData,
       bestselling: bestsellingData,
       flashSales: flashSalesData,
@@ -71,6 +71,7 @@ const loadPLandingPage = async (req, res) => {
 const loadSignUp = async (req, res) => {
   if (req.session.user) return res.redirect('/home')
   try {
+
     return res.render("user/signUp-page", {
       formData: {},
       errors: {},
@@ -286,7 +287,8 @@ const resendOtp = async (req, res) => {
 const loadLogin = async (req, res) => {
   if (req.session.user) return res.redirect('/home')
   try {
-    res.render("login-page");
+     const error = req.flash('error')
+    res.render("login-page",{success:null,message:"",error:error || []});
   } catch (error) {
     console.log("Error loading login page");
     return res.redirect("/PageNotFound").status(404);
@@ -438,7 +440,7 @@ const otpForgotPassword = async (req, res) => {
 
     req.session.otpVerified = true
     req.flash('success', 'OTP verified successfully!');
-    return res.redirect('/reset-password');
+    return res.redirect('/reset-password'); 
   } catch (error) {
     console.log('Error verifying OTP:', error.message);
     return res.render('user/error-page');
@@ -541,6 +543,7 @@ const loadHomePage = async (req, res) => {
 
       return res.render("user/Home-page", {
         user: userData,
+        firstName :userData.firstName,
         products: newProductData,
         bestselling: bestsellingData,
         flashSales: flashSalesData

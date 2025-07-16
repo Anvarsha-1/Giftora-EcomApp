@@ -307,8 +307,28 @@
             </div>
         </div>
     </div>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <% if (showSwal && message) { %>
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'error',
+            text: <%- JSON.stringify(message) %>,
+            confirmButtonText: 'Go Back',
+            confirmButtonColor: '#2563eb',
+        }).then(() => {
+            window.location.href = '/viewProducts';
+        });
+    </script>
+    <% } %>
 
     <script>
+
+
+
+
         function refreshPage() {
             const button = document.querySelector('.btn-primary');
             const spinner = button.querySelector('.loading-spinner');
@@ -338,8 +358,7 @@
             }
         }
 
-        // Uncomment the line below to enable auto-retry
-         autoRetry();
+      
 
         // Add some interactive feedback
         document.addEventListener('DOMContentLoaded', function () {
