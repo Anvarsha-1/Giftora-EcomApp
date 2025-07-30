@@ -481,6 +481,7 @@
               <th>Product Name</th>
               <th>Category</th>
               <th>Price</th>
+              <th>Sales Price</th>
               <th>Quantity</th>
               <th>Status</th>
               <th>Actions</th>
@@ -505,22 +506,25 @@
                 </td>
                 <td>₹<%= product.regularPrice %>
                 </td>
+                <td>₹<%= product.salesPrice || 'N/A' %>
+                </td>
                 <td>
                   <%= product.quantity %>
                 </td>
                 <td>
-                  <span class="status-<%= product.status ? 'listed' : 'unlisted' %>">
-                    <%= product.status ? 'Listed' : 'Unlisted' %>
+                  <span class="status-label status-<%= product.isBlocked ? 'unlisted' : 'listed' %>">
+                    <%= product.isBlocked ? 'Unlisted' : 'Listed' %>
                   </span>
                 </td>
+
                 <td>
                   <a href="/admin/editProduct/<%= product._id %>">
                     <button class="action-btn edit">Edit</button>
                   </a>
                   <button class="action-btn delete" data-id="<%= product._id %>">Delete</button>
                   <button class="action-btn block" data-id="<%= product._id %>"
-                    data-status="<%= product.status ? 'listed' : 'unlisted' %>">
-                    <%= product.status ? 'Block' : 'Unblock' %>
+                    data-status="<%= product.isBlocked ?  'unlisted' : 'listed' %>">
+                    <%= product.isBlocked ?   'Unblock':'Block' %>
                   </button>
                   <button class="action-btn offer" data-id="<%= product._id %>">Add Offer</button>
                 </td>
@@ -558,22 +562,22 @@
   <script>
 
     const searchForm = document.getElementById("searchForm");
-      searchForm.addEventListener("submit", (e) => {
-        const clearButton = e.submitter && e.submitter.name === "clear";
-        if (clearButton) {
+    searchForm.addEventListener("submit", (e) => {
+      const clearButton = e.submitter && e.submitter.name === "clear";
+      if (clearButton) {
+        e.preventDefault();
+        window.location.href = "/admin/products?page=1";
+      } else {
+        // Reset to page 1 on new search
+        const searchInput = document.getElementById("searchInput").value.trim();
+        if (searchInput) {
           e.preventDefault();
-          window.location.href = "/admin/products?page=1";
-        } else {
-          // Reset to page 1 on new search
-          const searchInput = document.getElementById("searchInput").value.trim();
-          if (searchInput) {
-            e.preventDefault();
-            window.location.href = `/admin/products?page=1&search=${encodeURIComponent(searchInput)}`;
-          }
+          window.location.href = `/admin/products?page=1&search=${encodeURIComponent(searchInput)}`;
         }
-      })
-    
- 
+      }
+    })
+
+
 
 
 
@@ -716,7 +720,7 @@
     }
     window.addEventListener("resize", () => updateLayout(document.body.classList.contains("sidebar-collapsed")));
 
-    
+
     function toggleProductStatus(id, currentStatus) {
       Swal.fire({
         title: `Are you sure you want to ${currentStatus === 'listed' ? 'block' : 'unblock'} this product?`,
@@ -728,28 +732,33 @@
         cancelButtonText: 'Cancel'
       }).then((result) => {
         if (result.isConfirmed) {
-          
+
           $.ajax({
             url: `/admin/blockProduct/${id}`,
             method: 'PATCH',
             success: function (response) {
-              if (response.success) {
+             if (response.success) {
                 const button = document.querySelector(`.action-btn.block[data-id="${id}"]`);
-                const statusCell = button.closest('tr').querySelector('td:nth-child(6) span');
-                const newStatus = currentStatus === 'listed' ? 'unlisted' : 'listed';
+                const statusCell = button.closest('tr').querySelector('.status-label');
+                const isBlocked = response.product.isBlocked;
+
+                const newStatus = isBlocked ? 'unlisted' : 'listed';
 
                 button.dataset.status = newStatus;
-                button.textContent = newStatus === 'listed' ? 'Block' : 'Unblock';
-                statusCell.className = `status-${newStatus}`;
-                statusCell.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                button.textContent = isBlocked ? 'Unblock' : 'Block';
+
+                if (statusCell) {
+                  statusCell.className = `status-label status-${newStatus}`;
+                  statusCell.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                }
 
                 Swal.fire({
                   icon: 'success',
-                  title: `Product ${newStatus === 'listed' ? 'unblocked' : 'blocked'} successfully`,
+                  title: `Product ${isBlocked ? 'blocked' : 'unblocked'} successfully`,
                   showConfirmButton: false,
                   timer: 1500
                 });
-              } else {
+              }else {
                 Swal.fire({
                   icon: 'error',
                   title: 'Error',
@@ -793,7 +802,7 @@
                   text: 'Product has been deleted.',
                   showConfirmButton: false,
                   timer: 1500
-                }).then(()=>{
+                }).then(() => {
                   location.reload()
                 })
               } else {

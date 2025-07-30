@@ -172,6 +172,12 @@
                                         <span class="error" id="regularPrice-error"></span>
                                     </div>
                                     <div class="form-group">
+                                        <label for="salesPrice">Sales Price</label>
+                                        <input type="number" id="salesPrice" name="salesPrice" min="0" step="1"
+                                            value="<%= formData?.salesPrice ?? '' %>" />
+                                        <span class="error" id="salesPrice-error"></span>
+                                    </div>
+                                    <div class="form-group">
                                         <label for="status">Status</label>
                                         <select id="status" name="status">
                                             <option value="Available" <%=formData?.status==='Available' ? 'selected'
@@ -189,13 +195,15 @@
                                             <% for (let i=0; i < 3; i++) { %>
                                                 <% const existingImage=formData?.productImage?.[i] || null; %>
                                                     <div style="position: relative;">
-                                                        <input type="file" id="image<%= i + 1 %>" name="productImage"
+                                                        <input type="file" id="image<%= i + 1 %>" name="productImage[]"
                                                             accept="image/png,image/jpeg,image/jpg" />
                                                         <img class="image-preview" id="preview<%= i + 1 %>"
                                                             src="<%= existingImage?.url || '#' %>"
-                                                            alt="Preview image <%= i + 1 %> for <%= formData?.productName || 'product' %>"style="<%= existingImage?.url ? 'display: block;' : 'display: none;' %>" />
+                                                            alt="Preview image <%= i + 1 %> for <%= formData?.productName || 'product' %>"
+                                                            style="<%= existingImage?.url ? 'display: block;' : 'display: none;' %>" />
                                                         <button type="button" class="remove-image-btn"
-                                                            data-index="<%= i + 1 %>"style="<%= existingImage?.url ? 'display: block;' : 'display: none;' %>">×</button>
+                                                            data-index="<%= i + 1 %>"
+                                                            style="<%= existingImage?.url ? 'display: block;' : 'display: none;' %> ">×</button>
                                                         <input type="hidden" name="existingImages[]"
                                                             id="existingImage<%= i + 1 %>"
                                                             value="<%= existingImage?.public_id || '' %>" />
@@ -378,7 +386,7 @@
         document.getElementById('productForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             let valid = true;
-        
+
             // Reset error messages
             document.querySelectorAll('.error').forEach((err) => (err.textContent = ''));
             serverError.style.display = 'none';
@@ -386,8 +394,7 @@
             // Validate product name
             const productName = document.getElementById('productName');
             if (!productName.value.trim()) {
-                document.getElementById('productName-error').textContent = 'Product name is required.' ;
-                
+                document.getElementById('productName-error').textContent = 'Product name is required.';
                 valid = false;
             }
 
@@ -395,7 +402,6 @@
             const description = document.getElementById('description');
             if (!description.value.trim()) {
                 document.getElementById('description-error').textContent = 'Description is required.';
-               
                 valid = false;
             }
 
@@ -420,19 +426,33 @@
                 valid = false;
             }
 
+            // Validate sales price
+            const salesPrice = document.getElementById('salesPrice');
+            if (!salesPrice.value || salesPrice.value < 0) {
+                document.getElementById('salesPrice-error').textContent = 'Please enter a valid sales price.';
+                valid = false;
+            }
+            if (parseFloat(salesPrice.value) >= parseFloat(regularPrice.value)) {
+                document.getElementById('salesPrice-error').textContent = 'Sales price must be less than regular price.';
+                valid = false;
+            }
+
             // Validate images
             if (!validateImages()) {
                 valid = false;
             }
 
-               
+            if (!valid) {
+                return;
+            }
+
             submitButton.disabled = true;
             submitButton.textContent = 'Updating...';
 
             const formData = new FormData(document.getElementById('productForm'));
 
             try {
-                const response = await fetch(`/admin/editProduct/<%= formData?._id || '' %>`,{
+                const response = await fetch(`/admin/editProduct/<%= formData?._id || '' %>`, {
                     method: 'POST',
                     body: formData,
                 });

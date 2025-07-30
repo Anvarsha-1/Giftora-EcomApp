@@ -72,10 +72,13 @@ const loadSignUp = async (req, res) => {
   if (req.session.user) return res.redirect('/home')
   try {
 
+    const error = req.query.error || null
+
     return res.render("user/signUp-page", {
       formData: {},
       errors: {},
       message: "",
+      error,
     });
   } catch (error) {
     console.log("Sign Up page not found");
@@ -138,6 +141,8 @@ const signUp = async (req, res) => {
       userData: req.session.userData,
     });
 
+    const error = req.query.error ||null
+
     req.session.save((err) => {
       if (err) {
         console.error("Session save error:", err);
@@ -145,6 +150,7 @@ const signUp = async (req, res) => {
           message: "Failed to save session. Please try again.",
           formData: req.body,
           errors: {},
+          error,
         });
       }
       res.redirect("/verify-otp");
@@ -303,17 +309,25 @@ const login = async (req, res) => {
     console.log(email, password);
     const findUser = await User.findOne({ email: email });
 
-    if(findUser.isAdmin){
-      return res
-      .status(404)
-      .json({success:false ,message:"Access Denied please login through admin side"}) 
-    }
 
     if (!findUser) {
       return res
         .status(404)
         .json({ success: false, message: "User not Found" });
     }
+    
+    if (findUser.googleId){
+      return res
+      .json({success:false,message:"Please login thought google authentication"})
+    }
+    
+
+    if(findUser.isAdmin){
+      return res
+      .status(404)
+      .json({success:false ,message:"Access Denied please login through admin side"}) 
+    }
+
     if (findUser.isBlocked) {
       return res
         .status(403)
@@ -563,19 +577,7 @@ const loadHomePage = async (req, res) => {
 };
 
 
-const myAccountDetails = async(req,res)=>{
-  try{
-    const id  = req.session.user
-      
-    const userData = await User.findById(id);
-   
-    return res.render('myAccount',{user:userData})
 
-  }
-  catch(error){
-
-  }
-}
 
 const logout = async (req, res) => {
   try {
@@ -608,7 +610,7 @@ module.exports = {
   loadResetPassword,
   validateResetPassword,
   loadHomePage,
-  myAccountDetails,
+  
 };
 
 

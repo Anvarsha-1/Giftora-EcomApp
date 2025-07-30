@@ -125,7 +125,7 @@ const viewProductDetails = async (req, res) => {
         
      return res.render('user/productDetails', {
       user:userData,
-       firstName: userData?.firstName || "",
+      firstName: userData?.firstName || "",
       product:productData,
       relatedProducts:relatedProducts,
       mainImage,

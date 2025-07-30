@@ -8,24 +8,68 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+   <link rel="stylesheet" href="/css/user/productListing.css">
+  <!-- Add custom CSS for toast -->
+  <style>
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
+    .toast {
+      display: none;
+      padding: 12px 16px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 4s forwards;
+    }
 
-  <link rel="stylesheet" href="/css/user/productListing.css">
+    .toast.success {
+      border-left: 4px solid #10b981;
+    }
+
+    .toast.error {
+      border-left: 4px solid #ef4444;
+    }
+
+    .toast.show {
+      display: flex;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
   <%-include('../partials/user/newheader.ejs') %>
 
-
-
-
-
     <div class="container">
       <!-- Sidebar Filters (Desktop) -->
       <aside class="sidebar">
-
         <nav class="breadcrumb">
-          <a href="/home">Home</a>
+          <a href="/home" class="home-breadcrumb" style="color:rgb(73, 73, 73)">Home</a>
           <span class="breadcrumb-separator">/</span>
           <span>Shop</span>
         </nav>
@@ -57,15 +101,12 @@
                 <i class="fas fa-list"></i> Category
               </label>
               <select id="categoryFilter" class="filter-select">
-
                 <option value="">All Categories</option>
                 <% cat.forEach((category)=> { %>
                   <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : '' %>>
                     <%= category.name %>
                   </option>
-
                   <% }) %>
-
               </select>
             </div>
 
@@ -126,7 +167,6 @@
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
               </select>
-
             </div>
 
             <div class="filter-group">
@@ -158,8 +198,6 @@
       <!-- Main Content -->
       <main class="main-content">
         <div class="page-header">
-
-
         </div>
 
         <!-- Results Section -->
@@ -180,7 +218,8 @@
                   <div class="product-image">
                     <% if (products[i].productImage) { %>
                       <a href="/productsDetails/<%= products[i]._id %>">
-                        <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>" class="product-img">
+                        <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>"
+                          class="product-img">
                       </a>
                       <% } else { %>
                         <div
@@ -212,11 +251,12 @@
                       <span class="rating-count">(247 reviews)</span>
                     </div>
                     <div class="product-prices">
-                      <span class="current-price">₹<%= products[i].regularPrice %></span>
-                      <span class="original-price">₹<%= (products[i].regularPrice * 1.4).toFixed(0) %></span>
-                      <span class="price-savings">Save ₹<%= (products[i].regularPrice * 0.4).toFixed(0) %></span>
+                      <span class="current-price">₹<%= products[i].salesPrice %></span>
+                      <span class="original-price" id="price">₹<%= products[i].regularPrice %></span>
+                      <span class="price-savings">Save ₹<%= (products[i].regularPrice -
+                          products[i].salesPrice).toFixed(0) %></span>
                     </div>
-                    <button class="add-to-cart">
+                    <button type="button" class="add-to-cart" data-id="<%=products[i]._id %>" onclick="addToCart(this)">
                       <i class="fas fa-shopping-cart"></i>
                       <span>Add to Cart</span>
                     </button>
@@ -260,8 +300,10 @@
     </div>
     <%-include('../partials/user/footer.ejs') %>
 
-      <script>
+      <!-- Toast Container -->
+      <div id="toastContainer" class="toast-container"></div>
 
+      <script>
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
@@ -308,7 +350,6 @@
           return isNaN(num) ? fallback : num;
         };
 
-
         // Fetch products with filters and page
         async function fetchProducts(page = 1) {
           const search = searchInput.value.trim();
@@ -334,7 +375,7 @@
           // If either price field is filled, apply filtering
           if (hasMin || hasMax) {
             if (!hasMin) min = 0;
-            if (!hasMax) max = 100000; // Arbitrary large max, adjust as needed
+            if (!hasMax) max = 100000; 
 
             if (min > max) [min, max] = [max, min];
 
@@ -364,7 +405,6 @@
       </div>`;
           }
         }
-
 
         // Render products
         function renderProducts(products) {
@@ -399,12 +439,12 @@
                           <span class="rating-count">(247 reviews)</span>
                         </div>
                         <div class="product-prices">
-                          <span class="current-price">₹${p.regularPrice}</span>
-                          <span class="original-price">₹${(p.regularPrice * 1.4).toFixed(0)}</span>
-                          <span class="price-savings">Save ₹${(p.regularPrice * 0.4).toFixed(0)}</span>
+                          <span class="current-price">₹${p.salesPrice}</span>
+                          <span class="original-price">₹${p.regularPrice}</span>
+                          <span class="price-savings">Save ₹${(p.regularPrice - p.salesPrice).toFixed(0)}</span>
                         </div>
                         ${p.status === 'Available' ? `
-                    <button class="add-to-cart">
+                    <button type="button" data-id="${p._id}" onclick="addToCart(this)" class="add-to-cart">
                       <i class="fas fa-shopping-cart"></i>
                       <span>Add to Cart</span>
                     </button>`: `
@@ -418,21 +458,12 @@
                   `).join('');
         }
 
-
-
-       
-
-  document.addEventListener('click', function (e) {
-    const img = e.target.closest('.product-img');
-    if (img && img.dataset.id) {
-      window.location.href = `/productsDetails/${img.dataset.id}`;
-    }
-  });
-
-
-
-
-
+        document.addEventListener('click', function (e) {
+          const img = e.target.closest('.product-img');
+          if (img && img.dataset.id) {
+            window.location.href = `/productsDetails/${img.dataset.id}`;
+          }
+        });
 
         // Render pagination
         function renderPagination(currentPage, totalPages, params) {
@@ -476,16 +507,12 @@
           maxPriceValue.textContent = maxPriceSlider.value;
         }
 
-
-
         // Toggle mobile filter panel
         filterToggleBtn.addEventListener('click', () => {
           mobileFilterPanel.classList.toggle('active');
         });
 
-
         function resetPriceFilters() {
-
           document.getElementById('minPrice').value = '';
           document.getElementById('maxPrice').value = '';
           document.getElementById('minPriceSlider').value = 0;
@@ -495,7 +522,6 @@
           document.getElementById('categoryFilter').value = ''
           document.getElementById('sortBy').value = 'createdAt-desc'
         }
-
 
         // Event listeners
         searchBtn.addEventListener('click', () => fetchProducts(1));
@@ -513,7 +539,6 @@
           if (min) params.set('minPrice', min);
           if (max) params.set('maxPrice', max);
           if (sort) params.set('sort', sort);
-
 
           params.set('clearSearch', '1');
 
@@ -536,9 +561,6 @@
             });
         });
 
-
-
-
         applyFiltersBtn.addEventListener('click', () => fetchProducts(1));
 
         clearFiltersBtn.addEventListener('click', () => {
@@ -547,7 +569,7 @@
             headers: { Accept: 'application/json' }
           }).then((res) => {
             if (!res.ok) throw new Error('failed to fetch')
-            console.log("fetch clear filter error", res)
+
             return res.json()
           }).then((data) => {
             renderProducts(data.products);
@@ -558,7 +580,6 @@
             updateSliderValues();
           })
         });
-
 
         applyFiltersMobile.addEventListener('click', () => fetchProducts(1));
         clearFiltersMobile.addEventListener('click', () => {
@@ -605,10 +626,68 @@
 
         // Initial fetch
         fetchProducts(currentPage);
-
-
       </script>
 
+   
+      <script>
+        // Show custom toast notification
+        function showToast(message, type = 'success') {
+          const toastContainer = document.getElementById('toastContainer');
+          const toast = document.createElement('div');
+          toast.className = `toast ${type}`;
+
+          const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
+          const iconColor = type === 'success' ? 'text-green-600' : 'text-red-600';
+
+          toast.innerHTML = `
+        <div class="flex items-center gap-3">
+          <i class="${icon} ${iconColor}"></i>
+          <span class="text-gray-900 font-medium">${message}</span>
+          <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-gray-400 hover:text-gray-600">
+            <i class="ri-close-line"></i>
+          </button>
+        </div>
+      `;
+
+          toastContainer.appendChild(toast);
+
+          // Show toast
+          setTimeout(() => toast.classList.add('show'), 100);
+
+          // Auto remove after 4 seconds
+          setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+          }, 4000);
+        }
+
+        async function addToCart(button) {
+          const productId = button.getAttribute('data-id');
+
+          try {
+            const response = await fetch('/cart/addToCart', {
+              method: "POST",
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ productId, quantity: 1 })
+            });
+            const data = await response.json();
+            if (data.success) {
+              showToast('Product added to cart', 'success');
+              updateCartCount()
+            } else {
+              if (data.message === "User not logged in") {
+                window.location.href = '/login';
+              }
+              showToast(data.message || 'Could not add product to cart', 'error');
+            }
+          } catch (err) {
+            console.error(err);
+            showToast('Something went wrong. Please try again.', 'error');
+          }
+        }
+      </script>
 </body>
 
 </html>

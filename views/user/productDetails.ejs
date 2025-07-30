@@ -5,50 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Gift Box - Luxury Collection</title>
-    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="stylesheet" href="/styles/output.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Add Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         :where([class^="ri-"])::before {
             content: "\f3c2";
         }
 
+        /* Grid layout for products */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 1.5rem;
         }
 
-        /* Card layout: full height, vertical stack */
+        /* Product card styling */
         .product-card {
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             height: 100%;
         }
 
-        /* Card hover effect */
-        .product-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .product-image {
+            position: relative;
+            overflow: hidden;
         }
 
-        .discount-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: #ef4444;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 500;
+        .product-image img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
         }
 
         .wishlist-btn {
@@ -68,7 +65,6 @@
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
         }
 
-        /* Info container grows to fill space */
         .product-info {
             padding: 1rem;
             display: flex;
@@ -125,7 +121,77 @@
             font-weight: 500;
         }
 
-        /* Button pushed to bottom of the card */
+        /* Custom Add to Cart button styling */
+        .custom-add-to-cart {
+            display: block;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            margin-top: auto;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-add-to-cart:hover {
+            background-color: #45a049;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: #6b7280;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .no-results h3 {
+            font-size: 1.25rem;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            font-size: 1rem;
+            color: #6b7280;
+        }
+
+        /* Card hover effect */
+        .product-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Info container grows to fill space */
+        .product-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
+        }
+
         .add-to-cart {
             margin-top: auto;
             width: 100%;
@@ -142,65 +208,99 @@
             justify-content: center;
             gap: 0.5rem;
             transition: background 0.3s ease;
+            opacity: 1;
         }
 
         .add-to-cart:hover {
             background: #2563eb;
         }
 
-        /* Empty state */
-        .no-results {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 2rem;
+        /* Toast Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .no-results i {
-            font-size: 3rem;
-            color: #6b7280;
-            opacity: 0.3;
-            margin-bottom: 1rem;
-        }
-        .zoom {
-  cursor: zoom-in;
-}
-
-
-        .no-results h3 {
-            font-size: 1.25rem;
-            color: #1f2937;
-            margin-bottom: 0.5rem;
+        .toast {
+            display: none;
+            padding: 12px 16px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 4s forwards;
         }
 
-        .no-results p {
-            font-size: 1rem;
-            color: #6b7280;
+        .toast.success {
+            border-left: 4px solid #10b981;
         }
-    </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                        secondary: '#64748b'
-                    },
-                    borderRadius: {
-                        'none': '0px',
-                        'sm': '4px',
-                        DEFAULT: '8px',
-                        'md': '12px',
-                        'lg': '16px',
-                        'xl': '20px',
-                        '2xl': '24px',
-                        '3xl': '32px',
-                        'full': '9999px',
-                        'button': '8px'
-                    }
-                }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.show {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
             }
         }
-    </script>
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+            }
+        }
+
+        /* Quantity Selector */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .quantity-btn {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .quantity-btn:hover:enabled {
+            border-color: #3b82f6;
+            background-color: #f3f4f6;
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quantity-display {
+            width: 3rem;
+            text-align: center;
+            font-weight: 500;
+            font-size: 1rem;
+            color: #1f2937;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 min-h-screen">
@@ -218,11 +318,11 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                 <div class="space-y-4">
                     <!-- Main Image -->
-                <div id="image-Container" class="zoom cursor-zoom-in w-full max-w-md border overflow-hidden bg-white">
-                    <img id="mainImage" src="<%= mainImage.url %>" alt=""
-                        class="w-full max-h-[440px] object-cover object-center bg-white" />
-                </div>
-
+                    <div id="image-Container"
+                        class="zoom cursor-zoom-in w-full max-w-md border overflow-hidden bg-white">
+                        <img id="mainImage" src="<%= mainImage.url %>" alt=""
+                            class="w-full max-h-[440px] object-cover object-center bg-white" />
+                    </div>
 
                     <!-- Thumbnails including Main Image first -->
                     <div class="grid grid-cols-3 gap-4">
@@ -230,7 +330,6 @@
                         <div class="relative w-[170px] h-[170px] overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
                             data-image="<%= mainImage.url %>">
                             <img src="<%= mainImage.url %>" alt="" class="w-full h-full object-cover p-1" />
-
                         </div>
 
                         <!-- Sub Images -->
@@ -246,7 +345,7 @@
                 <div class="space-y-6">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-900 mb-4">
-                            <%=product.productName %>
+                            <%= product.productName %>
                         </h1>
                         <div class="flex items-center space-x-4 mb-4">
                             <div class="flex items-center">
@@ -264,76 +363,56 @@
                                     <div class="w-2 h-2 bg-green-600 rounded-full mr-2"></div>
                                     In Stock
                                 </span>
-
-                                <% if (product.quantity <=10) { %>
-                                    <span class="ml-6 text-xs text-orange-600">Hurry! Only <%= product.quantity %> left</span>
+                                <% if (product.quantity> 0) { %>
+                                    <span class="ml-6 text-sm text-gray-600">Only <%= product.quantity %> left!</span>
                                     <% } %>
-
-                                <%if (product.quantity> 10) { %>
-                                    <span class="ml-6 text-xs text-gray-600">Only <%= product.quantity %> left!</span>
-                                    <% } %>
-                                    
-   
-                                <% } else { %>
-                                    <span class="text-red-600 text-sm font-medium flex items-center">
-                                        <div class="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
-                                        Out of Stock
-                                    </span>
-                                    <% } %>
+                                        <% } else { %>
+                                            <span class="text-red-600 text-sm font-medium flex items-center">
+                                                <div class="w-2 h-2 bg-red-600 rounded-full mr-2"></div>
+                                                Out of Stock
+                                            </span>
+                                            <% } %>
                         </div>
                         <div class="flex items-center space-x-4 mb-6">
-                            <span class="text-3xl font-bold text-gray-900">₹<%=product.regularPrice%></span>
-                            <span class="text-xl text-gray-500 line-through">₹<%=(product.regularPrice*1.4).toFixed() %>
+                            <span class="text-3xl font-bold text-gray-900">₹<%= product.salesPrice ||
+                                    product.regularPrice %></span>
+                            <span class="text-xl text-gray-500 line-through">₹<%= (product.regularPrice).toFixed() %>
                                     </span>
                             <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-2 rounded">
-                                <%= Math.round(((product.regularPrice * 1.4 - product.regularPrice) /
-                                    (product.regularPrice * 1.4)) * 100)%>%OFF
+                                Save ₹<%= (product.regularPrice - (product.salesPrice ||
+                                    product.regularPrice)).toFixed(0) %>
                             </span>
-                            
                         </div>
                     </div>
 
                     <div class="space-y-4">
                         <div>
                             <h3 class="text-sm font-medium text-gray-900 mb-2">Quantity</h3>
-                            <div class="flex items-center space-x-3">
-                                <button
-                                    class="w-10 h-10 border border-gray-300 rounded-button flex items-center justify-center hover:border-primary transition-colors">
-                                    <i class="ri-subtract-line"></i>
+                            <div class="quantity-selector">
+                                <button class="quantity-btn" id="decreaseQty" title="Decrease quantity">
+                                    <i data-lucide="minus">-</i>
                                 </button>
-                                <span class="w-12 text-center font-medium">1</span>
-                                <button
-                                    class="w-10 h-10 border border-gray-300 rounded-button flex items-center justify-center hover:border-primary transition-colors">
-                                    <i class="ri-add-line"></i>
+                                <span class="quantity-display" id="quantityDisplay">1</span>
+                                <button class="quantity-btn" id="increaseQty" title="Increase quantity">
+                                    <i data-lucide="plus">+</i>
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex space-x-4">
-                        <% const inStock=product.status?.toLowerCase().trim()==="available" ; %>
-                            <!-- Add to Cart Button -->
-                            <button
-                                class="flex-1 py-3 px-6 rounded-button font-medium whitespace-nowrap transition-colors 
-                             <%= inStock ? 'bg-primary text-white hover:bg-blue-700' : 'bg-gray-300 text-gray-500 cursor-not-allowed' %>"
-                                <%=inStock ? '' : 'disabled' %>>
-                                Add to Cart
-                            </button>
+                    <!-- Buttons Section -->
+                    <div class="flex items-center gap-3 mt-4">
+                        <!-- Add to Cart -->
+                        <button type="button" data-id="<%= product._id %>" id="addToCartBtn"
+                            class="w-44 h-12 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-all">
+                            Add to Cart
+                        </button>
 
-                            <!-- Buy Now Button -->
-                            <button
-                                class="flex-1 py-3 px-6 rounded-button font-medium whitespace-nowrap transition-colors 
-                             <%= inStock ? 'bg-gray-900 text-white hover:bg-gray-800' : 'bg-gray-300 text-gray-500 cursor-not-allowed' %>"
-                                <%=inStock ? '' : 'disabled' %>>
-                                Buy Now
-                            </button>
-
-                            <button
-                                class="p-3 border border-gray-300 rounded-button hover:border-primary hover:text-primary transition-colors">
-                                <div class="w-6 h-6 flex items-center justify-center">
-                                    <i class="ri-heart-line"></i>
-                                </div>
-                            </button>
+                        <!-- Wishlist -->
+                        <button
+                            class="w-12 h-12 border border-gray-300 rounded hover:border-red-500 hover:text-red-500 flex items-center justify-center">
+                            <i class="ri-heart-line text-xl"></i>
+                        </button>
                     </div>
 
                     <div class="border-t pt-6">
@@ -374,49 +453,51 @@
                     <% if (relatedProducts && relatedProducts.length> 0) { %>
                         <% for (let i=0; i < relatedProducts.length; i++) { %>
                             <div class="product-card">
-                                <div class="product-image w-full overflow-hidden rounded-md">
+                                <div class="product-image w-full overflow-hidden rounded-md relative">
                                     <% if (relatedProducts[i].productImage) { %>
-                                        <a href="/productsDetails/<%=relatedProducts[i]._id %>">
-                                        <img src="<%= relatedProducts[i].productImage[0]?.url %>"
-                                            alt="<%= relatedProducts[i].productName %>"
-                                            class="w-full h-60 object-cover object-center rounded-t-md">
-                                            </a>
+                                        <a href="/productsDetails/<%= relatedProducts[i]._id %>">
+                                            <img src="<%= relatedProducts[i].productImage[0]?.url %>"
+                                                alt="<%= relatedProducts[i].productName %>"
+                                                class="w-full h-60 object-cover object-center rounded-t-md">
+                                        </a>
                                         <% } else { %>
                                             <div class="no-image-placeholder">
                                                 <i class="fas fa-image"></i>
                                             </div>
                                             <% } %>
-                                              
                                                 <button class="wishlist-btn" title="Add to Wishlist">
                                                     <i class="far fa-heart"></i>
                                                 </button>
                                 </div>
-
-                                <!-- Make this container grow to fill space -->
-                                <div class="product-info">
-                                    <h3 class="product-name">
-                                        <%= relatedProducts[i].productName %>
-                                    </h3>
-                                    <div class="product-rating">
-                                        <div class="stars">
-                                            <i class="fas fa-star star"></i><i class="fas fa-star star"></i><i
-                                                class="fas fa-star star"></i><i class="fas fa-star star"></i><i
-                                                class="fas fa-star star"></i>
+                                <div class="product-info p-4 flex flex-col justify-between">
+                                    <div>
+                                        <h3 class="product-name">
+                                            <%= relatedProducts[i].productName %>
+                                        </h3>
+                                        <div class="product-rating">
+                                            <div class="stars">
+                                                <i class="fas fa-star star"></i><i class="fas fa-star star"></i><i
+                                                    class="fas fa-star star"></i><i class="fas fa-star star"></i><i
+                                                    class="fas fa-star star"></i>
+                                            </div>
+                                            <span class="rating-count">(247 reviews)</span>
                                         </div>
-                                        <span class="rating-count">(247 reviews)</span>
+                                        <div class="product-prices">
+                                            <span class="current-price">₹<%= relatedProducts[i].salesPrice ||
+                                                    relatedProducts[i].regularPrice %></span>
+                                            <span class="original-price">₹<%=
+                                                    (relatedProducts[i].regularPrice).toFixed(0) %></span>
+                                            <span class="price-savings">Save ₹<%= (relatedProducts[i].regularPrice -
+                                                    (relatedProducts[i].salesPrice ||
+                                                    relatedProducts[i].regularPrice)).toFixed(0) %></span>
+                                        </div>
                                     </div>
-                                    <div class="product-prices">
-                                        <span class="current-price">₹<%= relatedProducts[i].regularPrice %></span>
-                                        <span class="original-price">₹<%= (relatedProducts[i].regularPrice *
-                                                1.4).toFixed(0) %></span>
-                                        <span class="price-savings">Save ₹<%= (relatedProducts[i].regularPrice *
-                                                0.4).toFixed(0) %></span>
-                                    </div>
-
-                                    <!-- 👇 Add mt-auto class to push this down -->
-                                    <button class="add-to-cart">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        <span>Add to Cart</span>
+                                    <button type="button" onclick="addToCart(this)"
+                                        data-id="<%= relatedProducts[i]._id %>"
+                                        style="background-color: #007BFF; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; font-size: 16px; font-weight: 500;"
+                                        onmouseover="this.style.backgroundColor='#0056b3'"
+                                        onmouseout="this.style.backgroundColor='#007BFF'">
+                                        Add to Cart
                                     </button>
                                 </div>
                             </div>
@@ -445,10 +526,9 @@
                     <h3 class="text-xl font-semibold text-gray-900 mb-4">Product Description</h3>
                     <p class="text-gray-700 leading-relaxed mb-4">
                         Our Premium Luxury Gift Box Collection represents the pinnacle of elegant packaging design.
-                        Crafted
-                        with meticulous attention to detail, each box features premium materials and sophisticated
-                        finishing
-                        that makes every gift-giving moment truly special.
+                        Crafted with meticulous attention to detail, each box features premium materials and
+                        sophisticated
+                        finishing that makes every gift-giving moment truly special.
                     </p>
                     <p class="text-gray-700 leading-relaxed mb-4">
                         The collection includes various sizes to accommodate different gift types, from jewelry and
@@ -457,8 +537,7 @@
                     </p>
                     <p class="text-gray-700 leading-relaxed">
                         Whether you're celebrating birthdays, anniversaries, holidays, or any special occasion, these
-                        gift
-                        boxes elevate the presentation and create lasting memories for your loved ones.
+                        gift boxes elevate the presentation and create lasting memories for your loved ones.
                     </p>
                 </div>
 
@@ -686,70 +765,70 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div id="reviewModal"
-                class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-                <div class="bg-white rounded-lg max-w-md w-full p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-semibold text-gray-900">Write a Review</h3>
-                        <button id="closeModal" class="text-gray-400 hover:text-gray-600">
-                            <div class="w-6 h-6 flex items-center justify-center">
-                                <i class="ri-close-line"></i>
+                <div id="reviewModal"
+                    class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-lg max-w-md w-full p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-semibold text-gray-900">Write a Review</h3>
+                            <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                                <div class="w-6 h-6 flex items-center justify-center">
+                                    <i class="ri-close-line"></i>
+                                </div>
+                            </button>
+                        </div>
+                        <form class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                                <div class="flex space-x-1" id="starRating">
+                                    <button type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                        data-rating="1">
+                                        <i class="ri-star-line"></i>
+                                    </button>
+                                    <button type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                        data-rating="2">
+                                        <i class="ri-star-line"></i>
+                                    </button>
+                                    <button type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                        data-rating="3">
+                                        <i class="ri-star-line"></i>
+                                    </button>
+                                    <button type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                        data-rating="4">
+                                        <i class="ri-star-line"></i>
+                                    </button>
+                                    <button type="button"
+                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                        data-rating="5">
+                                        <i class="ri-star-line"></i>
+                                    </button>
+                                </div>
                             </div>
-                        </button>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
+                                <input type="text"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    placeholder="Give your review a title">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
+                                <textarea rows="4"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    placeholder="Share your experience with this product"></textarea>
+                            </div>
+                            <div class="flex space-x-3 pt-4">
+                                <button type="button" id="cancelReview"
+                                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition-colors whitespace-nowrap">Cancel</button>
+                                <button type="submit"
+                                    class="flex-1 px-4 py-2 bg-primary text-white rounded-button hover:bg-blue-700 transition-colors whitespace-nowrap">Submit
+                                    Review</button>
+                            </div>
+                        </form>
                     </div>
-                    <form class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                            <div class="flex space-x-1" id="starRating">
-                                <button type="button"
-                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                    data-rating="1">
-                                    <i class="ri-star-line"></i>
-                                </button>
-                                <button type="button"
-                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                    data-rating="2">
-                                    <i class="ri-star-line"></i>
-                                </button>
-                                <button type="button"
-                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                    data-rating="3">
-                                    <i class="ri-star-line"></i>
-                                </button>
-                                <button type="button"
-                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                    data-rating="4">
-                                    <i class="ri-star-line"></i>
-                                </button>
-                                <button type="button"
-                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                    data-rating="5">
-                                    <i class="ri-star-line"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
-                            <input type="text"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="Give your review a title">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
-                            <textarea rows="4"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="Share your experience with this product"></textarea>
-                        </div>
-                        <div class="flex space-x-3 pt-4">
-                            <button type="button" id="cancelReview"
-                                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition-colors whitespace-nowrap">Cancel</button>
-                            <button type="submit"
-                                class="flex-1 px-4 py-2 bg-primary text-white rounded-button hover:bg-blue-700 transition-colors whitespace-nowrap">Submit
-                                Review</button>
-                        </div>
-                    </form>
                 </div>
             </div>
 
@@ -764,8 +843,7 @@
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-2">Secure Delivery</h3>
                         <p class="text-gray-600 text-sm">Fast and secure delivery with tracking. Your orders are
-                            protected
-                            every step of the way.</p>
+                            protected every step of the way.</p>
                     </div>
                     <div class="text-center">
                         <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -785,8 +863,7 @@
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-2">Easy Returns</h3>
                         <p class="text-gray-600 text-sm">30-day return policy with no questions asked. Your satisfaction
-                            is
-                            guaranteed.</p>
+                            is guaranteed.</p>
                     </div>
                     <div class="text-center">
                         <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -796,15 +873,122 @@
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-2">Payment Safety</h3>
                         <p class="text-gray-600 text-sm">Multiple secure payment options including PayPal, Stripe, and
-                            major
-                            credit cards.</p>
+                            major credit cards.</p>
                     </div>
                 </div>
             </section>
         </main>
         <%-include('../partials/user/footer.ejs') %>
+
+            <!-- Toast Container -->
+            <div id="toastContainer" class="toast-container"></div>
+
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/jquery-zoom/jquery.zoom.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+            <script>
+                // Initialize Lucide icons
+                document.addEventListener('DOMContentLoaded', () => {
+                    Lucide.createIcons();
+                });
+
+                // Quantity Selector
+                document.addEventListener('DOMContentLoaded', function () {
+                    const decreaseBtn = document.getElementById('decreaseQty');
+                    const increaseBtn = document.getElementById('increaseQty');
+                    const quantityDisplay = document.getElementById('quantityDisplay');
+                    const addToCartBtn = document.getElementById('addToCartBtn');
+                    const maxStock = '<%= product.quantity %>'; // Get stock from EJS
+                    let quantity = 1;
+
+                    // Update button states based on quantity
+                    function updateButtonStates() {
+                        decreaseBtn.disabled = quantity <= 1;
+                        increaseBtn.disabled = quantity >= maxStock;
+                    }
+
+                    // Initialize button states
+                    updateButtonStates();
+
+                    // Decrease quantity
+                    decreaseBtn.addEventListener('click', function () {
+                        if (quantity > 1) {
+                            quantity--;
+                            quantityDisplay.textContent = quantity;
+                            updateButtonStates();
+                        }
+                    });
+
+                    // Increase quantity
+                    increaseBtn.addEventListener('click', function () {
+                        if (quantity < maxStock) {
+                            quantity++;
+                            quantityDisplay.textContent = quantity;
+                            updateButtonStates();
+                        } else {
+                            showToast('Reached maximum stock', 'error');
+                        }
+                    });
+
+                    // Add to Cart
+                    addToCartBtn.addEventListener('click', async function () {
+                        const productId = this.getAttribute('data-id');
+                        try {
+                            const response = await fetch('/cart/addToCart', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ productId, quantity })
+                            });
+                            const data = await response.json();
+
+                            if (data.success) {
+                                showToast('Product added to cart', 'success');
+                                updateCartCount()
+                            } else {
+                                if (data.message === 'User not logged in') {
+                                    window.location.href = '/login';
+                                } else {
+                                    showToast(data.message || 'Could not add product to cart', 'error');
+                                }
+                            }
+                        } catch (err) {
+                            console.error('Error adding to cart:', err);
+                            showToast('Something went wrong', 'error');
+                        }
+                    });
+                });
+
+                // Show custom toast notification
+                function showToast(message, type = 'success') {
+                    const toastContainer = document.getElementById('toastContainer');
+                    const toast = document.createElement('div');
+                    toast.className = `toast ${type}`;
+
+                    const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
+                    const iconColor = type === 'success' ? 'text-green-600' : 'text-red-600';
+
+                    toast.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="${icon} ${iconColor}"></i>
+                    <span class="text-gray-900 font-medium">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            `;
+
+                    toastContainer.appendChild(toast);
+
+                    setTimeout(() => toast.classList.add('show'), 100);
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 4000);
+                }
+            </script>
 
             <script>
                 $(function () {
@@ -823,7 +1007,7 @@
                     // Thumbnail click handler
                     $('.thumbnail').on('click', function () {
                         const newSrc = $(this).data('image');
-                        mainImage.attr('src', newSrc); // ✅ update image
+                        mainImage.attr('src', newSrc);
 
                         // Wait a tiny bit for the image to load, then rebind zoom
                         setTimeout(() => {
@@ -935,27 +1119,6 @@
                             }
                         });
                     }
-                });
-            </script>
-
-            <script id="quantityControls">
-                document.addEventListener('DOMContentLoaded', function () {
-                    const decreaseBtn = document.querySelector('.w-10.h-10:first-of-type');
-                    const increaseBtn = document.querySelector('.w-10.h-10:last-of-type');
-                    const quantityDisplay = document.querySelector('.w-12.text-center');
-                    let quantity = 1;
-
-                    decreaseBtn.addEventListener('click', function () {
-                        if (quantity > 1) {
-                            quantity--;
-                            quantityDisplay.textContent = quantity;
-                        }
-                    });
-
-                    increaseBtn.addEventListener('click', function () {
-                        quantity++;
-                        quantityDisplay.textContent = quantity;
-                    });
                 });
             </script>
 </body>

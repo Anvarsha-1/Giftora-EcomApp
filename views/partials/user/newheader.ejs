@@ -22,6 +22,9 @@
             background-color: white;
             border-bottom: 1px solid #e0e0e0;
             padding: 15px 0;
+
+
+
         }
 
         .header-container {
@@ -31,6 +34,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
+
         }
 
         .logo img {
@@ -74,18 +78,23 @@
 
         .cart-badge {
             position: absolute;
-            top: -2px;
-            right: -2px;
+            top: 0;
+            right: 0;
+            transform: translate(50%, -50%);
             background-color: #ff4444;
             color: white;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             font-size: 10px;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
+            line-height: 1.7;
+            pointer-events: none;
+            box-sizing: border-box;
+            z-index: 1;
         }
 
         .profile-dropdown {
@@ -100,11 +109,19 @@
             border: none;
             cursor: pointer;
             padding: 8px;
-            border-radius: 6px;
+
             transition: background-color 0.3s ease;
             color: #333;
             font-size: 18px;
         }
+
+        .profile-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            object-fit: cover;
+        }
+
 
         .profile-button:hover {
             background-color: #f5f5f5;
@@ -112,19 +129,17 @@
 
         .user-name {
             position: absolute;
-            top: 100%;
+            top: 80%;
             left: 50%;
-            font-size: 15px;
             transform: translateX(-50%);
             margin-top: 2px;
             font-size: 10px;
             color: #333;
             white-space: nowrap;
-            background: rgba(255, 255, 255, 0.95);
             padding: 2px 6px;
             border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e0e0e0;
+            font-weight: bold;
+            font-family: 'Arial', sans-serif;
         }
 
         .dropdown-menu {
@@ -207,7 +222,6 @@
                     <li><a href="/viewProducts" class="nav-link">Shop</a></li>
                     <li><a href="#" class="nav-link">Contact</a></li>
                     <li><a href="#" class="nav-link">About</a></li>
-
                     <% if (!user) { %>
                         <li><a href="/login" class="nav-link">Sign Up</a></li>
                         <% } %>
@@ -217,26 +231,30 @@
             <% if (user) { %>
                 <div class="header-right">
                     <!-- Wishlist -->
-                    <button class="icon-button" aria-label="Wishlist">
+                    <button class="icon-button header-wishlist" aria-label="Wishlist">
                         <i class="far fa-heart"></i>
                     </button>
 
                     <!-- Cart -->
-                    <button class="icon-button cart-icon" aria-label="Cart">
+                    <button onclick="window.location.href='/cart'" class="icon-button cart-icon" aria-label="Cart">
                         <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-badge">0</span>
+                        <span id='cart-count' class="cart-badge">0</span>
                     </button>
 
                     <!-- Profile Dropdown -->
                     <div class="profile-dropdown" id="profileDropdown1">
                         <button class="profile-button" id="profileToggle1" aria-label="Profile">
-                            <i class="fas fa-user"></i>
+                            <% if (user.profileImage?.url) { %>
+                                <img src="<%= user.profileImage?.url %>" alt="Profile Image" class="profile-img">
+                                <% } else { %>
+                                    <i class="fas fa-user text-lg"></i>
+                                    <% } %>
                         </button>
                         <div class="user-name" id="userName1">
-                            <%= firstName %>
+                            <%= user.firstName %>
                         </div>
                         <div class="dropdown-menu" id="dropdownMenu1">
-                            <a href="/my-account" class="dropdown-item">
+                            <a href="/account/profile" class="dropdown-item">
                                 <i class="fas fa-user"></i> My Account
                             </a>
                             <a href="/my-orders" class="dropdown-item">
@@ -252,7 +270,7 @@
         </div>
     </header>
     <script>
-        const user ='<% - JSON.stringify(user || null) %>';
+        const user = '<% - JSON.stringify(user || null) %>';
     </script>
 
     <script>
@@ -291,8 +309,9 @@
             }
         }
 
-      
+
     </script>
+    <script src="/js/updateCartIconCount.js"></script>
 
 
 </body>

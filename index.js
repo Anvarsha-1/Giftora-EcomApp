@@ -5,8 +5,11 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const userRouter = require("./routers/user/userRouter");
 const adminRouter = require('./routers/admin/adminRouter');
+const userAccount =  require('./routers/user/userAccount')
+const userCart  = require('./routers/user/userCart')
 const session = require('express-session');
 const app = express();
+
 const flash = require('express-flash');
 const passport = require("./config/passport");
 
@@ -65,9 +68,13 @@ app.set('views', [
 
 
 
+
+
 // Routes
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
+app.use('/account',userAccount)
+app.use('/cart', userCart)
 
 
 

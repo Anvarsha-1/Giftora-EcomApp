@@ -4,204 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>My Account - E-commerce Store</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #e74c3c;
-            --accent-color: #3498db;
-            --light-bg: #f8f9fa;
-            --dark-text: #2c3e50;
-            --border-color: #dee2e6;
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
         }
 
-        body {
-            background-color: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: var(--dark-text);
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .breadcrumb {
-            background: transparent;
-            padding: 0;
-            margin: 0;
-        }
-
-        .breadcrumb-item a {
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-
-        .breadcrumb-item.active {
-            color: var(--dark-text);
-        }
-
-        .account-sidebar {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            color: white;
-            font-size: 2rem;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar-menu li {
-            margin-bottom: 0.5rem;
-        }
-
-        .sidebar-menu a {
-            display: block;
-            padding: 0.75rem 1rem;
-            color: var(--dark-text);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-menu a:hover {
-            background-color: var(--light-bg);
-            color: var(--accent-color);
-        }
-
-        .sidebar-menu a.active {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: white;
-        }
-
-        .sidebar-menu .submenu {
-            padding-left: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .sidebar-menu .submenu a {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-
-        .sidebar-menu .submenu a.active {
-            background-color: var(--secondary-color);
-        }
-
-        .account-content {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-        }
-
-        .section-title {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-control {
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            padding: 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
-        }
-
-        .form-control:disabled {
-            background-color: var(--light-bg);
-            color: #6c757d;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 2rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-        }
-
-        .btn-outline-secondary {
-            border-color: var(--border-color);
-            color: var(--dark-text);
-            border-radius: 8px;
-            padding: 0.75rem 2rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-secondary:hover {
-            background-color: var(--light-bg);
-            border-color: var(--accent-color);
-            color: var(--accent-color);
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #6c757d;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .password-toggle:hover {
-            color: var(--accent-color);
-        }
-
-        .input-group {
+        .nav-item {
             position: relative;
+            overflow: hidden;
         }
 
-        .welcome-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            color: white;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: #3b82f6;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            border-radius: 0 4px 4px 0;
         }
 
-        .edit-mode .form-control:not(:disabled) {
-            border-color: var(--accent-color);
-            background-color: #f8f9ff;
+        .nav-item.active::before {
+            transform: scaleY(1);
         }
 
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
+        #sidebar {
+            position: sticky
+        }
+
+        .nav-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
         }
 
         @keyframes fadeIn {
@@ -215,517 +62,213 @@
                 transform: translateY(0);
             }
         }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-icon {
-            font-size: 2rem;
-            color: var(--accent-color);
-            margin-bottom: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .account-sidebar {
-                margin-bottom: 1rem;
-            }
-
-            .profile-stats {
-                grid-template-columns: 1fr;
-            }
-        }
     </style>
 </head>
 
-<body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="#"><i class="fas fa-store"></i> MyStore</a>
-            <div class="navbar-nav ms-auto">
-                <span class="navbar-text text-white">Welcome, Customer Name</span>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Breadcrumb -->
-    <div class="container mt-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/home"><i class="fas fa-home"></i> Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">My Account</li>
-            </ol>
-        </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="container mt-4">
-        <!-- Welcome Header -->
-        <div class="welcome-header">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h2><i class="fas fa-user-circle"></i> Welcome Back!</h2>
-                    <p class="mb-0">Manage your account settings and preferences</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <button class="btn btn-light" id="editToggle">
-                        <i class="fas fa-edit"></i> Edit Profile
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profile Stats -->
-        <div class="profile-stats">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
-                <h4>12</h4>
-                <p class="text-muted">Total Orders</p>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-heart"></i></div>
-                <h4>5</h4>
-                <p class="text-muted">Wishlist Items</p>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
-                <h4>2</h4>
-                <p class="text-muted">Addresses</p>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-3 col-md-4">
-                <div class="account-sidebar">
-                    <div class="text-center mb-4">
-                        <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h5 class="mb-1">Customer Name</h5>
-                        <p class="text-muted small">Premium Member</p>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <%-include('../partials/user/newheader.ejs')%>
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+        <!-- Main Container -->
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Sidebar -->
+               <%-include('../partials/user/myaccountSidebar.ejs') %>
+                <!-- Main Content -->
+                <main
+                    class="flex-1 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
+                    <!-- Breadcrumb -->
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <nav class="flex items-center space-x-2 text-sm text-gray-500">
+                            <a href="/" class="hover:text-gray-700">Home</a>
+                            <i class="ri-arrow-right-s-line"></i>
+                            <a href="/profile" class="hover:text-gray-700">My Account</a>
+                            <i class="ri-arrow-right-s-line"></i>
+                            <span id="breadcrumb-current" class="text-gray-900">My Profile</span>
+                        </nav>
                     </div>
-
-                    <ul class="sidebar-menu">
-                        <li>
-                            <a href="#" class="active">
-                                <i class="fas fa-tachometer-alt me-2"></i>
-                                Manage My Account
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="#" class="active"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                                <li><a href="#"><i class="fas fa-address-book me-2"></i>Address Book</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="/my-acccount"><i class="fas fa-shopping-bag me-2"></i>My Orders</a></li>
-                        <li><a href="#"><i class="fas fa-heart me-2"></i>My Wishlist</a></li>
-                        <li><a href="#"><i class="fas fa-wallet me-2"></i>Wallet</a></li>
-                        <li><a href="#"><i class="fas fa-ticket-alt me-2"></i>Coupons</a></li>
-                        <li><a href="#"><i class="fas fa-headset me-2"></i>Support</a></li>
-                        <li><a href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <div class="col-lg-9 col-md-8">
-                <div class="account-content">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2 class="section-title mb-0">Your Details</h2>
-                        <div class="edit-actions" id="editActions" style="display: none;">
-                            <button class="btn btn-outline-secondary me-2" id="cancelEdit">
-                                <i class="fas fa-times"></i> Cancel
-                            </button>
-                            <button class="btn btn-primary" id="saveChanges">
-                                <i class="fas fa-save"></i> Update
-                            </button>
-                        </div>
-                    </div>
-
-                    <form id="profileForm">
-                        <div class="row">
-                            <!-- Personal Information -->
-                            <div class="col-md-6">
-                                <h4 class="mb-3"><i class="fas fa-user-edit me-2"></i>Personal Information</h4>
-
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="firstName" class="form-label">First Name</label>
-                                        <input type="text" class="form-control" id="firstName" value="<%=user.firstName %>" disabled>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="lastName" class="form-label">Last Name</label>
-                                        <input type="text" class="form-control" id="lastName" value="<%=user.lastName %>" disabled>
-                                    </div>
+                    <!-- Content Area -->
+                    <div class="p-6">
+                        <!-- Profile Section -->
+                        <div id="profile-content" class="content-section">
+                            <div class="bg-gray-50 rounded-lg p-6 text-center">
+                                <div class="w-24 h-24 mx-auto mb-4">
+                                    <% if (user.profileImage?.url) { %>
+                                        <img src="<%= user.profileImage?.url %>" alt="Profile Image"
+                                            class="w-24 h-24 rounded-full object-cover border-2 border-primary shadow" />
+                                        <% } else { %>
+                                            <div
+                                                class="w-24 h-24 bg-primary rounded-full flex items-center justify-center">
+                                                <i class="ri-user-line text-white ri-3x"></i>
+                                            </div>
+                                            <% } %>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" value="<%=user.email %>"
-                                        disabled>
-                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">
+                                    <%= user.firstName %>
+                                </h3>
 
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="phone" class="form-label">Phone Number</label>
-                                        <input type="tel" class="form-control" id="phone" value="<%=user.phone %>"
-                                            disabled>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="dob" class="form-label">Date of Birth</label>
-                                        <input type="date" class="form-control" id="dob" value="1999-10-11" disabled>
-                                    </div>
-                                </div>
 
-                                <div class="mb-3">
-                                    <label for="gender" class="form-label">Gender</label>
-                                    <select class="form-control" id="gender" disabled>
-                                        <option value="">Select Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female" selected>Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
+
                             </div>
 
-                            <!-- Password Section -->
-                            <div class="col-md-6">
-                                <h4 class="mb-3"><i class="fas fa-lock me-2"></i>Password Management</h4>
+                            <div class="flex items-center justify-between mb-6">
+                                <h1 class="text-2xl font-semibold text-gray-900">My Profile</h1>
 
-                                <div class="mb-3">
-                                    <label for="currentPassword" class="form-label">Current Password</label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="currentPassword"
-                                            placeholder="Enter current password" disabled>
-                                        <button class="password-toggle" type="button" data-target="currentPassword">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                            </div>
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div class="lg:col-span-2 space-y-6">
+                                    <div
+                                        class="bg-gray-50 rounded-lg p-8 transition-all duration-300 hover:shadow-md hover:bg-white">
+                                        <div class="flex items-center justify-between mb-6">
+                                            <h3 class="text-lg font-medium text-gray-900">Email Address</h3>
+                                            <button onclick="window.location='/account/profile/update/email'"
+                                                class="text-primary hover:text-secondary flex items-center gap-2 transition-colors duration-200">
+                                                <i class="ri-edit-line"></i>
+                                                <span>Change Email</span>
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center gap-4 mb-2">
+                                            <i class="ri-mail-line text-gray-500"></i>
+                                            <p class="text-gray-900" id="currentEmail">
+                                                <%=user.email %>
+                                            </p>
+                                            <span
+                                                class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Verified</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500 ml-8">Your email is used for account security
+                                            and notifications</p>
+                                    </div>
+                                    <div
+                                        class="bg-gray-50 rounded-lg p-8 transition-all duration-300 hover:shadow-md hover:bg-white">
+                                        <div class="flex items-center justify-between mb-6">
+                                            <h3 class="text-lg font-medium text-gray-900">Personal Information</h3>
+                                            <button onclick="window.location.href='/account/profile/update/details'"
+                                                class="text-primary hover:text-secondary flex items-center gap-2 transition-colors duration-200">
+                                                <i class="ri-edit-line"></i>
+                                                <span>Edit Details</span>
+                                            </button>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-500 mb-1">First
+                                                    Name</label>
+                                                <p class="text-gray-900">
+                                                    <%=user.firstName%>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-500 mb-1">Last
+                                                    Name</label>
+                                                <p class="text-gray-900">
+                                                    <%=user.lastName %>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <label
+                                                    class="block text-sm font-medium text-gray-500 mb-1">Phone</label>
+                                                <p class="text-gray-900">
+                                                    <%=user.phone %>
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="newPassword" class="form-label">New Password</label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="newPassword"
-                                            placeholder="Enter new password" disabled>
-                                        <button class="password-toggle" type="button" data-target="newPassword">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                <div
+                                    class="bg-gray-50 rounded-lg p-8 transition-all duration-300 hover:shadow-md hover:bg-white">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Account Statistics</h3>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-primary">47</div>
+                                            <div class="text-sm text-gray-600">Total Orders</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-primary">12</div>
+                                            <div class="text-sm text-gray-600">Wishlist Items</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="text-2xl font-bold text-primary">₹2,340</div>
+                                            <div class="text-sm text-gray-600">Total Spent</div>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="mb-3">
-                                    <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="confirmPassword"
-                                            placeholder="Confirm new password" disabled>
-                                        <button class="password-toggle" type="button" data-target="confirmPassword">
-                                            <i class="fas fa-eye"></i>
+                            </div>
+                            <div class="space-y-6">
+                                <div
+                                    class="bg-gray-50 rounded-lg p-8 transition-all duration-300 hover:shadow-md hover:bg-white">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+                                    <div class="space-y-3">
+                                        <button
+                                            class="w-full text-left px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-primary transition-colors duration-200 flex items-center whitespace-nowrap !rounded-button">
+                                            <div class="w-6 h-6 flex items-center justify-center mr-4">
+                                                <i class="ri-box-line text-gray-600"></i>
+                                            </div>
+                                            View Recent Orders
+                                        </button>
+                                        <button
+                                            class="w-full text-left px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-primary transition-colors duration-200 flex items-center whitespace-nowrap !rounded-button">
+                                            <div class="w-6 h-6 flex items-center justify-center mr-4">
+                                                <i class="ri-heart-line text-gray-600"></i>
+                                            </div>
+                                            Manage Wishlist
+                                        </button>
+                                        <button
+                                            class="w-full text-left px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-primary transition-colors duration-200 flex items-center whitespace-nowrap !rounded-button">
+                                            <div class="w-6 h-6 flex items-center justify-center mr-4">
+                                                <i class="ri-map-pin-line text-gray-600"></i>
+                                            </div>
+                                            Update Addresses
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </form>
-                </div>
+                        <!-- Other Content Sections (Hidden by default) -->
+                        <div id="addresses-content" class="content-section hidden">
+                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">Address Book</h1>
+                            <!-- Address Book Content Here -->
+                            <div class="text-gray-600">Address management content will be loaded here...</div>
+                        </div>
+                        <div id="orders-content" class="content-section hidden">
+                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">My Orders</h1>
+                            <!-- My Orders Content Here -->
+                            <div class="text-gray-600">Orders history content will be loaded here...</div>
+                        </div>
+                        <div id="wishlist-content" class="content-section hidden">
+                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">My Wishlist</h1>
+                            <!-- My Wishlist Content Here -->
+                            <div class="text-gray-600">Wishlist items content will be loaded here...</div>
+                        </div>
+                        <div id="wallet-content" class="content-section hidden">
+                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">Wallet</h1>
+                            <!-- Wallet Content Here -->
+                            <div class="text-gray-600">Wallet and payment methods content will be loaded here...</div>
+                        </div>
+                        <div id="coupons-content" class="content-section hidden">
+                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">Coupons</h1>
+                            <!-- Coupons Content Here -->
+                            <div class="text-gray-600">Available coupons and discounts content will be loaded here...
+                            </div>
+                        </div>
+                        <div id="support-content" class="content-section hidden">
+                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">Support</h1>
+                            <!-- Support Content Here -->
+                            <div class="text-gray-600">Customer support and help content will be loaded here...</div>
+                        </div>
+                
+                        </div>
+                    </div>
+                </main>
             </div>
         </div>
-    </div>
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+      
 
-    <!-- Success Modal -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">
-                        <i class="fas fa-check-circle text-success me-2"></i>Success
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Your profile has been updated successfully!
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Account Management JavaScript
-        class AccountManager {
-            constructor() {
-                this.isEditMode = false;
-                this.originalValues = {};
-                this.init();
-            }
 
-            init() {
-                this.bindEvents();
-                this.storeOriginalValues();
-            }
-
-            bindEvents() {
-                // Edit toggle button
-                document.getElementById('editToggle').addEventListener('click', () => {
-                    this.toggleEditMode();
-                });
-
-                // Cancel edit button
-                document.getElementById('cancelEdit').addEventListener('click', () => {
-                    this.cancelEdit();
-                });
-
-                // Save changes button
-                document.getElementById('saveChanges').addEventListener('click', () => {
-                    this.saveChanges();
-                });
-
-                // Password toggle buttons
-                document.querySelectorAll('.password-toggle').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        this.togglePasswordVisibility(e.target.closest('button'));
-                    });
-                });
-
-                // Form validation
-                document.getElementById('profileForm').addEventListener('input', (e) => {
-                    this.validateForm();
-                });
-            }
-
-            storeOriginalValues() {
-                const formElements = document.querySelectorAll('#profileForm input, #profileForm select');
-                formElements.forEach(element => {
-                    this.originalValues[element.id] = element.value;
-                });
-            }
-
-            toggleEditMode() {
-                this.isEditMode = !this.isEditMode;
-                const editToggle = document.getElementById('editToggle');
-                const editActions = document.getElementById('editActions');
-                const formElements = document.querySelectorAll('#profileForm input, #profileForm select');
-
-                if (this.isEditMode) {
-                    // Enable edit mode
-                    editToggle.innerHTML = '<i class="fas fa-times"></i> Cancel Edit';
-                    editToggle.classList.remove('btn-light');
-                    editToggle.classList.add('btn-outline-light');
-                    editActions.style.display = 'block';
-
-                    formElements.forEach(element => {
-                        element.disabled = false;
-                    });
-
-                    document.querySelector('.account-content').classList.add('edit-mode');
-                    this.showNotification('Edit mode enabled', 'info');
-                } else {
-                    this.disableEditMode();
-                }
-            }
-
-            disableEditMode() {
-                this.isEditMode = false;
-                const editToggle = document.getElementById('editToggle');
-                const editActions = document.getElementById('editActions');
-                const formElements = document.querySelectorAll('#profileForm input, #profileForm select');
-
-                editToggle.innerHTML = '<i class="fas fa-edit"></i> Edit Profile';
-                editToggle.classList.remove('btn-outline-light');
-                editToggle.classList.add('btn-light');
-                editActions.style.display = 'none';
-
-                formElements.forEach(element => {
-                    element.disabled = true;
-                });
-
-                document.querySelector('.account-content').classList.remove('edit-mode');
-            }
-
-            cancelEdit() {
-                // Restore original values
-                Object.keys(this.originalValues).forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        element.value = this.originalValues[id];
-                    }
-                });
-
-                this.disableEditMode();
-                this.showNotification('Changes cancelled', 'warning');
-            }
-
-            saveChanges() {
-                if (this.validateForm()) {
-                    // Simulate API call
-                    this.showLoadingState();
-
-                    setTimeout(() => {
-                        this.hideLoadingState();
-                        this.storeOriginalValues(); // Update original values
-                        this.disableEditMode();
-
-                        // Show success modal
-                        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                        successModal.show();
-
-                        this.showNotification('Profile updated successfully!', 'success');
-                    }, 1500);
-                }
-            }
-
-            validateForm() {
-                let isValid = true;
-                const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
-
-                requiredFields.forEach(fieldId => {
-                    const field = document.getElementById(fieldId);
-                    if (!field.value.trim()) {
-                        this.showFieldError(field, 'This field is required');
-                        isValid = false;
-                    } else {
-                        this.clearFieldError(field);
-                    }
-                });
-
-                // Email validation
-                const email = document.getElementById('email');
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (email.value && !emailRegex.test(email.value)) {
-                    this.showFieldError(email, 'Please enter a valid email address');
-                    isValid = false;
-                }
-
-                // Password validation
-                const newPassword = document.getElementById('newPassword');
-                const confirmPassword = document.getElementById('confirmPassword');
-
-                if (newPassword.value && newPassword.value.length < 8) {
-                    this.showFieldError(newPassword, 'Password must be at least 8 characters long');
-                    isValid = false;
-                }
-
-                if (newPassword.value !== confirmPassword.value) {
-                    this.showFieldError(confirmPassword, 'Passwords do not match');
-                    isValid = false;
-                }
-
-                return isValid;
-            }
-
-            showFieldError(field, message) {
-                this.clearFieldError(field);
-                field.classList.add('is-invalid');
-
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'invalid-feedback';
-                errorDiv.textContent = message;
-                field.parentNode.appendChild(errorDiv);
-            }
-
-            clearFieldError(field) {
-                field.classList.remove('is-invalid');
-                const errorDiv = field.parentNode.querySelector('.invalid-feedback');
-                if (errorDiv) {
-                    errorDiv.remove();
-                }
-            }
-
-            togglePasswordVisibility(button) {
-                const targetId = button.getAttribute('data-target');
-                const targetInput = document.getElementById(targetId);
-                const icon = button.querySelector('i');
-
-                if (targetInput.type === 'password') {
-                    targetInput.type = 'text';
-                    icon.className = 'fas fa-eye-slash';
-                } else {
-                    targetInput.type = 'password';
-                    icon.className = 'fas fa-eye';
-                }
-            }
-
-            showLoadingState() {
-                const saveButton = document.getElementById('saveChanges');
-                saveButton.disabled = true;
-                saveButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Saving...';
-            }
-
-            hideLoadingState() {
-                const saveButton = document.getElementById('saveChanges');
-                saveButton.disabled = false;
-                saveButton.innerHTML = '<i class="fas fa-save"></i> Update';
-            }
-
-            showNotification(message, type) {
-                // Create toast notification
-                const toast = document.createElement('div');
-                toast.className = `alert alert-${type} position-fixed`;
-                toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
-                toast.innerHTML = `
-                    <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : 'info'}-circle me-2"></i>
-                    ${message}
-                `;
-
-                document.body.appendChild(toast);
-
-                // Auto remove after 3 seconds
-                setTimeout(() => {
-                    toast.remove();
-                }, 3000);
-            }
-        }
-
-        // Initialize account manager when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            new AccountManager();
-        });
-
-        // Additional animations and interactions
-        document.addEventListener('DOMContentLoaded', () => {
-            // Animate elements on load
-            const elements = document.querySelectorAll('.account-sidebar, .account-content');
-            elements.forEach((element, index) => {
-                setTimeout(() => {
-                    element.classList.add('fade-in');
-                }, index * 200);
-            });
-
-            // Sidebar menu interactions
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-
-                    // Remove active class from all links
-                    document.querySelectorAll('.sidebar-menu a').forEach(l => l.classList.remove('active'));
-
-                    // Add active class to clicked link
-                    link.classList.add('active');
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>

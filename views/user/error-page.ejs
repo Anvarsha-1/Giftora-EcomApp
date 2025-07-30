@@ -310,7 +310,7 @@
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <% if (showSwal && message) { %>
+    <% if (showSwal!==undefined&& message) { %>
     <script>
         Swal.fire({
             icon: 'error',
@@ -319,7 +319,7 @@
             confirmButtonText: 'Go Back',
             confirmButtonColor: '#2563eb',
         }).then(() => {
-            window.location.href = '/viewProducts';
+            window.history.back()
         });
     </script>
     <% } %>

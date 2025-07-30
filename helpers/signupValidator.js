@@ -39,8 +39,8 @@ const validateSignupForm = async (formData) => {
   //   errors.phone = "Phone number already registered";
   // }
 
-  if (!password || password.length < 6) {
-    errors.password = "Password must be at least 6 characters";
+  if (!password || password.length < 8) {
+    errors.password = "Password must be at least 8 characters";
   }
 
   if (confirmPassword !== password) {

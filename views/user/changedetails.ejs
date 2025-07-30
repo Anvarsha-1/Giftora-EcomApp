@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - E-commerce Store</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+  
+    <style>
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-image-preview {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+        }
+
+        .profile-image-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .edit-icon {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            padding: 6px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .edit-icon:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <%-include('../partials/user/newheader.ejs')%>
+
+        <!-- Main Container -->
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <main
+                class="bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
+                <!-- Breadcrumb -->
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <nav class="flex items-center space-x-2 text-sm text-gray-500">
+                        <a href="/" class="hover:text-gray-700">Home</a>
+                        <i class="ri-arrow-right-s-line"></i>
+                        <a href="/account" class="hover:text-gray-700">My Account</a>
+                        <i class="ri-arrow-right-s-line"></i>
+                        <span class="text-gray-900">Edit Profile</span>
+                    </nav>
+                </div>
+                <!-- Content Area -->
+                <div class="p-6">
+                    <div class="content-section">
+                        <div class="bg-white rounded-lg w-full max-w-2xl mx-auto">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h3 class="text-xl font-semibold text-gray-900">Edit Profile Details</h3>
+                                    <a href="/account/profile" class="text-gray-400 hover:text-gray-600">
+                                        <i class="ri-close-line ri-lg"></i>
+                                    </a>
+                                </div>
+                                <form id="profileEditForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Profile Image Upload -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
+                                        <div class="flex items-center gap-4">
+                                            <div class="profile-image-container relative">
+                                                <img id="profileImagePreview" src="<%= user.profileImage?.url || '/images/default-profile.png' %>"
+                                                    alt="Profile Preview" class="profile-image-preview rounded-full w-24 h-24 object-cover border" />
+                                                <i class="ri-pencil-fill absolute bottom-1 right-1 bg-white p-1 rounded-full shadow cursor-pointer"
+                                                    onclick="document.getElementById('profileImage').click()"></i>
+                                                <input type="file" id="profileImage" accept="image/*" class="hidden">
+                                            </div>
+                                            <button type="button" id="removeProfileImage"
+                                                class="px-4 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50">
+                                                Remove
+                                            </button>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1">Max file size: 2MB. Accepted formats: JPG, PNG</p>
+                                    </div>
+
+                                    <!-- Existing Form Fields -->
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                        <input type="text" id="editFirstName" value="<%= user.firstName %>"
+                                            class="w-full px-4 py-2 border rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                        <input type="text" id="editLastName" value="<%= user.lastName %>"
+                                            class="w-full px-4 py-2 border rounded-lg">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                        <input type="tel" id="editPhone" value="<%= user.phone %>"
+                                            class="w-full px-4 py-2 border rounded-lg">
+                                    </div>
+                                </form>
+                                <div class="flex justify-end gap-4 mt-6">
+                                    <a href="/account/profile"
+                                        class="px-6 py-3 border rounded-button hover:bg-gray-100">Cancel</a>
+                                    <button onclick="saveProfileChanges()"
+                                        class="bg-primary text-white px-6 py-3 rounded-button hover:bg-secondary">Save
+                                        Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    let removeProfileImage = false;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const profileImageInput = document.getElementById('profileImage');
+        const profileImagePreview = document.getElementById('profileImagePreview');
+        const removeProfileImageBtn = document.getElementById('removeProfileImage');
+
+        profileImageInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        position: 'top-end',
+                        title: 'File size exceeds 2MB',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: '#EF4444',
+                        color: '#fff'
+                    });
+                    this.value = '';
+                    return;
+                }
+
+                if (!file.type.startsWith('image/')) {
+                    Swal.fire({
+                        toast: true,
+                        icon: 'error',
+                        position: 'top-end',
+                        title: 'Invalid image format',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: '#EF4444',
+                        color: '#fff'
+                    });
+                    this.value = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    profileImagePreview.src = e.target.result;
+                    removeProfileImage = false; // reset flag
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeProfileImageBtn.addEventListener('click', function () {
+            Swal.fire({
+                title: 'Remove Profile Image?',
+                text: 'This will revert your image to default.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Yes, remove it'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    profileImagePreview.src = '/images/default-profile.png';
+                    profileImageInput.value = '';
+                    removeProfileImage = true;
+                }
+            });
+        });
+    });
+
+    async function saveProfileChanges() {
+        const firstName = document.getElementById('editFirstName').value.trim();
+        const lastName = document.getElementById('editLastName').value.trim();
+        const phone = document.getElementById('editPhone').value.trim();
+        const profileImage = document.getElementById('profileImage').files[0];
+
+        const formData = new FormData();
+        formData.append('firstName', firstName);
+        formData.append('lastName', lastName);
+        formData.append('phone', phone);
+        formData.append('removeProfileImage', removeProfileImage);
+
+        if (profileImage) {
+            formData.append('profileImage', profileImage);
+        }
+
+        try {
+            const response = await fetch('/account/profile/update/details', {
+                method: 'PATCH',
+                body: formData // No headers
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                Swal.fire({
+                    toast: true,
+                    icon: 'success',
+                    title: 'Profile updated successfully!',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#10B981',
+                    color: '#fff'
+                }).then(() => {
+                    window.location.href="/account/profile"
+                });
+            } else {
+                Swal.fire({
+                    toast: true,
+                    icon: 'error',
+                    title: data.message || 'Failed to update',
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#EF4444',
+                    color: '#fff'
+                });
+            }
+        } catch (error) {
+            Swal.fire({
+                toast: true,
+                icon: 'error',
+                title: 'Error updating profile',
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                background: '#EF4444',
+                color: '#fff'
+            });
+        }
+    }
+</script>
+
+</body>
+
+</html>
+```

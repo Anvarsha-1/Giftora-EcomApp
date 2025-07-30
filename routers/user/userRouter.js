@@ -3,11 +3,14 @@ const router = express.Router();
 const {userAuth} = require('../../middlewares/auth')
 const authUserController = require("../../controllers/user/authUserController")
 const userProductController = require('../../controllers/user/userProductController')
+const userAccount  = require('../../controllers/user/userAccount')
 const passport = require('passport');
+const upload = require('../../helpers/multer')
 
 
 
 
+//USER AUTHENTICATION
 router.get('/',authUserController.loadPLandingPage);
 router.get('/PageNotFound',authUserController.PageNotFound);
 router.get("/signup",authUserController.loadSignUp);
@@ -25,14 +28,23 @@ router.get('/reset-password',authUserController.loadResetPassword)
 router.post('/reset-password',authUserController.validateResetPassword)
 router.get('/logout',authUserController.logout)
 router.get("/auth/google",passport.authenticate("google",{scope:['profile','email']}))
-router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:"/signup"}),(req,res)=>{
-    req.session.user = req.user._id
-    res.redirect("/home")
-})
-router.get('/my-account',userAuth,authUserController.myAccountDetails)
+router.get('/auth/google/callback', (req, res, next) => {
+    passport.authenticate('google', async (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {          
+            return res.redirect(`/signup?error=${encodeURIComponent(info.message)}`);
+        }
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+            req.session.user = user._id;
+            return res.redirect("/home");
+        });
+    })(req, res, next);
+});
 
 
 
+//USER HOME PAGE 
 router.get('/home',userAuth,authUserController.loadHomePage)
 router.get('/viewProducts/',userProductController.loadProductListingPage)
 router.get('/productsDetails/:id',userProductController.viewProductDetails)

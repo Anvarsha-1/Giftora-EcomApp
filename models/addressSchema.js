@@ -7,11 +7,11 @@ const addressSchema =  new Schema({
         ref:"User",
         required: true,
     },
-    name: {
+    fullName: {
        type: String,
        required: true,
     },
-    phone: {
+    mobileNumber: {
         type: String,
         required: true
     },
@@ -23,11 +23,15 @@ const addressSchema =  new Schema({
         type: String,
         required: true,
     },
+    district: {
+        type: String,
+        required: true,
+    },
     state: {
         type:String,
         required:true,
     },
-    landMark: {
+    landmark: {
         type: String,
         default:"" 
     },
@@ -35,11 +39,7 @@ const addressSchema =  new Schema({
         type:Number,
         required: true,
     },
-    altPhone: {
-        type: String,
-        default:"",
-     },
-    label: {
+    addressType: {
         type: String,
         enum: ['Home', 'Office', 'Other'],
         default: 'Home'
@@ -49,3 +49,5 @@ const addressSchema =  new Schema({
 })
 
 const Address = mongoose.model("Address",addressSchema);
+
+module.exports=Address;

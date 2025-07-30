@@ -7,6 +7,8 @@
   <title>Create Account</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
  <link rel="stylesheet" href="/css/user/signup.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body>
@@ -109,13 +111,27 @@
           </div>
           <% } %>
 
+          <% if (error) { %>
+            <script>
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: "<%= error %>",
+                confirmButtonColor: '#d33'
+              }).then(()=>{
+                window.location.href="/login"
+              });
+            </script>
+            <% } %>
+
+
             <div class="form-row">
               <div class="form-group">
                 <input type="text" name="firstName"
                   class="form-control <%= errors && errors.firstName ? 'error' : '' %>" placeholder="First Name"
                   value="<%= formData && formData.firstName ? formData.firstName : '' %>">
                 <% if (errors && errors.firstName) { %>
-                  <span class="error-message">
+                  <span class="error-message"  >
                     <%= errors.firstName %>
                   </span>
                   <% } else { %>

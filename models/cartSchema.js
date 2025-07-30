@@ -11,7 +11,7 @@ const cartSchema = new Schema({
     items:[{
         productId: {
             type: Schema.Types.ObjectId,
-            ref: "product",
+            ref: "Product",
             required: true
         },
         quantity: {
@@ -25,10 +25,6 @@ const cartSchema = new Schema({
         totalPrice: {
             type:Number,
             required:true
-        },
-        status: {
-            type: String,
-            default: "placed"
         },
     }]}
 );

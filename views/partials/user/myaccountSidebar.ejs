@@ -1,0 +1,86 @@
+<aside id="sidebar"
+    class="w-full md:w-96 bg-white rounded-lg shadow-sm border border-gray-200 h-fit transform -translate-x-full md:translate-x-0 md:sticky top-0 left-0 z-0 transition-transform duration-300 ease-in-out">
+    <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Manage Account</h2>
+            <button id="close-sidebar"
+                class="md:hidden w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <nav class="space-y-3">
+            <a href="/account/profile"
+                class="nav-item active flex items-center px-6 py-4 text-base font-medium rounded-lg transition-all duration-300 hover:scale-[1.02]">
+                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                    <i class="ri-user-line text-current"></i>
+                </div>
+                My Profile
+            </a>
+            <a href="/account/addresses"
+                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
+                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                    <i class="ri-map-pin-line text-current"></i>
+                </div>
+                Address Book
+            </a>
+            <a href="/account/orders"
+                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
+                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                    <i class="ri-archive-line text-current"></i>
+
+                </div>
+                My Orders
+            </a>
+            <a href="/account/wishlist"
+                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
+                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                    <i class="ri-heart-line text-current"></i>
+                </div>
+                My Wishlist
+            </a>
+            <a href="/account/wallet"
+                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
+                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                    <i class="ri-wallet-line text-current"></i>
+                </div>
+                Wallet
+            </a>
+            <a href="/account/coupons"
+                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
+                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                    <i class="ri-coupon-line text-current"></i>
+                </div>
+                Coupons
+            </a>
+            <a href="/account/support"
+                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
+                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                    <i class="ri-customer-service-line text-current"></i>
+                </div>
+                Support
+            </a>
+            <a href="/account/change/password"
+                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
+                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                    <i class="ri-key-line text-current"></i>
+                </div>
+                Password Management
+            </a>
+        </nav>
+    </div>
+</aside>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-item');
+
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('bg-gray-100', 'text-primary', 'font-semibold');
+            } else {
+                link.classList.add('text-gray-700');
+            }
+        });
+    });
+</script>

@@ -15,7 +15,7 @@
   <link rel="preload" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" as="style" />
   <link rel="preload" href="https://cdn.jsdelivr.net/npm/sweetalert2@11" as="script" />
   <link rel="stylesheet" href="/css/admin/addproduct.css" />
-  
+
 </head>
 
 <body>
@@ -80,6 +80,12 @@
                     <span class="error" id="regularPrice-error"></span>
                   </div>
                   <div class="form-group">
+                    <label for="salesPrice">Sales Price</label>
+                    <input type="number" id="salesPrice" name="salesPrice" min="0" step="1"
+                      value="<%= typeof formData !== 'undefined' ? formData.salesPrice : '' %>" />
+                    <span class="error" id="salesPrice-error"></span>
+                  </div>
+                  <div class="form-group">
                     <label for="status">Status</label>
                     <select id="status" name="status">
                       <option value="Available" <%=typeof formData !=='undefined' && formData.status==='Available'
@@ -96,8 +102,7 @@
                     <div class="image-upload">
                       <% for (let i=0; i < 3; i++) { %>
                         <div style="position: relative;">
-                          <input type="file" id="image<%= i + 1 %>" name="productImage"
-                           />
+                          <input type="file" id="image<%= i + 1 %>" name="productImage" />
                           <img class="image-preview" id="preview<%= i + 1 %>" src="#" alt="Preview <%= i + 1 %>"
                             style="display: none;" />
                           <button type="button" class="remove-image-btn" data-index="<%= i + 1 %>"
@@ -140,38 +145,37 @@
     const serverError = document.getElementById('server-error');
     const imagesError = document.getElementById('imagesError');
 
-
-      // Initialize file inputs
-        document.querySelectorAll('input[type="file"]').forEach((input, index) => {
-          input.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-              const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-              if (!file.type || !validTypes.includes(file.type)) {
-                imagesError.textContent = 'Please upload a valid image (PNG, JPEG, JPG).';
-                input.value = '';
-                return;
-              }
-              document.getElementById('imagesError').textContent = '';
-              currentInputIndex = index + 1;
-              const reader = new FileReader();
-              reader.onload = (event) => {
-                cropImage.src = event.target.result;
-                cropModal.style.display = 'flex';
-                if (cropper) {
-                  cropper.destroy();
-                }
-                cropper = new Cropper(cropImage, {
-                  aspectRatio: 1,
-                  viewMode: 1,
-                  autoCropArea: 0.8,
-                  responsive: true,
-                });
-              };
-              reader.readAsDataURL(file);
+    // Initialize file inputs
+    document.querySelectorAll('input[type="file"]').forEach((input, index) => {
+      input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+          if (!file.type || !validTypes.includes(file.type)) {
+            imagesError.textContent = 'Please upload a valid image (PNG, JPEG, JPG).';
+            input.value = '';
+            return;
+          }
+          document.getElementById('imagesError').textContent = '';
+          currentInputIndex = index + 1;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            cropImage.src = event.target.result;
+            cropModal.style.display = 'flex';
+            if (cropper) {
+              cropper.destroy();
             }
-          });
-        });
+            cropper = new Cropper(cropImage, {
+              aspectRatio: 1,
+              viewMode: 1,
+              autoCropArea: 0.8,
+              responsive: true,
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    });
 
 
 
@@ -180,7 +184,7 @@
       const imagesError = document.getElementById('imagesError');
       const imageInputs = ['image1', 'image2', 'image3'].map(id => document.getElementById(id));
       const imageCount = imageInputs.filter(input => input.files && input.files.length > 0).length;
-    
+
       if (imageCount !== 3) {
         imagesError.textContent = `Please upload exactly 3 images. Current count: ${imageCount}.`;
         return false;
@@ -189,7 +193,7 @@
       return true;
     }
 
-  
+
 
     // Crop button event
     cropButton.addEventListener('click', () => {
@@ -247,122 +251,132 @@
     });
 
     document.getElementById('productForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        let valid = true;
+      e.preventDefault();
+      let valid = true;
 
-        // Reset error messages
-        document.querySelectorAll('.error').forEach((err) => (err.textContent = ''));
-        serverError.style.display = 'none';
+      // Reset error messages
+      document.querySelectorAll('.error').forEach((err) => (err.textContent = ''));
+      serverError.style.display = 'none';
 
-        // Validate fields
-        const productName = document.getElementById('productName');
-        if (!productName.value.trim()) {
-          document.getElementById('productName-error').textContent = 'Product name is required.';
-          valid = false;
-        }
-        const description = document.getElementById('description');
-        if (!description.value.trim()) {
-          document.getElementById('description-error').textContent = 'Description is required.';
-          valid = false;
-        }
-        const category = document.getElementById('category');
-        if (!category.value) {
-          document.getElementById('categoryError').textContent = 'Please select a category.';
-          valid = false;
-        }
-        const quantity = document.getElementById('quantity');
-        if (!quantity.value || quantity.value < 0) {
-          document.getElementById('quantity-error').textContent = 'Please enter a valid quantity.';
-          valid = false;
-        }
-        const regularPrice = document.getElementById('regularPrice');
-        if (!regularPrice.value || regularPrice.value < 0) {
-          document.getElementById('regularPrice-error').textContent = 'Please enter a valid price.';
-          valid = false;
-        }
-        if (!validateImages()) {
-          valid = false;
-        }
+      // Validate fields
+      const productName = document.getElementById('productName');
+      if (!productName.value.trim()) {
+        document.getElementById('productName-error').textContent = 'Product name is required.';
+        valid = false;
+      }
+      const description = document.getElementById('description');
+      if (!description.value.trim()) {
+        document.getElementById('description-error').textContent = 'Description is required.';
+        valid = false;
+      }
+      const category = document.getElementById('category');
+      if (!category.value) {
+        document.getElementById('categoryError').textContent = 'Please select a category.';
+        valid = false;
+      }
+      const quantity = document.getElementById('quantity');
+      if (!quantity.value || quantity.value < 0) {
+        document.getElementById('quantity-error').textContent = 'Please enter a valid quantity.';
+        valid = false;
+      }
+      const regularPrice = document.getElementById('regularPrice');
+      if (!regularPrice.value || regularPrice.value < 0) {
+        document.getElementById('regularPrice-error').textContent = 'Please enter a valid price.';
+        valid = false;
+      }
+      const salesPrice = document.getElementById('salesPrice');
+      if (!salesPrice.value || salesPrice.value < 0) {
+        document.getElementById('salesPrice-error').textContent = 'Please enter a valid sales price.';
+        valid = false;
+      }
+      if (parseFloat(salesPrice.value) >= parseFloat(regularPrice.value)) {
+        document.getElementById('salesPrice-error').textContent = 'Sales price must be less than regular price.';
+        valid = false;
+      }
+      if (!validateImages()) {
+        valid = false;
+      }
 
-        if (!valid) {
-          return;
-        }
+      if (!valid) {
+        return;
+      }
 
-        // Show loading alert
-        Swal.fire({
-          title: 'Adding Product...',
-          text: 'Please wait while we process your request.',
-          allowOutsideClick: false,
-          showClass: { popup: 'swal2-show fast-animation' },
-          hideClass: { popup: 'swal2-hide fast-animation' },
-          didOpen: () => {
-            Swal.showLoading();
-          }
+      // Show loading alert
+      Swal.fire({
+        title: 'Adding Product...',
+        text: 'Please wait while we process your request.',
+        allowOutsideClick: false,
+        showClass: { popup: 'swal2-show fast-animation' },
+        hideClass: { popup: 'swal2-hide fast-animation' },
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Adding...';
+
+      const formData = new FormData(document.getElementById('productForm'));
+
+      try {
+        const response = await fetch('/admin/addProducts', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json'
+          },
+          body: new FormData(document.getElementById('productForm')),
         });
 
-        submitButton.disabled = true;
-        submitButton.textContent = 'Adding...';
+        const result = await response.json();
 
-        const formData = new FormData(document.getElementById('productForm'));
-
-        try {
-          const response = await fetch('/admin/addProducts', {
-            method: 'POST',
-            headers :{
-                  Accept:'application/json'
-            },
-            body: new FormData(document.getElementById('productForm')),
+        if (result.success) {
+          await Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: result.message || 'Product added successfully!',
+            timer: 1500,
+            showConfirmButton: false,
+            showClass: { popup: 'swal2-show fast-animation' },
+            hideClass: { popup: 'swal2-hide fast-animation' }
           });
-
-          const result = await response.json();
-
-          if (result.success) {
-            await Swal.fire({
-              icon: 'success',
-              title: 'Success',
-              text: result.message || 'Product added successfully!',
-              timer: 1500,
-              showConfirmButton: false,
-              showClass: { popup: 'swal2-show fast-animation' },
-              hideClass: { popup: 'swal2-hide fast-animation' }
-            });
-            window.location.href = '/admin/products';
-          } else {
-            if (result.formData) {
-              document.getElementById('productName').value = result.formData.productName || '';
-              document.getElementById('description').value = result.formData.description || '';
-              document.getElementById('category').value = result.formData.category || '';
-              document.getElementById('quantity').value = result.formData.quantity || '';
-              document.getElementById('regularPrice').value = result.formData.regularPrice || '';
-              document.getElementById('status').value = result.formData.status || 'Available';
-                 }
-              await Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: result.error || 'Failed to add product.',
-              showConfirmButton: true,
-              showClass: { popup: 'swal2-show fast-animation' },
-              hideClass: { popup: 'swal2-hide fast-animation' }
-            });
-            serverError.textContent = result.error || 'Failed to add product.';
-            serverError.style.display = 'block';
+          window.location.href = '/admin/products';
+        } else {
+          if (result.formData) {
+            document.getElementById('productName').value = result.formData.productName || '';
+            document.getElementById('description').value = result.formData.description || '';
+            document.getElementById('category').value = result.formData.category || '';
+            document.getElementById('quantity').value = result.formData.quantity || '';
+            document.getElementById('regularPrice').value = result.formData.regularPrice || '';
+            document.getElementById('salesPrice').value = result.formData.salesPrice || '';
+            document.getElementById('status').value = result.formData.status || 'Available';
           }
-        } catch (error) {
           await Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'An error occurred while adding the product: ' + error.message,
+            text: result.error || 'Failed to add product.',
             showConfirmButton: true,
             showClass: { popup: 'swal2-show fast-animation' },
             hideClass: { popup: 'swal2-hide fast-animation' }
           });
-          serverError.textContent = 'An error occurred while adding the product.';
+          serverError.textContent = result.error || 'Failed to add product.';
           serverError.style.display = 'block';
-        } finally {
-          submitButton.disabled = false;
-          submitButton.textContent = 'Add Product';
         }
-     });
+      } catch (error) {
+        await Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An error occurred while adding the product: ' + error.message,
+          showConfirmButton: true,
+          showClass: { popup: 'swal2-show fast-animation' },
+          hideClass: { popup: 'swal2-hide fast-animation' }
+        });
+        serverError.textContent = 'An error occurred while adding the product.';
+        serverError.style.display = 'block';
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Add Product';
+      }
+    });
   </script>
 </body>
 

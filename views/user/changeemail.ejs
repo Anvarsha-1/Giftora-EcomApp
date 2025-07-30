@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Email - E-commerce Store</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#1e40af'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <%- include('../partials/user/newheader.ejs') %>
+        <!-- Main Container -->
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <main class="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+                <!-- Breadcrumb -->
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <nav class="flex items-center space-x-2 text-sm text-gray-500">
+                        <a href="/" class="hover:text-gray-700">Home</a>
+                        <i class="ri-arrow-right-s-line"></i>
+                        <a href="/account" class="hover:text-gray-700">My Account</a>
+                        <i class="ri-arrow-right-s-line"></i>
+                        <span class="text-gray-900">Change Email</span>
+                    </nav>
+                </div>
+                <!-- Content Area -->
+                <div class="p-6">
+                    <div class="content-section max-w-md mx-auto">
+                        <h1 class="text-2xl font-semibold text-gray-900 mb-6">Change Email Address</h1>
+                        <div id="emailStep1" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Current Email</label>
+                                <p class="text-gray-900" id="modelcurrentemail">
+                                    <%= user.email %>
+                                </p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">New Email Address</label>
+                                <input type="email" id="newEmail"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                    placeholder="Enter new email address">
+                            </div>
+                            <button onclick="sendEmailOTP()"
+                                class="w-full bg-primary text-white px-6 py-3 rounded-button text-base font-medium hover:bg-secondary transition-all duration-300 whitespace-nowrap">
+                                Continue
+                            </button>
+                            <button onclick="window.location.href='/profile'"
+                                class="w-full bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-button text-base font-medium hover:bg-gray-50 transition-all duration-300 whitespace-nowrap">
+                                Cancel
+                            </button>
+                        </div>
+                        <div id="emailStep2" class="space-y-4 hidden">
+                            <div class="text-center mb-4">
+                                <div
+                                    class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="ri-mail-line text-primary ri-2x"></i>
+                                </div>
+                                <h4 class="text-lg font-medium text-gray-900">Verify Your Email</h4>
+                                <p class="text-sm text-gray-600">We've sent a verification code to your new email
+                                    address</p>
+                            </div>
+                            <div class="flex gap-2 justify-center">
+                                <input type="text" maxlength="1"
+                                    class="otp-input w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-xl">
+                                <input type="text" maxlength="1"
+                                    class="otp-input w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-xl">
+                                <input type="text" maxlength="1"
+                                    class="otp-input w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-xl">
+                                <input type="text" maxlength="1"
+                                    class="otp-input w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-xl">
+                                <input type="text" maxlength="1"
+                                    class="otp-input w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-xl">
+                                <input type="text" maxlength="1"
+                                    class="otp-input w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-xl">
+                            </div>
+                            <div class="text-center">
+                                <button id="resendBtn" onclick="sendEmailOTP()"
+                                    class="text-primary hover:text-secondary text-sm">Resend Code</button>
+                                <p class="text-sm text-gray-500 mt-2">Code expires in <span id="otpTimer">01:00</span>
+                                </p>
+                            </div>
+                            <button onclick="verifyEmailOTP()"
+                                class="w-full bg-primary text-white px-6 py-3 rounded-button text-base font-medium hover:bg-secondary transition-all duration-300 whitespace-nowrap">
+                                Verify & Change Email
+                            </button>
+                            <button onclick="window.location.href='/profile'"
+                                class="w-full bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-button text-base font-medium hover:bg-gray-50 transition-all duration-300 whitespace-nowrap">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- Success Toast -->
+        <div id="successToast"
+            class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 flex items-center gap-2">
+            <i class="ri-checkbox-circle-line"></i>
+            <span id="toastMessage">Changes saved successfully!</span>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+            // Toast Function
+            window.showToast = function (message, type = 'success') {
+                const toast = document.getElementById('successToast');
+                const toastMessage = document.getElementById('toastMessage');
+                toastMessage.textContent = message;
+                toast.classList.remove('bg-green-500', 'bg-red-500');
+                if (type === 'success') {
+                    toast.classList.add('bg-green-500');
+                } else if (type === 'error') {
+                    toast.classList.add('bg-red-500');
+                }
+                toast.classList.remove('translate-y-full', 'opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('translate-y-full', 'opacity-0');
+                }, 3000);
+            };
+
+            function sendEmailOTP() {
+                const email = document.getElementById('newEmail').value.trim();
+                fetch('/account/profile/update/email', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast(data.message || "OTP sent successfully");
+                            document.getElementById('emailStep1').classList.add('hidden');
+                            document.getElementById('emailStep2').classList.remove('hidden');
+                            startOTPTimer();
+                        } else {
+                            showToast(data.message || 'Failed to send OTP', 'error');
+                            const resendBtn = document.getElementById('resendBtn');
+                            resendBtn.disabled = false;
+                            resendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error', error.message);
+                        showToast('An error occurred while sending OTP', 'error');
+                        const resendBtn = document.getElementById('resendBtn');
+                        resendBtn.disabled = false;
+                        resendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    });
+            }
+
+            function verifyEmailOTP() {
+                const inputs = document.querySelectorAll('.otp-input');
+                let otp = "";
+                inputs.forEach(val => {
+                    otp += val.value;
+                });
+                fetch('/account/profile/verify/otp', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ otp }),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.success) {
+                            showToast(data.message || "Email verification successful");
+                            setTimeout(() => {
+                                window.location.href = '/account/profile';
+                            }, 1500);
+                        } else {
+                            showToast(data.message || "Invalid OTP", 'error');
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error in verify OTP', error.message);
+                        showToast('Error occurred while verifying OTP. Please try again', 'error');
+                    });
+            }
+
+            function startOTPTimer() {
+                let timeLeft = 60; // 1 minute in seconds
+                const timerDisplay = document.getElementById('otpTimer');
+                const resendBtn = document.getElementById('resendBtn');
+                if (resendBtn) {
+                    resendBtn.disabled = true;
+                    resendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+                if (window.otpTimerInterval) {
+                    clearInterval(window.otpTimerInterval);
+                }
+                window.otpTimerInterval = setInterval(() => {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                    if (timeLeft <= 0) {
+                        clearInterval(window.otpTimerInterval);
+                        timerDisplay.textContent = '00:00';
+                        if (resendBtn) {
+                            resendBtn.disabled = false;
+                            resendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+                    }
+                    timeLeft--;
+                }, 1000);
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const otpInputs = document.querySelectorAll('#emailStep2 input[type="text"]');
+                otpInputs.forEach((input, index) => {
+                    input.addEventListener('input', function () {
+                        if (this.value.length === 1) {
+                            if (index < otpInputs.length - 1) {
+                                otpInputs[index + 1].focus();
+                            }
+                        }
+                    });
+                    input.addEventListener('keydown', function (e) {
+                        if (e.key === 'Backspace' && !this.value) {
+                            if (index > 0) {
+                                otpInputs[index - 1].focus();
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
+</body>
+
+</html>

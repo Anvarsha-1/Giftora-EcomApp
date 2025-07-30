@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Address Book - E-commerce Store</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+  
+
+    <style>
+        * {
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .address-card {
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .address-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .stagger {
+            animation: slideUp 0.4s ease-out both;
+        }
+
+        .stagger:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stagger:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stagger:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stagger:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .font-body {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .font-medium {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+
+        .font-semibold {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<%- include('../partials/user/newheader.ejs') %>
+
+    <body class="bg-gray-50 min-h-screen">
+        <!-- Main Container -->
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar -->
+                <%- include('../partials/user/myaccountSidebar.ejs') %>
+
+                    <!-- Main Content -->
+                    <main class="flex-1 bg-white rounded-lg shadow-sm border border-gray-200">
+                        <!-- Breadcrumb -->
+                        <div class="px-8 py-6 border-b border-gray-200">
+                            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+                                <a href="/" class="hover:text-gray-700 transition-colors">Home</a>
+                                <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                <a href="/account/profile" class="hover:text-gray-700 transition-colors">My Account</a>
+                                <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                <span class="text-gray-900">Address Book</span>
+                            </nav>
+                            <h1 class="text-2xl font-display text-gray-900">Address Book</h1>
+                        </div>
+
+                        <!-- Content Area -->
+                        <div class="p-8">
+                            <div id="addresses-content" class="content-section">
+                                <!-- Header Section -->
+                                <div class="flex items-center justify-between mb-8">
+                                    <div>
+                                        <p class="text-gray-600 font-body">Manage your delivery addresses for faster
+                                            checkout</p>
+                                    </div>
+                                    <button onclick="window.location.href='/account/add/addresses'"
+                                        class="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-secondary transition-colors duration-200 flex items-center gap-2 text-sm font-medium">
+                                        <i class="ri-add-line"></i>
+                                        <span class="hidden sm:inline">Add New Address</span>
+                                        <span class="sm:hidden">Add</span>
+                                    </button>
+                                </div>
+
+                                <% if (addresses && addresses.length> 0) { %>
+                                    <!-- Address Cards Grid -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                        <% addresses.forEach((address, index)=> { %>
+                                            <div
+                                                class="address-card stagger bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                                <!-- Header -->
+                                                <div class="flex items-start justify-between mb-3">
+                                                    <div class="flex items-center gap-2">
+                                                        <div
+                                                            class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                                            <% if (address.addressType.toLowerCase()==='home' ) { %>
+                                                                <i class="ri-home-4-line text-gray-600 text-sm"></i>
+                                                                <% } else if (address.addressType.toLowerCase()==='work'
+                                                                    ) { %>
+                                                                    <i
+                                                                        class="ri-briefcase-line text-gray-600 text-sm"></i>
+                                                                    <% } else { %>
+                                                                        <i
+                                                                            class="ri-map-pin-line text-gray-600 text-sm"></i>
+                                                                        <% } %>
+                                                        </div>
+                                                        <div>
+                                                            <h3
+                                                                class="text-base font-semibold text-gray-900 tracking-tight">
+                                                                <%= address.fullName %>
+                                                            </h3>
+                                                            <p
+                                                                class="text-xs text-gray-500 font-medium tracking-wide uppercase">
+                                                                <%= address.addressType %>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex items-center gap-1">
+                                                        <button onclick="editAddress('<%= address._id %>')"
+                                                            class="p-1.5 text-gray-500 hover:text-primary hover:bg-blue-50 rounded transition-colors">
+                                                            <i class="ri-edit-line text-sm"></i>
+                                                        </button>
+                                                        <button onclick="deleteAddress('<%= address._id %>')"
+                                                            class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded transition-colors">
+                                                            <i class="ri-delete-bin-line text-sm"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Address Details -->
+                                                <div class="space-y-2 mb-3">
+                                                    <p class="text-sm text-gray-900 leading-relaxed font-body">
+                                                        <%= address.address %>
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 font-body">
+                                                        <%= address.city %>, <%= address.district %>
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 font-body">
+                                                        <%= address.state %> - <%= address.pinCode %>
+                                                    </p>
+                                                    <% if (address.landmark) { %>
+                                                        <p class="text-xs text-gray-500 font-body italic">Near <%=
+                                                                address.landmark %>
+                                                        </p>
+                                                        <% } %>
+                                                </div>
+
+                                                <!-- Footer -->
+                                                <div
+                                                    class="pt-3 border-t border-gray-200 flex items-center justify-between">
+                                                    <p class="text-xs text-gray-400 font-body">Added <%= new
+                                                            Date(address.createdAt).toLocaleDateString() %>
+                                                    </p>
+                                                    <div class="flex items-center gap-1">
+                                                        <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                                                        <span
+                                                            class="text-xs text-green-600 font-medium tracking-wide">ACTIVE</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% }) %>
+                                    </div>
+                                    <% } else { %>
+                                        <!-- Empty State -->
+                                        <div class="text-center py-16">
+                                            <div
+                                                class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                                <i class="ri-map-pin-line text-gray-400 text-2xl"></i>
+                                            </div>
+                                            <h3 class="text-lg font-display text-gray-900 mb-2">No addresses saved</h3>
+                                            <p class="text-gray-500 mb-6 max-w-md mx-auto font-body leading-relaxed">
+                                                Add your first address to get started with faster checkout and seamless
+                                                delivery
+                                            </p>
+                                            <button onclick="window.location.href='/account/add/addresses'"
+                                                class="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-secondary transition-colors duration-200 font-medium">
+                                                Add Your First Address
+                                            </button>
+                                        </div>
+                                        <% } %>
+                            </div>
+                        </div>
+                    </main>
+            </div>
+        </div>
+
+        <!-- SweetAlert2 for confirmation -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script>
+            // Edit Address Function
+            function editAddress(addressId) {
+               Swal.fire({
+                    title: 'Edit Address',
+                    text: "You will be redirected to edit this address.",
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, edit it!',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'border border-gray-200 shadow-lg rounded-xl p-4'
+                    }
+                })
+              .then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `/account/edit/addresses/${addressId}`;
+                    }
+                });
+            }
+
+            // Delete Address Function
+            function deleteAddress(addressId) {
+                Swal.fire({
+                    title: 'Delete Address?',
+                    text: "This action cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444', 
+                    cancelButtonColor: '#6b7280',  
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'border border-red-200 shadow-xl rounded-xl p-5',
+                        confirmButton: 'bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md mr-2',
+                        cancelButton: 'bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-md'
+                    },
+                    buttonsStyling: false
+                    
+                })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/account/delete/addresses/${addressId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: 'Address deleted successfully',
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                        timerProgressBar: true
+                                    }).then(() => {
+                                        location.reload(); 
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'error',
+                                        title: data.message || 'Failed to delete address',
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                        timerProgressBar: true
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'error',
+                                    title: 'Something went wrong. Please try again.',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    timerProgressBar: true
+                                });
+                            });
+                    }
+                });
+            }
+
+            // Add entrance animations on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                const cards = document.querySelectorAll('.stagger');
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.1}s`;
+                });
+            });
+        </script>
+    </body>
+
+</html>

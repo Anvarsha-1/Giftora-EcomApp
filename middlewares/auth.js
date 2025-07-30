@@ -3,8 +3,8 @@ const User = require("../models/userSchema");
 const userAuth = async (req, res, next) => {
   try {
     
-
     const userId = req.session.user || req.session?.passport?.user;
+    
     if (!userId) {
       if (req.headers.accept?.includes('application/json')) {
         return res.status(401).json({ success: false, message: 'Unauthorized: Please login' });

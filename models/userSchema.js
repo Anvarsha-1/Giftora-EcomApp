@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
         sparse:true,
         default:null,
     },
+    profileImage: {
+        public_id: { type: String, required: false, default: null },
+        url: { type: String, required: false, default: null }
+    },
     googleId: {
         type: String,
         unique:true,

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Address - My Account</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        .dropdown-content {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .radio-custom {
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #d1d5db;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .radio-custom:checked {
+            border-color: #3b82f6;
+            background-color: #3b82f6;
+        }
+
+        .radio-custom:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .radio-custom:hover {
+            border-color: #3b82f6;
+        }
+
+        /* Form animations */
+        .form-section {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom toast styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            padding: 16px;
+            margin-bottom: 12px;
+            min-width: 320px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .font-body {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        /* Input focus states */
+        .form-input {
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+    </style>
+    <%- include('../partials/user/newheader.ejs') %>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Sidebar -->
+
+
+                <!-- Main Content -->
+                <div class="flex-1">
+                    <!-- Mobile Header -->
+                    <div class="lg:hidden fixed top-0 left-0 right-0 bg-white shadow-md z-50">
+                        <div class="flex items-center justify-between px-4 py-3">
+                            <button id="mobile-menu-toggle" class="w-8 h-8 flex items-center justify-center">
+                                <i class="ri-menu-line text-xl"></i>
+                            </button>
+                            <h1 class="text-lg font-semibold text-gray-900 font-['Pacifico']">logo</h1>
+                            <div class="w-8"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-16 lg:mt-0">
+                        <div class="max-w-4xl mx-auto p-6">
+                            <!-- Breadcrumb -->
+                            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-6">
+                                <a href="/account" class="hover:text-primary transition-colors">Account</a>
+                                <div class="w-4 h-4 flex items-center justify-center">
+                                    <i class="ri-arrow-right-s-line"></i>
+                                </div>
+                                <a href="/account/addresses" class="hover:text-primary transition-colors">Addresses</a>
+                                <div class="w-4 h-4 flex items-center justify-center">
+                                    <i class="ri-arrow-right-s-line"></i>
+                                </div>
+                                <span class="text-gray-900">Edit Address</span>
+                            </nav>
+
+                            <!-- Form Card -->
+                            <div class="bg-white rounded-lg shadow-md border border-gray-200 form-section">
+                                <div class="p-6">
+                                    <!-- Header -->
+                                    <div class="flex items-center justify-between mb-6">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <i class="ri-edit-line text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <h1 class="text-2xl font-display text-gray-900">Edit Address</h1>
+                                                <p class="text-sm text-gray-500">Update your delivery information</p>
+                                            </div>
+                                        </div>
+                                        <a href="/account/addresses"
+                                            class="text-gray-500 hover:text-gray-700 transition-colors p-2 rounded-full hover:bg-gray-100">
+                                            <i class="ri-close-line text-xl"></i>
+                                        </a>
+                                    </div>
+
+                                    <!-- Address Info Header -->
+                                    <% if (address) { %>
+                                        <div class="bg-gray-50 rounded-lg p-4 mb-6 border-l-4 border-primary">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm">
+                                                    <% if (address.addressType &&
+                                                        address.addressType.toLowerCase()==='home' ) { %>
+                                                        <i class="ri-home-4-line text-primary text-sm"></i>
+                                                        <% } else if (address.addressType &&
+                                                            address.addressType.toLowerCase()==='office' ) { %>
+                                                            <i class="ri-briefcase-line text-primary text-sm"></i>
+                                                            <% } else { %>
+                                                                <i class="ri-map-pin-line text-primary text-sm"></i>
+                                                                <% } %>
+                                                </div>
+                                                <div>
+                                                    <h3 class="font-semibold text-gray-900">
+                                                        <%= address.fullName || 'Unknown' %>
+                                                    </h3>
+                                                    <p
+                                                        class="text-xs text-gray-500 uppercase tracking-wide font-medium">
+                                                        <%= address.addressType || 'OTHER' %> ADDRESS
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% } %>
+
+                                            <!-- Form -->
+                                            <form id="address-form" class="space-y-6">
+                                                <!-- Hidden field for address ID -->
+                                                <input type="hidden" id="addressId"
+                                                    value="<%= address ? address._id : '' %>">
+
+                                                <!-- Full Name -->
+                                                <div>
+                                                    <label for="fullName"
+                                                        class="block text-sm font-medium text-gray-700 mb-2">
+                                                        Full Name <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="relative">
+                                                        <div
+                                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                            <i class="ri-user-line text-gray-400"></i>
+                                                        </div>
+                                                        <input type="text" id="fullName" name="fullName"
+                                                            value="<%= address ? address.fullName : '' %>"
+                                                            class="form-input w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            placeholder="Enter your full name">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Mobile Number -->
+                                                <div>
+                                                    <label for="mobileNumber"
+                                                        class="block text-sm font-medium text-gray-700 mb-2">
+                                                        Mobile Number <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="relative">
+                                                        <div
+                                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                            <i class="ri-phone-line text-gray-400"></i>
+                                                        </div>
+                                                        <input type="tel" id="mobileNumber" name="mobileNumber"
+                                                            value="<%= address ? address.mobileNumber : '' %>"
+                                                            class="form-input w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            placeholder="Enter your mobile number">
+                                                    </div>
+                                                </div>
+
+                                                <!-- City -->
+                                                <div>
+                                                    <label for="city"
+                                                        class="block text-sm font-medium text-gray-700 mb-2">
+                                                        City <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="relative">
+                                                        <div
+                                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                            <i class="ri-building-line text-gray-400"></i>
+                                                        </div>
+                                                        <input type="text" id="city" name="city"
+                                                            value="<%= address ? address.city : '' %>"
+                                                            class="form-input w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            placeholder="Enter your city">
+                                                    </div>
+                                                </div>
+
+                                                <!-- State -->
+                                                <div>
+                                                    <label for="state"
+                                                        class="block text-sm font-medium text-gray-700 mb-2">
+                                                        State <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="relative">
+                                                        <select id="state" name="state"
+                                                            class="form-input w-full h-12 px-4 pr-8 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white">
+                                                            <option value="">Select a state</option>
+                                                            <option value="andhra-pradesh" <%=address &&
+                                                                address.state==='andhra-pradesh' ? 'selected' : '' %>
+                                                                >Andhra Pradesh</option>
+                                                            <option value="arunachal-pradesh" <%=address &&
+                                                                address.state==='arunachal-pradesh' ? 'selected' : '' %>
+                                                                >Arunachal Pradesh</option>
+                                                            <option value="assam" <%=address && address.state==='assam'
+                                                                ? 'selected' : '' %>>Assam</option>
+                                                            <option value="bihar" <%=address && address.state==='bihar'
+                                                                ? 'selected' : '' %>>Bihar</option>
+                                                            <option value="chhattisgarh" <%=address &&
+                                                                address.state==='chhattisgarh' ? 'selected' : '' %>
+                                                                >Chhattisgarh</option>
+                                                            <option value="goa" <%=address && address.state==='goa'
+                                                                ? 'selected' : '' %>>Goa</option>
+                                                            <option value="gujarat" <%=address &&
+                                                                address.state==='gujarat' ? 'selected' : '' %>>Gujarat
+                                                            </option>
+                                                            <option value="haryana" <%=address &&
+                                                                address.state==='haryana' ? 'selected' : '' %>>Haryana
+                                                            </option>
+                                                            <option value="himachal-pradesh" <%=address &&
+                                                                address.state==='himachal-pradesh' ? 'selected' : '' %>
+                                                                >Himachal Pradesh</option>
+                                                            <option value="jharkhand" <%=address &&
+                                                                address.state==='jharkhand' ? 'selected' : '' %>
+                                                                >Jharkhand</option>
+                                                            <option value="karnataka" <%=address &&
+                                                                address.state==='karnataka' ? 'selected' : '' %>
+                                                                >Karnataka</option>
+                                                            <option value="kerala" <%=address &&
+                                                                address.state==='kerala' ? 'selected' : '' %>>Kerala
+                                                            </option>
+                                                            <option value="madhya-pradesh" <%=address &&
+                                                                address.state==='madhya-pradesh' ? 'selected' : '' %>
+                                                                >Madhya Pradesh</option>
+                                                            <option value="maharashtra" <%=address &&
+                                                                address.state==='maharashtra' ? 'selected' : '' %>
+                                                                >Maharashtra</option>
+                                                            <option value="manipur" <%=address &&
+                                                                address.state==='manipur' ? 'selected' : '' %>>Manipur
+                                                            </option>
+                                                            <option value="meghalaya" <%=address &&
+                                                                address.state==='meghalaya' ? 'selected' : '' %>
+                                                                >Meghalaya</option>
+                                                            <option value="mizoram" <%=address &&
+                                                                address.state==='mizoram' ? 'selected' : '' %>>Mizoram
+                                                            </option>
+                                                            <option value="nagaland" <%=address &&
+                                                                address.state==='nagaland' ? 'selected' : '' %>>Nagaland
+                                                            </option>
+                                                            <option value="odisha" <%=address &&
+                                                                address.state==='odisha' ? 'selected' : '' %>>Odisha
+                                                            </option>
+                                                            <option value="punjab" <%=address &&
+                                                                address.state==='punjab' ? 'selected' : '' %>>Punjab
+                                                            </option>
+                                                            <option value="rajasthan" <%=address &&
+                                                                address.state==='rajasthan' ? 'selected' : '' %>
+                                                                >Rajasthan</option>
+                                                            <option value="sikkim" <%=address &&
+                                                                address.state==='sikkim' ? 'selected' : '' %>>Sikkim
+                                                            </option>
+                                                            <option value="tamil-nadu" <%=address &&
+                                                                address.state==='tamil-nadu' ? 'selected' : '' %>>Tamil
+                                                                Nadu</option>
+                                                            <option value="telangana" <%=address &&
+                                                                address.state==='telangana' ? 'selected' : '' %>
+                                                                >Telangana</option>
+                                                            <option value="tripura" <%=address &&
+                                                                address.state==='tripura' ? 'selected' : '' %>>Tripura
+                                                            </option>
+                                                            <option value="uttar-pradesh" <%=address &&
+                                                                address.state==='uttar-pradesh' ? 'selected' : '' %>
+                                                                >Uttar Pradesh</option>
+                                                            <option value="uttarakhand" <%=address &&
+                                                                address.state==='uttarakhand' ? 'selected' : '' %>
+                                                                >Uttarakhand</option>
+                                                            <option value="west-bengal" <%=address &&
+                                                                address.state==='west-bengal' ? 'selected' : '' %>>West
+                                                                Bengal</option>
+                                                        </select>
+                                                        <div
+                                                            class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                                            <i class="ri-arrow-down-s-line text-gray-400"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- District -->
+                                                <div>
+                                                    <label for="district"
+                                                        class="block text-sm font-medium text-gray-700 mb-2">
+                                                        District <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="relative">
+                                                        <input type="text" id="district" name="district"
+                                                            value="<%= address ? address.district : '' %>"
+                                                            class="form-input w-full h-12 px-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            placeholder="Start typing district name..."
+                                                            autocomplete="off">
+                                                        <div id="district-dropdown"
+                                                            class="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 hidden dropdown-content">
+                                                            <div id="district-options" class="py-1"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Pincode -->
+                                                <div>
+                                                    <label for="pinCode"
+                                                        class="block text-sm font-medium text-gray-700 mb-2">
+                                                        Pincode <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="relative">
+                                                        <div
+                                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                            <i class="ri-map-pin-line text-gray-400"></i>
+                                                        </div>
+                                                        <input type="text" id="pinCode" name="pincode" maxlength="6"
+                                                            value="<%= address ? address.pinCode : '' %>"
+                                                            class="form-input w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            placeholder="Enter 6-digit pincode">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Landmark -->
+                                                <div>
+                                                    <label for="landmark"
+                                                        class="block text-sm font-medium text-gray-700 mb-2">
+                                                        Landmark
+                                                    </label>
+                                                    <div class="relative">
+                                                        <div
+                                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                            <i class="ri-flag-line text-gray-400"></i>
+                                                        </div>
+                                                        <input type="text" id="landmark" name="landmark"
+                                                            value="<%= address ? address.landmark : '' %>"
+                                                            class="form-input w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                                            placeholder="Enter nearby landmark (optional)">
+                                                    </div>
+                                                </div>
+
+                                                <!-- Address -->
+                                                <div>
+                                                    <label for="address"
+                                                        class="block text-sm font-medium text-gray-700 mb-2">
+                                                        Address <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="relative">
+                                                        <div class="absolute top-3 left-3 pointer-events-none">
+                                                            <i class="ri-home-4-line text-gray-400"></i>
+                                                        </div>
+                                                        <textarea id="address" name="address"
+                                                            class="form-input w-full h-20 pl-10 pr-4 pt-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                                                            placeholder="Enter your full address (e.g., House No., Street, Area)"><%= address ? address.address : '' %></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Address Type -->
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-700 mb-3">
+                                                        Address Type <span class="text-red-500">*</span>
+                                                    </label>
+                                                    <div class="flex space-x-6">
+                                                        <label class="flex items-center cursor-pointer">
+                                                            <input type="radio" name="addressType" value="Home"
+                                                                <%=address && address.addressType==='Home' ? 'checked'
+                                                                : '' %>
+                                                            class="radio-custom mr-3">
+                                                            <span class="text-sm text-gray-700">Home</span>
+                                                        </label>
+                                                        <label class="flex items-center cursor-pointer">
+                                                            <input type="radio" name="addressType" value="Office"
+                                                                <%=address && address.addressType==='Office' ? 'checked'
+                                                                : '' %>
+                                                            class="radio-custom mr-3">
+                                                            <span class="text-sm text-gray-700">Office</span>
+                                                        </label>
+                                                        <label class="flex items-center cursor-pointer">
+                                                            <input type="radio" name="addressType" value="Other"
+                                                                <%=address && address.addressType==='Other' ? 'checked'
+                                                                : '' %>
+                                                            class="radio-custom mr-3">
+                                                            <span class="text-sm text-gray-700">Other</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Form Actions -->
+                                                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                                                    <a href="/account/addresses"
+                                                        class="px-6 py-3 border border-gray-300 rounded-button text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap font-medium">
+                                                        Cancel
+                                                    </a>
+                                                    <button type="submit"
+                                                        class="px-6 py-3 bg-primary text-white rounded-button hover:bg-blue-600 transition-all duration-200 whitespace-nowrap font-medium flex items-center gap-2">
+                                                        <span>Update Address</span>
+                                                        <i class="ri-save-line"></i>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script>
+        document.getElementById('address-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            updateAddress();
+        });
+
+        const updateAddress = async () => {
+            // Get all input values
+            const addressId = document.getElementById('addressId').value;
+            const fullName = document.getElementById('fullName').value;
+            const mobileNumber = document.getElementById("mobileNumber").value;
+            const city = document.getElementById("city").value;
+            const state = document.getElementById("state").value;
+            const district = document.getElementById("district").value;
+            const pinCode = document.getElementById("pinCode").value;
+            const landmark = document.getElementById("landmark").value;
+            const address = document.getElementById("address").value;
+            const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+            // Basic validation
+            if (!fullName || !mobileNumber || !city || !state || !district || !pinCode || !address || !addressType) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Updating...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/account/edit/addresses/${addressId}`, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fullName,
+                        mobileNumber,
+                        city,
+                        state,
+                        district,
+                        pinCode,
+                        landmark,
+                        address,
+                        addressType
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Address updated successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = "/account/addresses";
+                    }, 1500);
+                } else {
+                    showToast(data.message || 'Failed to update address. Please try again.', 'error');
+                    // Restore button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                showToast('Something went wrong. Please try again.', 'error');
+                // Restore button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        };
+
+        // Show custom toast notification
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
+            const iconColor = type === 'success' ? 'text-green-600' : 'text-red-600';
+
+            toast.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <i class="${icon} ${iconColor}"></i>
+                    <span class="text-gray-900 font-medium">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-gray-400 hover:text-gray-600">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 100);
+
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+
+    <script id="district-autocomplete">
+        document.addEventListener('DOMContentLoaded', function () {
+            const stateSelect = document.getElementById('state');
+            const districtInput = document.getElementById('district');
+            const districtDropdown = document.getElementById('district-dropdown');
+            const districtOptions = document.getElementById('district-options');
+            const stateDistricts = {
+                'maharashtra': ['Mumbai', 'Pune', 'Nashik', 'Nagpur', 'Aurangabad', 'Solapur', 'Kolhapur', 'Sangli', 'Satara', 'Ahmednagar'],
+                'karnataka': ['Bangalore', 'Mysore', 'Hubli', 'Mangalore', 'Belgaum', 'Gulbarga', 'Davangere', 'Bellary', 'Bijapur', 'Shimoga'],
+                'tamil-nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tirunelveli', 'Tiruppur', 'Vellore', 'Erode', 'Thoothukudi'],
+                'gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Junagadh', 'Gandhinagar', 'Anand', 'Bharuch'],
+                'rajasthan': ['Jaipur', 'Jodhpur', 'Kota', 'Bikaner', 'Ajmer', 'Udaipur', 'Bhilwara', 'Alwar', 'Bharatpur', 'Sikar'],
+                'uttar-pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Meerut', 'Allahabad', 'Bareilly', 'Aligarh', 'Moradabad'],
+                'west-bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Bardhaman', 'Malda', 'Baharampur', 'Habra', 'Kharagpur'],
+                'telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Khammam', 'Karimnagar', 'Ramagundam', 'Mahbubnagar', 'Nalgonda', 'Adilabad', 'Suryapet'],
+                'andhra-pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Rajahmundry', 'Tirupati', 'Kadapa', 'Kakinada', 'Anantapur'],
+                'kerala': ['Thiruvananthapuram', 'Kozhikode', 'Thrissur', 'Kollam', 'Palakkad', 'Alappuzha', 'Malappuram', 'Kannur', 'Kasaragod', 'Pathanamthitta', 'Wayanad', 'Idukki', 'Ernakulam', 'Kottayam'],
+                'punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali', 'Firozpur', 'Hoshiarpur', 'Batala', 'Pathankot'],
+                'haryana': ['Faridabad', 'Gurgaon', 'Panipat', 'Ambala', 'Yamunanagar', 'Rohtak', 'Hisar', 'Karnal', 'Sonipat', 'Panchkula'],
+                'bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Darbhanga', 'Bihar Sharif', 'Arrah', 'Begusarai', 'Katihar'],
+                'odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Brahmapur', 'Sambalpur', 'Puri', 'Balasore', 'Bhadrak', 'Baripada', 'Jharsuguda'],
+                'assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur', 'Bongaigaon', 'Dhubri', 'Diphu'],
+                'jharkhand': ['Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro', 'Deoghar', 'Phusro', 'Hazaribagh', 'Giridih', 'Ramgarh', 'Medininagar'],
+                'madhya-pradesh': ['Bhopal', 'Indore', 'Jabalpur', 'Gwalior', 'Ujjain', 'Sagar', 'Dewas', 'Satna', 'Ratlam', 'Rewa'],
+                'chhattisgarh': ['Raipur', 'Bhilai', 'Korba', 'Bilaspur', 'Durg', 'Rajnandgaon', 'Jagdalpur', 'Raigarh', 'Ambikapur', 'Mahasamund'],
+                'uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Rudrapur', 'Kashipur', 'Rishikesh', 'Kotdwar', 'Ramnagar', 'Manglaur'],
+                'himachal-pradesh': ['Shimla', 'Dharamshala', 'Solan', 'Mandi', 'Palampur', 'Baddi', 'Nahan', 'Paonta Sahib', 'Sundernagar', 'Chamba'],
+                'goa': ['Panaji', 'Vasco da Gama', 'Margao', 'Mapusa', 'Ponda', 'Bicholim', 'Curchorem', 'Sanquelim', 'Cuncolim', 'Quepem']
+            };
+            let currentDistricts = [];
+            stateSelect.addEventListener('change', function () {
+                const selectedState = this.value;
+                currentDistricts = stateDistricts[selectedState] || [];
+                districtInput.value = '';
+                districtDropdown.classList.add('hidden');
+            });
+            districtInput.addEventListener('input', function () {
+                const query = this.value.toLowerCase();
+                if (query.length === 0) {
+                    districtDropdown.classList.add('hidden');
+                    return;
+                }
+                const filteredDistricts = currentDistricts.filter(district =>
+                    district.toLowerCase().includes(query)
+                );
+                if (filteredDistricts.length > 0) {
+                    districtOptions.innerHTML = filteredDistricts.map(district =>
+                        `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" data-district="${district}">${district}</div>`
+                    ).join('');
+                    districtDropdown.classList.remove('hidden');
+                } else {
+                    districtDropdown.classList.add('hidden');
+                }
+            });
+            districtOptions.addEventListener('click', function (e) {
+                if (e.target.dataset.district) {
+                    districtInput.value = e.target.dataset.district;
+                    districtDropdown.classList.add('hidden');
+                }
+            });
+            document.addEventListener('click', function (e) {
+                if (!districtInput.contains(e.target) && !districtDropdown.contains(e.target)) {
+                    districtDropdown.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+
+    </body>
+    </html>
+    

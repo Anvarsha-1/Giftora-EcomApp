@@ -51,7 +51,7 @@ body {
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-md);
     padding: 2rem;
-    margin-bottom: 2rem;
+    margin-top: 40px;
     width: 100%;
     transition: var(--transition);
 }
@@ -502,6 +502,9 @@ body {
     object-fit: cover;
     transition: var(--transition);
     cursor:pointer;
+}
+.home-breadcrumb:hover{
+    color:rgb(64, 64, 202);
 }
 
 .product-card:hover .product-img {
