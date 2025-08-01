@@ -88,7 +88,7 @@
                                 </div>
                                 <% } else if (cartItems && cartItems.length> 0) { %>
                                     <% cartItems.forEach(item=> { %>
-                                        
+
                                         <div class="flex flex-col sm:flex-row items-start sm:items-center py-6 border-b border-gray-200 last:border-b-0"
                                             data-item-id="<%= item._id %>">
                                             <!-- Product Image -->
@@ -115,7 +115,6 @@
                                                 <button
                                                     class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors minus-btn <%= (item.quantity <= 1 || !item.quantity) ? 'opacity-50 cursor-not-allowed' : '' %>"
                                                     data-item-id="<%= item._id %>"
-                                                   
                                                     data-quantity="<%= item.quantity || 1 %>">
                                                     <i data-lucide="minus" class="w-4 h-4"></i>
                                                 </button>
@@ -139,7 +138,7 @@
                                                             0).toLocaleString() %>
                                                     </p>
                                                 </div>
-                                                <button  type="button" onclick="removeItem('<%= item._id %>')"
+                                                <button type="button" onclick="removeItem('<%= item._id %>')"
                                                     class="text-red-500 hover:text-red-700 transition-colors p-2"
                                                     data-item-id="<%= item._id %>">
                                                     <i data-lucide="trash-2" class="w-5 h-5"></i>
@@ -164,7 +163,7 @@
                                         <%= totalQuantity || 0 %>
                                     </span> items)</span>
                                 <span class="font-medium" id="cart-subtotal">₹<%= (subTotal || 0).toLocaleString() %>
-                                        </span>
+                                </span>
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Tax (5%)</span>
@@ -244,7 +243,7 @@
                 document.querySelectorAll('.minus-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const itemId = btn.getAttribute('data-item-id');
-                      
+
                         const currentQuantity = parseInt(btn.getAttribute('data-quantity'));
                         updateQuantity(itemId, currentQuantity - 1);
                     });
@@ -289,7 +288,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ itemId, quantity: parseInt(newQuantity) })
                     });
-                    
+
                     const result = await response.json();
                     console.log('Update Response:', result); // Debug the response
 
@@ -382,10 +381,10 @@
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            
+
                             const response = await fetch(`/cart/remove/${productId}`, {
                                 method: 'DELETE',
-                                
+
                             });
                             const result = await response.json();
 
@@ -393,8 +392,8 @@
                                 showToast('Item Removed', 'success');
                                 updateCartCount()
                                 const itemRow = document.querySelector(`div[data-item-id="${productId}"]`);
-                                if (itemRow) itemRow.remove();                               
-                                window.location.reload(); 
+                                if (itemRow) itemRow.remove();
+                                window.location.reload();
                             } else {
                                 showToast(result.message || 'Failed to remove item', 'error');
                             }

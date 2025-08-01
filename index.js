@@ -7,6 +7,7 @@ const userRouter = require("./routers/user/userRouter");
 const adminRouter = require('./routers/admin/adminRouter');
 const userAccount =  require('./routers/user/userAccount')
 const userCart  = require('./routers/user/userCart')
+const userWishlist = require('./routers/user/userWishlist')
 const session = require('express-session');
 const app = express();
 
@@ -75,6 +76,7 @@ app.use('/', userRouter);
 app.use('/admin', adminRouter);
 app.use('/account',userAccount)
 app.use('/cart', userCart)
+app.use('/wishlist', userWishlist)
 
 
 

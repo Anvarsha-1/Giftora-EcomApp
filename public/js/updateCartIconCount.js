@@ -1,5 +1,6 @@
 async function updateCartCount() {
     try {
+       
         const res = await fetch('/cart/count');
         const data = await res.json();
         if (data.success) {
@@ -9,6 +10,7 @@ async function updateCartCount() {
                 badge.style.display = data.count > 0 ? 'inline-block' : 'none';
             }
         }
+    
     } catch (err) {
         console.error('Cart count update failed:', err);
     }

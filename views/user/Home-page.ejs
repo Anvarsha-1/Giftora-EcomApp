@@ -1021,7 +1021,8 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                                                
+                                                <button type="button" onclick="addWishlist('<%=flashSales[i]._id %>')"  class="wishlist-btn"><i class="far fa-heart"></i></button>
                                                 <div class="product-overlay">
                                                     <div class="quick-actions">
                                                         <button class="quick-btn">Quick View</button>
@@ -1146,7 +1147,7 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                                                <button type="button" onclick="addWishlist('<%=products[i]._id %>')" class="wishlist-btn"><i class="far fa-heart"></i></button>
                                                 <div class="product-overlay">
                                                     <div class="quick-actions">
                                                         <button class="quick-btn">Quick View</button>
@@ -1225,7 +1226,7 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                <button class="wishlist-btn"><i class="far fa-heart"></i></button>
+                                                <button type="button" onclick="addWishlist('<%=bestselling[i]._id %>')" class="wishlist-btn"><i class="far fa-heart"></i></button>
                                                 <div class="product-overlay">
                                                     <div class="quick-actions">
                                                         <button class="quick-btn">Quick View</button>
@@ -1441,6 +1442,71 @@
                     }
                 }
             </script>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
+                async function addWishlist(productId) {
+                        try {
+                            console.log(productId);
+                            const res = await fetch(`/wishlist/add/`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ productId }),
+                            });
+
+                            const result = await res.json();
+
+                            if (result.success) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: result.message || "Wishlist updated"
+                                });
+                            } else {
+                                if (result.message === "user not found") {
+                                    Swal.fire({
+                                        icon: 'info',
+                                        title: "Login Required",
+                                        text: "Please login to continue",
+                                        showCancelButton: true,
+                                        confirmButtonText: "Login",
+                                        cancelButtonText: "Cancel",
+                                    }).then((res) => {
+                                        if (res.isConfirmed) {
+                                            window.location.href = "/login";
+                                        }
+                                    });
+                                    return; 
+                                }
+
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: result.message || 'Failed to update wishlist'
+                                });
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Server error'
+                            });
+                        }
+                    }
+
+            </script>
+
 </body>
 
 </html>

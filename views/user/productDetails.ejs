@@ -409,7 +409,7 @@
                         </button>
 
                         <!-- Wishlist -->
-                        <button
+                        <button type="button" onclick="addWishlist('<%=product._id%>')"
                             class="w-12 h-12 border border-gray-300 rounded hover:border-red-500 hover:text-red-500 flex items-center justify-center">
                             <i class="ri-heart-line text-xl"></i>
                         </button>
@@ -465,7 +465,7 @@
                                                 <i class="fas fa-image"></i>
                                             </div>
                                             <% } %>
-                                                <button class="wishlist-btn" title="Add to Wishlist">
+                                                <button type="button" onclick="addWishlist('<%=relatedProducts[i]._id%>')" class="wishlist-btn" title="Add to Wishlist">
                                                     <i class="far fa-heart"></i>
                                                 </button>
                                 </div>
@@ -882,16 +882,18 @@
 
             <!-- Toast Container -->
             <div id="toastContainer" class="toast-container"></div>
-
+            <script src="https://unpkg.com/lucide@latest"></script>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/jquery-zoom/jquery.zoom.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
             <script>
                 // Initialize Lucide icons
-                document.addEventListener('DOMContentLoaded', () => {
-                    Lucide.createIcons();
-                });
+              
+                    document.addEventListener("DOMContentLoaded", function () {
+                        lucide.createIcons();
+                       });
+           
 
                 // Quantity Selector
                 document.addEventListener('DOMContentLoaded', function () {
@@ -1120,6 +1122,69 @@
                         });
                     }
                 });
+            </script>
+            <script>
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
+                async function addWishlist(productId) {
+                    try {
+                        console.log(productId);
+                        const res = await fetch(`/wishlist/add/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ productId }),
+                        });
+
+                        const result = await res.json();
+
+                        if (result.success) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: result.message || "Wishlist updated"
+                            });
+                        } else {
+                            if (result.message === "user not found") {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: "Login Required",
+                                    text: "Please login to continue",
+                                    showCancelButton: true,
+                                    confirmButtonText: "Login",
+                                    cancelButtonText: "Cancel",
+                                }).then((res) => {
+                                    if (res.isConfirmed) {
+                                        window.location.href = "/login";
+                                    }
+                                });
+                                return;
+                            }
+
+                            Toast.fire({
+                                icon: 'error',
+                                title: result.message || 'Failed to update wishlist'
+                            });
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Server error'
+                        });
+                    }
+                }
+
             </script>
 </body>
 

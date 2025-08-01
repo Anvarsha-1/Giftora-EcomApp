@@ -1,6 +1,8 @@
 const Cart = require('../../models/cartSchema')
 const User =  require('../../models/userSchema')
 const Product = require('../../models/productSchema')
+const Wishlist = require('../../models/wishListSchema')
+const mongoose = require('mongoose');
 
 const loadCart = async (req, res) => {
     try {
@@ -114,6 +116,7 @@ const addToCart = async(req,res)=>{
         if(product.isDeleted || product.isBlocked){
             return res.json({success:false,message:"Product not available"})
         }
+
         if (product.quantity <= 0 || !product.status === "Available"){
             return res.json({success:false,message:"Product is out of stock"})
         }
@@ -126,7 +129,10 @@ const addToCart = async(req,res)=>{
 
         
         const price = product.salesPrice || product.regularPrice
+
         const total = price * qty
+
+        
 
         let cart =  await Cart.findOne({userId})
 
@@ -144,7 +150,7 @@ const addToCart = async(req,res)=>{
                 ]
             });
         }else{
-            
+  
            
             const itemIndex =  cart.items.findIndex( 
                 item => item.productId.toString()===productId
@@ -177,6 +183,21 @@ const addToCart = async(req,res)=>{
                 });
             }
         }
+
+       const wishlist = await Wishlist.findOne({userId})
+       
+        if (wishlist) {
+          const matched = wishlist.products.some(p => p.productId.toString() === productId);
+            if (matched) {
+                await Wishlist.updateOne(
+                    { userId },
+                    { $pull: { products: { productId: productId } } }
+
+                );
+            }
+        }
+
+
 
         await cart.save();
         return res.json({success:true,message:"Product added to cart"});
@@ -286,13 +307,21 @@ const removeCartItem = async(req,res)=>{
       return res.json({success:false,message:"Something went wrong. Please try again."})
    }
 }
+const updateCartCount = async (req, res) => {
+    try {
+        const userId = req.session.user;
 
-const updateCartCount = async(req,res)=>{
-    try{
-       const userId = req.session.user
-       const cart = await Cart.findOne({userId}).populate('items.productId')
+        if (!userId) {
+            return res.json({ success: true, count: 0 });
+        }
 
-        const validateCart = cart.items.filter(item => {
+        const cart = await Cart.findOne({ userId }).populate('items.productId');
+
+        if (!cart || !cart.items) {
+            return res.json({ success: true, count: 0 });
+        }
+
+        const validItems = cart.items.filter(item => {
             const product = item.productId;
             return (
                 product &&
@@ -303,15 +332,14 @@ const updateCartCount = async(req,res)=>{
             );
         });
 
-        
-       const count = cart ? validateCart.length : 0
-       return res.json({success:true,count})
-
-    }catch(error){
-        console.log("Error update cart count",error.message)
-        res.json({success:false,count:0})
+        return res.json({ success: true, count: validItems.length });
+    } catch (error) {
+        console.error("Error update cart count", error.message);
+        return res.status(500).json({ success: false, message: "Server error", count: 0 });
     }
-}
+};
+
+
 module.exports = { 
     loadCart ,
     addToCart,

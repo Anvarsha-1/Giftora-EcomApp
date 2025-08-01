@@ -9,6 +9,7 @@ const validateSignupForm = require("../../helpers/signupValidator");
 const bcrypt = require("bcrypt");
 const product = require("../../models/productSchema")
 const category = require('../../models/categorySchema')
+const Wishlist = require('../../models/wishListSchema')
 
 
 
@@ -548,19 +549,23 @@ const loadHomePage = async (req, res) => {
     const bestsellingData = productData.slice(4, 8);
     const flashSalesData = productData.slice(8, 12);
 
+   
 
+    const userId = req.session.user;
+    const wishlist = await Wishlist.findOne({userId})
+    const wishlistId = wishlist ? wishlist.products.map(item=> item.productId.toString()) : []
+    
 
-    const user = req.session.user;
-
-    if (user) {
-      const userData = await User.findById(user);
+    if (userId) {
+      const userData = await User.findById(userId);
 
       return res.render("user/Home-page", {
         user: userData,
         firstName :userData.firstName,
         products: newProductData,
         bestselling: bestsellingData,
-        flashSales: flashSalesData
+        flashSales: flashSalesData,
+        wishlistId:wishlistId
       });
     }
 
@@ -568,7 +573,8 @@ const loadHomePage = async (req, res) => {
       user: null,
       products: productData,
       bestselling: bestsellingData,
-      flashSales: flashSalesData
+      flashSales: flashSalesData,
+      wishlistId: null
     });
 
   } catch (error) {

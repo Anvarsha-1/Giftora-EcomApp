@@ -8,7 +8,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon ",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "lint:ejs": "node_modules/.bin/ejs-lint views/**/*.ejs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.11",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
+    "ejs-lint": "^2.0.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17"
   }

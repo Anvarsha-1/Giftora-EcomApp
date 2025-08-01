@@ -109,7 +109,10 @@ const viewProductDetails = async (req, res) => {
 
 
       if(productData.isBlocked || productData.isDeleted){     
-        return res.status(404).render('error-page',{message:"product is blocked or deleted by admin",showSwal:true}) 
+        return res.status(404).render('error',{
+          title:"404",
+          message:"product not available"
+        }) 
       }
       
     const relatedProducts = await Products.find({
@@ -133,7 +136,10 @@ const viewProductDetails = async (req, res) => {
     })
   } catch (error) {
      console.log("Error while loading product Details",error.message);
-     return res.status(500).render('user/error-page')
+     return res.status(404).render('user/error',{
+      title:"404",
+      message:"Page not found"
+     })
   }
 }
 
