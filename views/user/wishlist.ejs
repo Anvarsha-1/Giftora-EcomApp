@@ -124,7 +124,7 @@
                                     <!-- Wishlist Items Container -->
                                     <!-- Wishlist Items Container -->
                                     <div class="bg-white rounded-lg">
-                                        <% wishlistItem.forEach((item, index)=> { %>
+                                        <% wishlistItem.reverse().forEach((item, index)=> { %>
                                             <div class="wishlist-item p-6 <%= index !== wishlistItem.length - 1 ? 'border-b border-gray-200' : '' %>"
                                                 data-item-id="<%= item._id %>">
                                                 <div class="flex items-start space-x-4">
@@ -180,7 +180,7 @@
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            console.log('Client-side wishlistItem:', <% - JSON.stringify(wishlistItem || []) %>);
+           
 
             async function addToCart(button) {
                 const productId = button.getAttribute('data-id');

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success | Your Shop Name</title>
+    <!-- Tailwind CSS (replace href with your actual build output path) -->
+    <link href="/styles/output.css" rel="stylesheet">
+    <!-- RemixIcon CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Favicon (optional) -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <!-- Custom animations and styles -->
+    <style>
+        @keyframes fade-in-up {
+            0% {
+                opacity: 0;
+                transform: translateY(32px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fade-in-up 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            animation: confetti 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        .confetti:nth-child(2n) {
+            background: #4ecdc4;
+        }
+
+        .confetti:nth-child(3n) {
+            background: #45b7d1;
+        }
+
+        .confetti:nth-child(4n) {
+            background: #96ceb4;
+        }
+
+        .bg-gradient-custom {
+            background: linear-gradient(135deg, #e0f7fa 0%, #fff 100%);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-custom min-h-screen flex items-center justify-center px-4 py-12">
+    <!-- Confetti Effect (triggered on page load) -->
+    <script>
+        function createConfetti() {
+            const confettiCount = 50;
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.animationDuration = `${1.5 + Math.random() * 1}s`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 2500);
+            }
+        }
+        window.addEventListener('load', createConfetti);
+    </script>
+
+    <div
+        class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col items-center animate-fade-in-up">
+        <!-- Success Icon -->
+        <div class="bg-green-100 rounded-full p-5 mb-6 flex items-center justify-center">
+            <i class="ri-check-circle-fill text-5xl text-green-600"></i>
+        </div>
+        <!-- Headline -->
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 text-center tracking-tight">
+            Order Placed Successfully!
+        </h1>
+        <!-- Subtext -->
+        <p class="text-gray-600 text-center mb-6 text-base sm:text-lg">
+            Thank you for shopping with us! We’ll notify you via email or SMS when your order ships.
+        </p>
+        <!-- Order Details Card -->
+        <div class="w-full bg-gray-50 rounded-xl p-5 mb-6 shadow-md">
+            <div class="flex flex-col gap-3 text-gray-700 text-sm sm:text-base">
+                <div class="flex justify-between">
+                    <span class="font-medium">Order ID:</span>
+                    <span class="font-mono text-blue-600">
+                        <%= order?.orderId || 'N/A' %>
+                    </span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium">Order Date:</span>
+                    <span>
+                        <%= order?.createdOn ? new Date(order.createdOn).toLocaleString('en-US', { dateStyle: 'medium' ,
+                            timeStyle: 'short' }) : 'N/A' %>
+                    </span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium">Total Amount:</span>
+                    <span class="font-semibold text-green-600">₹<%= (order?.finalPrice || order?.totalPrice ||
+                            0).toLocaleString() %></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-medium">Payment Method:</span>
+                    <span class="capitalize">
+                        <%= order?.paymentMethod || 'N/A' %>
+                    </span>
+                </div>
+                <% if (order?.trackingUrl) { %>
+                    <div class="flex justify-between">
+                        <span class="font-medium">Tracking:</span>
+                        <a href="<%= order.trackingUrl %>" target="_blank" class="text-blue-600 hover:underline">Track
+                            Order</a>
+                    </div>
+                    <% } %>
+            </div>
+        </div>
+        <!-- Additional Info -->
+        <p class="text-gray-500 text-center mb-6 text-sm">
+            Need help? Contact our support team at <a href="mailto:support@yourshopname.com"
+                class="text-blue-600 hover:underline">support@yourshopname.com</a>.
+        </p>
+        <!-- Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
+            <a href="/orders/details/?orderId=<%= order?.orderId || '' %>"
+                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-all duration-200">
+                <i class="ri-file-list-3-line"></i>
+                Track order
+            </a>
+            <a href="/viewproducts"
+                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-white border border-gray-300 text-blue-600 font-semibold shadow-md hover:bg-gray-50 transition-all duration-200">
+                <i class="ri-shopping-bag-3-line"></i>
+                Continue Shopping
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

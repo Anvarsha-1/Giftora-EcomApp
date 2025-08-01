@@ -73,7 +73,7 @@
 
                         <!-- Cart Items Container -->
                         <div id="cartItemsContainer">
-                            <% if (cartItems && cartItems.length===0) { %>
+                            <% if (!cartItems || cartItems.length===0) { %>
                                 <div id="emptyCartMessage" class="text-center py-12">
                                     <div class="mb-4">
                                         <i data-lucide="shopping-cart" class="w-16 h-16 text-gray-300 mx-auto"></i>
@@ -87,8 +87,7 @@
                                     </a>
                                 </div>
                                 <% } else if (cartItems && cartItems.length> 0) { %>
-                                    <% cartItems.forEach(item=> { %>
-
+                                    <% cartItems.reverse().forEach(item=> { %>
                                         <div class="flex flex-col sm:flex-row items-start sm:items-center py-6 border-b border-gray-200 last:border-b-0"
                                             data-item-id="<%= item._id %>">
                                             <!-- Product Image -->
@@ -145,8 +144,8 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <% }) %> <!-- Close the forEach loop -->
-                                            <% } %> <!-- Close the else if block -->
+                                        <% }); %>
+                                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -243,7 +242,6 @@
                 document.querySelectorAll('.minus-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const itemId = btn.getAttribute('data-item-id');
-
                         const currentQuantity = parseInt(btn.getAttribute('data-quantity'));
                         updateQuantity(itemId, currentQuantity - 1);
                     });
@@ -381,18 +379,16 @@
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-
                             const response = await fetch(`/cart/remove/${productId}`, {
-                                method: 'DELETE',
-
+                                method: 'DELETE'
                             });
                             const result = await response.json();
 
                             if (result.success) {
                                 showToast('Item Removed', 'success');
-                                updateCartCount()
                                 const itemRow = document.querySelector(`div[data-item-id="${productId}"]`);
                                 if (itemRow) itemRow.remove();
+                                // Optionally update cart count or reload page if needed
                                 window.location.reload();
                             } else {
                                 showToast(result.message || 'Failed to remove item', 'error');
@@ -430,25 +426,11 @@
                 }
             }
 
-            async function proceedToCheckout() {
-                try {
-                    const response = await fetch('/cart/checkout', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                    const result = await response.json();
-
-                    if (result.success) {
-                        showToast('Redirecting to Checkout', 'success');
-                        setTimeout(() => {
-                            window.location.href = result.redirectUrl || '/checkout';
-                        }, 1500);
-                    } else {
-                        showToast(result.message || 'Failed to proceed to checkout', 'error');
-                    }
-                } catch (error) {
-                    showToast('Failed to proceed to checkout', 'error');
-                }
+            function proceedToCheckout() {
+                showToast('Redirecting to Checkout', 'success');
+                setTimeout(() => {
+                    window.location.href = '/checkout';
+                }, 1000);
             }
         </script>
 </body>

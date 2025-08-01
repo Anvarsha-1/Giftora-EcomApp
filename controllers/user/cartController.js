@@ -73,6 +73,9 @@ const loadCart = async (req, res) => {
             ? "Free delivery on order above ₹1000"
             : "₹50 shipping charge for orders below ₹1000";
 
+            
+            req.session.allowCheckout = true
+
         return res.render('cart', {
             user,
             cartItems,
