@@ -2,9 +2,9 @@ const User = require("../models/userSchema");
 
 const userAuth = async (req, res, next) => {
   try {
-    
+
     const userId = req.session.user || req.session?.passport?.user;
-    
+
     if (!userId) {
       if (req.headers.accept?.includes('application/json')) {
         return res.status(401).json({ success: false, message: 'Unauthorized: Please login' });
@@ -14,14 +14,14 @@ const userAuth = async (req, res, next) => {
 
     const userData = await User.findById(userId);
     if (!userData || userData.isBlocked) {
-        delete req.session.user
-        res.clearCookie("connect.sid");
-        if (req.headers.accept?.includes('application/json')) {
-          return res.status(403).json({ success: false, message: 'Access denied or user blocked' });
-        }
-        req.flash('error',"Access denied or user blocked ")
-        return res.redirect("/login");
-     
+      delete req.session.user
+      res.clearCookie("connect.sid");
+      if (req.headers.accept?.includes('application/json')) {
+        return res.status(403).json({ success: false, message: 'Access denied or user blocked' });
+      }
+      req.flash('error', "Access denied or user blocked ")
+      return res.redirect("/login");
+
     }
 
     req.user = userData;
@@ -33,9 +33,9 @@ const userAuth = async (req, res, next) => {
 };
 
 
-const adminAuth = async (req, res, next) => { 
+const adminAuth = async (req, res, next) => {
   try {
-   
+
     const isApiRequest = req.headers.accept?.includes('application/json');
 
     if (!req.session.admin) {
@@ -69,7 +69,7 @@ const adminAuth = async (req, res, next) => {
     res.status(500).send("Internal Server Error");
   }
 };
- 
+
 
 module.exports = {
   userAuth,

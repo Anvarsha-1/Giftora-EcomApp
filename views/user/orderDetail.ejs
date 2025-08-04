@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Details</title>
+  <link href="/styles/output.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <div class="max-w-3xl mx-auto py-8 px-4">
+    <a href="/user/orders" class="text-blue-600 hover:underline text-sm mb-4 inline-block">&larr; Back to Orders</a>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+      <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-2">
+        <div class="space-y-1">
+          <div class="text-sm text-gray-500">Order ID: <span class="font-medium text-gray-700">
+              <%= order.orderId %>
+            </span></div>
+          <div class="text-sm text-gray-500">Order Date: <span class="text-gray-700">
+              <%= order.createdOn %>
+            </span></div>
+          <div class="text-sm text-gray-500">Payment: <span class="text-gray-700">
+              <%= order.paymentMethod %>
+            </span></div>
+          <div class="text-sm text-gray-500">Shipping Address: <span class="text-gray-700">
+              <%= order.shippingAddress %>
+            </span></div>
+        </div>
+        <div class="flex flex-col md:items-end gap-2 mt-2 md:mt-0">
+          <span
+            class="inline-block px-3 py-1 rounded-full text-xs font-medium <%= order.status === 'delivered' ? 'bg-green-100 text-green-700' : order.status === 'cancelled' ? 'bg-red-100 text-red-700' : order.status === 'returned' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700' %>">
+            <%= order.status.charAt(0).toUpperCase() + order.status.slice(1) %>
+          </span>
+          <div class="text-lg font-semibold text-gray-800">₹<%= order.totalPrice.toFixed(2) %>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-100 pt-4">
+        <div class="space-y-4">
+          <% order.orderedItems.forEach(function(item) { %>
+            <div class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
+              <div class="flex items-center gap-3">
+                <img src="<%= item.productId?.productImage?.[0]?.url %>" alt="<%= item.productId?.productName %>"
+                  class="w-14 h-14 object-cover rounded border border-gray-200">
+                <div>
+                  <div class="font-medium text-gray-800">
+                    <%= item.productId?.productName %>
+                  </div>
+                  <div class="text-xs text-gray-500">Qty: <%= item.quantity %>
+                  </div>
+                  <div class="text-xs text-gray-500">Price: ₹<%= item.price %>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col items-end gap-2">
+                <div class="text-gray-700 font-semibold">₹<%= (item.price * item.quantity).toFixed(2) %>
+                </div>
+                <% if (order.status !=='cancelled' && order.status !=='returned' && item.status !=='cancelled' ) { %>
+                  <button
+                    class="cancel-item-btn px-3 py-1 text-xs rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition"
+                    data-order-id="<%= order._id %>" data-item-id="<%= item._id %>">Cancel
+                    Product</button>
+                  <% } else if (item.status==='cancelled' ) { %>
+                    <span class="text-xs text-red-500">Cancelled</span>
+                    <% } %>
+              </div>
+            </div>
+            <% }); %>
+        </div>
+      </div>
+      <div class="mt-6 flex flex-wrap gap-3 justify-end">
+        <% if (order.status !=='cancelled' && order.status !=='returned' ) { %>
+          <button id="cancel-order-btn"
+            class="px-5 py-2 rounded bg-red-600 text-white font-medium hover:bg-red-700 transition">Cancel
+            Order</button>
+          <% } %>
+            <% if (order.status==='delivered' ) { %>
+              <button id="return-order-btn"
+                class="px-5 py-2 rounded bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition">Return
+                Order</button>
+              <% } %>
+                <a href="/user/orders/<%= order._id %>/invoice"
+                  class="px-5 py-2 rounded bg-blue-600 text-white font-medium hover:bg-blue-700 transition">Download
+                  Invoice</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Cancel Order
+    const cancelOrderBtn = document.getElementById('cancel-order-btn');
+    if (cancelOrderBtn) {
+      cancelOrderBtn.addEventListener('click', function () {
+        Swal.fire({
+          title: 'Cancel Order?',
+          input: 'text',
+          inputLabel: 'Reason (optional)',
+          inputPlaceholder: 'Enter reason for cancellation',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/user/orders/<%= order._id %>/cancel`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ reason: result.value })
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  Swal.fire('Cancelled!', 'Your order has been cancelled.', 'success').then(() => location.reload());
+                } else {
+                  Swal.fire('Error', data.message || 'Could not cancel order.', 'error');
+                }
+              });
+          }
+        });
+      });
+    }
+    // Cancel Product
+    document.querySelectorAll('.cancel-item-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const orderId = btn.getAttribute('data-order-id');
+        const itemId = btn.getAttribute('data-item-id');
+        Swal.fire({
+          title: 'Cancel Product?',
+          input: 'text',
+          inputLabel: 'Reason (optional)',
+          inputPlaceholder: 'Enter reason for cancellation',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, cancel it!'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/user/orders/${orderId}/item/${itemId}/cancel`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ reason: result.value })
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  Swal.fire('Cancelled!', 'Product has been cancelled.', 'success').then(() => location.reload());
+                } else {
+                  Swal.fire('Error', data.message || 'Could not cancel product.', 'error');
+                }
+              });
+          }
+        });
+      });
+    });
+    // Return Order
+    const returnOrderBtn = document.getElementById('return-order-btn');
+    if (returnOrderBtn) {
+      returnOrderBtn.addEventListener('click', function () {
+        Swal.fire({
+          title: 'Return Order?',
+          input: 'text',
+          inputLabel: 'Reason (required)',
+          inputPlaceholder: 'Enter reason for return',
+          inputValidator: (value) => {
+            if (!value || value.trim().length < 3) {
+              return 'Return reason is required!';
+            }
+          },
+          showCancelButton: true,
+          confirmButtonColor: '#f59e42',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Return Order'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/user/orders/<%= order._id %>/return`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ reason: result.value })
+            })
+              .then(res => res.json())
+              .then(data => {
+                if (data.success) {
+                  Swal.fire('Returned!', 'Your order has been marked as returned.', 'success').then(() => location.reload());
+                } else {
+                  Swal.fire('Error', data.message || 'Could not return order.', 'error');
+                }
+              });
+          }
+        });
+      });
+    }
+  </script>
+</body>
+
+</html>

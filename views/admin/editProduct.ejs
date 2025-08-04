@@ -192,25 +192,30 @@
                                         <label>Product Images (3 required)</label>
                                         <span class="error" id="images-error"></span>
                                         <div class="image-upload">
-                                            <% for (let i=0; i < 3; i++) { %>
-                                                <% const existingImage=formData?.productImage?.[i] || null; %>
-                                                    <div style="position: relative;">
-                                                        <input type="file" id="image<%= i + 1 %>" name="productImage[]"
-                                                            accept="image/png,image/jpeg,image/jpg" />
-                                                        <img class="image-preview" id="preview<%= i + 1 %>"
-                                                            src="<%= existingImage?.url || '#' %>"
-                                                            alt="Preview image <%= i + 1 %> for <%= formData?.productName || 'product' %>"
-                                                            style="<%= existingImage?.url ? 'display: block;' : 'display: none;' %>" />
-                                                        <button type="button" class="remove-image-btn"
-                                                            data-index="<%= i + 1 %>"
-                                                            style="<%= existingImage?.url ? 'display: block;' : 'display: none;' %> ">×</button>
-                                                        <input type="hidden" name="existingImages[]"
-                                                            id="existingImage<%= i + 1 %>"
-                                                            value="<%= existingImage?.public_id || '' %>" />
-                                                        <input type="hidden" name="removedImages[]"
-                                                            id="removedImage<%= i + 1 %>" value="" />
-                                                    </div>
-                                                    <% } %>
+                                            <% for (let i=0; i < 3; i++) { const existingImage=formData?.productImage?.[i] || null; %>
+                                                <div style="position: relative;">
+                                                    <!-- FILE INPUT -->
+                                                    <input type="file" id="image<%= i + 1 %>" name="productImage" accept="image/png,image/jpeg,image/jpg" />
+                                            
+                                                    <!-- PREVIEW -->
+                                                    <img class="image-preview" id="preview<%= i + 1 %>" src="<%= existingImage?.url || '#' %>"
+                                                        alt="Preview image <%= i + 1 %>" style="<%= existingImage?.url ? 'display: block;' : 'display: none;' %>" />
+                                            
+                                                    <!-- REMOVE BUTTON -->
+                                                    <button type="button" class="remove-image-btn" data-index="<%= i + 1 %>"
+                                                        style="<%= existingImage?.url ? 'display: block;' : 'display: none;' %>">
+                                                        ×
+                                                    </button>
+                                            
+                                                    <!-- EXISTING IMAGE TRACKER -->
+                                                    <input type="hidden" name="existingImages[]" id="existingImage<%= i + 1 %>"
+                                                        value="<%= existingImage?.public_id || '' %>" />
+                                            
+                                                    <!-- REMOVED IMAGE TRACKER -->
+                                                    <input type="hidden" name="removedImages[]" id="removedImage<%= i + 1 %>" value="" />
+                                                </div>
+                                                <% } %>
+
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -308,43 +313,53 @@
 
         // Crop button event
         cropButton.addEventListener('click', () => {
-            if (cropper) {
-                const canvas = cropper.getCroppedCanvas({
-                    width: 300,
-                    height: 300,
-                    imageSmoothingQuality: 'high',
-                });
-                const preview = document.getElementById(`preview${currentInputIndex}`);
-                const removeBtn = document.querySelector(`.remove-image-btn[data-index="${currentInputIndex}"]`);
-                const existingImageInput = document.getElementById(`existingImage${currentInputIndex}`);
-                const removedImageInput = document.getElementById(`removedImage${currentInputIndex}`);
+                if (cropper) {
+                    const canvas = cropper.getCroppedCanvas({
+                        width: 300,
+                        height: 300,
+                        imageSmoothingQuality: 'high',
+                    });
 
-                canvas.toBlob((blob) => {
-                    preview.src = URL.createObjectURL(blob);
-                    preview.style.display = 'block';
-                    removeBtn.style.display = 'block';
-
+                    const preview = document.getElementById(`preview${currentInputIndex}`);
+                    const removeBtn = document.querySelector(`.remove-image-btn[data-index="${currentInputIndex}"]`);
+                    const existingImageInput = document.getElementById(`existingImage${currentInputIndex}`);
+                    const removedImageInput = document.getElementById(`removedImage${currentInputIndex}`);
                     const fileInput = document.getElementById(`image${currentInputIndex}`);
-                    const dataTransfer = new DataTransfer();
-                    const file = new File([blob], `cropped_image${currentInputIndex}.jpg`, { type: 'image/jpeg' });
-                    dataTransfer.items.add(file);
-                    fileInput.files = dataTransfer.files;
 
-                    // Clear existing image if present
-                    if (existingImageInput.value) {
-                        removedImageInput.value = existingImageInput.value;
-                        existingImageInput.value = '';
+                    if (!fileInput) {
+                        console.error(`Input with ID image${currentInputIndex} not found.`);
+                        cropModal.style.display = 'none';
+                        cropper.destroy();
+                        cropper = null;
+                        currentInputIndex = null;
+                        return;
                     }
 
-                    validateImages();
-                }, 'image/jpeg');
+                    canvas.toBlob((blob) => {
+                        preview.src = URL.createObjectURL(blob);
+                        preview.style.display = 'block';
+                        removeBtn.style.display = 'block';
 
-                cropModal.style.display = 'none';
-                cropper.destroy();
-                cropper = null;
-                currentInputIndex = null;
-            }
-        });
+                        const dataTransfer = new DataTransfer();
+                        const file = new File([blob], `cropped_image${currentInputIndex}.jpg`, { type: 'image/jpeg' });
+                        dataTransfer.items.add(file);
+                        fileInput.files = dataTransfer.files;
+
+                        if (existingImageInput.value) {
+                            removedImageInput.value = existingImageInput.value;
+                            existingImageInput.value = '';
+                        }
+
+                        validateImages();
+                    }, 'image/jpeg');
+
+                    cropModal.style.display = 'none';
+                    cropper.destroy();
+                    cropper = null;
+                    currentInputIndex = null;
+                }
+            });
+
 
         // Cancel crop event
         cancelCrop.addEventListener('click', () => {

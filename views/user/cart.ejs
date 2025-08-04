@@ -204,7 +204,7 @@
                         </div>
 
                         <!-- Checkout Button -->
-                        <button id="checkoutBtn" onclick="proceedToCheckout()"
+                        <button id="checkoutBtn"
                             class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors <%= (cartItems && cartItems.length === 0) ? 'disabled:bg-gray-300 disabled:cursor-not-allowed' : '' %>"
                             <%=(cartItems && cartItems.length===0) ? 'disabled' : '' %>>
                             Proceed to Checkout
@@ -426,12 +426,7 @@
                 }
             }
 
-            function proceedToCheckout() {
-                showToast('Redirecting to Checkout', 'success');
-                setTimeout(() => {
-                    window.location.href = '/checkout';
-                }, 1000);
-            }
+           
         </script>
 </body>
 

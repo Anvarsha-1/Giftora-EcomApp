@@ -25,7 +25,7 @@ const loadWishlist = async (req, res) => {
         });
 
         if (!wishlist || !wishlist.products || wishlist.products.length === 0) {
-            console.log(`No wishlist or products found for user: ${userId}`);
+            
             return res.render('wishlist', { user, wishlistItem: [] });
         }
        

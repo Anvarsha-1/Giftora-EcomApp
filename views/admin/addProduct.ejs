@@ -102,7 +102,7 @@
                     <div class="image-upload">
                       <% for (let i=0; i < 3; i++) { %>
                         <div style="position: relative;">
-                          <input type="file" id="image<%= i + 1 %>" name="productImage" />
+                          <input type="file" id="image<%= i + 1 %>" name="productImage" multiple />
                           <img class="image-preview" id="preview<%= i + 1 %>" src="#" alt="Preview <%= i + 1 %>"
                             style="display: none;" />
                           <button type="button" class="remove-image-btn" data-index="<%= i + 1 %>"

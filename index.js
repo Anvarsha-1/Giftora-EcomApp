@@ -74,13 +74,14 @@ app.set('views', [
 
 
 // Routes
-app.use('/', userRouter);
+
 app.use('/admin', adminRouter);
 app.use('/account',userAccount)
 app.use('/cart', userCart)
 app.use('/wishlist', userWishlist)
 app.use('/checkout', userCheckout)
 app.use('/orders', userOrders)
+app.use('/', userRouter);
 
 
 

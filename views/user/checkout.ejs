@@ -137,12 +137,18 @@
                                                     </div>
                                         </div>
                                         <div class="text-right">
-                                            <div class="text-sm text-gray-700">₹<%= item.price.toLocaleString() %> x <%=
-                                                        item.quantity %>
-                                            </div>
-                                            <div class="text-base font-semibold text-gray-900">₹<%= (item.price *
-                                                    item.quantity).toLocaleString() %>
-                                            </div>
+
+                                            <% if (item.price !==undefined && item.price !==null) { %>
+                                                <div class="text-sm text-gray-700">₹<%= item.price.toLocaleString() %> x
+                                                        <%= item.quantity %>
+                                                </div>
+                                                <% } else { %>
+                                                    <div class="text-sm text-red-500">Price not available</div>
+                                                    <% } %>
+
+                                                        <div class="text-base font-semibold text-gray-900">₹<%=
+                                                                (item.price * item.quantity).toLocaleString() %>
+                                                        </div>
                                         </div>
                                     </div>
                                     <% }) %>
@@ -150,7 +156,7 @@
                             <div class="flex justify-end mt-4">
                                 <span class="text-gray-700 font-medium">Items Total: </span>
                                 <span class="ml-2 text-lg font-bold text-gray-900">₹<%= subTotal.toLocaleString() %>
-                                        </span>
+                                </span>
                             </div>
                             <% } else { %>
                                 <div class="text-center text-gray-500 py-8">
@@ -213,37 +219,37 @@
                         <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                             <i class="ri-bank-card-line text-blue-600"></i> Payment Method
                         </h2>
-                       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <!-- COD (Active and Selected) -->
-    <label class="block cursor-pointer">
-        <input type="radio" name="paymentMethod" value="COD" class="peer hidden" checked>
-        <div
-            class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 peer-checked:border-blue-600 peer-checked:bg-blue-50">
-            <i class="ri-money-rupee-circle-line text-2xl text-blue-600 mb-1"></i>
-            <span class="font-medium text-gray-900">Cash on Delivery</span>
-        </div>
-        <% if (total > 4000) { %>
-            <div class="text-xs text-red-600 mt-2 text-center">
-                COD is available only for orders up to ₹4000
-            </div>
-        <% } %>
-    </label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- COD (Active and Selected) -->
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="COD" class="peer hidden" checked>
+                                <div
+                                    class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                                    <i class="ri-money-rupee-circle-line text-2xl text-blue-600 mb-1"></i>
+                                    <span class="font-medium text-gray-900">Cash on Delivery</span>
+                                </div>
+                                <% if (total> 4000) { %>
+                                    <div class="text-xs text-red-600 mt-2 text-center">
+                                        COD is available only for orders up to ₹4000
+                                    </div>
+                                    <% } %>
+                            </label>
 
-    <!-- Online Payment (Disabled) -->
-    <div
-        class="border rounded-lg p-4 flex flex-col items-center bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed">
-        <i class="ri-bank-line text-2xl mb-1"></i>
-        <span class="font-medium">Online Payment</span>
-    </div>
+                            <!-- Online Payment (Disabled) -->
+                            <div
+                                class="border rounded-lg p-4 flex flex-col items-center bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed">
+                                <i class="ri-bank-line text-2xl mb-1"></i>
+                                <span class="font-medium">Online Payment</span>
+                            </div>
 
-    <!-- Wallet Payment (Disabled) -->
-    <div
-        class="border rounded-lg p-4 flex flex-col items-center bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed">
-        <i class="ri-wallet-3-line text-2xl mb-1"></i>
-        <span class="font-medium">Wallet Payment</span>
-        <span class="text-xs text-red-500 mt-1">₹0 (Insufficient)</span>
-    </div>
-</div>
+                            <!-- Wallet Payment (Disabled) -->
+                            <div
+                                class="border rounded-lg p-4 flex flex-col items-center bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed">
+                                <i class="ri-wallet-3-line text-2xl mb-1"></i>
+                                <span class="font-medium">Wallet Payment</span>
+                                <span class="text-xs text-red-500 mt-1">₹0 (Insufficient)</span>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -322,7 +328,7 @@
                     const addressSelected = document.querySelector('input[name="selectedAddress"]:checked');
                     const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
                     const totalPrice = parseFloat('<%= total %>');
-                    const cartItems = <%- JSON.stringify(cartItems || []) %>;
+                    const cartItems = <% - JSON.stringify(cartItems || []) %>;
                     const couponApplied = false;
                     const couponId = null;
 
@@ -397,9 +403,9 @@
                                 text: 'Your order has been placed successfully.',
                                 confirmButtonColor: '#3b82f6'
                             }).then(() => {
-                                
+
                                 window.location.href = `/checkout/order-success?orderId=${result.orderId}`;
-                                
+
                             });
                         } else {
                             Swal.fire({

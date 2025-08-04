@@ -6,44 +6,44 @@ const deleteUploadedImages = require('../../helpers/deleteImage')
 
 const viewProduct = async (req, res) => {
   try {
-    const isClear = req.query.clear==="1"
-    const search  = isClear ? "" : req.query.search?.trim() || "";
-    const page =parseInt(req.query.page) || 1
+    const isClear = req.query.clear === "1"
+    const search = isClear ? "" : req.query.search?.trim() || "";
+    const page = parseInt(req.query.page) || 1
     const limit = 4;
 
-    const productData  = await Product.find({
-       isDeleted:{$ne:true},
-         $or:[{
-          productName:{$regex:new  RegExp(".*"+search+".*","i")},
+    const productData = await Product.find({
+      isDeleted: { $ne: true },
+      $or: [{
+        productName: { $regex: new RegExp(".*" + search + ".*", "i") },
 
-        }]
+      }]
 
-    }).limit(limit*1).skip((page-1)*limit).sort({createdAt:-1}).populate('category').exec();
+    }).limit(limit * 1).skip((page - 1) * limit).sort({ createdAt: -1 }).populate('category').exec();
 
-  
+
 
     const count = await Product.find({
-      isDeleted:{$ne:true},
-      $or:[{
+      isDeleted: { $ne: true },
+      $or: [{
         productName: { $regex: new RegExp(".*" + search + ".*", "i") }
       }]
     }).countDocuments();
 
-    const category = await Category.find({isListed:true ,isDeleted:false});
+    const category = await Category.find({ isListed: true, isDeleted: false });
 
-    if(category){
-      res.render("product-view",{
-        data:productData,
-        currentPage:page,
-        totalPages:Math.ceil(count/limit),
-        cat:category,
+    if (category) {
+      res.render("product-view", {
+        data: productData,
+        currentPage: page,
+        totalPages: Math.ceil(count / limit),
+        cat: category,
         search,
       })
-      
-    }else{
+
+    } else {
       res.render('admin-404-page')
     }
-    
+
   } catch (error) {
     console.log("Error loading products page:", error);
     res.status(500).redirect("/pageNotFound");
@@ -54,7 +54,7 @@ const viewProduct = async (req, res) => {
 const loadAddProductPage = async (req, res) => {
   try {
     const category = await Category.find({ isListed: true, isDeleted: false });
-    return res.render("addProduct", { 
+    return res.render("addProduct", {
       cat: category,
       message: "",
       error: null,
@@ -323,26 +323,15 @@ const uploadEditProduct = async (req, res) => {
 
 
     if (Array.isArray(removedImages) && removedImages.length > 0) {
-
       for (const public_id of removedImages) {
-
         if (public_id) {
-
           try {
-
             await cloudinary.uploader.destroy(public_id);
-
           } catch (err) {
-
-            console.error(`Failed to delete Cloudinary image ${public_id}:`, err.message);
-
+           console.error(`Failed to delete Cloudinary image ${public_id}:`, err.message);
           }
-
-
         }
-
       }
-
     }
 
 
@@ -390,49 +379,49 @@ const uploadEditProduct = async (req, res) => {
 
 
 
-const deleteProduct = async (req,res)=>{
-  const {id} = req.params
-     try{
-         if(!id) return res.status(404).json({success:false,error:"Product id required"})
+const deleteProduct = async (req, res) => {
+  const { id } = req.params
+  try {
+    if (!id) return res.status(404).json({ success: false, error: "Product id required" })
 
-          const product = await Product.findByIdAndUpdate(id,{isDeleted:true},{new:true});
-          
-          if(!product) return res.status(404).json({success:false,error:"Product not found"})
+    const product = await Product.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
 
-           res.status(200).json({success:true,message:"Product delete successfully"})
+    if (!product) return res.status(404).json({ success: false, error: "Product not found" })
 
-     }catch(error){
-      console.error("Error deleting product:", error.message);
+    res.status(200).json({ success: true, message: "Product delete successfully" })
 
-      res.status(500).json({ success: false, message: "Server error" });
+  } catch (error) {
+    console.error("Error deleting product:", error.message);
 
-     }
+    res.status(500).json({ success: false, message: "Server error" });
+
+  }
 
 }
 
-const blockProduct = async(req,res)=>{
+const blockProduct = async (req, res) => {
 
-  const {id} = req.params;
+  const { id } = req.params;
 
-  try{
+  try {
     console.log(id)
 
-        if(!id) return res.status(400).json({success:false,error:"Product id required"});
+    if (!id) return res.status(400).json({ success: false, error: "Product id required" });
 
-        const product = await  Product.findById(id);
+    const product = await Product.findById(id);
 
-        if(!product) return res.status(404).json('Product not found')
+    if (!product) return res.status(404).json('Product not found')
 
-        product.isBlocked = !product.isBlocked
+    product.isBlocked = !product.isBlocked
 
-        await product.save();
+    await product.save();
 
-        res.status(200).json({success:true,message:`Product ${product.isBlocked ? 'Blocked':'unblocked'} successfully `,product})
+    res.status(200).json({ success: true, message: `Product ${product.isBlocked ? 'Blocked' : 'unblocked'} successfully `, product })
 
-  }catch(error){
-       console.log("Error while block product",error.message);
+  } catch (error) {
+    console.log("Error while block product", error.message);
 
-       return res.status(500).json({success:false,error:"Internal server error"})
+    return res.status(500).json({ success: false, error: "Internal server error" })
   }
 }
 

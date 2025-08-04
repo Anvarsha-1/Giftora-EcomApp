@@ -28,13 +28,19 @@ const loadCheckoutPage = async (req, res) => {
             });
         }
 
+
         let subTotal = 0;
         const validItems = cart.items.filter(item => {
             const product = item.productId;
-            return product && !product.isBlocked && !product.isDeleted && product.status === "Available" && product.quantity >= 1;
+            return product && !product.isBlocked && !product.isDeleted && product.quantity >= 1;
         });
 
+       
+
         const cartItems = validItems.map(item => {
+            if (item.productId.status === 'Out Of Stock') {
+                return res.json({ success: false, message: `${item.productName} is out of stock` })
+            }
             const product = item.productId;
             const price = Number(product.regularPrice) || 0;
             const safeQuantity = Math.min(item.quantity, product.quantity || 1);
@@ -51,6 +57,7 @@ const loadCheckoutPage = async (req, res) => {
                 totalPrice: itemTotal,
             };
         });
+
 
         const tax = Math.round(subTotal * 0.05);
         const shipping = subTotal >= 1000 ? 0 : 50;
