@@ -44,7 +44,7 @@ const loadWishlist = async (req, res) => {
             return {
                 _id: product._id ? product._id.toString() : null,
                 name: product.productName || 'Unnamed Product',
-                price: product.regularPrice || 0,
+                price: product.salesPrice || 0,
                 stock: product.quantity || 0,
                 image: product.productImage?.[0]?.url || '/images/placeholder.jpg'
             };

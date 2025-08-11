@@ -25,7 +25,7 @@ const loadProductListingPage = async (req, res) => {
       isBlocked: false,
       isDeleted: false,
       quantity: { $gt: 0 },
-      regularPrice: { $gte: minPrice, $lte: maxPrice },
+      salesPrice: { $gte: minPrice, $lte: maxPrice },
     };
 
     if(search) {
@@ -46,10 +46,10 @@ const loadProductListingPage = async (req, res) => {
         sort = { productName: -1 };
         break;
       case 'price-asc':
-        sort = { regularPrice: 1 };
+        sort = { salesPrice: 1 };
         break;
       case 'price-desc':
-        sort = { regularPrice: -1 };
+        sort = { salesPrice: -1 };
         break;
       case 'createdAt-desc':
       default:

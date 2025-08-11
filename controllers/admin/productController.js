@@ -163,6 +163,17 @@ const addProduct = async (req, res) => {
       });
     }
 
+
+    if (status!=="Available" && quantity>0){
+      await deleteUploadedImages(req.files);
+      return res.status(400).json({
+        success:false
+        ,error:"Quantity must be 0 ",
+        formData:req.body,
+        cat:await Category.find({isListed: true, isDeleted: false})
+      })
+    }
+
     console.log("Files received:");
     console.log(req.files.map(file => ({
       path: file.path,
@@ -319,6 +330,17 @@ const uploadEditProduct = async (req, res) => {
         formData: req.body,
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
+    }
+
+
+    if (status !== "Available" && quantity > 0) {
+      await deleteUploadedImages(req.files);
+      return res.status(400).json({
+        success: false
+        , error: "Quantity must be 0 ",
+        formData: req.body,
+        cat: await Category.find({ isListed: true, isDeleted: false })
+      })
     }
 
 

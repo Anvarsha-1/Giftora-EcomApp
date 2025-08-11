@@ -304,11 +304,15 @@
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Shipping</span>
-                                    <span class="text-green-600 font-medium">FREE</span>
+                                    <% if (shipping===0) { %>
+                                        <span class="text-green-600 font-medium">FREE</span>
+                                        <% } else { %>
+                                            <span class="text-gray-700 font-medium">₹<%= shipping %></span>
+                                            <% } %>
                                 </div>
                                 <div class="flex justify-between font-semibold">
                                     <span>Total</span>
-                                    <span>₹<%= (subTotal + tax).toLocaleString() %></span>
+                                    <span id="total-price" data-total-price="<%= subTotal + tax + shipping.toLocaleString() %>">₹<%= subTotal + tax + shipping.toLocaleString() %></span>
                                 </div>
                             </div>
                             <% } %>
@@ -316,115 +320,117 @@
                     <!-- Place Order Button -->
                     <div class="card">
                         <button id="placeOrderBtn" type="button"
-                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors text-lg"
-                            onclick="placeOrder()">Place Order</button>
+                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors text-lg">Place
+                            Order</button>
                     </div>
                 </div>
             </div>
         </div>
         <%- include('../partials/user/footer.ejs') %>
             <script>
-                async function placeOrder() {
-                    const addressSelected = document.querySelector('input[name="selectedAddress"]:checked');
-                    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
-                    const totalPrice = parseFloat('<%= total %>');
-                    const cartItems = <% - JSON.stringify(cartItems || []) %>;
-                    const couponApplied = false;
-                    const couponId = null;
+                const placeOrderBtn = document.getElementById('placeOrderBtn');
+                if (placeOrderBtn) {
+                    placeOrderBtn.addEventListener('click', async function () {
+                        const addressSelected = document.querySelector('input[name="selectedAddress"]:checked');
+                        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+                        const totalPriceEl = document.getElementById('total-price');
+                        const totalPrice = totalPriceEl ? parseFloat(totalPriceEl.getAttribute('data-total-price')) : 0;
+                        const cartItems = <%- JSON.stringify(cartItems || []) %>;
+                        const couponApplied = false
+                        const couponId = null
 
-                    if (!addressSelected) {
-                        return Swal.fire({
-                            icon: 'warning',
-                            title: 'Select Address',
-                            text: 'Please select a delivery address before placing your order.',
-                            confirmButtonColor: '#3085d6'
-                        });
-                    }
 
-                    if (paymentMethod === "COD" && totalPrice > 4000) {
-                        return Swal.fire({
-                            icon: 'error',
-                            title: 'COD Unavailable',
-                            text: 'Cash on Delivery is available only for orders up to ₹4000.',
-                            confirmButtonColor: '#d33'
-                        });
-                    }
 
-                    const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-                    const orderedItems = cartItems.map(item => ({
-                        productId: item._id,
-                        quantity: item.quantity
-                    }));
+                        if (!addressSelected) {
+                            return Swal.fire({
+                                icon: 'warning',
+                                title: 'Select Address',
+                                text: 'Please select a delivery address before placing your order.',
+                                confirmButtonColor: '#3085d6'
+                            });
+                        }
 
-                    const confirmation = await Swal.fire({
-                        title: 'Confirm Your Order',
-                        html: `
+
+
+                        const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+                        const orderedItems = cartItems.map(item => ({
+                            productId: item._id,
+                            quantity: item.quantity
+                        }));
+
+                        const confirmation = await Swal.fire({
+                            title: 'Confirm Your Order',
+                            html: `
                             <div style="text-align:left; font-size:15px;">
                                 <strong>Total Items:</strong> ${totalQuantity} <br>
                                 <strong>Total Price:</strong> ₹${totalPrice.toFixed(2)} <br>
                                 <strong>Payment Method:</strong> ${paymentMethod}
                             </div>
                         `,
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Place Order',
-                        cancelButtonText: 'Cancel',
-                        confirmButtonColor: '#16a34a',
-                        cancelButtonColor: '#d33',
-                        background: '#f0f9ff'
-                    });
-
-                    if (!confirmation.isConfirmed) return;
-
-                    try {
-                        const response = await fetch('/checkout/place-order', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                address: addressSelected.value,
-                                paymentMethod,
-                                totalPrice,
-                                discountPrice: 0,
-                                finalPrice: totalPrice,
-                                couponApplied,
-                                couponId,
-                                orderedItems
-                            })
+                            icon: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Place Order',
+                            cancelButtonText: 'Cancel',
+                            confirmButtonColor: '#16a34a',
+                            cancelButtonColor: '#d33',
+                            background: '#f0f9ff'
                         });
 
-                        const result = await response.json();
+                        if (!confirmation.isConfirmed) return;
 
-                        if (result.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Order Placed!',
-                                text: 'Your order has been placed successfully.',
-                                confirmButtonColor: '#3b82f6'
-                            }).then(() => {
-
-                                window.location.href = `/checkout/order-success?orderId=${result.orderId}`;
-
+                        try {
+                            const response = await fetch('/checkout/place-order', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    address: addressSelected.value,
+                                    paymentMethod,
+                                    totalPrice,
+                                    discountPrice: 0,
+                                    finalPrice: totalPrice,
+                                    couponApplied,
+                                    couponId,
+                                    orderedItems
+                                })
                             });
-                        } else {
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Order Placed!',
+                                    text: 'Your order has been placed successfully.',
+                                    confirmButtonColor: '#3b82f6'
+                                }).then(() => {
+
+                                    window.location.href = `/checkout/order-success?orderId=${result.orderId}`;
+
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed',
+                                    text: result.message || 'Order could not be placed.',
+                                    confirmButtonColor: '#d33'
+                                });
+                            }
+                        } catch (err) {
+                            console.error(err);
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Failed',
-                                text: result.message || 'Order could not be placed.',
+                                title: 'Server Error',
+                                text: 'Something went wrong. Please try again later.',
                                 confirmButtonColor: '#d33'
                             });
                         }
-                    } catch (err) {
-                        console.error(err);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Server Error',
-                            text: 'Something went wrong. Please try again later.',
-                            confirmButtonColor: '#d33'
-                        });
-                    }
+
+                    })
                 }
+
+
             </script>
 
 

@@ -29,7 +29,7 @@ const loadCart = async (req, res) => {
 
         const validItems = cart.items.filter(item => {
             const product = item.productId;
-            return product && !product.isBlocked && !product.isDeleted && product.quantity >= 1;
+            return product && !product.isBlocked && !product.isDeleted ;
         });
 
         if (validItems.length === 0) {
@@ -47,7 +47,7 @@ const loadCart = async (req, res) => {
 
         const cartItems = validItems.map(item => {
             const product = item.productId;
-            const price = Number(product.regularPrice) || 0;
+            const price = Number(product.salesPrice) || 0;
             const safeQuantity = Math.min(item.quantity, product.quantity || 1)
             const itemTotal = price * safeQuantity;
 
@@ -58,7 +58,7 @@ const loadCart = async (req, res) => {
             return {
                 _id: product._id,
                 name: product.productName || 'Unnamed Product',
-                price: product.regularPrice,
+                price: product.salesPrice,
                 quantity: safeQuantity,
                 stock: product.quantity || 0,
                 image: product.productImage?.[0]?.url || '/images/placeholder.jpg',
@@ -69,7 +69,7 @@ const loadCart = async (req, res) => {
         const tax = Math.round(subTotal * 0.05);
         const shipping = subTotal >= 1000 ? 0 : 50;
         const total = subTotal + tax + shipping;
-        const deliveryMessage = subTotal > 1000
+        const deliveryMessage = subTotal >= 1000
             ? "Free delivery on order above ₹1000"
             : "₹50 shipping charge for orders below ₹1000";
 
@@ -218,6 +218,7 @@ const updateCartQuantity = async (req, res) => {
         const userId = req.session.user
         const { itemId, quantity } = req.body
         const user = await User.findById(req.session.user)
+       
 
         if (!user) {
             return res.json({ success: false, message: "User not logged in" })
@@ -230,6 +231,7 @@ const updateCartQuantity = async (req, res) => {
         }
 
         const cart = await Cart.findOne({ userId })
+        console.log(cart)
 
         const item = cart.items.find(i => i.productId.toString() === itemId)
 
@@ -256,7 +258,7 @@ const updateCartQuantity = async (req, res) => {
         }
 
         item.quantity = newQuantity
-        item.totalPrice = product.regularPrice * quantity;
+        item.totalPrice = product.salesPrice * quantity;
         cart.total = cart.items.reduce((sum, i) => sum + i.totalPrice, 0);
         cart.totalQuantity = cart.items.reduce((sum, i) => sum + i.quantity, 0);
   
@@ -320,29 +322,40 @@ const updateCartCount = async (req, res) => {
         const userId = req.session.user;
 
         if (!userId) {
-            return res.json({ success: true, count: 0 });
+            return res.json({ success: false,wishlistCount:0, count: 0 });
         }
 
         const cart = await Cart.findOne({ userId }).populate('items.productId');
+        const wishlist = await Wishlist.findOne({userId}).populate('products.productId')
 
-        if (!cart || !cart.items) {
-            return res.json({ success: true, count: 0 });
+        if (!cart || !cart.items || !wishlist || !wishlist.products) {
+            return res.json({ success: false,wishlistCount:0, cartCount: 0 });
         }
 
+        
         const validItems = cart.items.filter(item => {
             const product = item.productId;
             return (
                 product &&
                 !product.isBlocked &&
-                !product.isDeleted &&
-                product.quantity > 0
+                !product.isDeleted 
+               
             );
         });
 
-        return res.json({ success: true, count: validItems.length });
+        const validWishlist = wishlist.products.filter(item=>{
+            const product = item.productId;
+            return (
+                product && 
+                !product.isBlocked &&
+                !product.isDeleted
+            )
+        })
+
+        return res.json({ success: true, cartCount: validItems.length , wishlistCount :validWishlist.length  });
     } catch (error) {
         console.error("Error update cart count", error.message);
-        return res.status(500).json({ success: false, message: "Server error", count: 0 });
+        return res.status(500).json({ success: false, message: "Server error", cartCount: validItems.length || 0, wishlistCount: validWishlist.length || 0 });
     }
 };
 

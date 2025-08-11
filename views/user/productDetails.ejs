@@ -1153,7 +1153,9 @@
                             Toast.fire({
                                 icon: 'success',
                                 title: result.message || "Wishlist updated"
-                            });
+                            }).then(()=>{
+                                 updateCartCount()
+                            })
                         } else {
                             if (result.message === "user not found") {
                                 Swal.fire({

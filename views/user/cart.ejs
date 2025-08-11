@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart - Your Store</title>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+   
     <link rel="stylesheet" href="/styles/output.css">
     <!-- Add custom CSS for toast -->
     <style>
@@ -104,9 +105,16 @@
                                                 </h3>
                                                 <p class="text-sm text-gray-500 mb-2">₹<%= (item.price ||
                                                         0).toLocaleString() %> per item</p>
-                                                <p class="text-xs text-gray-400">
-                                                    <%= item.stock || 0 %> in stock
-                                                </p>
+                                                <% if (item.stock===0) { %>
+                                                    <p class="text-xs text-red-500 font-medium">
+                                                        Out of stock
+                                                    </p>
+                                                    <% } else { %>
+                                                        <p class="text-xs text-gray-400">
+                                                            <%= item.stock %> in stock
+                                                        </p>
+                                                        <% } %>
+
                                             </div>
 
                                             <!-- Quantity Controls -->
@@ -204,7 +212,7 @@
                         </div>
 
                         <!-- Checkout Button -->
-                        <button id="checkoutBtn"
+                        <button id="checkoutBtn" onclick="proceedToCheckout()"
                             class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors <%= (cartItems && cartItems.length === 0) ? 'disabled:bg-gray-300 disabled:cursor-not-allowed' : '' %>"
                             <%=(cartItems && cartItems.length===0) ? 'disabled' : '' %>>
                             Proceed to Checkout
@@ -222,10 +230,10 @@
             </div>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Toast Container -->
         <div id="toastContainer" class="toast-container"></div>
 
-        <script src="https://cdn.tailwindcss.com"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 lucide.createIcons();
@@ -427,6 +435,35 @@
             }
 
            
+        </script>
+        <script>
+            async function proceedToCheckout() {
+                    try {
+                        const response = await fetch('/checkout', {
+                            method: 'POST',
+                        });
+
+                        const data = await response.json();
+
+                        if (!data.success) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Cannot Proceed',
+                                html: Array.isArray(data.item)
+                                    ? data.item.map(i => `<p>${i.name}: ${i.reason}</p>`).join('')
+                                    : `<p>${data.message || 'Unknown error'}</p>`,
+                                confirmButtonText: 'OK'
+                            });
+                            return;
+                        }else if(data.success){  
+                        window.location.href = '/checkout';
+                        }
+                    } catch (err) {
+                        console.error('Error:', err);
+                        Swal.fire('Something went wrong!', '', 'error');
+                    }
+                }
+
         </script>
 </body>
 

@@ -76,7 +76,7 @@
             position: relative;
         }
 
-        .cart-badge {
+        .count-badge {
             position: absolute;
             top: 0;
             right: 0;
@@ -230,16 +230,19 @@
 
             <% if (user) { %>
                 <div class="header-right">
-                    <!-- Wishlist -->
-                    <button onclick='window.location.href="/wishlist"'   class="icon-button header-wishlist" aria-label="Wishlist">
-                        <i class="far fa-heart"></i>
-                    </button>
+                 
+                <!-- Wishlist -->
+                <button onclick="window.location.href='/wishlist'" class="icon-button header-wishlist" aria-label="Wishlist">
+                    <i class="far fa-heart"></i>
+                    <span id="wishlist-count" class="count-badge">0</span>
+                </button>
+                
+                <!-- Cart -->
+                <button onclick="window.location.href='/cart'" class="icon-button cart-icon" aria-label="Cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cart-count" class="count-badge">0</span>
+                </button>
 
-                    <!-- Cart -->
-                    <button onclick="window.location.href='/cart'" class="icon-button cart-icon" aria-label="Cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id='cart-count' class="cart-badge">0</span>
-                    </button>
 
                     <!-- Profile Dropdown -->
                     <div class="profile-dropdown" id="profileDropdown1">
@@ -269,6 +272,7 @@
                 <% } %>
         </div>
     </header>
+    <script src="/js/updateCartIconCount.js"></script>
     <script>
         const user = '<% - JSON.stringify(user || null) %>';
     </script>
@@ -311,7 +315,8 @@
 
 
     </script>
-    <script src="/js/updateCartIconCount.js"></script>
+
+   
 
 
 </body>

@@ -4,10 +4,15 @@ async function updateCartCount() {
         const res = await fetch('/cart/count');
         const data = await res.json();
         if (data.success) {
-            const badge = document.getElementById('cart-count');
-            if (badge) {
-                badge.innerText = data.count;
-                badge.style.display = data.count > 0 ? 'inline-block' : 'none';
+            console.log(data)
+            const cartBadge = document.getElementById('cart-count');
+            const wishlistBadge = document.getElementById('wishlist-count')
+            if (cartBadge && wishlistBadge) {
+               
+                cartBadge.innerText = data.cartCount;
+                wishlistBadge.innerText = data.wishlistCount;
+                cartBadge.style.display = data.cartCount > 0 ? 'inline-block' : 'none';
+                wishlistBadge.style.display = data.wishlistCount > 0 ? 'inline-block' : 'none';
             }
         }
     
