@@ -164,13 +164,13 @@ const addProduct = async (req, res) => {
     }
 
 
-    if (status!=="Available" && quantity>0){
+    if (status !== "Available" && quantity > 0) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
-        success:false
-        ,error:"Quantity must be 0 ",
-        formData:req.body,
-        cat:await Category.find({isListed: true, isDeleted: false})
+        success: false
+        , error: "Quantity must be 0 ",
+        formData: req.body,
+        cat: await Category.find({ isListed: true, isDeleted: false })
       })
     }
 
@@ -350,7 +350,7 @@ const uploadEditProduct = async (req, res) => {
           try {
             await cloudinary.uploader.destroy(public_id);
           } catch (err) {
-           console.error(`Failed to delete Cloudinary image ${public_id}:`, err.message);
+            console.error(`Failed to delete Cloudinary image ${public_id}:`, err.message);
           }
         }
       }

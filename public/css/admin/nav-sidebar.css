@@ -128,6 +128,14 @@
     padding: 0 20px;
     transition: all 0.3s ease;
 }
+.sidebar {
+  width: 16rem; /* 256px (w-64) */
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+
 
 .logout-btn {
     width: 100%;

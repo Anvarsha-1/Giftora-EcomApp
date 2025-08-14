@@ -431,60 +431,7 @@ body {
 <body>
   <div class="main-wrapper">
     <!-- Sidebar Navigation -->
-    <div class="sidebar">
-      <div class="logo-section">
-        <img src="/images/header.img/gifttora.png" alt="Giftora Logo" class="logo-img">
-        <button type="button" class="toggle-sidebar" aria-label="Toggle sidebar">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-      
-      <nav class="nav-section">
-        <a href="/admin/dashboard" class="nav-item active" data-tooltip="Dashboard">
-          <i class="fas fa-chart-line"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="/admin/products" class="nav-item" data-tooltip="Products">
-          <i class="fas fa-box"></i>
-          <span>Products</span>
-        </a>
-        <a href="#" class="nav-item" data-tooltip="Order Lists">
-          <i class="fas fa-list-alt"></i>
-          <span>Order Lists</span>
-        </a>
-        <a href="/admin/users" class="nav-item" data-tooltip="Users">
-          <i class="fas fa-users"></i>
-          <span>Users</span>
-        </a>
-        <a href="#" class="nav-item" data-tooltip="Sales">
-          <i class="fas fa-chart-bar"></i>
-          <span>Sales</span>
-        </a>
-        <a href="#" class="nav-item" data-tooltip="Coupons">
-          <i class="fas fa-ticket-alt"></i>
-          <span>Coupons</span>
-        </a>
-        <a href="/admin/category" class="nav-item" data-tooltip="Category">
-          <i class="fas fa-tags"></i>
-          <span>Category</span>
-        </a>
-        <a href="#" class="nav-item" data-tooltip="Banner">
-          <i class="fas fa-image"></i>
-          <span>Banner</span>
-        </a>
-        <a href="#" class="nav-item" data-tooltip="Offer">
-          <i class="fas fa-percent"></i>
-          <span>Offer</span>
-        </a>
-      </nav>
-      
-      <div class="logout-section">
-        <a href="/admin/logout" class="logout-btn">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span>
-        </a>
-      </div>
-    </div>
+    <%- include('../partials/admin/header.ejs') %>
 
     <!-- Main content area -->
     <div class="content-wrapper">

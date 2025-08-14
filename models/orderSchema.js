@@ -38,6 +38,9 @@ const orderSchema = new Schema({
     returnReason: {
       type: String
     },
+    itemReturnRequestAt :{
+      type:Date
+    },
     adminApprovalStatus: {
       type: String,
       enum: ['Pending', 'Approved', 'Rejected'],

@@ -1,6 +1,8 @@
 const Order = require('../../models/orderSchema')
 const User = require('../../models/userSchema')
 const Address = require('../../models/addressSchema')
+const BuildPDF = require('../../helpers/pdf-service')
+
 
 
 const loadOrderDetails = async (req, res) => {
@@ -41,7 +43,7 @@ const loadMyOrder = async (req, res) => {
         const userId = req.session.user
         const user = await User.findById(userId)
         const order = await Order.find({ userId: userId }).populate('orderedItems.productId')
-        console.log(order)
+
         if (!order || order.length < 1) {
             return res.render('orderList', { order: null, user: user || null, address: null });
         }
@@ -109,7 +111,7 @@ const cancelOrder = async (req, res) => {
     try {
         const reason = req.body.reason
         const orderId = req.params.orderId
-        console.log(orderId)
+
         if (!orderId) {
             return res.json({ success: false, message: "invalid request" })
         }
@@ -143,6 +145,101 @@ const cancelOrder = async (req, res) => {
 }
 
 
+const downloadPdf = async (req, res) => {
+    try {
+        const orderId = req.params.orderId
+        const order = await Order.findOne({ orderId }).populate("orderedItems.productId").lean()
+
+        const addressId = order.address
+        const address = await Address.findById(addressId)
+
+        if (!order) {
+            return res.json({ success: false, message: "order not found" })
+        }
+        const stream = res.writeHead(200, { "Content-Type": "application/pdf", 'Content-Disposition': `attachment; filename=invoice-${orderId}.pdf` })
+
+        BuildPDF(order, address,
+            (chunk) => stream.write(chunk),
+            () => stream.end()
+        )
+
+
+    } catch (error) {
+
+        console.log("Error in invoice page", error.message)
+    }
+}
+
+const returnOrder = async (req, res) => {
+    try {
+        const orderId = req.params.orderId
+        console.log(orderId)
+        const { reason } = req.body
+        if (!orderId) {
+            return res.json({ success: false, message: "Invalid request" })
+        }
+        if (!reason || reason.length < 3 || reason.length > 50) {
+            return res.json({ success: false, message: "reason required or reason  must be 3-50 characters" })
+        }
+
+        const order = await Order.findOne({ orderId }).populate('orderedItems.productId')
+
+        if (!order) {
+            return res({ success: false, message: "Order not Found" })
+        }
+
+        order.status = 'Return Request'
+        order.returnReason = reason
+        order.returnedAt = Date.now()
+        order.orderedItems.forEach((item) => {
+            item.status = 'Return Request',
+                item.returnReason = reason,
+                item.itemReturnRequestAt = Date.now()
+        })
+        await order.save()
+        return res.json({ success: true })
+    } catch (error) {
+        console.log("error while return order", error.message)
+        return res.json({ message: false, message: "Something went wrong" })
+    }
+}
+
+const returnItemRequest = async (req, res) => {
+    try {
+        const { orderId, itemId } = req.params
+       
+        const { reason } = req.body
+        if (!orderId || !itemId) {
+            return res.json({ success: false, message: "Invalid request " })
+        }
+
+        const order = await Order.findOne({ orderId }).populate('orderedItems.productId')
+        if (!order) {
+            return res.json({ success: false, message: "Order not found" })
+        }
+        const product = order.orderedItems.find((item) => item._id.toString() === itemId.toString())
+        if (!product) {
+            return res.json({ success: false, message: "Product not found" })
+        }
+        
+        if(product.status==='Delivered'){
+            product.status = 'Return Request',
+            product.returnReason = reason
+            product.itemReturnRequestAt = Date.now()
+        }
+       
+        await order.save()
+        return res.json({ success: true })
+
+    } catch (error) {
+        console.log("Error while order Item Request",error.message)
+        return res.json({success:false,message:"Something went wrong"})
+    }
+}
+
+
+
+
 
 
 
@@ -150,5 +247,8 @@ module.exports = {
     loadOrderDetails,
     loadMyOrder,
     cancelProduct,
-    cancelOrder
+    cancelOrder,
+    returnOrder,
+    returnItemRequest,
+    downloadPdf
 }

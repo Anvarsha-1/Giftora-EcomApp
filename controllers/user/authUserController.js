@@ -56,7 +56,7 @@ const loadPLandingPage = async (req, res) => {
 
     return res.render("user/Home-page", {
       user: null,
-      firstName:null,
+      firstName: null,
       products: productData,
       bestselling: bestsellingData,
       flashSales: flashSalesData,
@@ -142,7 +142,7 @@ const signUp = async (req, res) => {
       userData: req.session.userData,
     });
 
-    const error = req.query.error ||null
+    const error = req.query.error || null
 
     req.session.save((err) => {
       if (err) {
@@ -233,7 +233,7 @@ const verifyOtp = async (req, res) => {
     });
 
     req.session.user = newUser._id
-   
+
     return res.status(200).json({
       success: true,
       redirectUrl: "/home",
@@ -294,8 +294,8 @@ const resendOtp = async (req, res) => {
 const loadLogin = async (req, res) => {
   if (req.session.user) return res.redirect('/home')
   try {
-     const error = req.flash('error')
-    res.render("login-page",{success:null,message:"",error:error || []});
+    const error = req.flash('error')
+    res.render("login-page", { success: null, message: "", error: error || [] });
   } catch (error) {
     console.log("Error loading login page");
     return res.redirect("/PageNotFound").status(404);
@@ -316,17 +316,17 @@ const login = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not Found" });
     }
-    
-    if (findUser.googleId){
-      return res
-      .json({success:false,message:"Please login thought google authentication"})
-    }
-    
 
-    if(findUser.isAdmin){
+    if (findUser.googleId) {
       return res
-      .status(404)
-      .json({success:false ,message:"Access Denied please login through admin side"}) 
+        .json({ success: false, message: "Please login thought google authentication" })
+    }
+
+
+    if (findUser.isAdmin) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Access Denied please login through admin side" })
     }
 
     if (findUser.isBlocked) {
@@ -397,8 +397,8 @@ const forgotPasswordValidation = async (req, res) => {
     }
 
     const otp = generateOtp()
-    console.log("generated OTP",otp)
-    sendVerificationEmail(email,otp);
+    console.log("generated OTP", otp)
+    sendVerificationEmail(email, otp);
 
     req.session.otp = otp;
     req.session.otpCreatedAt = Date.now()
@@ -416,46 +416,46 @@ const forgotPasswordValidation = async (req, res) => {
 
 const otpForgotPassword = async (req, res) => {
   if (!req.session.email) return res.redirect('/forgot-password')
-  try { 
-    return res.render('user/otpForgotPassword',{error:req.flash('error'),success:req.flash('success')})
+  try {
+    return res.render('user/otpForgotPassword', { error: req.flash('error'), success: req.flash('success') })
   } catch (error) {
-     console.log('error while loading otpForgotPassword',error.message);
-     return res.render('user/error-page')
+    console.log('error while loading otpForgotPassword', error.message);
+    return res.render('user/error-page')
   }
 }
 
 
-  const verifyForgotPasswordOtp = async (req, res) => {
-    if (!req.session.email) return res.redirect('/forgot-password');
+const verifyForgotPasswordOtp = async (req, res) => {
+  if (!req.session.email) return res.redirect('/forgot-password');
 
-    try {
+  try {
 
-      const Expiration = Date.now() - req.session.otpCreatedAt > 5 * 60 * 1000
+    const Expiration = Date.now() - req.session.otpCreatedAt > 5 * 60 * 1000
 
-      if (Expiration) {
-        req.session.otp = null;
-        req.session.otpCreatedAt = null;
-        req.flash('error', 'OTP expired. Request a new one.');
-        return res.redirect('/otp-forgot-password')
-      }
+    if (Expiration) {
+      req.session.otp = null;
+      req.session.otpCreatedAt = null;
+      req.flash('error', 'OTP expired. Request a new one.');
+      return res.redirect('/otp-forgot-password')
+    }
 
-      const otp = (req.body.otp || []).join('').trim();
-        console.log("otp",otp)
-      if (!otp || otp.length !== 6) {
-        req.flash('error', 'Please enter a valid 6-digit OTP');
-        return res.redirect('/otp-forgot-password'); 
-      }
-  
-      if (otp !== req.session.otp) {
-        req.flash('error', 'Incorrect OTP');
-        return res.redirect('/otp-forgot-password');
-      }
-      
-     
+    const otp = (req.body.otp || []).join('').trim();
+    console.log("otp", otp)
+    if (!otp || otp.length !== 6) {
+      req.flash('error', 'Please enter a valid 6-digit OTP');
+      return res.redirect('/otp-forgot-password');
+    }
+
+    if (otp !== req.session.otp) {
+      req.flash('error', 'Incorrect OTP');
+      return res.redirect('/otp-forgot-password');
+    }
+
+
 
     req.session.otpVerified = true
     req.flash('success', 'OTP verified successfully!');
-    return res.redirect('/reset-password'); 
+    return res.redirect('/reset-password');
   } catch (error) {
     console.log('Error verifying OTP:', error.message);
     return res.render('user/error-page');
@@ -463,53 +463,53 @@ const otpForgotPassword = async (req, res) => {
 };
 
 
-const loadResetPassword  = async(req,res)=>{
+const loadResetPassword = async (req, res) => {
   if (!req.session.email || !req.session.otpVerified) return res.redirect('/forgot-password')
-  try{
-    return res.render('resetPassword',{
-      error:req.flash('error'),
-      success:req.flash('success'), 
+  try {
+    return res.render('resetPassword', {
+      error: req.flash('error'),
+      success: req.flash('success'),
     })
-  }catch(error){
+  } catch (error) {
 
   }
 }
 
 
-const validateResetPassword = async(req,res)=>{
-  try{
-    const { newPassword , confirmPassword }  = req.body
-    console.log("new password",newPassword)
-    if(!newPassword || !confirmPassword){
-      req.flash('error','All fields required..!')
-      return res.render('user/resetPassword',{error:req.flash('error')})
-    } 
+const validateResetPassword = async (req, res) => {
+  try {
+    const { newPassword, confirmPassword } = req.body
+    console.log("new password", newPassword)
+    if (!newPassword || !confirmPassword) {
+      req.flash('error', 'All fields required..!')
+      return res.render('user/resetPassword', { error: req.flash('error') })
+    }
 
-    if(newPassword.length<6){
-      req.flash('error','Password must be at least 6 character long');
+    if (newPassword.length < 6) {
+      req.flash('error', 'Password must be at least 6 character long');
       return res.render('user/resetPassword', { error: req.flash('error') });
     }
 
-    if(newPassword!==confirmPassword){
-      req.flash('error',"Password does not match");
-      return res.render('resetPassword',{ error:req.flash('error')});
+    if (newPassword !== confirmPassword) {
+      req.flash('error', "Password does not match");
+      return res.render('resetPassword', { error: req.flash('error') });
     }
-     
+
     const hashPassword = await securePassword(newPassword)
-  
-    const user = await User.findOne({email:req.session.email})
+
+    const user = await User.findOne({ email: req.session.email })
 
     if (!user) {
       req.flash('error', 'User not found.');
       return res.redirect('/reset-password');
     }
 
-    
+
     user.password = hashPassword
 
     await user.save()
 
-    
+
 
     req.flash('success', 'Password updated successfully.');
     delete req.session.email
@@ -517,10 +517,10 @@ const validateResetPassword = async(req,res)=>{
 
     res.redirect('/login');
 
-  }catch(error){
+  } catch (error) {
 
-      console.log('error while reset password',error.message)
-      return res.status(500).render('user/error-page')
+    console.log('error while reset password', error.message)
+    return res.status(500).render('user/error-page')
   }
 }
 
@@ -549,23 +549,23 @@ const loadHomePage = async (req, res) => {
     const bestsellingData = productData.slice(4, 8);
     const flashSalesData = productData.slice(8, 12);
 
-   
+
 
     const userId = req.session.user;
-    const wishlist = await Wishlist.findOne({userId})
-    const wishlistId = wishlist ? wishlist.products.map(item=> item.productId.toString()) : []
-    
+    const wishlist = await Wishlist.findOne({ userId })
+    const wishlistId = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
+
 
     if (userId) {
       const userData = await User.findById(userId);
 
       return res.render("user/Home-page", {
         user: userData,
-        firstName :userData.firstName,
+        firstName: userData.firstName,
         products: newProductData,
         bestselling: bestsellingData,
         flashSales: flashSalesData,
-        wishlistId:wishlistId
+        wishlistId: wishlistId
       });
     }
 
@@ -616,7 +616,7 @@ module.exports = {
   loadResetPassword,
   validateResetPassword,
   loadHomePage,
-  
+
 };
 
 

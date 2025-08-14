@@ -231,7 +231,7 @@ const updateCartQuantity = async (req, res) => {
         }
 
         const cart = await Cart.findOne({ userId })
-        console.log(cart)
+       
 
         const item = cart.items.find(i => i.productId.toString() === itemId)
 

@@ -80,17 +80,23 @@
                                     class="px-5 py-2 rounded bg-red-100 text-red-600 font-medium border border-red-200">Order
                                     Cancelled</span>
                                 <% } else if (order.status==='Delivered' ) { %>
-                                    <button id="return-order-btn"
-                                        class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium">
-                                        Return Order
-                                    </button>
-
-                                    <% } else if (order.status==='Pending' || order.status==='Shipping' ) { %>
-                                        <button id="cancelAllOrders"
-                                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
-                                            data-order-id="<%= order.orderId %>">Cancel
-                                            All Orders</button>
-                                        <% } %>
+                                    <% if (order.returnStatus) { %>
+                                        <span class="px-4 py-2 bg-gray-200 text-gray-700 rounded font-medium">
+                                            Return <%= order.returnStatus %>
+                                        </span>
+                                    <% } else { %>
+                                        <button id="return-order-btn"
+                                            class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
+                                            data-order-id="<%= order.orderId %>">
+                                            Return Order
+                                        </button>
+                                    <% } %>
+                                <% } else if (order.status==='Pending' || order.status==='Shipping' ) { %>
+                                    <button id="cancelAllOrders"
+                                        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
+                                        data-order-id="<%= order.orderId %>">Cancel
+                                        All Orders</button>
+                                    <% } %>
                                             <% } %>
                     </div>
                 </div>
@@ -144,16 +150,16 @@
                                             <h3 class="text-md font-semibold text-gray-800 mb-1">Order Status & Price
                                             </h3>
                                             <span class="inline-block px-3 py-1 rounded-full text-xs font-medium
-                                                            <%= order.status === 'pending' ? 'bg-red-100 text-red-700' :
-                                                                order.status === 'shipped' ? 'bg-yellow-100 text-yellow-700' :
-                                                                order.status === 'delivered' ? 'bg-green-100 text-green-700' :
-                                                                order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                                                order.status === 'shipping' ? 'bg-yellow-100 text-yellow-700' :
-                                                                order.status === 'Pending' ? 'bg-red-100 text-red-700' :
-                                                                order.status === 'Shipping' ? 'bg-yellow-100 text-yellow-700' :
-                                                                order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                                                                order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                                                                'bg-gray-100 text-gray-700' %>">
+                                                <%= order.status === 'pending' ? 'bg-red-100 text-red-700' :
+                                                    order.status === 'shipped' ? 'bg-yellow-100 text-yellow-700' :
+                                                    order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                                                    order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                                                    order.status === 'shipping' ? 'bg-yellow-100 text-yellow-700' :
+                                                    order.status === 'Pending' ? 'bg-red-100 text-red-700' :
+                                                    order.status === 'Shipping' ? 'bg-yellow-100 text-yellow-700' :
+                                                    order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                                                    order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                                    'bg-gray-100 text-gray-700' %>">
                                                 <%= order.status %>
                                             </span>
                                             <span class="text-lg font-semibold text-gray-800">Total: ₹<%=
@@ -197,37 +203,47 @@
                                                 <h3 class="text-md font-semibold text-gray-800 mb-2">Order Summary</h3>
                                                 <div class="space-y-2">
                                                     <% order.orderedItems.forEach(function(item) { %>
-                                                        <div
-                                                            class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
+                                                        <div class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
                                                             <div class="flex items-center gap-3">
                                                                 <img src="<%= item.productId?.productImage?.[0]?.url || '/default-image.png' %>"
                                                                     alt="<%= item.productId?.productName || 'Product' %>"
                                                                     class="w-12 h-12 object-cover rounded border border-gray-200">
                                                                 <div>
                                                                     <p class="font-medium text-gray-800">
-                                                                        <%= item.productId?.productName
-                                                                            || 'Unnamed Product' %>
+                                                                        <%= item.productId?.productName || 'Unnamed Product' %>
                                                                     </p>
-                                                                    <p class="text-xs text-gray-600">Qty: <%=
-                                                                            item.quantity %> | ₹ <%=
-                                                                                item.price?.toFixed(2) || 'N/A' %> each
-                                                                    </p>
+                                                                    <p class="text-xs text-gray-600">Qty: <%= item.quantity %> | ₹ <%= item.price?.toFixed(2)
+                                                                                || 'N/A' %> each</p>
                                                                 </div>
                                                             </div>
                                                             <div class="flex items-center gap-4">
-                                                                <p class="text-gray-700 font-semibold">₹<%= item.price ?
-                                                                        (item.price * item.quantity).toFixed(2) : 'N/A'
-                                                                        %>
+                                                                <p class="text-gray-700 font-semibold">₹<%= item.price ? (item.price * item.quantity).toFixed(2)
+                                                                        : 'N/A' %>
                                                                 </p>
-                                                                <% if (item.status === 'Cancelled') { %>
+                                                                <% if (item.status==='Cancelled' ) { %>
                                                                     <span class="text-xs text-red-500">Cancelled</span>
-                                                                <% } else if (order.status==='Pending' || order.status==='Shipping' ) { %>
-                                                                    <button
-                                                                        class="cancel-item-btn px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
-                                                                        data-order-id="<%= order.orderId %>"
-                                                                        data-item-id="<%= item._id %>">Cancel
-                                                                        Item</button>
-                                                                <% } %>
+                                                                    <% } else if (order.status==="Delivered" || order.status==="Returned") { %>
+                                                                        <% if (item.status==="Return Request" || order.status==="Returned" ) { %>
+                                                                            <span class="text-xs font-medium
+                                                                        <%= item.adminApprovalStatus === 'Pending' ? 'text-yellow-600' :
+                                                                            item.adminApprovalStatus === 'Approved' ? 'text-green-600' :
+                                                                            item.adminApprovalStatus === 'Rejected' ? 'text-red-600' : 'text-gray-600' %>">
+                                                                                Return <%= item.adminApprovalStatus %>
+                                                                            </span>
+                                                                            <% } else if (!item.status) { %>
+                                                                                <button
+                                                                                    class="return-item-btn px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
+                                                                                    data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
+                                                                                    Return Item
+                                                                                </button>
+                                                                                <% } %>
+                                                                                    <% } else if (order.status==='Pending' || order.status==='Shipping' ) { %>
+                                                                                        <button
+                                                                                            class="cancel-item-btn px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
+                                                                                            data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
+                                                                                            Cancel Item
+                                                                                        </button>
+                                                                                        <% } %>
                                                             </div>
                                                         </div>
                                                         <% }); %>
@@ -256,8 +272,6 @@
         <script>
             // Run after DOM is loaded
             window.onload = function () {
-
-
                 // Cancel All Orders
                 const cancelAllOrdersBtn = document.getElementById('cancelAllOrders');
                 if (cancelAllOrdersBtn) {
@@ -268,17 +282,17 @@
                         Swal.fire({
                             title: 'Cancel Order?',
                             html: `
-                    <label for="cancel-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
-                    <select id="cancel-reason-select" class="swal2-input" style="width:100%">
-                        <option value="">-- Please select --</option>
-                        <option value="Accidentally placed the order">Accidentally placed the order</option>
-                        <option value="Found a lower price elsewhere">Found a lower price elsewhere</option>
-                        <option value="Order taking too long to deliver">Order taking too long to deliver</option>
-                        <option value="Changed my mind">Changed my mind</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <input id="cancel-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
-                `,
+                <label for="cancel-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
+                <select id="cancel-reason-select" class="swal2-input" style="width:100%">
+                    <option value="">-- Please select --</option>
+                    <option value="Accidentally placed the order">Accidentally placed the order</option>
+                    <option value="Found a lower price elsewhere">Found a lower price elsewhere</option>
+                    <option value="Order taking too long to deliver">Order taking too long to deliver</option>
+                    <option value="Changed my mind">Changed my mind</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input id="cancel-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
+            `,
                             focusConfirm: false,
                             showCancelButton: true,
                             confirmButtonColor: '#d33',
@@ -348,17 +362,17 @@
                         Swal.fire({
                             title: 'Cancel Item?',
                             html: `
-                    <label for="cancel-item-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
-                    <select id="cancel-item-reason-select" class="swal2-input" style="width:100%">
-                        <option value="">-- Please select --</option>
-                        <option value="Accidentally placed the order">Accidentally placed the order</option>
-                        <option value="Found a lower price elsewhere">Found a lower price elsewhere</option>
-                        <option value="Order taking too long to deliver">Order taking too long to deliver</option>
-                        <option value="Changed my mind">Changed my mind</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    <input id="cancel-item-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
-                `,
+                <label for="cancel-item-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
+                <select id="cancel-item-reason-select" class="swal2-input" style="width:100%">
+                    <option value="">-- Please select --</option>
+                    <option value="Accidentally placed the order">Accidentally placed the order</option>
+                    <option value="Found a lower price elsewhere">Found a lower price elsewhere</option>
+                    <option value="Order taking too long to deliver">Order taking too long to deliver</option>
+                    <option value="Changed my mind">Changed my mind</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input id="cancel-item-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
+            `,
                             focusConfirm: false,
                             showCancelButton: true,
                             confirmButtonColor: '#d33',
@@ -415,15 +429,16 @@
                     });
                 });
 
-                // Return Order (for delivered orders)
-                const returnOrderBtn = document.getElementById('return-order-btn');
-                if (returnOrderBtn) {
-                    console.log('Found Return Order button');
-                    returnOrderBtn.addEventListener('click', function () {
-                        console.log('Return Order button clicked');
+                // Return Item (for each item)
+                const returnItemBtns = document.querySelectorAll('.return-item-btn');
+                console.log('Found', returnItemBtns.length, 'Return Item buttons');
+                returnItemBtns.forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        console.log('Return Item button clicked');
                         const orderId = btn.getAttribute('data-order-id');
+                        const itemId = btn.getAttribute('data-item-id');
                         Swal.fire({
-                            title: 'Return Order?',
+                            title: 'Return Item?',
                             input: 'select',
                             inputOptions: {
                                 'Received wrong item': 'Received wrong item',
@@ -443,8 +458,8 @@
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                fetch(`/orders/${orderId}/return`, {
-                                    method: 'POST',
+                                fetch(`/orders/${orderId}/item/${itemId}/return`, {
+                                    method: 'PATCH',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ reason: result.value })
                                 })
@@ -461,11 +476,93 @@
                                         Swal.fire('Error', 'An error occurred while processing the return request.', 'error');
                                     });
                             }
-                        })
+                        });
+                    });
+                });
 
-                    })
+
+
+                // Return Order
+                const returnOrderBtn = document.getElementById('return-order-btn');
+                if (returnOrderBtn) {
+                    console.log('Found Return Order button');
+                    returnOrderBtn.addEventListener('click', function () {
+                        console.log('Return Order button clicked');
+                        const orderId = returnOrderBtn.getAttribute('data-order-id');
+                        Swal.fire({
+                            title: 'Return Order?',
+                            html: `
+                <label for="return-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
+                <select id="return-reason-select" class="swal2-input" style="width:100%">
+                    <option value="">-- Please select --</option>
+                    <option value="Received wrong item">Received wrong item</option>
+                    <option value="Item damaged or defective">Item damaged or defective</option>
+                    <option value="Not satisfied with the product">Not satisfied with the product</option>
+                    <option value="Changed my mind">Changed my mind</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input id="return-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
+            `,
+                            focusConfirm: false,
+                            showCancelButton: true,
+                            confirmButtonColor: '#d33',
+                            cancelButtonColor: '#3085d6',
+                            confirmButtonText: 'Yes, return it!',
+                            preConfirm: () => {
+                                const select = document.getElementById('return-reason-select');
+                                const otherInput = document.getElementById('return-reason-other');
+                                if (!select.value) {
+                                    Swal.showValidationMessage('Please select a reason for return');
+                                    return false;
+                                }
+                                if (select.value === 'Other') {
+                                    if (!otherInput.value.trim()) {
+                                        Swal.showValidationMessage('Please enter a reason');
+                                        return false;
+                                    }
+                                    return otherInput.value.trim();
+                                }
+                                return select.value;
+                            },
+                            didOpen: () => {
+                                const select = document.getElementById('return-reason-select');
+                                const otherInput = document.getElementById('return-reason-other');
+                                select.addEventListener('change', function () {
+                                    if (this.value === 'Other') {
+                                        otherInput.style.display = '';
+                                    } else {
+                                        otherInput.style.display = 'none';
+                                    }
+                                });
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed && result.value) {
+                                fetch(`/orders/${orderId}/return`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ reason: result.value })
+                                })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                            Swal.fire('Returned!', 'Your order return request has been submitted.', 'success').then(() => location.reload());
+                                        } else {
+                                            Swal.fire('Error', data.message || 'Could not process return request.', 'error');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        Swal.fire('Error', 'An error occurred while processing the return request.', 'error');
+                                    });
+                            }
+                        });
+                    });
                 } else {
                     console.log('Return Order button NOT found');
                 }
+                
             }
         </script>
+</body>
+
+</html>

@@ -60,8 +60,8 @@ const loadCheckoutPage = async (req, res) => {
 
 
         const tax = Math.round(subTotal * 0.05);
-        const shipping = subTotal >= 1000 ? 0 : 50;
-        const total = subTotal + tax + shipping;
+        const shipping = subTotal >= 1000 ? parseInt(0) : parseInt(50);
+        const total = Number(subTotal + tax + shipping);
        
 
 
@@ -96,12 +96,15 @@ const validateCheckout  = async(req,res)=>{
             return res.json({success:false,message:"invalid request cart not found"})
         }
         let outOfStockItems =[]
+        
 
+       
         
         
          
         for(let item  of cart.items){
             const product = item.productId
+           
             if(!product || product.isBlocked || product.isDeleted || product.quantity<item.quantity){
                  outOfStockItems.push({
                     name:product?.productName || "unknown Product",
@@ -167,6 +170,8 @@ const placeOrder = async(req,res)=>{
             
             if(!product || item.quantity>product.quantity){
                 return res.json({success:false,message:`Insufficient stock for ${product?.productName} `})
+            }if(item.quantity>10){
+                return res.json({success:false,message:"Only 10 quantity approved"})
             }
              product.quantity -= item.quantity
              await product.save()
