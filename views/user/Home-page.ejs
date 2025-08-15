@@ -1417,7 +1417,7 @@
                     const productId = button.getAttribute('data-id');
 
                     try {
-                        const response = await fetch('/cart/addToCart', {
+                        const response = await fetch('/cart', {
                             method: "POST",
                             headers: {
                                 'Content-Type': 'application/json'
@@ -1428,7 +1428,8 @@
 
                         if (data.success) {
                             showToast('Product added to cart', 'success');
-                            updateCartCount()
+                            await updateCartCount()
+                           
                         } else {
                             if (data.message === "User not logged in") {
                                 window.location.href = '/login';

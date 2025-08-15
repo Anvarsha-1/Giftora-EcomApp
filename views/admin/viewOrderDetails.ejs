@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - Admin</title>
+    <link href="/styles/output.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.tutorialjinni.com/sweetalert2/11.14.3/sweetalert2.min.css" />
+    <style>
+        /* Custom styles for header image and layout */
+        .header-image {
+            width: 16rem;
+            height: 8rem;
+            object-fit: contain;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 1.5rem;
+            max-width: 80rem;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .sidebar {
+            width: 16rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .main-content {
+                width: 100%;
+            }
+        }
+
+        /* Status badge styles */
+        .status-badge {
+            padding: 0.15rem 0.6em;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    
+        <div class="content-wrapper">
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="flex justify-between items-center mb-6">
+                    <h1 class="text-2xl font-semibold text-gray-800">Order Details</h1>
+                    <div class="flex gap-4">
+                        <a href="/admin/orders"
+                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Back to
+                            Orders</a>
+                        <% if (order) { %>
+                            <% if (order.status==='Cancelled' ) { %>
+                                <span
+                                    class="px-5 py-2 rounded bg-red-100 text-red-600 font-medium border border-red-200">Order
+                                    Cancelled</span>
+                                <% } else if (order.status==='Delivered' && order.returnStatus) { %>
+                                    <span class="px-4 py-2 bg-gray-200 text-gray-700 rounded font-medium">Return <%=
+                                            order.returnStatus %></span>
+                                    <% } %>
+                                        <% } %>
+                    </div>
+                </div>
+
+                <% if (order) { %>
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                            <!-- User Info -->
+                            <% if (user) { %>
+                                <div class="mb-4">
+                                    <h3 class="text-md font-semibold text-gray-800 mb-1">Customer Details</h3>
+                                    <div class="text-gray-700 text-sm">
+                                        <div><span class="font-medium">Name:</span>
+                                            <%= user.firstName %>
+                                        </div>
+                                        <div><span class="font-medium">Email:</span>
+                                            <%= user.email %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <!-- Order Info & Status/Price Side by Side -->
+                                    <div class="mb-4 flex flex-col md:flex-row md:justify-between md:items-start gap-6">
+                                        <!-- Left: Order Info -->
+                                        <div class="flex-1">
+                                            <h3 class="text-md font-semibold text-gray-800 mb-1">Order Info</h3>
+                                            <div class="text-gray-700 text-sm space-y-1">
+                                                <div><span class="font-medium">Order ID:</span> <span
+                                                        class="text-gray-800">
+                                                        <%= order.orderId %>
+                                                    </span></div>
+                                                <div><span class="font-medium">Order Date:</span> <span
+                                                        class="text-gray-800">
+                                                        <%= new Date(order.createdOn).toLocaleString('en-US', {
+                                                            dateStyle: 'medium' , timeStyle: 'short' }) %>
+                                                    </span></div>
+                                                <div><span class="font-medium">Payment Method:</span> <span
+                                                        class="text-gray-800">
+                                                        <%= order.paymentMethod %>
+                                                    </span></div>
+                                                <% if (order.couponApplied) { %>
+                                                    <div><span class="font-medium">Coupon Applied:</span> <span
+                                                            class="text-gray-800">
+                                                            <%= order.couponCode %> (₹<%= order.couponDiscount %>)
+                                                        </span></div>
+                                                    <% } %>
+                                            </div>
+                                        </div>
+                                        <!-- Right: Order Status & Price -->
+                                        <div class="flex flex-col items-end min-w-[220px]">
+                                            <h3 class="text-md font-semibold text-gray-800 mb-1">Order Status & Price
+                                            </h3>
+                                            <span
+                                                class="inline-block px-3 py-1 rounded-full text-xs font-medium <%= order.status === 'Pending' ? 'bg-red-100 text-red-700' : order.status === 'Shipping' ? 'bg-yellow-100 text-yellow-700' : order.status === 'Delivered' ? 'bg-green-100 text-green-700' : order.status === 'Cancelled' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700' %>">
+                                                <%= order.status %>
+                                            </span>
+                                            <span class="text-lg font-semibold text-gray-800">Total: ₹<%=
+                                                    order.totalPrice?.toFixed(2) || '0.00' %></span>
+                                            <% if (order.discountPrice) { %>
+                                                <span class="text-gray-700">Discount: -₹<%=
+                                                        order.discountPrice.toFixed(2) %></span>
+                                                <% } %>
+                                                    <span class="text-lg font-bold text-blue-700">Final Amount: ₹<%=
+                                                            order.finalAmount?.toFixed(2) || '0.00' %></span>
+                                        </div>
+                                    </div>
+                                    <!-- Shipping Address -->
+                                    <% if (address) { %>
+                                        <div class="border-t border-gray-200 pt-4 mb-4">
+                                            <h3 class="text-md font-semibold text-gray-800 mb-2">Shipping Address</h3>
+                                            <div class="text-gray-700 text-sm">
+                                                <div><span class="font-medium">Name:</span>
+                                                    <%= address.fullName %>
+                                                </div>
+                                                <div><span class="font-medium">Mobile:</span>
+                                                    <%= address.mobileNumber %>
+                                                </div>
+                                                <div><span class="font-medium">Address:</span>
+                                                    <%= address.address %>, <%= address.city %>, <%= address.district %>
+                                                                , <%= address.state %> - <%= address.pinCode %>
+                                                </div>
+                                                <% if (address.landmark) { %>
+                                                    <div><span class="font-medium">Landmark:</span>
+                                                        <%= address.landmark %>
+                                                    </div>
+                                                    <% } %>
+                                                        <div><span class="font-medium">Type:</span>
+                                                            <%= address.addressType %>
+                                                        </div>
+                                            </div>
+                                        </div>
+                                        <% } %>
+                                            <!-- Order Summary -->
+                                            <div class="border-t border-gray-200 pt-4 mb-4">
+                                                <h3 class="text-md font-semibold text-gray-800 mb-2">Order Summary</h3>
+                                                <div class="space-y-2">
+                                                    <% order.orderedItems.forEach(function(item) { %>
+                                                        <div
+                                                            class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
+                                                            <div class="flex items-center gap-3">
+                                                                <img src="<%= item.productId?.productImage?.[0]?.url || '/default-image.png' %>"
+                                                                    alt="<%= item.productId?.productName || 'Product' %>"
+                                                                    class="w-12 h-12 object-cover rounded border border-gray-200">
+                                                                <div>
+                                                                    <p class="font-medium text-gray-800">
+                                                                        <%= item.productId?.productName
+                                                                            || 'Unnamed Product' %>
+                                                                    </p>
+                                                                    <p class="text-xs text-gray-600">Qty: <%=
+                                                                            item.quantity %> | ₹<%=
+                                                                                item.price?.toFixed(2) || 'N/A' %> each
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex items-center gap-4">
+                                                                <p class="text-gray-700 font-semibold">₹<%= item.price ?
+                                                                        (item.price * item.quantity).toFixed(2) : 'N/A'
+                                                                        %>
+                                                                </p>
+                                                                <span
+                                                                    class="text-xs font-medium <%= item.status === 'Pending' ? 'text-red-600' : item.status === 'Shipped' ? 'text-yellow-600' : item.status === 'Delivered' ? 'text-green-600' : item.status === 'Cancelled' ? 'text-red-600' : item.status === 'Returned' ? 'text-yellow-600' : 'text-gray-600' %>">
+                                                                    <%= item.status %>
+                                                                </span>
+                                                                <% if (item.status==='Delivered' &&
+                                                                    item.adminApprovalStatus==='Rejected' ) { %>
+                                                                    <span
+                                                                        class="text-xs font-medium text-red-600">Return
+                                                                        Rejected Reason: <%= item.adminRejectionReason
+                                                                            %></span>
+                                                                    <span
+                                                                        class="text-xs font-medium text-red-600">Return
+                                                                        Status: <%= item.adminApprovalStatus %></span>
+                                                                    <% } else if (item.returnStatus==='Return Request'
+                                                                        || item.returnStatus==='Returned' ) { %>
+                                                                        <span
+                                                                            class="text-xs font-medium <%= item.adminApprovalStatus === 'Pending' ? 'text-yellow-600' : item.adminApprovalStatus === 'Approved' ? 'text-green-600' : item.adminApprovalStatus === 'Rejected' ? 'text-red-600' : 'text-gray-600' %>">
+                                                                            Return <%= item.adminApprovalStatus %>
+                                                                        </span>
+                                                                        <% } %>
+                                                            </div>
+                                                        </div>
+                                                        <% }); %>
+                                                </div>
+                                            </div>
+                        </div>
+                    </div>
+                    <% } else { %>
+                        <!-- Empty State -->
+                        <div class="text-center py-16 bg-white rounded-lg shadow-md border border-gray-200">
+                            <svg class="mx-auto mb-4 w-16 h-16 text-gray-300" fill="none" stroke="currentColor"
+                                stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M6 7V6a6 6 0 1112 0v1m-1 0H7m10 0a2 2 0 012 2v9a2 2 0 01-2 2H7a2 2 0 01-2-2V9a2 2 0 012-2h10z" />
+                            </svg>
+                            <div class="text-lg font-medium text-gray-700 mb-4">No order details available.</div>
+                            <a href="/admin/orders"
+                                class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition font-medium">Back
+                                to Orders</a>
+                        </div>
+                        <% } %>
+            </main>
+        </div>
+
+        <!-- Only one SweetAlert2 script, at the end of body -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            // No button-related JavaScript needed for admin side
+            window.onload = function () {
+                console.log('Admin Order Details page loaded');
+            }
+        </script>
+</body>
+
+</html>

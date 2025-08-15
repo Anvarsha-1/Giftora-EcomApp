@@ -5,6 +5,7 @@ const { sendVerificationEmail, securePassword } = require('../../helpers/helper'
 const extractImageData = require('../../helpers/imageprocess')
 const cloudinary = require('../../helpers/cloudinary')
 const bcrypt = require("bcrypt")
+const Wallet = require('../../models/walletSchema')
 
 
 
@@ -274,6 +275,29 @@ const changePassword = async (req,res)=>{
 }
 
 
+const loadMyWallet = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        const user = await User.findById(userId)
+        const wallet = await Wallet.findOne({ userId });
+
+        if (!wallet) {
+            return res.render('user/myWallet', {
+                wallet: { balance: 0, transactions: [] },user
+            });
+        }
+
+        res.render('user/myWallet', { wallet ,user});
+    } catch (error) {
+        console.error("Error loading wallet:", error.message);
+        res.render('user/myWallet', {
+            wallet: { balance: 0, transactions: [] }
+        });
+    }
+};
+
+
+
 
 
 module.exports = {
@@ -285,5 +309,6 @@ module.exports = {
     updateUserDetails,
     loadPasswordChange,
     changePassword,
+    loadMyWallet
    
 }

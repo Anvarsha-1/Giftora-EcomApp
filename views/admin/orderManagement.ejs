@@ -7,254 +7,274 @@
     return 'bg-orange-100 text-orange-700 border border-orange-300' ; case 'Returned' :
     return 'bg-gray-100 text-gray-700 border border-gray-300' ; default:
     return 'bg-gray-100 text-gray-700 border border-gray-300' ; } } %>
-    <!DOCTYPE html>
-    <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Order Management</title>
-        <link rel="stylesheet" href="/styles/output.css" />
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <style>
-            [x-cloak] {
-                display: none !important
-            }
-        </style>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        [x-cloak] {
+            display: none !important
+        }
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .content-wrapper {
+            flex: 1;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
 
-    <body class="bg-gray-50 min-h-screen">
-        <div class="flex min-h-screen bg-gray-50 w-full">
-           
-            <main class="flex-1 p-2 sm:p-6 min-w-0">
-                    <!-- Controls/Top Bar -->
-                    <div
-                        class="bg-white flex flex-col sm:flex-row sm:items-center justify-between px-2 sm:px-4 py-4 rounded shadow-sm mb-4 gap-2">
-                        <!-- Breadcrumb -->
-                        <nav class="text-sm mb-2" aria-label="Breadcrumb">
-                          <ol class="list-reset flex text-gray-600">
-                            <li>
-                              <a href="/admin/dashboard" class="hover:text-blue-700 transition underline">Dashboard</a>
-                            </li>
-                            <li><span class="mx-2">/</span></li>
-                            <li class="text-gray-900">Order Management</li>
-                          </ol>
-                        </nav>
-                        <h1 class="text-2xl font-semibold mb-2 sm:mb-0">Order Management</h1>
-                        <div class="flex flex-wrap sm:flex-nowrap gap-2 items-center w-full sm:w-auto">
-                            <form method="GET" action="/admin/orders"
-                                class="flex gap-2 items-center flex-wrap w-full sm:w-auto">
-                                <input type="text" name="search" value="<%= query.search || '' %>"
-                                    placeholder="Search Order ID, Name, Email"
-                                    class="border rounded px-3 h-10 focus:outline-none w-40">
-                                <select name="status" class="border rounded px-2 h-10 focus:outline-none">
-                                    <option <%=!query.status ? 'selected' : '' %>>All</option>
-                                    <option <%=query.status==='Pending' ? 'selected' : '' %>>Pending</option>
-                                    <option <%=query.status==='Processing' ? 'selected' : '' %>>Processing</option>
-                                    <option <%=query.status==='Shipped' ? 'selected' : '' %>>Shipped</option>
-                                    <option <%=query.status==='Delivered' ? 'selected' : '' %>>Delivered</option>
-                                    <option <%=query.status==='Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                    <option <%=query.status==='Return Request' ? 'selected' : '' %>>Return Request
-                                    </option>
-                                    <option <%=query.status==='Returned' ? 'selected' : '' %>>Returned</option>
-                                </select>
-                                <select name="sort" class="border rounded px-2 h-10 focus:outline-none">
-                                    <option value="latest" <%=(!query.sort || query.sort==='latest' ) ? 'selected' : ''
-                                        %>>Latest</option>
-                                    <option value="oldest" <%=query.sort==='oldest' ? 'selected' : '' %>>Oldest</option>
-                                </select>
-                                <button type="submit"
-                                    class="bg-blue-600 text-white px-4 rounded h-10 hover:bg-blue-700">Search</button>
-                                <a href="/admin/orders"
-                                    class="bg-gray-100 px-4 rounded border h-10 flex items-center hover:bg-gray-200">Clear</a>
-                            </form>
-                            <div class="ml-auto">
-                                <a href="/admin/returns"
-                                    class="inline-flex items-center bg-blue-600 text-white px-4 py-2 font-medium rounded hover:bg-blue-800 transition">
-                                    Verify Returns
-                                    <span id="returns-badge"
-                                        class="ml-2 bg-red-600 px-2 py-0.5 rounded-full text-xs font-semibold">0</span>
-                                </a>
-                            </div>
-                        </div>
+<body class="bg-gray-50 min-h-screen">
+    <div class="main-wrapper">
+        <!-- Include the admin sidebar -->
+        <%- include('../partials/admin/header.ejs') %>
+
+        <div class="content-wrapper">
+            <!-- Controls/Top Bar -->
+            <div
+                class="bg-white flex flex-col sm:flex-row sm:items-center justify-between px-4 py-4 rounded shadow-sm mb-4 gap-2">
+                <!-- Breadcrumb -->
+                <nav class="text-sm mb-2" aria-label="Breadcrumb">
+                  <ol class="list-reset flex text-gray-600">
+                    <li>
+                      <a href="/admin/dashboard" class="hover:text-blue-700 transition underline">Dashboard</a>
+                    </li>
+                    <li><span class="mx-2">/</span></li>
+                    <li class="text-gray-900">Order Management</li>
+                  </ol>
+                </nav>
+                <h1 class="text-2xl font-semibold mb-2 sm:mb-0">Order Management</h1>
+                <div class="flex flex-wrap sm:flex-nowrap gap-2 items-center w-full sm:w-auto">
+                    <form method="GET" action="/admin/orders"
+                        class="flex gap-2 items-center flex-wrap w-full sm:w-auto">
+                        <input type="text" name="search" value="<%= query.search || '' %>"
+                            placeholder="Search Order ID, Name, Email"
+                            class="border rounded px-3 h-10 focus:outline-none w-40">
+                        <select name="status" class="border rounded px-2 h-10 focus:outline-none">
+                            <option <%=!query.status ? 'selected' : '' %>>All</option>
+                            <option <%=query.status==='Pending' ? 'selected' : '' %>>Pending</option>
+                            <option <%=query.status==='Processing' ? 'selected' : '' %>>Processing</option>
+                            <option <%=query.status==='Shipped' ? 'selected' : '' %>>Shipped</option>
+                            <option <%=query.status==='Delivered' ? 'selected' : '' %>>Delivered</option>
+                            <option <%=query.status==='Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            <option <%=query.status==='Return Request' ? 'selected' : '' %>>Return Request
+                            </option>
+                            <option <%=query.status==='Returned' ? 'selected' : '' %>>Returned</option>
+                        </select>
+                        <select name="sort" class="border rounded px-2 h-10 focus:outline-none">
+                            <option value="latest" <%=(!query.sort || query.sort==='latest' ) ? 'selected' : ''
+                                %>>Latest</option>
+                            <option value="oldest" <%=query.sort==='oldest' ? 'selected' : '' %>>Oldest</option>
+                        </select>
+                        <button type="submit"
+                            class="bg-blue-600 text-white px-4 rounded h-10 hover:bg-blue-700">Search</button>
+                        <a href="/admin/orders"
+                            class="bg-gray-100 px-4 rounded border h-10 flex items-center hover:bg-gray-200">Clear</a>
+                    </form>
+                    <div class="ml-auto">
+                        <a href="/admin/returns"
+                            class="inline-flex items-center bg-blue-600 text-white px-4 py-2 font-medium rounded hover:bg-blue-800 transition">
+                            Verify Returns
+                            <span id="returns-badge"
+                                class="ml-2 bg-red-600 px-2 py-0.5 rounded-full text-xs font-semibold">0</span>
+                        </a>
                     </div>
-                    <!-- Orders Table -->
-                    <div class="overflow-x-auto">
-                        <table
-                            class="table-fixed w-full min-w-[880px] bg-white text-sm rounded shadow border text-center">
-                            <colgroup>
-                                <col class="w-1/6 min-w-[120px] max-w-[150px]" />
-                                <col class="w-1/6 min-w-[110px]" />
-                                <col class="w-1/6 min-w-[140px]" />
-                                <col class="w-1/6 min-w-[100px]" />
-                                <col class="w-1/6 min-w-[90px]" />
-                                <col class="w-1/6 min-w-[135px]" />
-                            </colgroup>
-                            <thead>
-                                <tr class="bg-gray-100 text-xs uppercase">
-                                    <th class="p-1">Order ID</th>
-                                    <th class="p-1">Date</th>
-                                    <th class="p-1">User</th>
-                                    <th class="p-1">Status</th>
-                                    <th class="p-1">Action</th>
-                                    <th class="p-1">Change Status</th>
+                </div>
+            </div>
+            <!-- Orders Table -->
+            <div class="overflow-x-auto">
+                <table
+                    class="table-fixed w-full min-w-[880px] bg-white text-sm rounded shadow border text-center">
+                    <colgroup>
+                        <col class="w-1/6 min-w-[120px] max-w-[150px]" />
+                        <col class="w-1/6 min-w-[110px]" />
+                        <col class="w-1/6 min-w-[140px]" />
+                        <col class="w-1/6 min-w-[100px]" />
+                        <col class="w-1/6 min-w-[90px]" />
+                        <col class="w-1/6 min-w-[135px]" />
+                    </colgroup>
+                    <thead>
+                        <tr class="bg-gray-100 text-xs uppercase">
+                            <th class="p-1">Order ID</th>
+                            <th class="p-1">Date</th>
+                            <th class="p-1">User</th>
+                            <th class="p-1">Status</th>
+                            <th class="p-1">Action</th>
+                            <th class="p-1">Change Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (orders && orders.length>0) { orders.forEach(order => { %>
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="p-2 min-w-[120px] max-w-[160px] break-words align-middle">
+                                    <div class="flex items-center justify-center gap-1">
+                                        <span
+                                            class="font-mono cursor-pointer select-all text-blue-700 whitespace-nowrap"
+                                            onclick="navigator.clipboard.writeText('<%= order.orderId %>'); showSwalCopy()">
+                                            #ORD<%= order.orderId ? order.orderId.slice(-6) : '' %>
+                                        </span>
+                                        <button type="button"
+                                            onclick="navigator.clipboard.writeText('<%= order.orderId %>'); showSwalCopy()"
+                                            tabindex="-1"
+                                            class="ml-1 text-gray-400 hover:text-blue-600 focus:outline-none p-0.5">
+                                            <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'
+                                                fill='none' viewBox='0 0 24 24'>
+                                                <path stroke='currentColor' stroke-width='2'
+                                                    d='M9 9V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2' />
+                                                <rect width='10' height='14' x='3' y='7' stroke='currentColor'
+                                                    stroke-width='2' rx='2' />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="p-2">
+                                    <% if (order.createdOn) { %>
+                                        <%= new Date(order.createdOn).toLocaleDateString('en-GB') %>
+                                            <% } %>
+                                </td>
+                                <td class="p-2">
+                                    <% if(order.userId) { %>
+                                        <b class="block text-base">
+                                            <%= order.userId.firstName %>
+                                                <%= order.userId.lastName %>
+                                        </b>
+                                        <span class="text-xs text-gray-500">
+                                            <%= order.userId.email %>
+                                        </span>
+                                        <% } else { %>
+                                            <span class="italic text-gray-400">User deleted</span>
+                                            <% } %>
+                                </td>
+                                <td class="p-2">
+                                    <span
+                                        class="status-badge px-2 py-1 rounded text-xs font-semibold <%= statusBadgeClass(order.status) %>">
+                                        <%= order.status %>
+                                    </span>
+                                </td>
+                                <td class="p-2">
+                                    <a href="/admin/view/orders/<%= order.orderId %>"
+                                        class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 shadow transition">View</a>
+                                </td>
+                                <td class="p-2">
+                                    <div class="flex items-center gap-2 justify-center">
+                                        <select id="status-<%= order.orderId %>" class="border px-2 py-1 rounded">
+                                            <% const
+                                                statuses=["Pending","Processing","Shipped","Delivered","Returned"]; statuses.forEach(s=>{ %>
+                                                <option value="<%=s%>" <%=order.status===s?'selected':'' %>>
+                                                    <%=s%>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                        <button onclick="saveStatus('<%= order.orderId %>')"
+                                            class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition shadow">Save</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }) } else { %>
+                                <tr>
+                                    <td colspan="6" class="text-center py-6 text-gray-500">No orders found.</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <% if (orders && orders.length>0) { orders.forEach(order => { %>
-                                    <tr class="border-b hover:bg-gray-50">
-                                        <td class="p-2 min-w-[120px] max-w-[160px] break-words align-middle">
-                                            <div class="flex items-center justify-center gap-1">
-                                                <span
-                                                    class="font-mono cursor-pointer select-all text-blue-700 whitespace-nowrap"
-                                                    onclick="navigator.clipboard.writeText('<%= order.orderId %>'); showSwalCopy()">
-                                                    #ORD<%= order.orderId ? order.orderId.slice(-6) : '' %>
-                                                </span>
-                                                <button type="button"
-                                                    onclick="navigator.clipboard.writeText('<%= order.orderId %>'); showSwalCopy()"
-                                                    tabindex="-1"
-                                                    class="ml-1 text-gray-400 hover:text-blue-600 focus:outline-none p-0.5">
-                                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'
-                                                        fill='none' viewBox='0 0 24 24'>
-                                                        <path stroke='currentColor' stroke-width='2'
-                                                            d='M9 9V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2' />
-                                                        <rect width='10' height='14' x='3' y='7' stroke='currentColor'
-                                                            stroke-width='2' rx='2' />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                        <td class="p-2">
-                                            <% if (order.createdOn) { %>
-                                                <%= new Date(order.createdOn).toLocaleDateString('en-GB') %>
-                                                    <% } %>
-                                        </td>
-                                        <td class="p-2">
-                                            <% if(order.userId) { %>
-                                                <b class="block text-base">
-                                                    <%= order.userId.firstName %>
-                                                        <%= order.userId.lastName %>
-                                                </b>
-                                                <span class="text-xs text-gray-500">
-                                                    <%= order.userId.email %>
-                                                </span>
-                                                <% } else { %>
-                                                    <span class="italic text-gray-400">User deleted</span>
-                                                    <% } %>
-                                        </td>
-                                        <td class="p-2">
-                                            <span
-                                                class="status-badge px-2 py-1 rounded text-xs font-semibold <%= statusBadgeClass(order.status) %>">
-                                                <%= order.status %>
-                                            </span>
-                                        </td>
-                                        <td class="p-2">
-                                            <a href="/admin/orders/<%= order.orderId %>"
-                                                class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 shadow transition">View</a>
-                                        </td>
-                                        <td class="p-2">
-                                            <div class="flex items-center gap-2 justify-center">
-                                                <select id="status-<%= order.orderId %>" class="border px-2 py-1 rounded">
-                                                    <% const
-                                                        statuses=["Pending","Processing","Shipped","Delivered","Returned"]; statuses.forEach(s=>{ %>
-                                                        <option value="<%=s%>" <%=order.status===s?'selected':'' %>>
-                                                            <%=s%>
-                                                        </option>
-                                                        <% }) %>
-                                                </select>
-                                                <button onclick="saveStatus('<%= order.orderId %>')"
-                                                    class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition shadow">Save</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <% }) } else { %>
-                                        <tr>
-                                            <td colspan="6" class="text-center py-6 text-gray-500">No orders found.</td>
-                                        </tr>
-                                        <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Pagination centered below -->
-                    <div class="flex justify-center items-center mt-4">
-                        <button class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1"
-                            <%=currentPage <=1 ? 'disabled' : '' %>
-                            onclick="window.location.href='?page=<%= currentPage-1 %>
-                                <%= searchParamsExceptPage %>'"
-                                    >&larr;</button>
-                        <span class="px-2 text-sm">Page <%= currentPage %> of <%= totalPages %></span>
-                        <button class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1"
-                            <%=currentPage>= totalPages ? 'disabled' : '' %>
-                            onclick="window.location.href='?page=<%= currentPage+1 %>
-                                <%= searchParamsExceptPage %>'"
-                                    >&rarr;</button>
-                    </div>
-                </main>
-        </div>
-        <script>
-            // Util for colored badge class based on status
-            function statusBadgeClass(status) {
-                switch (status) {
-                    case 'Pending': return 'bg-yellow-100 text-yellow-700 border border-yellow-300';
-                    case 'Processing': return 'bg-indigo-100 text-indigo-700 border border-indigo-300';
-                    case 'Shipped': return 'bg-blue-100 text-blue-700 border border-blue-300';
-                    case 'Delivered': return 'bg-green-100 text-green-700 border border-green-300';
-                    case 'Cancelled': return 'bg-red-100 text-red-700 border border-red-300';
-                    case 'Return Request': return 'bg-orange-100 text-orange-700 border border-orange-300';
-                    case 'Returned': return 'bg-gray-100 text-gray-700 border border-gray-300';
-                    default: return 'bg-gray-100 text-gray-700 border border-gray-300';
-                }
-            }
-            window.statusBadgeClass = statusBadgeClass;
-            // Search params for pagination links
-            const urlSearch = new URLSearchParams(window.location.search);
-            let searchParamsExceptPage = '';
-            urlSearch.delete('page');
-            if ([...urlSearch].length > 0) {
-                searchParamsExceptPage = '&' + urlSearch.toString();
-            }
-            window.searchParamsExceptPage = searchParamsExceptPage;
-        </script>
-        <!-- AJAX for status badge and toast -->
-        <script>
-            fetch('/admin/returns/count').then(res => res.json()).then(data => {
-                document.getElementById('returns-badge').innerText = data.count;
-            })
-            function showSwalToast(msg, type = 'success') {
-                Swal.fire({
-                    toast: true, position: 'top-end', showConfirmButton: false,
-                    timer: 1800, timerProgressBar: true,
-                    icon: type, title: msg
-                });
-            }
-            function showSwalCopy() {
-                Swal.fire({
-                    toast: true, position: 'top-end', showConfirmButton: false,
-                    timer: 1200, timerProgressBar: true,
-                    icon: 'success', title: 'Order ID copied!'
-                });
-            }
-            function saveStatus(orderId) {
-                const status = document.getElementById(`status-` + orderId).value;
-                fetch(`/admin/orders/${orderId}/status`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            showSwalToast('Status updated!');
-                            setTimeout(() => window.location.reload(), 1000);
-                        } else {
-                            showSwalToast(data.message || 'Error', 'error');
-                        }
-                    })
-                    .catch(() => {
-                        showSwalToast('Update failed', 'error');
-                    });
-            }
-        </script>
-    </body>
+                                <% } %>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination centered below -->
+            <div class="flex justify-center items-center mt-4">
+    <button
+        class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1"
+        <%= currentPage <= 1 ? 'disabled' : '' %>
+        onclick="window.location.href='?page=<%= currentPage - 1 %><%= searchParamsExceptPage %>'"
+    >
+        &larr;
+    </button>
 
-    </html>
+    <span class="px-2 text-sm">Page <%= currentPage %> of <%= totalPages %></span>
+
+    <button
+        class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1"
+        <%= currentPage >= totalPages ? 'disabled' : '' %>
+        onclick="window.location.href='?page=<%= currentPage + 1 %><%= searchParamsExceptPage %>'"
+    >
+        &rarr;
+    </button>
+</div>
+
+        </div>
+    </div>
+    <script>
+        // Util for colored badge class based on status
+        function statusBadgeClass(status) {
+            switch (status) {
+                case 'Pending': return 'bg-yellow-100 text-yellow-700 border border-yellow-300';
+                case 'Processing': return 'bg-indigo-100 text-indigo-700 border border-indigo-300';
+                case 'Shipped': return 'bg-blue-100 text-blue-700 border border-blue-300';
+                case 'Delivered': return 'bg-green-100 text-green-700 border border-green-300';
+                case 'Cancelled': return 'bg-red-100 text-red-700 border border-red-300';
+                case 'Return Request': return 'bg-orange-100 text-orange-700 border border-orange-300';
+                case 'Returned': return 'bg-gray-100 text-gray-700 border border-gray-300';
+                default: return 'bg-gray-100 text-gray-700 border border-gray-300';
+            }
+        }
+        window.statusBadgeClass = statusBadgeClass;
+        // Search params for pagination links
+        const urlSearch = new URLSearchParams(window.location.search);
+        let searchParamsExceptPage = '';
+        urlSearch.delete('page');
+        if ([...urlSearch].length > 0) {
+            searchParamsExceptPage = '&' + urlSearch.toString();
+        }
+        window.searchParamsExceptPage = searchParamsExceptPage;
+    </script>
+    <!-- AJAX for status badge and toast -->
+    <script>
+        fetch('/admin/returns/count').then(res => res.json()).then(data => {
+            document.getElementById('returns-badge').innerText = data.count;
+        })
+        function showSwalToast(msg, type = 'success') {
+            Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false,
+                timer: 1800, timerProgressBar: true,
+                icon: type, title: msg
+            });
+        }
+        function showSwalCopy() {
+            Swal.fire({
+                toast: true, position: 'top-end', showConfirmButton: false,
+                timer: 1200, timerProgressBar: true,
+                icon: 'success', title: 'Order ID copied!'
+            });
+        }
+        function saveStatus(orderId) {
+            const status = document.getElementById(`status-` + orderId).value;
+            fetch(`/admin/orders/${orderId}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showSwalToast('Status updated!');
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        showSwalToast(data.message || 'Error', 'error');
+                    }
+                })
+                .catch(() => {
+                    showSwalToast('Update failed', 'error');
+                });
+        }
+    </script>
+</body>
+
+</html>

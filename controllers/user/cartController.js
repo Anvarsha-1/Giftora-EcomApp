@@ -318,46 +318,65 @@ const removeCartItem = async (req, res) => {
     }
 }
 const updateCartCount = async (req, res) => {
+    let validItems = [];
+    let validWishlist = [];
+
     try {
         const userId = req.session.user;
+       
 
         if (!userId) {
-            return res.json({ success: false,wishlistCount:0, count: 0 });
+            return res.json({ success: false, wishlistCount: 0, cartCount: 0 });
         }
 
         const cart = await Cart.findOne({ userId }).populate('items.productId');
-        const wishlist = await Wishlist.findOne({userId}).populate('products.productId')
+        const wishlist = await Wishlist.findOne({ userId }).populate('products.productId');
 
-        if (!cart || !cart.items || !wishlist || !wishlist.products) {
-            return res.json({ success: false,wishlistCount:0, cartCount: 0 });
+        if (!cart || !cart.items) {
+            return res.json({ success: true, cartCount: 0, wishlistCount: wishlist ? wishlist.products.length : 0 });
         }
 
-        
-        const validItems = cart.items.filter(item => {
-            const product = item.productId;
-            return (
-                product &&
-                !product.isBlocked &&
-                !product.isDeleted 
-               
-            );
+
+
+        if (cart && Array.isArray(cart.items)) {
+            validItems = cart.items.filter(item => {
+                const product = item.productId;
+                return (
+                    product &&
+                    !product.isBlocked &&
+                    !product.isDeleted
+                );
+            });
+        }
+
+        if (wishlist && Array.isArray(wishlist.products)) {
+            validWishlist = wishlist.products.filter(item => {
+                const product = item.productId;
+                return (
+                    product &&
+                    !product.isBlocked &&
+                    !product.isDeleted
+                );
+            });
+        }
+
+        return res.json({
+            success: true,
+            cartCount: validItems.length,
+            wishlistCount: validWishlist.length
         });
 
-        const validWishlist = wishlist.products.filter(item=>{
-            const product = item.productId;
-            return (
-                product && 
-                !product.isBlocked &&
-                !product.isDeleted
-            )
-        })
-
-        return res.json({ success: true, cartCount: validItems.length , wishlistCount :validWishlist.length  });
     } catch (error) {
         console.error("Error update cart count", error.message);
-        return res.status(500).json({ success: false, message: "Server error", cartCount: validItems.length || 0, wishlistCount: validWishlist.length || 0 });
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+            cartCount: validItems.length,
+            wishlistCount: validWishlist.length
+        });
     }
 };
+
 
 
 module.exports = {

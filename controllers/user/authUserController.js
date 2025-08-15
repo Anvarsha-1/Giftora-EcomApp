@@ -92,6 +92,7 @@ const loadSignUp = async (req, res) => {
 const signUp = async (req, res) => {
   if (req.session.user) return res.redirect('/home')
   try {
+    const error = req.query.error || null
 
     const {
       firstName,
@@ -110,6 +111,7 @@ const signUp = async (req, res) => {
         errors,
         formData: req.body,
         message: "",
+        error
       });
     }
 
@@ -123,6 +125,7 @@ const signUp = async (req, res) => {
         message: "Failed to send verification email",
         formData: req.body,
         errors: {},
+        error
       });
     }
 
@@ -142,7 +145,7 @@ const signUp = async (req, res) => {
       userData: req.session.userData,
     });
 
-    const error = req.query.error || null
+   
 
     req.session.save((err) => {
       if (err) {
@@ -151,7 +154,7 @@ const signUp = async (req, res) => {
           message: "Failed to save session. Please try again.",
           formData: req.body,
           errors: {},
-          error,
+          error
         });
       }
       res.redirect("/verify-otp");
@@ -162,6 +165,7 @@ const signUp = async (req, res) => {
       message: "An error occurred. Please try again.",
       formData: req.body || {},
       errors: {},
+      error
     });
   }
 };

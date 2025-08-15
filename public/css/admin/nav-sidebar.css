@@ -1,4 +1,95 @@
 /* Sidebar - fixed width on the left */
+.main-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+}
+
+/* Sidebar - fixed width on the left */
+.sidebar {
+    width: 250px;
+    min-width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+    min-width: 70px;
+}
+
+/* Hide text elements when sidebar is collapsed */
+.sidebar.collapsed .logo-img,
+.sidebar.collapsed .nav-item span {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    overflow: hidden;
+}
+
+.sidebar.collapsed .logo-section {
+    justify-content: center;
+    padding: 20px 10px;
+}
+
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 12px 10px;
+}
+
+.sidebar.collapsed .logout-btn span {
+    display: none;
+}
+
+.sidebar.collapsed .logout-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+/* Content wrapper - takes remaining space */
+.content-wrapper {
+    flex: 1;
+    margin-left: 250px; /* Same as sidebar width */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+    width: calc(100% - 250px);
+}
+
+/* When sidebar is collapsed, adjust content margin */
+.sidebar.collapsed + .content-wrapper {
+    margin-left: 70px;
+    width: calc(100% - 70px);
+}
+
+/* Top navbar - stays at top of content area */
+.navbar {
+    background-color: white;
+    padding: 15px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 .sidebar {
     width: 250px;
     min-width: 250px;

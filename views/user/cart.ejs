@@ -289,8 +289,8 @@
 
             async function updateQuantity(itemId, newQuantity) {
                 try {
-                    const response = await fetch('/cart/update', {
-                        method: 'POST',
+                    const response = await fetch('/cart', {
+                        method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ itemId, quantity: parseInt(newQuantity) })
                     });
@@ -387,7 +387,7 @@
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            const response = await fetch(`/cart/remove/${productId}`, {
+                            const response = await fetch(`/cart/${productId}`, {
                                 method: 'DELETE'
                             });
                             const result = await response.json();

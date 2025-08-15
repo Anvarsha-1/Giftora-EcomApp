@@ -18,4 +18,10 @@ router.get('/returns', adminOrderController.getReturnedOrder)
 
 router.post('/return/verify/:orderId/:itemId',adminOrderController.verifyOrderReturn)
 
+
+router.patch('/return/cancel/:orderId/:itemId',adminOrderController.cancelReturnRequest)
+
+
+router.get('/view/orders/:orderId',adminOrderController.viewOrderDetails)
+
 module.exports = router

@@ -937,7 +937,7 @@
                     addToCartBtn.addEventListener('click', async function () {
                         const productId = this.getAttribute('data-id');
                         try {
-                            const response = await fetch('/cart/addToCart', {
+                            const response = await fetch('/cart', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
@@ -947,8 +947,11 @@
                             const data = await response.json();
 
                             if (data.success) {
-                                showToast('Product added to cart', 'success');
-                                updateCartCount()
+                                showToast('Product added to cart', 'success')
+                                .then(()=>{
+                                    updateCartCount()
+                                })
+                                
                             } else {
                                 if (data.message === 'User not logged in') {
                                     window.location.href = '/login';

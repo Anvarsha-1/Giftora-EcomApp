@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet - E-commerce Store</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+
+    <style>
+        :where([class^="ri-"])::before {
+            content: "\f3c2";
+        }
+
+        .nav-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: #3b82f6;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-item.active::before {
+            transform: scaleY(1);
+        }
+
+        #sidebar {
+            position: sticky
+        }
+
+        .nav-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <%- include('../partials/user/newheader.ejs') %>
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+        <!-- Main Container -->
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Sidebar -->
+                <%- include('../partials/user/myaccountSidebar.ejs') %>
+                    <!-- Main Content -->
+                    <main
+                        class="flex-1 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
+                        <!-- Breadcrumb -->
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <nav class="flex items-center space-x-2 text-sm text-gray-500">
+                                <a href="/" class="hover:text-gray-700">Home</a>
+                                <i class="ri-arrow-right-s-line"></i>
+                                <a href="/profile" class="hover:text-gray-700">My Account</a>
+                                <i class="ri-arrow-right-s-line"></i>
+                                <span id="breadcrumb-current" class="text-gray-900">My Wallet</span>
+                            </nav>
+                        </div>
+                        <!-- Content Area -->
+                        <div class="p-6">
+                            <!-- Wallet Section -->
+                            <div id="wallet-content" class="content-section">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h1 class="text-2xl font-semibold text-gray-900">My Wallet</h1>
+                                    <button
+                                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2">
+                                        <i class="ri-add-line"></i>
+                                        Add Funds
+                                    </button>
+                                </div>
+                                <div
+                                    class="bg-gray-50 rounded-lg p-6 mb-6 transition-all duration-300 hover:shadow-md hover:bg-white">
+                                    <div class="text-3xl font-bold text-green-600">
+                                        Balance: ₹<%= wallet.balance.toLocaleString() %>
+                                    </div>
+                                </div>
+
+                                <!-- Transaction History -->
+                                <div
+                                    class="bg-gray-50 rounded-lg p-6 transition-all duration-300 hover:shadow-md hover:bg-white">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h2 class="text-xl font-semibold text-gray-900">Transaction History</h2>
+                                        <button
+                                            class="text-primary hover:text-secondary flex items-center gap-2 transition-colors duration-200">
+                                            <i class="ri-download-line"></i>
+                                            <span>Download PDF</span>
+                                        </button>
+                                    </div>
+                                    <% if (wallet.transactions && wallet.transactions.length> 0) { %>
+                                        <div class="overflow-x-auto">
+                                            <table
+                                                class="min-w-full bg-white text-sm rounded-lg shadow border divide-y divide-gray-200">
+                                                <thead>
+                                                    <tr class="bg-gray-100 text-xs uppercase font-medium text-gray-600">
+                                                        <th class="px-6 py-3 text-center">Date & Time</th>
+                                                        <th class="px-6 py-3 text-center">Type</th>
+                                                        <th class="px-6 py-3 text-center">Description</th>
+                                                        <th class="px-6 py-3 text-center">Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="divide-y divide-gray-200">
+                                                    <% wallet.transactions.reverse().forEach(transaction=> { %>
+                                                        <tr class="hover:bg-gray-50 transition-colors">
+                                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                                <%= new Date(transaction.date).toLocaleString('en-GB', {
+                                                                    dateStyle: 'short' , timeStyle: 'short' }) %>
+                                                            </td>
+                                                            <td class="px-6 py-4">
+                                                                <span
+                                                                    class="px-3 py-1 rounded-full text-xs font-semibold <%= transaction.type === 'credit' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' %>">
+                                                                    <%= transaction.type.charAt(0).toUpperCase() +
+                                                                        transaction.type.slice(1) %>
+                                                                </span>
+                                                            </td>
+                                                            <td class="px-6 py-4">
+                                                                <%= transaction.description %>
+                                                            </td>
+                                                            <td
+                                                                class="px-6 py-4 whitespace-nowrap <%= transaction.type === 'credit' ? 'text-green-600' : 'text-red-600' %>">
+                                                                <%= transaction.type==='credit' ? '+' : '-' %>₹<%=
+                                                                        Math.abs(transaction.amount).toLocaleString() %>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <% } else { %>
+                                            <p class="text-gray-500 text-center py-4">No transactions yet</p>
+                                            <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+</body>
+
+</html>

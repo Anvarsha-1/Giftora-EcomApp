@@ -42,11 +42,12 @@ const loadMyOrder = async (req, res) => {
     try {
         const userId = req.session.user
         const user = await User.findById(userId)
-        const order = await Order.find({ userId: userId }).populate('orderedItems.productId')
+        const order = await Order.find({ userId: userId }).populate('orderedItems.productId').populate('address')
 
         if (!order || order.length < 1) {
-            return res.render('orderList', { order: null, user: user || null, address: null });
+            return res.render('orderList', { order: null, user: user || null });
         }
+
         res.render("orderList", { order, user })
 
     } catch (error) {
@@ -77,7 +78,7 @@ const cancelProduct = async (req, res) => {
 
         const item = order.orderedItems.find(item => item._id.toString() === itemId);
 
-
+        
         if (!item) {
             return res.json({ success: false, message: "ordered product not found in this order" })
         }
@@ -96,7 +97,14 @@ const cancelProduct = async (req, res) => {
             order.status = "Cancelled"
         }
 
+       
+
         await order.save()
+
+        if(item && item.productId){
+            item.productId.quantity+=item.quantity
+            await item.productId.save()
+        }
 
         return res.json({ success: true })
 
@@ -120,22 +128,31 @@ const cancelOrder = async (req, res) => {
             return res.json({ success: false, message: "Reason is required or reason must be at least 6-50 character" })
         }
 
-        const order = await Order.findOne({ orderId })
+        const order = await Order.findOne({ orderId }).populate('orderedItems.productId')
 
         if (!order) {
             return res.json({ success: false, message: "Order not found" })
         }
 
+        
+        for (let item of order.orderedItems) {
+            const wasPendingOrShipped = (item.status === 'Pending' || item.status === 'Shipped');
+            if(item.status==='Pending'){
+            item.status = "Cancelled";
+            item.cancellationReason = reason;
+            }
 
-        order.orderedItems.forEach(item => {
-            item.status = "Cancelled",
-                item.cancellationReason = reason
-        })
+            if (wasPendingOrShipped) {
+                item.productId.quantity += item.quantity;
+                await item.productId.save();
+            }
+        }
+       
 
         order.status = "Cancelled"
         order.cancellationReason = reason
 
-        await order.save()
+        await order.save()   
 
         return res.json({ success: true, message: "order has been cancelled" })
     } catch (error) {
@@ -207,7 +224,7 @@ const returnOrder = async (req, res) => {
 const returnItemRequest = async (req, res) => {
     try {
         const { orderId, itemId } = req.params
-       
+
         const { reason } = req.body
         if (!orderId || !itemId) {
             return res.json({ success: false, message: "Invalid request " })
@@ -221,19 +238,19 @@ const returnItemRequest = async (req, res) => {
         if (!product) {
             return res.json({ success: false, message: "Product not found" })
         }
-        
-        if(product.status==='Delivered'){
+
+        if (product.status === 'Delivered') {
             product.status = 'Return Request',
-            product.returnReason = reason
+                product.returnReason = reason
             product.itemReturnRequestAt = Date.now()
         }
-       
+
         await order.save()
         return res.json({ success: true })
 
     } catch (error) {
-        console.log("Error while order Item Request",error.message)
-        return res.json({success:false,message:"Something went wrong"})
+        console.log("Error while order Item Request", error.message)
+        return res.json({ success: false, message: "Something went wrong" })
     }
 }
 

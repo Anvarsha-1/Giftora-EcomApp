@@ -202,51 +202,67 @@
                                             <div class="border-t border-gray-200 pt-4 mb-4">
                                                 <h3 class="text-md font-semibold text-gray-800 mb-2">Order Summary</h3>
                                                 <div class="space-y-2">
-                                                    <% order.orderedItems.forEach(function(item) { %>
-                                                        <div class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
-                                                            <div class="flex items-center gap-3">
-                                                                <img src="<%= item.productId?.productImage?.[0]?.url || '/default-image.png' %>"
-                                                                    alt="<%= item.productId?.productName || 'Product' %>"
-                                                                    class="w-12 h-12 object-cover rounded border border-gray-200">
-                                                                <div>
-                                                                    <p class="font-medium text-gray-800">
-                                                                        <%= item.productId?.productName || 'Unnamed Product' %>
-                                                                    </p>
-                                                                    <p class="text-xs text-gray-600">Qty: <%= item.quantity %> | ₹ <%= item.price?.toFixed(2)
-                                                                                || 'N/A' %> each</p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="flex items-center gap-4">
-                                                                <p class="text-gray-700 font-semibold">₹<%= item.price ? (item.price * item.quantity).toFixed(2)
-                                                                        : 'N/A' %>
-                                                                </p>
-                                                                <% if (item.status==='Cancelled' ) { %>
-                                                                    <span class="text-xs text-red-500">Cancelled</span>
-                                                                    <% } else if (order.status==="Delivered" || order.status==="Returned") { %>
-                                                                        <% if (item.status==="Return Request" || order.status==="Returned" ) { %>
-                                                                            <span class="text-xs font-medium
-                                                                        <%= item.adminApprovalStatus === 'Pending' ? 'text-yellow-600' :
-                                                                            item.adminApprovalStatus === 'Approved' ? 'text-green-600' :
-                                                                            item.adminApprovalStatus === 'Rejected' ? 'text-red-600' : 'text-gray-600' %>">
-                                                                                Return <%= item.adminApprovalStatus %>
-                                                                            </span>
-                                                                            <% } else if (!item.status) { %>
-                                                                                <button
-                                                                                    class="return-item-btn px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
-                                                                                    data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
-                                                                                    Return Item
-                                                                                </button>
-                                                                                <% } %>
-                                                                                    <% } else if (order.status==='Pending' || order.status==='Shipping' ) { %>
-                                                                                        <button
-                                                                                            class="cancel-item-btn px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
-                                                                                            data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
-                                                                                            Cancel Item
-                                                                                        </button>
-                                                                                        <% } %>
-                                                            </div>
-                                                        </div>
-                                                        <% }); %>
+                                                    <div class="space-y-2">
+    <div class="space-y-2">
+    <div class="space-y-2">
+    <div class="space-y-2">
+    <% order.orderedItems.forEach(function(item) { %>
+        <div class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
+            <div class="flex items-center gap-3">
+                <img src="<%= item.productId?.productImage?.[0]?.url || '/default-image.png' %>"
+                    alt="<%= item.productId?.productName || 'Product' %>"
+                    class="w-12 h-12 object-cover rounded border border-gray-200">
+                <div>
+                    <p class="font-medium text-gray-800">
+                        <%= item.productId?.productName || 'Unnamed Product' %>
+                    </p>
+                    <p class="text-xs text-gray-600">Qty: <%= item.quantity %> | ₹ <%= item.price?.toFixed(2) || 'N/A' %> each</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <p class="text-gray-700 font-semibold">₹<%= item.price ? (item.price * item.quantity).toFixed(2) : 'N/A' %></p>
+                <span class="text-xs font-medium
+                    <%= item.status === 'Pending' ? 'text-red-600' :
+                        item.status === 'Shipped' ? 'text-yellow-600' :
+                        item.status === 'Delivered' ? 'text-green-600' :
+                        item.status === 'Cancelled' ? 'text-red-600' :
+                        item.status === 'Returned' ? 'text-yellow-600' :
+                        'text-gray-600' %>">
+                    <%= item.status %>
+                </span>
+                <% if (item.status === 'Delivered') { %>
+                    <% if (item.adminApprovalStatus === 'Rejected') { %>
+                        <span class="text-xs font-medium text-red-600">
+                            Return Rejected Reason: <%= item.adminRejectionReason %>
+                        </span>
+                        <span class="text-xs font-medium text-red-600">
+                           Return Status: <%= item.adminApprovalStatus %>
+                        </span>
+                    <% } else if (item.returnStatus === "Return Request" || item.returnStatus === "Returned") { %>
+                        <span class="text-xs font-medium
+                            <%= item.adminApprovalStatus === 'Pending' ? 'text-yellow-600' :
+                                item.adminApprovalStatus === 'Approved' ? 'text-green-600' :
+                                item.adminApprovalStatus === 'Rejected' ? 'text-red-600' : 'text-gray-600' %>">
+                            Return <%= item.adminApprovalStatus %>
+                        </span>
+                    <% } else { %>
+                        <button
+                            class="return-item-btn px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
+                            data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
+                            Return Item
+                        </button>
+                    <% } %>
+                <% } else if (order.status === 'Pending' || order.status === 'Shipping') { %>
+                    <button
+                        class="cancel-item-btn px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
+                        data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
+                        Cancel Item
+                    </button>
+                <% } %>
+            </div>
+        </div>
+    <% }); %>
+</div>
                                                 </div>
                                             </div>
                         </div>
