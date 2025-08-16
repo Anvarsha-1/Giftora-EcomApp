@@ -39,6 +39,10 @@ const addressSchema =  new Schema({
         type:Number,
         required: true,
     },
+    isDefault:{
+        type: Boolean,
+        default:false
+    },
     addressType: {
         type: String,
         enum: ['Home', 'Office', 'Other'],

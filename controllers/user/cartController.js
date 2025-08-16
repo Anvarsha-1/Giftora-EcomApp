@@ -29,7 +29,7 @@ const loadCart = async (req, res) => {
 
         const validItems = cart.items.filter(item => {
             const product = item.productId;
-            return product && !product.isBlocked && !product.isDeleted ;
+            return product 
         });
 
         if (validItems.length === 0) {
@@ -218,7 +218,7 @@ const updateCartQuantity = async (req, res) => {
         const userId = req.session.user
         const { itemId, quantity } = req.body
         const user = await User.findById(req.session.user)
-       
+
 
         if (!user) {
             return res.json({ success: false, message: "User not logged in" })
@@ -231,7 +231,7 @@ const updateCartQuantity = async (req, res) => {
         }
 
         const cart = await Cart.findOne({ userId })
-       
+
 
         const item = cart.items.find(i => i.productId.toString() === itemId)
 
@@ -261,8 +261,8 @@ const updateCartQuantity = async (req, res) => {
         item.totalPrice = product.salesPrice * quantity;
         cart.total = cart.items.reduce((sum, i) => sum + i.totalPrice, 0);
         cart.totalQuantity = cart.items.reduce((sum, i) => sum + i.quantity, 0);
-  
-        
+
+
 
 
         const subTotal = cart.total;
@@ -323,7 +323,7 @@ const updateCartCount = async (req, res) => {
 
     try {
         const userId = req.session.user;
-       
+
 
         if (!userId) {
             return res.json({ success: false, wishlistCount: 0, cartCount: 0 });
@@ -342,9 +342,8 @@ const updateCartCount = async (req, res) => {
             validItems = cart.items.filter(item => {
                 const product = item.productId;
                 return (
-                    product &&
-                    !product.isBlocked &&
-                    !product.isDeleted
+                    product 
+                    
                 );
             });
         }

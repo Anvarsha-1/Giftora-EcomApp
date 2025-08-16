@@ -8,6 +8,7 @@
     <link href="/styles/output.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.tutorialjinni.com/sweetalert2/11.14.3/sweetalert2.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <style>
         /* Custom styles for header image and layout */
         .header-image {
@@ -27,7 +28,6 @@
         .sidebar {
             width: 16rem;
             background-color: #f9fafb;
-            border-radius: 0.5rem;
             padding: 1.5rem;
         }
 
@@ -63,10 +63,18 @@
 
 <body class="bg-gray-100 min-h-screen">
     <!-- Header -->
-    
+    <%- include('../partials/admin/header.ejs') %>
         <div class="content-wrapper">
             <!-- Main Content -->
+             
             <main class="main-content">
+                <nav class="mb-4 text-sm text-gray-500">
+                    <a href="/admin/dashboard" class="hover:underline">Dashboard</a> &gt;
+                    <a href="/admin/orders" class="hover:underline">Order Management</a> &gt;
+                    <span class="text-gray-700">Return Requests</span>
+                </nav>
+
+
                 <div class="flex justify-between items-center mb-6">
                     <h1 class="text-2xl font-semibold text-gray-800">Order Details</h1>
                     <div class="flex gap-4">

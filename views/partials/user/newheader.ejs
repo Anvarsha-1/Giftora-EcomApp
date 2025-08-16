@@ -22,9 +22,10 @@
             background-color: white;
             border-bottom: 1px solid #e0e0e0;
             padding: 15px 0;
-
-
-
+            position: relative;
+            /* Ensure header is a positioned ancestor */
+            z-index: 1000;
+            /* Increase z-index to stay above other content */
         }
 
         .header-container {
@@ -34,7 +35,6 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 20px;
-
         }
 
         .logo img {
@@ -109,7 +109,6 @@
             border: none;
             cursor: pointer;
             padding: 8px;
-
             transition: background-color 0.3s ease;
             color: #333;
             font-size: 18px;
@@ -121,7 +120,6 @@
             border-radius: 9999px;
             object-fit: cover;
         }
-
 
         .profile-button:hover {
             background-color: #f5f5f5;
@@ -151,13 +149,13 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             min-width: 180px;
-            z-index: 100;
+            z-index: 1001;
+            /* Higher than header */
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
             margin-top: 25px;
-            /* Account for user name space */
         }
 
         .profile-dropdown.active .dropdown-menu {
@@ -196,24 +194,105 @@
             font-size: 12px;
         }
 
+        /* Hamburger Menu Styles */
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #333;
+            padding: 8px;
+            z-index: 1002;
+            /* Ensure hamburger is above other elements */
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            /* Changed to fixed for consistent positioning */
+            top: 81px;
+            /* Adjust based on header height (15px padding + 50px logo + 15px padding + 1px border) */
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            /* Higher than header but below hamburger */
+            padding: 20px;
+            flex-direction: column;
+            align-items: flex-start;
+            max-height: calc(100vh - 81px);
+            /* Prevent overflow */
+            overflow-y: auto;
+            /* Allow scrolling if content is long */
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-nav-menu {
+            list-style: none;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .mobile-nav-menu li {
+            margin-bottom: 10px;
+        }
+
+        .mobile-nav-link {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            padding: 10px 0;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-nav-link:hover {
+            color: #666;
+        }
+
+        .mobile-header-right {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
         @media (max-width: 768px) {
 
             .nav-menu,
             .header-right {
                 display: none;
             }
+
+            .hamburger {
+                display: block;
+            }
+
+            .mobile-menu.active {
+                display: flex;
+            }
         }
     </style>
 </head>
 
 <body>
-
     <header class="main-header">
         <div class="header-container">
             <!-- Logo -->
             <a href="/home" class="logo">
                 <img src="/images/header/giftora.png" alt="Giftora Logo">
             </a>
+
+            <!-- Hamburger Button -->
+            <button class="hamburger" id="hamburgerToggle">
+                <i class="fas fa-bars"></i>
+            </button>
 
             <!-- Navigation -->
             <nav>
@@ -230,19 +309,18 @@
 
             <% if (user) { %>
                 <div class="header-right">
-                 
-                <!-- Wishlist -->
-                <button onclick="window.location.href='/wishlist'" class="icon-button header-wishlist" aria-label="Wishlist">
-                    <i class="far fa-heart"></i>
-                    <span id="wishlist-count" class="count-badge">0</span>
-                </button>
-                
-                <!-- Cart -->
-                <button onclick="window.location.href='/cart'" class="icon-button cart-icon" aria-label="Cart">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cart-count" class="count-badge">0</span>
-                </button>
+                    <!-- Wishlist -->
+                    <button onclick="window.location.href='/wishlist'" class="icon-button header-wishlist"
+                        aria-label="Wishlist">
+                        <i class="far fa-heart"></i>
+                        <span id="wishlist-count" class="count-badge">0</span>
+                    </button>
 
+                    <!-- Cart -->
+                    <button onclick="window.location.href='/cart'" class="icon-button cart-icon" aria-label="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="count-badge">0</span>
+                    </button>
 
                     <!-- Profile Dropdown -->
                     <div class="profile-dropdown" id="profileDropdown1">
@@ -260,7 +338,7 @@
                             <a href="/account/profile" class="dropdown-item">
                                 <i class="fas fa-user"></i> My Account
                             </a>
-                            <a href="/my-orders" class="dropdown-item">
+                            <a href="/orders" class="dropdown-item">
                                 <i class="fas fa-box"></i> My Orders
                             </a>
                             <a href="/logout" class="dropdown-item">
@@ -270,14 +348,66 @@
                     </div>
                 </div>
                 <% } %>
+
+                    <!-- Mobile Menu -->
+                    <div class="mobile-menu" id="mobileMenu">
+                        <ul class="mobile-nav-menu">
+                            <li><a href="/" class="mobile-nav-link">Home</a></li>
+                            <li><a href="/viewProducts" class="mobile-nav-link">Shop</a></li>
+                            <li><a href="#" class="mobile-nav-link">Contact</a></li>
+                            <li><a href="#" class="mobile-nav-link">About</a></li>
+                            <% if (!user) { %>
+                                <li><a href="/login" class="mobile-nav-link">Sign Up</a></li>
+                                <% } %>
+                        </ul>
+                        <% if (user) { %>
+                            <div class="mobile-header-right">
+                                <!-- Wishlist -->
+                                <button onclick="window.location.href='/wishlist'" class="icon-button header-wishlist"
+                                    aria-label="Wishlist">
+                                    <i class="far fa-heart"></i> Wishlist
+                                    <span id="mobile-wishlist-count" class="count-badge">0</span>
+                                </button>
+
+                                <!-- Cart -->
+                                <button onclick="window.location.href='/cart'" class="icon-button cart-icon"
+                                    aria-label="Cart">
+                                    <i class="fas fa-shopping-cart"></i> Cart
+                                    <span id="mobile-cart-count" class="count-badge">0</span>
+                                </button>
+
+                                <!-- Profile Links -->
+                                <a href="/account/profile" class="mobile-nav-link">
+                                    <i class="fas fa-user"></i> My Account
+                                </a>
+                                <a href="/orders" class="mobile-nav-link">
+                                    <i class="fas fa-box"></i> My Orders
+                                </a>
+                                <a href="/logout" class="mobile-nav-link">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </a>
+                            </div>
+                            <% } %>
+                    </div>
         </div>
     </header>
+
     <script src="/js/updateCartIconCount.js"></script>
     <script>
         const user = '<% - JSON.stringify(user || null) %>';
-    </script>
 
-    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburgerToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (hamburger && mobileMenu) {
+            hamburger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                mobileMenu.classList.toggle('active');
+            });
+        }
+
+        // Profile Dropdown Toggle
         function toggleDropdown(toggleId, menuId) {
             const toggle = document.getElementById(toggleId);
             const menu = document.getElementById(menuId);
@@ -299,13 +429,17 @@
         // Initialize dropdowns only if they exist
         toggleDropdown('profileToggle1', 'dropdownMenu1');
 
-        // Close dropdowns when clicking outside
+        // Close dropdowns and mobile menu when clicking outside
         document.addEventListener('click', function () {
             document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
                 dropdown.classList.remove('show');
             });
+            if (mobileMenu) {
+                mobileMenu.classList.remove('active');
+            }
         });
 
+        // Update user name
         function updateUserName(userName) {
             const nameEl = document.getElementById('userName1');
             if (nameEl) {
@@ -313,12 +447,47 @@
             }
         }
 
+        // Sync mobile badge counts with desktop
+        function syncBadgeCounts() {
+            const wishlistCount = document.getElementById('wishlist-count');
+            const mobileWishlistCount = document.getElementById('mobile-wishlist-count');
+            const cartCount = document.getElementById('cart-count');
+            const mobileCartCount = document.getElementById('mobile-cart-count');
 
+            if (wishlistCount && mobileWishlistCount) {
+                mobileWishlistCount.textContent = wishlistCount.textContent;
+            }
+            if (cartCount && mobileCartCount) {
+                mobileCartCount.textContent = cartCount.textContent;
+            }
+        }
+
+        // Dynamically adjust mobile menu position
+        function adjustMobileMenuPosition() {
+            if (mobileMenu) {
+                const header = document.querySelector('.main-header');
+                const headerHeight = header.offsetHeight;
+                mobileMenu.style.top = `${headerHeight}px`;
+            }
+        }
+
+        // Run on load and window resize
+        document.addEventListener('DOMContentLoaded', () => {
+            syncBadgeCounts();
+            adjustMobileMenuPosition();
+        });
+        window.addEventListener('resize', adjustMobileMenuPosition);
+
+        // Listen for custom filter event (assuming filter triggers an event)
+        document.addEventListener('filterApplied', () => {
+            adjustMobileMenuPosition();
+            syncBadgeCounts();
+        });
+
+        // Run sync on cart/wishlist updates
+        window.addEventListener('cartUpdated', syncBadgeCounts);
+        window.addEventListener('wishlistUpdated', syncBadgeCounts);
     </script>
-
-   
-
-
 </body>
 
 </html>

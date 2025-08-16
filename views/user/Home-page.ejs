@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* [Existing styles remain unchanged, copied from your original file] */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -45,7 +44,6 @@
             padding: 0 20px;
         }
 
-        /* Header */
         header {
             background: var(--white);
             box-shadow: var(--shadow-light);
@@ -159,7 +157,6 @@
             font-weight: 600;
         }
 
-        /* Hero Section */
         .hero-section {
             min-height: 100vh;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
@@ -361,7 +358,6 @@
             }
         }
 
-        /* Section Styles */
         .section {
             margin-bottom: 4rem;
         }
@@ -410,7 +406,6 @@
             transform: translateY(-1px);
         }
 
-        /* Flash Sale Timer */
         .flash-sale-banner {
             background: linear-gradient(45deg, var(--accent-color), #c0392b);
             color: var(--white);
@@ -471,7 +466,6 @@
             opacity: 0.8;
         }
 
-        /* Product Grid */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -553,7 +547,7 @@
 
         .wishlist-btn:hover {
             background: var(--accent-color);
-            color: var(--white);
+           
         }
 
         .product-overlay {
@@ -694,7 +688,6 @@
             transform: translateY(-1px);
         }
 
-        /* Categories Grid */
         .categories-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -758,7 +751,6 @@
             z-index: 1;
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -866,7 +858,6 @@
             }
         }
 
-        /* Loading Animation */
         .loading {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
@@ -883,7 +874,6 @@
             }
         }
 
-        /* Notification styles */
         .notification {
             position: fixed;
             top: 20px;
@@ -904,7 +894,6 @@
             transform: translateX(0);
         }
 
-        /* Toast Styles (copied from cart page) */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -1021,8 +1010,13 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                
-                                                <button type="button" onclick="addWishlist('<%=flashSales[i]._id %>')"  class="wishlist-btn"><i class="far fa-heart"></i></button>
+                                                <button type="button"
+                                                    onclick="addWishlist('<%= flashSales[i]._id %>', this)"
+                                                    class="wishlist-btn"
+                                                    style="background-color: var(--white); color: <%= wishlistId.includes(flashSales[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
+                                                    <i
+                                                        class="<%= wishlistId.includes(flashSales[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
+                                                </button>
                                                 <div class="product-overlay">
                                                     <div class="quick-actions">
                                                         <button class="quick-btn">Quick View</button>
@@ -1032,7 +1026,7 @@
                                 <div class="product-info">
                                     <div class="product-brand">PREMIUM</div>
                                     <h3 class="product-name">
-                                        <%=flashSales[i].productName %>
+                                        <%= flashSales[i].productName %>
                                     </h3>
                                     <div class="product-rating">
                                         <div class="stars">
@@ -1057,7 +1051,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <% }; %>
+                            <% } %>
                                 <% } else { %>
                                     <div
                                         style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
@@ -1147,7 +1141,13 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                <button type="button" onclick="addWishlist('<%=products[i]._id %>')" class="wishlist-btn"><i class="far fa-heart"></i></button>
+                                                <button type="button"
+                                                    onclick="addWishlist('<%= products[i]._id %>', this)"
+                                                    class="wishlist-btn"
+                                                    style="background-color: var(--white); color: <%= wishlistId.includes(products[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
+                                                    <i
+                                                        class="<%= wishlistId.includes(products[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
+                                                </button>
                                                 <div class="product-overlay">
                                                     <div class="quick-actions">
                                                         <button class="quick-btn">Quick View</button>
@@ -1182,7 +1182,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <% }; %>
+                            <% } %>
                                 <% } else { %>
                                     <div
                                         style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
@@ -1215,8 +1215,8 @@
                         <% for(let i=0; i<bestselling.length; i++) { %>
                             <div class="product-card">
                                 <div class="product-image">
-                                    <% if (bestselling[i].productImage) {%>
-                                        <a href="/productsDetails/<%=bestselling[i]._id %>">
+                                    <% if (bestselling[i].productImage) { %>
+                                        <a href="/productsDetails/<%=bestselling[i]._id%>">
                                             <img src="<%= bestselling[i].productImage %>"
                                                 alt="<%= bestselling[i].productName %>" class="product-img"></a>
                                         <% } else { %>
@@ -1226,12 +1226,20 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                <button type="button" onclick="addWishlist('<%=bestselling[i]._id %>')" class="wishlist-btn"><i class="far fa-heart"></i></button>
-                                                <div class="product-overlay">
-                                                    <div class="quick-actions">
-                                                        <button class="quick-btn">Quick View</button>
+                                                < <button type="button"
+                                                    onclick="addWishlist('<%= bestselling[i]._id %>', this)"
+                                                    class="wishlist-btn"
+                                                    style="background-color: var(--white); color: <%= wishlistId.includes(bestselling[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>;">
+                                                    <i
+                                                        class="<%= wishlistId.includes(bestselling[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
+                                                    </button>
+
+                                                    </button>
+                                                    <div class="product-overlay">
+                                                        <div class="quick-actions">
+                                                            <button class="quick-btn">Quick View</button>
+                                                        </div>
                                                     </div>
-                                                </div>
                                 </div>
                                 <div class="product-info">
                                     <div class="product-brand">PREMIUM</div>
@@ -1261,7 +1269,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <% }; %>
+                            <% } %>
                                 <% } else { %>
                                     <div
                                         style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
@@ -1273,7 +1281,7 @@
                 </div>
             </section>
         </div>
-        <%-include('../partials/user/footer.ejs') %>
+        <%- include('../partials/user/footer.ejs') %>
 
             <!-- Toast Container -->
             <div id="toastContainer" class="toast-container"></div>
@@ -1294,28 +1302,7 @@
                     showToast(`Showing ${category} products`, 'success');
                 }
 
-                if (user) {
-                    // Wishlist functionality
-                    document.querySelectorAll('.wishlist-btn').forEach(btn => {
-                        btn.addEventListener('click', function (e) {
-                            e.stopPropagation();
-                            const icon = this.querySelector('i');
-                            if (icon.classList.contains('far')) {
-                                icon.classList.remove('far');
-                                icon.classList.add('fas');
-                                this.style.backgroundColor = 'var(--accent-color)';
-                                this.style.color = 'var(--white)';
-                                showToast('Added to wishlist', 'success');
-                            } else {
-                                icon.classList.remove('fas');
-                                icon.classList.add('far');
-                                this.style.backgroundColor = 'var(--white)';
-                                this.style.color = 'var(--dark-gray)';
-                                showToast('Removed from wishlist', 'success');
-                            }
-                        });
-                    });
-                }
+
 
                 // Product card click handler
                 document.querySelectorAll('.product-card').forEach(card => {
@@ -1364,13 +1351,13 @@
                             menuBtn.className = 'mobile-menu-btn';
                             menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
                             menuBtn.style.cssText = `
-                display: block;
-                background: none;
-                border: none;
-                font-size: 1.5rem;
-                cursor: pointer;
-                color: var(--dark-gray);
-            `;
+                        display: block;
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: var(--dark-gray);
+                    `;
 
                             menuBtn.addEventListener('click', () => {
                                 navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
@@ -1428,8 +1415,7 @@
 
                         if (data.success) {
                             showToast('Product added to cart', 'success');
-                            await updateCartCount()
-                           
+                            await updateCartCount();
                         } else {
                             if (data.message === "User not logged in") {
                                 window.location.href = '/login';
@@ -1442,9 +1428,7 @@
                         showToast('Something went wrong', 'error');
                     }
                 }
-            </script>
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
+
                 const Toast = Swal.mixin({
                     toast: true,
                     position: 'top-end',
@@ -1452,64 +1436,75 @@
                     timer: 2000,
                     timerProgressBar: true,
                     didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
                     }
                 });
 
-                async function addWishlist(productId) {
-                        try {
-                            console.log(productId);
-                            const res = await fetch(`/wishlist/add/`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ productId }),
-                            });
+                async function addWishlist(productId, button) {
+                    try {
+                        const res = await fetch(`/wishlist/add/`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ productId }),
+                        });
 
-                            const result = await res.json();
+                        const result = await res.json();
 
-                            if (result.success) {
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: result.message || "Wishlist updated"
-                                }).then(()=>{
-                                     updateCartCount()
-                                })
-                            } else {
-                                if (result.message === "user not found") {
-                                    Swal.fire({
-                                        icon: 'info',
-                                        title: "Login Required",
-                                        text: "Please login to continue",
-                                        showCancelButton: true,
-                                        confirmButtonText: "Login",
-                                        cancelButtonText: "Cancel",
-                                    }).then((res) => {
-                                        if (res.isConfirmed) {
-                                            window.location.href = "/login";
-                                        }
-                                    });
-                                    return; 
+                        if (result.success) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: result.message || "Wishlist updated"
+                            }).then(() => {
+
+                                const icon = button.querySelector("i.fa-heart");
+
+                                if (result.inWishlist) {
+                                    icon.classList.remove("far");
+                                    icon.classList.add("fas", "text-red-500");
+                                    button.style.backgroundColor = 'var(--white)';
+                                    button.style.color = 'var(--accent-color)';
+                                } else {
+                                    icon.classList.remove("fas", "text-red-500");
+                                    icon.classList.add("far");
+                                    button.style.backgroundColor = 'var(--white)';
+                                    button.style.color = 'var(--dark-gray)';
                                 }
-
-                                Toast.fire({
-                                    icon: 'error',
-                                    title: result.message || 'Failed to update wishlist'
+                                updateCartCount();
+                            });
+                        } else {
+                            if (result.message === "user not found") {
+                                Swal.fire({
+                                    icon: 'info',
+                                    title: "Login Required",
+                                    text: "Please login to continue",
+                                    showCancelButton: true,
+                                    confirmButtonText: "Login",
+                                    cancelButtonText: "Cancel",
+                                }).then((res) => {
+                                    if (res.isConfirmed) {
+                                        window.location.href = "/login";
+                                    }
                                 });
+                                return;
                             }
-                        } catch (err) {
-                            console.error(err);
+
                             Toast.fire({
                                 icon: 'error',
-                                title: 'Server error'
+                                title: result.message || 'Failed to update wishlist'
                             });
                         }
+                    } catch (err) {
+                        console.error(err);
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Server error'
+                        });
                     }
-
+                }
             </script>
-
 </body>
 
 </html>

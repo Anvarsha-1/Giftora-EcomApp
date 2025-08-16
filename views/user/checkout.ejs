@@ -90,8 +90,13 @@
             color: #666;
         }
 
-        /* Visual indicator for selected address */
         input[name="selectedAddress"].peer:checked~div {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            border-width: 2px;
+        }
+
+        input[name="paymentMethod"].peer:checked~div {
             border-color: #3b82f6;
             background-color: #eff6ff;
             border-width: 2px;
@@ -137,7 +142,6 @@
                                                     </div>
                                         </div>
                                         <div class="text-right">
-
                                             <% if (item.price !==undefined && item.price !==null) { %>
                                                 <div class="text-sm text-gray-700">₹<%= item.price.toLocaleString() %> x
                                                         <%= item.quantity %>
@@ -145,7 +149,6 @@
                                                 <% } else { %>
                                                     <div class="text-sm text-red-500">Price not available</div>
                                                     <% } %>
-
                                                         <div class="text-base font-semibold text-gray-900">₹<%=
                                                                 (item.price * item.quantity).toLocaleString() %>
                                                         </div>
@@ -175,7 +178,7 @@
                                 <% addresses.forEach(function(address, idx) { %>
                                     <label class="block cursor-pointer">
                                         <input type="radio" name="selectedAddress" value="<%= address._id %>"
-                                            class="peer hidden" <%=idx===0 ? 'checked' : '' %>>
+                                            class="peer hidden" <%=address.isDefault ? 'checked' : '' %>>
                                         <div class="border rounded-lg p-4 transition-all hover:border-blue-400">
                                             <div class="flex items-center justify-between mb-2">
                                                 <span class="font-medium text-gray-900">
@@ -206,7 +209,8 @@
                             </div>
                             <% } else { %>
                                 <div class="text-center text-gray-500 py-4">No addresses available. <a
-                                        href="/account/addresses" class="text-blue-600 hover:underline">Add one now</a>.
+                                        href="/account/add/addresses" class="text-blue-600 hover:underline">Add one
+                                        now</a>.
                                 </div>
                                 <% } %>
                                     <button type="button" onclick="window.location.href='/account/addresses'"
@@ -220,9 +224,10 @@
                             <i class="ri-bank-card-line text-blue-600"></i> Payment Method
                         </h2>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <!-- COD (Active and Selected) -->
+                            <!-- COD -->
                             <label class="block cursor-pointer">
-                                <input type="radio" name="paymentMethod" value="COD" class="peer hidden" checked>
+                                <input type="radio" name="paymentMethod" value="COD" class="peer hidden" <%=total <=4000
+                                    ? 'checked' : '' %>>
                                 <div
                                     class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 peer-checked:border-blue-600 peer-checked:bg-blue-50">
                                     <i class="ri-money-rupee-circle-line text-2xl text-blue-600 mb-1"></i>
@@ -235,22 +240,29 @@
                                     <% } %>
                             </label>
 
-                            <!-- Online Payment (Disabled) -->
-                            <div
-                                class="border rounded-lg p-4 flex flex-col items-center bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed">
-                                <i class="ri-bank-line text-2xl mb-1"></i>
-                                <span class="font-medium">Online Payment</span>
-                            </div>
+                            <!-- Online Payment -->
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="Online" class="peer hidden">
+                                <div
+                                    class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                                    <i class="ri-bank-line text-2xl text-blue-600 mb-1"></i>
+                                    <span class="font-medium text-gray-900">Online Payment</span>
+                                </div>
+                            </label>
 
-                            <!-- Wallet Payment (Disabled) -->
-                            <div
-                                class="border rounded-lg p-4 flex flex-col items-center bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed">
-                                <i class="ri-wallet-3-line text-2xl mb-1"></i>
-                                <span class="font-medium">Wallet Payment</span>
-                                <span class="text-xs text-red-500 mt-1">₹0 (Insufficient)</span>
-                            </div>
+                            <!-- Wallet Payment -->
+                            <label class="block cursor-pointer">
+                                <input type="radio" name="paymentMethod" value="Wallet" class="peer hidden" disabled>
+                                <div class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 
+                                          bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed">
+                                    <i class="ri-wallet-3-line text-2xl mb-1"></i>
+                                    <span class="font-medium">Wallet Payment</span>
+                                 <span class="<%= wallet.balance > 0 ? 'text-xs text-green-600 mt-1' : 'text-xs text-red-500 mt-1' %>">
+                                     <%= wallet && wallet.balance> 0 ?  wallet.balance : "₹0 (Insufficient)" %>
+                                    </span>
+                                </div>
+                            </label>
                         </div>
-
                     </div>
                 </div>
                 <!-- Right Section -->
@@ -312,7 +324,8 @@
                                 </div>
                                 <div class="flex justify-between font-semibold">
                                     <span>Total</span>
-                                    <span id="total-price" data-total-price="<%= subTotal + tax + shipping%>">₹<%= subTotal + tax + shipping%></span>
+                                    <span id="total-price" data-total-price="<%= subTotal + tax + shipping%>">₹<%=
+                                            subTotal + tax + shipping%></span>
                                 </div>
                             </div>
                             <% } %>
@@ -326,6 +339,7 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" id="cartItems" value='<%- JSON.stringify(cartItems || []) %>'>
         <%- include('../partials/user/footer.ejs') %>
             <script>
                 const placeOrderBtn = document.getElementById('placeOrderBtn');
@@ -335,11 +349,9 @@
                         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
                         const totalPriceEl = document.getElementById('total-price');
                         const totalPrice = totalPriceEl ? parseFloat(totalPriceEl.getAttribute('data-total-price')) : 0;
-                        const cartItems = <%- JSON.stringify(cartItems || []) %>;
+                        const cartItems = JSON.parse(document.getElementById('cartItems').value);
                         const couponApplied = false
                         const couponId = null
-
-
 
                         if (!addressSelected) {
                             return Swal.fire({
@@ -349,8 +361,6 @@
                                 confirmButtonColor: '#3085d6'
                             });
                         }
-
-
 
                         const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
                         const orderedItems = cartItems.map(item => ({
@@ -405,9 +415,7 @@
                                     text: 'Your order has been placed successfully.',
                                     confirmButtonColor: '#3b82f6'
                                 }).then(() => {
-
                                     window.location.href = `/checkout/order-success?orderId=${result.orderId}`;
-
                                 });
                             } else {
                                 Swal.fire({
@@ -426,14 +434,9 @@
                                 confirmButtonColor: '#d33'
                             });
                         }
-
                     })
                 }
-
-
             </script>
-
-
 </body>
 
 </html>

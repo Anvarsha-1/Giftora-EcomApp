@@ -145,7 +145,7 @@ const signUp = async (req, res) => {
       userData: req.session.userData,
     });
 
-   
+
 
     req.session.save((err) => {
       if (err) {

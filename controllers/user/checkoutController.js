@@ -3,9 +3,10 @@ const User = require('../../models/userSchema')
 const Address = require('../../models/addressSchema')
 const Product = require('../../models/productSchema')
 const Order = require('../../models/orderSchema')
+const Wallet = require('../../models/walletSchema')
 
 const loadCheckoutPage = async (req, res) => {
-    if (!req.session.allowCheckout){
+    if (!req.session.allowCheckout) {
         return res.redirect("/cart")
     }
     try {
@@ -16,7 +17,9 @@ const loadCheckoutPage = async (req, res) => {
 
         const addresses = await Address.find({ userId }) || [];
 
-        if (!cart || !cart.items || cart.items.length === 0) {
+        const wallet = await Wallet.findOne({userId})
+
+        if (!cart || !cart.items || cart.items.length === 0 ) {
             return res.render('user/checkout', {
                 user,
                 cartItems: [],
@@ -25,6 +28,7 @@ const loadCheckoutPage = async (req, res) => {
                 shipping: 0,
                 total: 0,
                 addresses,
+                wallet
             });
         }
 
@@ -35,7 +39,7 @@ const loadCheckoutPage = async (req, res) => {
             return product && !product.isBlocked && !product.isDeleted && product.quantity >= 1;
         });
 
-       
+
 
         const cartItems = validItems.map(item => {
             if (item.productId.status === 'Out Of Stock') {
@@ -62,18 +66,19 @@ const loadCheckoutPage = async (req, res) => {
         const tax = Math.round(subTotal * 0.05);
         const shipping = subTotal >= 1000 ? parseInt(0) : parseInt(50);
         const total = Number(subTotal + tax + shipping);
-       
+
 
 
         return res.render('user/checkout', {
-            
+
             user,
             cartItems,
             subTotal,
             tax,
-            addresses ,
+            addresses,
             shipping,
-            total
+            total,
+            wallet
         });
 
     } catch (error) {
@@ -86,164 +91,169 @@ const loadCheckoutPage = async (req, res) => {
 };
 
 
-const validateCheckout  = async(req,res)=>{
-    try{
-        const userId =  req.session.user
-        const user =  await User.findById(userId)
-        const cart =  await Cart.findOne({userId}).populate("items.productId")
-     
-        if(!cart || !cart.items || cart.items.length<1){
-            return res.json({success:false,message:"invalid request cart not found"})
-        }
-        let outOfStockItems =[]
-        
+const validateCheckout = async (req, res) => {
+    try {
+        const userId = req.session.user
+        const user = await User.findById(userId)
+        const cart = await Cart.findOne({ userId }).populate("items.productId")
 
-       
-        
-        
-         
-        for(let item  of cart.items){
+        if (!cart || !cart.items || cart.items.length < 1) {
+            return res.json({ success: false, message: "invalid request cart not found" })
+        }
+        let outOfStockItems = []
+
+
+
+
+
+
+        for (let item of cart.items) {
             const product = item.productId
-           
-            if(!product || product.isBlocked || product.isDeleted || product.quantity<item.quantity){
-                 outOfStockItems.push({
-                    name:product?.productName || "unknown Product",
-                    reason :product.isBlocked ? "Blocked" : "Out of stock"
-                 })
+
+            if (!product || product.isBlocked || product.isDeleted || product.quantity < item.quantity) {
+                outOfStockItems.push({
+                    name: product?.productName || "unknown Product",
+                    reason: product.isBlocked ? "Blocked" : "Out of stock"
+                })
             }
         }
 
-        if (outOfStockItems.length>0){
+        if (outOfStockItems.length > 0) {
             return res.status(400).json({
-               success:false,
-               message:"Some Products are not available",
+                success: false,
+                message: "Some Products are not available",
                 item: outOfStockItems
             })
         }
 
-        return res.json({success:true})
-       
-    }catch(error){
-         console.log("Error validate Checkout",error.message)
-         return res.status(500).json({success:false,message:"Something went wrong"})
+        return res.json({ success: true })
+
+    } catch (error) {
+        console.log("Error validate Checkout", error.message)
+        return res.status(500).json({ success: false, message: "Something went wrong" })
     }
 }
 
-const placeOrder = async(req,res)=>{
-    try{
-        const userId =  req.session.user
-       
-       
+const placeOrder = async (req, res) => {
+    try {
+        const userId = req.session.user
+
+
         const { totalPrice, discountPrice, finalPrice, address, paymentMethod } = req.body
 
-        if(!address){
-            return res.json({success:false,message:"Please select a address to continue"})
+        if (!address) {
+            return res.json({ success: false, message: "Please select a address to continue" })
         }
-        if(!paymentMethod){
-            return res.json({success:false,message:"Please select a payment method"})
+        if (!paymentMethod) {
+            return res.json({ success: false, message: "Please select a payment method" })
         }
-        const cart = await Cart.findOne({userId})
-        
-        if (!cart || !cart.items || cart.items.length<1){
-            return res.json({success:false,message:"Cart items not found"})
+        const cart = await Cart.findOne({ userId })
+
+        if (!cart || !cart.items || cart.items.length < 1) {
+            return res.json({ success: false, message: "Cart items not found" })
         }
-        
+
         const userAddress = await Address.findById(address)
 
-        if(!userAddress){
-            return res.json({success:false,message:"Invalid address"})
+        if (!userAddress) {
+            return res.json({ success: false, message: "Invalid address" })
         }
 
         function generateOrderId() {
-            const timestamp = Date.now().toString().slice(-5); 
+            const timestamp = Date.now().toString().slice(-5);
             const random = Math.floor(Math.random() * 90000 + 10000);
-            return timestamp + random; 
+            return timestamp + random;
         }
 
-       const orderId ="ORD" + generateOrderId()
+        const orderId = "ORD" + generateOrderId()
 
-       const orderedItems = []
+        const orderedItems = []
 
-        for(let item of req.body.orderedItems){
+        for (let item of req.body.orderedItems) {
 
-            const product = await Product.findById(item.productId)  
-            
-            if(!product || item.quantity>product.quantity){
-                return res.json({success:false,message:`Insufficient stock for ${product?.productName} `})
-            }if(item.quantity>10){
-                return res.json({success:false,message:"Only 10 quantity approved"})
+            const product = await Product.findById(item.productId)
+
+            if (!product || item.quantity > product.quantity) {
+                return res.json({ success: false, message: `Insufficient stock for ${product?.productName} ` })
+            } if (item.quantity > 10) {
+                return res.json({ success: false, message: "Only 10 quantity approved" })
             }
-             product.quantity -= item.quantity
-             await product.save()
+            product.quantity -= item.quantity
+            await product.save()
 
             orderedItems.push({
-                productId:product._id,
-                quantity:item.quantity,
-                price:product.salesPrice,
+                productId: product._id,
+                quantity: item.quantity,
+                price: product.salesPrice,
             })
         }
-        
-        
 
-      
-       const status = paymentMethod === "COD" ? "Pending" : 'Processing' 
-       const newOrder = new Order({
-        userId:userId,
-        orderId,
-        orderedItems,
-        totalPrice,
-        discountPrice,
-        finalAmount:finalPrice,
-        address,
-        status,
-        createdOn : Date.now(),
-        paymentMethod
 
-       })
 
-        await newOrder.save() 
+
+        const status = paymentMethod === "COD" ? "Pending" : 'Processing'
+        const newOrder = new Order({
+            userId: userId,
+            orderId,
+            orderedItems,
+            totalPrice,
+            discountPrice,
+            finalAmount: finalPrice,
+            address,
+            status,
+            createdOn: Date.now(),
+            paymentMethod
+
+        })
+
+        await newOrder.save()
         req.session.allowSuccessPage = true
         await Cart.updateOne(
             { userId },
             { $pull: { items: { productId: { $in: orderedItems.map(i => i.productId) } } } }
-           
+
         ); console.log(newOrder.orderId)
         return res.json({
             success: true,
             message: "Order placed successfully",
             orderId: newOrder.orderId,
             orderDetails: newOrder
-        }); 
-  
-    }catch(error){
-       console.log("Error while placing Order",error.message)
-       return res.json({success:false,message:"Something went wrong. Please try again"})
+        });
+
+    } catch (error) {
+        console.log("Error while placing Order", error.message)
+        return res.json({ success: false, message: "Something went wrong. Please try again" })
     }
 }
 
-const loadOrderSuccess = async(req,res)=>{
-    try{
-       if(!req.session.allowSuccessPage){
-        return res.redirect('/cart')
-       }
-         
-       const orderId = req.query.orderId
-       
-       const order = await Order.findOne({orderId})
-       if(!order){
-         return res.redirect('/cart')
-       }
-       req.session.allowSuccessPage
+const loadOrderSuccess = async (req, res) => {
+    try {
+        if (!req.session.allowSuccessPage) {
+            return res.redirect('/cart')
+        }
+
+        const orderId = req.query.orderId
+
+        const order = await Order.findOne({ orderId })
+        if (!order) {
+            return res.redirect('/cart')
+        }
+        req.session.allowSuccessPage
         res.render('orderSuccessPage', { order })
-    }catch(error){
-        console.log("Error while loading success Page",error.message)
-        return res.json({success:false,message:"something went wrong Please try again"})
+    } catch (error) {
+        console.log("Error while loading success Page", error.message)
+        return res.json({ success: false, message: "something went wrong Please try again" })
     }
 }
 
-module.exports={
+
+
+
+module.exports = {
     loadCheckoutPage,
     validateCheckout,
     placeOrder,
     loadOrderSuccess
 }
+
+

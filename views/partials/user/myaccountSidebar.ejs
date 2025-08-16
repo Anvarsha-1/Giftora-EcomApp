@@ -1,86 +1,234 @@
-<aside id="sidebar"
-    class="w-full md:w-96 bg-white rounded-lg shadow-sm border border-gray-200 h-fit transform -translate-x-full md:translate-x-0 md:sticky top-0 left-0 z-0 transition-transform duration-300 ease-in-out">
-    <div class="p-6">
-        <div class="flex items-center justify-between mb-6">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giftora Sidebar</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" />
+    <style>
+        .sidebar {
+            width: 100%;
+            max-width: 384px;
+            /* Matches md:w-96 */
+            background: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e5e7eb;
+            height: fit-content;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 50;
+            /* Below header (z-1000) */
+            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+                /* Compact width for icons only */
+                padding: 6px;
+            }
+
+            .nav-item {
+                justify-content: center;
+                /* Center icons */
+                padding: 8px;
+            }
+
+            .nav-item div {
+                margin: 0;
+                /* Remove margin for icon-only display */
+            }
+
+            .nav-item span {
+                display: none;
+                /* Hide text labels */
+            }
+
+            .sidebar.full {
+                width: 100%;
+                max-width: 320px;
+                /* Full width when expanded */
+                padding: 24px;
+                transform: translateX(0);
+            }
+
+            .sidebar.full .nav-item {
+                justify-content: flex-start;
+                padding: 12px 24px;
+            }
+
+            .sidebar.full .nav-item span {
+                display: inline;
+                /* Show text labels when expanded */
+            }
+
+            .sidebar.full .header-section {
+                display: flex;
+                /* Show header when expanded */
+            }
+
+            .header-section {
+                display: none;
+                /* Hide header in collapsed state */
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1.5rem;
+            }
+
+            #close-sidebar {
+                display: flex;
+                /* Keep close button visible */
+            }
+        }
+
+        @media (min-width: 769px) {
+            .sidebar {
+                transform: translateX(0);
+                /* Always visible */
+                width: 100%;
+                max-width: 384px;
+                padding: 24px;
+            }
+
+            .nav-item {
+                justify-content: flex-start;
+                padding: 12px 24px;
+            }
+
+            .nav-item span {
+                display: inline;
+            }
+
+            .header-section {
+                display: flex;
+                /* Show header in desktop */
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside id="sidebar" class="sidebar">
+        <div class="header-section">
             <h2 class="text-xl font-semibold text-gray-900">Manage Account</h2>
             <button id="close-sidebar"
-                class="md:hidden w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+                class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
                 <i class="ri-close-line"></i>
             </button>
         </div>
         <nav class="space-y-3">
             <a href="/account/profile"
-                class="nav-item active flex items-center px-6 py-4 text-base font-medium rounded-lg transition-all duration-300 hover:scale-[1.02]">
+                class="nav-item flex items-center px-6 py-4 text-base font-medium rounded-lg transition-all duration-300 hover:scale-[1.02]">
                 <div class="w-6 h-6 flex items-center justify-center mr-4">
                     <i class="ri-user-line text-current"></i>
                 </div>
-                My Profile
+                <span>My Profile</span>
             </a>
             <a href="/account/addresses"
                 class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
                 <div class="w-6 h-6 flex items-center justify-center mr-4">
                     <i class="ri-map-pin-line text-current"></i>
                 </div>
-                Address Book
+                <span>Address Book</span>
             </a>
             <a href="/orders"
                 class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
                 <div class="w-6 h-6 flex items-center justify-center mr-4">
                     <i class="ri-archive-line text-current"></i>
-
                 </div>
-                My Orders
+                <span>My Orders</span>
             </a>
             <a href="/wishlist"
                 class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
                 <div class="w-6 h-6 flex items-center justify-center mr-4">
                     <i class="ri-heart-line text-current"></i>
                 </div>
-                My Wishlist
+                <span>My Wishlist</span>
             </a>
             <a href="/account/wallet"
                 class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
                 <div class="w-6 h-6 flex items-center justify-center mr-4">
                     <i class="ri-wallet-line text-current"></i>
                 </div>
-                Wallet
+                <span>Wallet</span>
             </a>
             <a href="/account/coupons"
                 class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
                 <div class="w-6 h-6 flex items-center justify-center mr-4">
                     <i class="ri-coupon-line text-current"></i>
                 </div>
-                Coupons
+                <span>Coupons</span>
             </a>
             <a href="/account/support"
                 class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
                 <div class="w-6 h-6 flex items-center justify-center mr-4">
                     <i class="ri-customer-service-line text-current"></i>
                 </div>
-                Support
+                <span>Support</span>
             </a>
             <a href="/account/change/password"
                 class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
                 <div class="w-6 h-6 flex items-center justify-center mr-4">
                     <i class="ri-key-line text-current"></i>
                 </div>
-                Password Management
+                <span>Password Management</span>
             </a>
         </nav>
-    </div>
-</aside>
+    </aside>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const currentPath = window.location.pathname;
-        const navLinks = document.querySelectorAll('.nav-item');
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-item');
 
-        navLinks.forEach(link => {
-            if (link.getAttribute('href') === currentPath) {
-                link.classList.add('bg-gray-100', 'text-primary', 'font-semibold');
-            } else {
-                link.classList.add('text-gray-700');
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('bg-gray-100', 'text-primary', 'font-semibold');
+                } else {
+                    link.classList.add('text-gray-700');
+                }
+            });
+
+            const sidebar = document.getElementById('sidebar');
+            const closeBtn = document.getElementById('close-sidebar');
+
+            if (closeBtn && sidebar) {
+                closeBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('full');
+                });
             }
+
+            // Close sidebar when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!sidebar.contains(e.target) && !closeBtn.contains(e.target)) {
+                    sidebar.classList.remove('full');
+                }
+            });
+
+            // Prevent closing when clicking inside sidebar
+            sidebar.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
         });
-    });
-</script>
+    </script>
+</body>
+
+</html>

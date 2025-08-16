@@ -13,8 +13,6 @@
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
 
-  
-
     <style>
         * {
             font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -44,6 +42,12 @@
         .address-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .address-card.default {
+            background-color: #e6f3ff;
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
         }
 
         .stagger {
@@ -108,19 +112,20 @@
             <div class="flex flex-col md:flex-row gap-8">
                 <!-- Sidebar -->
                 <%- include('../partials/user/myaccountSidebar.ejs') %>
-                <!-- Main Content -->
-                <main class="flex-1 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
-                    <!-- Breadcrumb -->
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-4">
-                            <a href="/" class="hover:text-gray-700 transition-colors">Home</a>
-                            <i class="ri-arrow-right-s-line text-gray-400"></i>
-                            <a href="/account/profile" class="hover:text-gray-700 transition-colors">My Account</a>
-                            <i class="ri-arrow-right-s-line text-gray-400"></i>
-                            <span class="text-gray-900">Address Book</span>
-                        </nav>
-                        <h1 class="text-2xl font-display text-gray-900">Address Book</h1>
-                    </div>
+                    <!-- Main Content -->
+                    <main
+                        class="flex-1 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
+                        <!-- Breadcrumb -->
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+                                <a href="/" class="hover:text-gray-700 transition-colors">Home</a>
+                                <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                <a href="/account/profile" class="hover:text-gray-700 transition-colors">My Account</a>
+                                <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                <span class="text-gray-900">Address Book</span>
+                            </nav>
+                            <h1 class="text-2xl font-display text-gray-900">Address Book</h1>
+                        </div>
 
                         <!-- Content Area -->
                         <div class="p-6">
@@ -137,7 +142,6 @@
                                         <span class="hidden sm:inline">Add New Address</span>
                                         <span class="sm:hidden">Add</span>
                                     </button>
-
                                 </div>
 
                                 <% if (addresses && addresses.length> 0) { %>
@@ -145,7 +149,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                                         <% addresses.forEach((address, index)=> { %>
                                             <div
-                                                class="address-card stagger bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                                class="address-card stagger bg-gray-50 rounded-lg p-4 border border-gray-200 <%= address.isDefault ? 'default' : '' %>">
                                                 <!-- Header -->
                                                 <div class="flex items-start justify-between mb-3">
                                                     <div class="flex items-center gap-2">
@@ -209,10 +213,17 @@
                                                     <p class="text-xs text-gray-400 font-body">Added <%= new
                                                             Date(address.createdAt).toLocaleDateString() %>
                                                     </p>
-                                                    <div class="flex items-center gap-1">
-                                                        <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
-                                                        <span
-                                                            class="text-xs text-green-600 font-medium tracking-wide">ACTIVE</span>
+                                                    <div class="flex items-center gap-2">
+                                                        <div class="flex items-center gap-1">
+                                                            <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                                                            <span
+                                                                class="text-xs text-green-600 font-medium tracking-wide">ACTIVE</span>
+                                                        </div>
+                                                        <button onclick="setDefaultAddress('<%= address._id %>')"
+                                                            class="text-xs text-blue-600 hover:text-blue-800 font-medium <%= address.isDefault ? 'opacity-50 cursor-not-allowed' : '' %>"
+                                                            <%=address.isDefault ? 'disabled' : '' %>>
+                                                            <%= address.isDefault ? 'Default' : 'Set as Default' %>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -234,7 +245,6 @@
                                                 class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
                                                 Add Your First Address
                                             </button>
-
                                         </div>
                                         <% } %>
                             </div>
@@ -249,7 +259,7 @@
         <script>
             // Edit Address Function
             function editAddress(addressId) {
-               Swal.fire({
+                Swal.fire({
                     title: 'Edit Address',
                     text: "You will be redirected to edit this address.",
                     icon: 'info',
@@ -262,11 +272,11 @@
                         popup: 'border border-gray-200 shadow-lg rounded-xl p-4'
                     }
                 })
-              .then((result) => {
-                    if (result.isConfirmed) {
-                        window.location.href = `/account/edit/addresses/${addressId}`;
-                    }
-                });
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = `/account/edit/addresses/${addressId}`;
+                        }
+                    });
             }
 
             // Delete Address Function
@@ -276,8 +286,8 @@
                     text: "This action cannot be undone!",
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#ef4444', 
-                    cancelButtonColor: '#6b7280',  
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
                     confirmButtonText: 'Yes, delete it!',
                     cancelButtonText: 'Cancel',
                     customClass: {
@@ -286,55 +296,121 @@
                         cancelButton: 'bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-md'
                     },
                     buttonsStyling: false
-                    
                 })
-                .then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`/account/delete/addresses/${addressId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    Swal.fire({
-                                        toast: true,
-                                        position: 'top-end',
-                                        icon: 'success',
-                                        title: 'Address deleted successfully',
-                                        showConfirmButton: false,
-                                        timer: 2000,
-                                        timerProgressBar: true
-                                    }).then(() => {
-                                        location.reload(); 
-                                    });
-                                } else {
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/account/delete/addresses/${addressId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            toast: true,
+                                            position: 'top-end',
+                                            icon: 'success',
+                                            title: 'Address deleted successfully',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            toast: true,
+                                            position: 'top-end',
+                                            icon: 'error',
+                                            title: data.message || 'Failed to delete address',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true
+                                        });
+                                    }
+                                })
+                                .catch(error => {
                                     Swal.fire({
                                         toast: true,
                                         position: 'top-end',
                                         icon: 'error',
-                                        title: data.message || 'Failed to delete address',
+                                        title: 'Something went wrong. Please try again.',
                                         showConfirmButton: false,
                                         timer: 2000,
                                         timerProgressBar: true
                                     });
+                                });
+                        }
+                    });
+            }
+
+            // Set Default Address Function
+            function setDefaultAddress(addressId) {
+                Swal.fire({
+                    title: 'Set as Default Address?',
+                    text: "This address will be used as the default for checkout.",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, set as default!',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        popup: 'border border-gray-200 shadow-lg rounded-xl p-4',
+                        confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-md mr-2',
+                        cancelButton: 'bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-md'
+                    },
+                    buttonsStyling: false
+                })
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/account/set-default/addresses/${addressId}`, {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json'
                                 }
                             })
-                            .catch(error => {
-                                Swal.fire({
-                                    toast: true,
-                                    position: 'top-end',
-                                    icon: 'error',
-                                    title: 'Something went wrong. Please try again.',
-                                    showConfirmButton: false,
-                                    timer: 2000,
-                                    timerProgressBar: true
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire({
+                                            toast: true,
+                                            position: 'top-end',
+                                            icon: 'success',
+                                            title: 'Address set as default successfully',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true
+                                        }).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            toast: true,
+                                            position: 'top-end',
+                                            icon: 'error',
+                                            title: data.message || 'Failed to set default address',
+                                            showConfirmButton: false,
+                                            timer: 2000,
+                                            timerProgressBar: true
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'error',
+                                        title: 'Something went wrong. Please try again.',
+                                        showConfirmButton: false,
+                                        timer: 2000,
+                                        timerProgressBar: true
+                                    });
                                 });
-                            });
-                    }
-                });
+                        }
+                    });
             }
 
             // Add entrance animations on page load

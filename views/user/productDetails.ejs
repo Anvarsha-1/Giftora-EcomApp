@@ -121,27 +121,7 @@
             font-weight: 500;
         }
 
-        /* Custom Add to Cart button styling */
-        .custom-add-to-cart {
-            display: block;
-            width: 100%;
-            background-color: #4CAF50;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            text-align: center;
-            margin-top: auto;
-            transition: background-color 0.3s ease;
-        }
-
-        .custom-add-to-cart:hover {
-            background-color: #45a049;
-        }
-
+      
         .no-results {
             grid-column: 1 / -1;
             text-align: center;
@@ -192,24 +172,7 @@
             min-height: 200px;
         }
 
-        .add-to-cart {
-            margin-top: auto;
-            width: 100%;
-            background: #3b82f6;
-            color: white;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: background 0.3s ease;
-            opacity: 1;
-        }
+        
 
         .add-to-cart:hover {
             background: #2563eb;
@@ -403,10 +366,13 @@
                     <!-- Buttons Section -->
                     <div class="flex items-center gap-3 mt-4">
                         <!-- Add to Cart -->
-                        <button type="button" data-id="<%= product._id %>" id="addToCartBtn"
-                            class="w-44 h-12 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-all">
-                            Add to Cart
-                        </button>
+                <button type="button" data-id="<%= product._id %>"
+                    class="add-to-cart flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-all">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Add to Cart</span>
+                </button>
+
+
 
                         <!-- Wishlist -->
                         <button type="button" onclick="addWishlist('<%=product._id%>')"
@@ -447,70 +413,80 @@
                 </div>
             </div>
 
-            <section class="mb-16">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
-                <div class="products-grid">
-                    <% if (relatedProducts && relatedProducts.length> 0) { %>
-                        <% for (let i=0; i < relatedProducts.length; i++) { %>
-                            <div class="product-card">
-                                <div class="product-image w-full overflow-hidden rounded-md relative">
-                                    <% if (relatedProducts[i].productImage) { %>
-                                        <a href="/productsDetails/<%= relatedProducts[i]._id %>">
-                                            <img src="<%= relatedProducts[i].productImage[0]?.url %>"
-                                                alt="<%= relatedProducts[i].productName %>"
-                                                class="w-full h-60 object-cover object-center rounded-t-md">
-                                        </a>
-                                        <% } else { %>
-                                            <div class="no-image-placeholder">
-                                                <i class="fas fa-image"></i>
-                                            </div>
-                                            <% } %>
-                                                <button type="button" onclick="addWishlist('<%=relatedProducts[i]._id%>')" class="wishlist-btn" title="Add to Wishlist">
-                                                    <i class="far fa-heart"></i>
-                                                </button>
-                                </div>
-                                <div class="product-info p-4 flex flex-col justify-between">
-                                    <div>
-                                        <h3 class="product-name">
-                                            <%= relatedProducts[i].productName %>
-                                        </h3>
-                                        <div class="product-rating">
-                                            <div class="stars">
-                                                <i class="fas fa-star star"></i><i class="fas fa-star star"></i><i
-                                                    class="fas fa-star star"></i><i class="fas fa-star star"></i><i
-                                                    class="fas fa-star star"></i>
-                                            </div>
-                                            <span class="rating-count">(247 reviews)</span>
+       
+        <section class="mb-16">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
+            <div class="products-grid">
+                <% if (relatedProducts && relatedProducts.length> 0) { %>
+                    <% for (let i=0; i < relatedProducts.length; i++) { %>
+                        <div class="product-card">
+                            <div class="product-image">
+                                <% if (relatedProducts[i].productImage && relatedProducts[i].productImage[0]?.url) { %>
+                                    <a href="/productsDetails/<%= relatedProducts[i]._id %>">
+                                        <img src="<%= relatedProducts[i].productImage[0]?.url %>"
+                                            alt="<%= relatedProducts[i].productName %>" class="product-img">
+                                    </a>
+                                    <% } else { %>
+                                        <div
+                                            style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
+                                            <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                         </div>
-                                        <div class="product-prices">
-                                            <span class="current-price">₹<%= relatedProducts[i].salesPrice ||
-                                                    relatedProducts[i].regularPrice %></span>
-                                            <span class="original-price">₹<%=
-                                                    (relatedProducts[i].regularPrice).toFixed(0) %></span>
-                                            <span class="price-savings">Save ₹<%= (relatedProducts[i].regularPrice -
-                                                    (relatedProducts[i].salesPrice ||
-                                                    relatedProducts[i].regularPrice)).toFixed(0) %></span>
-                                        </div>
-                                    </div>
-                                    <button type="button" onclick="addToCart(this)"
-                                        data-id="<%= relatedProducts[i]._id %>"
-                                        style="background-color: #007BFF; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; font-size: 16px; font-weight: 500;"
-                                        onmouseover="this.style.backgroundColor='#0056b3'"
-                                        onmouseout="this.style.backgroundColor='#007BFF'">
-                                        Add to Cart
-                                    </button>
-                                </div>
+                                        <% } %>
+                                            <% if (relatedProducts[i].salesPrice && relatedProducts[i].regularPrice>
+                                                relatedProducts[i].salesPrice) { %>
+                                                <div class="discount-badge">
+                                                    -<%= Math.round(((relatedProducts[i].regularPrice -
+                                                        relatedProducts[i].salesPrice) / relatedProducts[i].regularPrice) * 100)
+                                                        %>%
+                                                </div>
+                                                <% } %>
+                                                    <button type="button" onclick="addWishlist('<%= relatedProducts[i]._id %>')"
+                                                        class="wishlist-btn" title="Add to Wishlist">
+                                                        <i class="far fa-heart"></i>
+                                                    </button>
+                                                    
                             </div>
-                            <% } %>
-                                <% } else { %>
-                                    <div class="no-results">
-                                        <i class="fas fa-box-open"></i>
-                                        <h3>No Products Found</h3>
-                                        <p>Try adjusting your filters or search terms</p>
+                            <div class="product-info">
+                                <div class="product-brand">PREMIUM</div>
+                                <h3 class="product-name">
+                                    <%= relatedProducts[i].productName %>
+                                </h3>
+                                <div class="product-rating">
+                                    <div class="stars">
+                                        <i class="fas fa-star star"></i>
+                                        <i class="fas fa-star star"></i>
+                                        <i class="fas fa-star star"></i>
+                                        <i class="fas fa-star star"></i>
+                                        <i class="fas fa-star star"></i>
                                     </div>
-                                    <% } %>
-                </div>
-            </section>
+                                    <span class="rating-count">(247 reviews)</span>
+                                </div>
+                                <div class="product-prices">
+                                    <span class="current-price">₹<%= relatedProducts[i].salesPrice ||
+                                            relatedProducts[i].regularPrice %></span>
+                                    <span class="original-price">₹<%= relatedProducts[i].regularPrice.toFixed(0) %></span>
+                                    <span class="price-savings">Save ₹<%= (relatedProducts[i].regularPrice -
+                                            (relatedProducts[i].salesPrice || relatedProducts[i].regularPrice)).toFixed(0) %>
+                                            </span>
+                                </div>
+                                <button type="button" data-id="<%= relatedProducts[i]._id %>"
+                                    class="add-to-cart flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-800 transition-all">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>Add to Cart</span>
+                                </button>
+
+                            </div>
+                        </div>
+                        <% } %>
+                            <% } else { %>
+                                <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
+                                    <i class="fas fa-box-open" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                    <p style="font-size: 1.2rem;">No products available</p>
+                                </div>
+                                <% } %>
+            </div>
+        </section>
+    
 
             <div class="bg-white rounded-lg shadow-sm border p-8 mb-16">
                 <div class="flex border-b mb-8">
@@ -900,8 +876,8 @@
                     const decreaseBtn = document.getElementById('decreaseQty');
                     const increaseBtn = document.getElementById('increaseQty');
                     const quantityDisplay = document.getElementById('quantityDisplay');
-                    const addToCartBtn = document.getElementById('addToCartBtn');
-                    const maxStock = '<%= product.quantity %>'; // Get stock from EJS
+                    const addToCartBtns = document.querySelectorAll('.add-to-cart');
+                    const maxStock = '<%= product.quantity %>'; 
                     let quantity = 1;
 
                     // Update button states based on quantity
@@ -934,7 +910,8 @@
                     });
 
                     // Add to Cart
-                    addToCartBtn.addEventListener('click', async function () {
+                    addToCartBtns.forEach(btn=>{
+                        btn.addEventListener('click', async function () {
                         const productId = this.getAttribute('data-id');
                         try {
                             const response = await fetch('/cart', {
@@ -947,11 +924,8 @@
                             const data = await response.json();
 
                             if (data.success) {
-                                showToast('Product added to cart', 'success')
-                                .then(()=>{
-                                    updateCartCount()
-                                })
-                                
+                                showToast('Product added to cart', 'success')                                
+                                    updateCartCount()                                                         
                             } else {
                                 if (data.message === 'User not logged in') {
                                     window.location.href = '/login';
@@ -965,6 +939,7 @@
                         }
                     });
                 });
+            })
 
                 // Show custom toast notification
                 function showToast(message, type = 'success') {

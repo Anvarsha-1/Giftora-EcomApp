@@ -38,6 +38,10 @@
             transition: all 0.3s ease;
             font-family: 'Inter', sans-serif;
         }
+        .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+     }
+
 
         .wishlist-item:hover {
             transform: translateY(-2px);
@@ -105,8 +109,10 @@
                         <!-- Content Area -->
                         <div class="p-8 content-section">
                             <!-- Empty Wishlist State -->
-                            <% if (!wishlistItem || wishlistItem.length===0) { %>
-                                <div id="wishlist-empty-box" class="bg-white rounded-lg p-12 text-center <%= wishlistItem.length ? 'hidden' : '' %>">
+                            
+                            
+                                <div id="wishlist-empty-box"
+                                    class="bg-white rounded-lg p-12 text-center <%= wishlistItem && wishlistItem.length ? 'hidden' : '' %>">
                                     <div class="max-w-md mx-auto">
                                         <i class="ri-heart-line text-gray-400 text-4xl mx-auto mb-4"></i>
                                         <h3 class="text-lg font-medium text-gray-900 mb-2">Your wishlist is empty</h3>
@@ -120,7 +126,8 @@
                                     </div>
                                 </div>
 
-                                <% } else { %>
+
+                              
                                     <!-- Wishlist Items Container -->
                                     <!-- Wishlist Items Container -->
                                     <div class="bg-white rounded-lg">
@@ -172,148 +179,162 @@
                                     </div>
 
                                   
-                                            <% } %>
+                                            
                         </div>
                     </main>
             </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-           
+       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Function to show the empty wishlist card with animation
+        function showEmptyWishlistCard() {
+            const remainingItems = document.querySelectorAll('.wishlist-item').length;
+            console.log("items",remainingItems)
+            if (remainingItems === 0) {
+                console.log("ji")
+                const emptyBox = document.getElementById('wishlist-empty-box');
+                console.log(emptyBox)
+                if (emptyBox) {
+                    emptyBox.classList.remove('hidden');
+                    emptyBox.classList.add('fade-in');
+                }else{
+                    emptyBox.classList.add('hidden');
+                }
+            }
+        }
 
-            async function addToCart(button) {
-                const productId = button.getAttribute('data-id');
-                try {
-                    const response = await fetch('/cart/addToCart', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ productId, quantity: 1 })
+        async function addToCart(button) {
+            const productId = button.getAttribute('data-id');
+            try {
+                const response = await fetch('/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId, quantity: 1 })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Product added to cart',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true
                     });
-                    const data = await response.json();
-                    if (data.success) {
+                    updateCartCount();
+                    const wishlistItem = button.closest('.wishlist-item');
+                    if (wishlistItem) {
+                        // Add fade-out animation
+                        wishlistItem.classList.add('opacity-0', 'translate-x-4', 'transition-all', 'duration-500');
+                        setTimeout(() => {
+                            wishlistItem.remove();
+                            showEmptyWishlistCard(); // Check if wishlist is empty
+                        }, 500);
+                    }
+                } else {
+                    if (data.message === 'User not logged in') {
+                        window.location.href = '/login';
+                    } else {
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
-                            icon: 'success',
-                            title: 'Product added to cart',
+                            icon: 'error',
+                            title: data.message || 'Could not add product to cart',
                             showConfirmButton: false,
                             timer: 3000,
                             timerProgressBar: true
                         });
-                        updateCartCount();
-                         const wishlistItem = button.closest('.wishlist-item');
-                         if (wishlistItem) wishlistItem.remove();
-                    } else {
-                        if (data.message === 'User not logged in') {
-                            window.location.href = '/login';
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: 'Something went wrong',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            }
+        }
+
+        async function removeFromWishlist(productId) {
+            Swal.fire({
+                title: 'Remove from Wishlist?',
+                text: "This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, remove it!',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'border border-red-200 shadow-xl rounded-xl p-5',
+                    confirmButton: 'bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md mr-2',
+                    cancelButton: 'bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-md'
+                },
+                buttonsStyling: false
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch(`/wishlist/remove/${productId}`, {
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: `${result.itemName || 'Item'} removed from wishlist`,
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            }).then(() => {
+                               
+                                const item = document.querySelector(`.wishlist-item[data-item-id="${productId}"]`);
+                                if (item) {
+                                    // Add fade-out animation
+                                    item.classList.add('opacity-0', 'translate-x-4', 'transition-all', 'duration-500');
+                                    setTimeout(() => {
+                                        
+                                        item.remove(); 
+                                        showEmptyWishlistCard(); // Check if wishlist is empty
+                                    }, 500);
+                                }
+                            });
                         } else {
                             Swal.fire({
                                 toast: true,
                                 position: 'top-end',
                                 icon: 'error',
-                                title: data.message || 'Could not add product to cart',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true
-                            });
-                        }
-                    }
-                } catch (err) {
-                    console.error(err);
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: 'Something went wrong',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true
-                    });
-                }
-            }
-
-            async function removeFromWishlist(productId) {
-                Swal.fire({
-                    title: 'Remove from Wishlist?',
-                    text: "This action cannot be undone!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#6b7280',
-                    confirmButtonText: 'Yes, remove it!',
-                    cancelButtonText: 'Cancel',
-                    customClass: {
-                        popup: 'border border-red-200 shadow-xl rounded-xl p-5',
-                        confirmButton: 'bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-md mr-2',
-                        cancelButton: 'bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-md'
-                    },
-                    buttonsStyling: false
-                }).then(async (result) => {
-                    if (result.isConfirmed) {
-                        try {
-                            const response = await fetch(`/wishlist/remove/${productId}`, {
-                                method: 'DELETE',
-                                headers: { 'Content-Type': 'application/json' }
-                            });
-                            const result = await response.json();
-                            if (response.ok) {
-                                Swal.fire({
-                                    toast: true,
-                                    position: 'top-end',
-                                    icon: 'success',
-                                    title: `${result.itemName || 'Item'} removed from wishlist`,
-                                    showConfirmButton: false,
-                                    timer: 2000,
-                                    timerProgressBar: true
-                                }).then(() => {
-                                     const item = document.querySelector(`.wishlist-item[data-item-id="${productId}"]`);
-                                    if (item) {
-                                        // Add fade-out animation
-                                        item.classList.add('opacity-0', 'translate-x-4', 'transition-all', 'duration-500');
-
-                                        setTimeout(() => {
-                                            item.remove();
-
-                                            // After removing, check if any items left
-                                            const remaining = document.querySelectorAll('.wishlist-item');
-                                            if (remaining.length === 0) {
-                                                const emptyBox = document.getElementById('wishlist-empty-box');
-                                                if (emptyBox) {
-                                                    emptyBox.classList.remove('hidden');
-                                                    emptyBox.classList.add('fade-in'); // optional class for animation
-                                                }
-                                            }
-                                        }, 500);
-                                    }
-                                });
-                            } else {
-                                Swal.fire({
-                                    toast: true,
-                                    position: 'top-end',
-                                    icon: 'error',
-                                    title: result.message || 'Failed to remove from wishlist',
-                                    showConfirmButton: false,
-                                    timer: 2000,
-                                    timerProgressBar: true
-                                });
-                            }
-                        } catch (error) {
-                            console.error('Error removing from wishlist:', error);
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: 'Error removing from wishlist',
+                                title: result.message || 'Failed to remove from wishlist',
                                 showConfirmButton: false,
                                 timer: 2000,
                                 timerProgressBar: true
                             });
                         }
+                    } catch (error) {
+                        console.error('Error removing from wishlist:', error);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Error removing from wishlist',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
                     }
-                });
-            }
-        </script>
-</body>
+                }
+            });
+        }
+    </script>
 
 </html>

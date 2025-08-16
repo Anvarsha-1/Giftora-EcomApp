@@ -1,6 +1,6 @@
 const Address = require('../../models/addressSchema')
 const addressValidation = require("../../helpers/addressValidaion")
-const User =  require('../../models/userSchema')
+const User = require('../../models/userSchema')
 
 
 const loadAddressDetails = async (req, res) => {
@@ -34,7 +34,7 @@ const UpdateAddresses = async (req, res) => {
     try {
         const { fullName, mobileNumber, city, state, district, pinCode, landmark, addressType, address } = req.body
         const userId = req.session.user
-        
+
         const validation = await addressValidation(req.body)
         if (!validation.success) {
             return res.json(validation)
@@ -113,14 +113,14 @@ const loadEditAddress = async (req, res) => {
     }
 }
 
-const editAddress  =  async (req,res) =>{
-    try{
+const editAddress = async (req, res) => {
+    try {
         const { fullName, mobileNumber, city, state, district, pinCode, landmark, addressType, address } = req.body
-        
-        const userId = req.session.user
-        const addressId  = req.params.id
 
-        const editAddress = await Address.findOne({ _id: addressId ,userId}) 
+        const userId = req.session.user
+        const addressId = req.params.id
+
+        const editAddress = await Address.findOne({ _id: addressId, userId })
 
         const validation = await addressValidation(req.body)
         if (!validation.success) {
@@ -166,40 +166,55 @@ const editAddress  =  async (req,res) =>{
         editAddress.pinCode = pinCode.trim();
 
         await editAddress.save()
-        return res.json({success:true,message:"address update successfully"})
-       
-    }catch(error){
-        return res.status(500).render('error',{
-            title:"something went wrong",
-            message:"An error occured while updating address. Please try again"
+        return res.json({ success: true, message: "address update successfully" })
+
+    } catch (error) {
+        return res.status(500).render('error', {
+            title: "something went wrong",
+            message: "An error occured while updating address. Please try again"
         })
 
     }
 }
 
-const deleteAddress = async(req,res) =>{
-    try{
-        const userId =  req.session.user
-        const id  =  req.params.id
-        const address = await Address.findOneAndDelete({_id:id,userId})
-        if(!address){
-            return res.status(404).json({success:false,message:"Address not found on database"})
+const deleteAddress = async (req, res) => {
+    try {
+        const userId = req.session.user
+        const id = req.params.id
+        const address = await Address.findOneAndDelete({ _id: id, userId })
+        if (!address) {
+            return res.status(404).json({ success: false, message: "Address not found on database" })
         }
-        return res.json({success:true,message:"Address deleted successfully"})
-    }catch(error){
-       return res.status(500).render('error',{
-        title:"Something went wrong",
-        message:"Error occured while delete address. Please try again"
-       })
+        return res.json({ success: true, message: "Address deleted successfully" })
+    } catch (error) {
+        return res.status(500).render('error', {
+            title: "Something went wrong",
+            message: "Error occured while delete address. Please try again"
+        })
     }
 }
 
 
-module.exports={
+const setDefaultAddress = async(req,res)=>{
+    try{
+        const addressId = req.params.addressId
+        const userId = req.session.user
+        await Address.updateOne({userId:userId,'isDefault':true},{$set:{'isDefault':false}})
+        await Address.updateOne({_id:addressId},{$set:{"isDefault":true}})
+        return res.json({success:true})
+    }catch(error){
+        console.log("Error while setting address to default",error.message)
+        return res.json({success:false,message:"Something went wrong. Please try again"})
+    }
+}
+
+
+module.exports = {
     loadAddressDetails,
     loadAddAddresses,
     UpdateAddresses,
     loadEditAddress,
     editAddress,
     deleteAddress,
+    setDefaultAddress,
 }

@@ -11,14 +11,14 @@ const loadOrderPage = async (req, res) => {
 
         let filter = {};
 
-       
+
         if (status && status !== 'All') {
             filter.status = status;
         }
 
-        
+
         if (search) {
-           
+
             const matchingUsers = await User.find({
                 $or: [
                     { firstName: { $regex: search, $options: 'i' } },
@@ -29,17 +29,17 @@ const loadOrderPage = async (req, res) => {
 
             const matchingUserIds = matchingUsers.map(u => u._id);
 
-           
+
             filter.$or = [
                 { orderId: { $regex: search, $options: 'i' } },
                 { userId: { $in: matchingUserIds } }
             ];
         }
 
-       
+
         const sortBy = sort === 'oldest' ? 1 : -1;
 
-        
+
         const skip = (page - 1) * defaultPageSize;
         const orders = await Order.find(filter)
             .populate('userId', 'firstName lastName email')
@@ -48,7 +48,7 @@ const loadOrderPage = async (req, res) => {
             .limit(defaultPageSize)
             .lean();
 
-       
+
         const totalOrders = await Order.countDocuments(filter);
         const totalPages = Math.ceil(totalOrders / defaultPageSize);
 
@@ -71,9 +71,9 @@ const loadOrderPage = async (req, res) => {
         });
     } catch (error) {
         console.log('Error while loading order page', error.message);
-        res.status(500).render('user/error',{
-            title:500,
-            message:"Server error"
+        res.status(500).render('user/error', {
+            title: 500,
+            message: "Server error"
         });
     }
 };
@@ -158,7 +158,7 @@ const verifyOrderReturn = async (req, res) => {
         }
 
         const userId = order.userId
-       
+
         let wallet = await Wallet.findOne({ userId });
 
 
@@ -167,10 +167,10 @@ const verifyOrderReturn = async (req, res) => {
         const totalTax = orderTotal * TAX_RATE;
         const itemTaxShare = (itemTotal / orderTotal) * totalTax;
         const refundAmount = itemTotal + itemTaxShare
-        
 
-        
-       
+
+
+
 
         if (!wallet) {
 
@@ -181,7 +181,7 @@ const verifyOrderReturn = async (req, res) => {
                     type: 'credit',
                     amount: refundAmount,
                     description: `Refund for returned item ${product.productId?.productName}`,
-                    date:Date.now()
+                    date: Date.now()
                 }]
             });
             await wallet.save();
@@ -196,7 +196,7 @@ const verifyOrderReturn = async (req, res) => {
             await wallet.save();
         }
 
-        
+
 
 
         product.status = "Returned";
@@ -214,8 +214,8 @@ const verifyOrderReturn = async (req, res) => {
 
         await order.save();
 
-        if(product && product.productId){
-            product.productId.quantity+=product.quantity
+        if (product && product.productId) {
+            product.productId.quantity += product.quantity
             await product.productId.save();
         }
 

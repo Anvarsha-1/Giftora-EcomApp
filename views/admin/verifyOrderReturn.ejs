@@ -6,123 +6,163 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Verify Return Request</title>
   <link rel="stylesheet" href="/styles/output.css" />
+  <link rel="stylesheet" href="https://cdn.tutorialjinni.com/sweetalert2/11.14.3/sweetalert2.min.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* Custom styles for layout */
+    .content-wrapper {
+      display: flex;
+      gap: 1.5rem;
+      max-width: 80rem;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .sidebar {
+      width: 16rem;
+      background-color: #f9fafb;
+      padding: 1.5rem;
+    }
+
+    .main-content {
+      flex: 1;
+    }
+
+    @media (max-width: 768px) {
+      .content-wrapper {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+
+      .main-content {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body class="min-h-screen bg-gray-100">
-  <div class="min-h-screen bg-gray-100 flex flex-col">
-    <div class="flex-1 p-4 md:p-6 md:ml-64">
+  <div class="content-wrapper">
+    <!-- Sidebar -->
+    <%- include('../partials/admin/header.ejs') %>
 
-      <!-- Breadcrumbs -->
-      <nav class="mb-4 text-sm text-gray-500">
-        <a href="/admin/dashboard" class="hover:underline">Dashboard</a> &gt;
-        <a href="/admin/orders" class="hover:underline">Orders</a> &gt;
-        <span class="text-gray-700">Return Requests</span>
-      </nav>
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Breadcrumbs -->
+        <nav class="mb-4 text-sm text-gray-500">
+          <a href="/admin/dashboard" class="hover:underline">Dashboard</a> &gt;
+          <a href="/admin/orders" class="hover:underline">Orders</a> &gt;
+          <span class="text-gray-700">Return Requests</span>
+        </nav>
 
-      <div class="mb-6">
-        <h1 class="text-xl md:text-2xl font-bold text-gray-800">Return Requests</h1>
-      </div>
-
-      <% let hasReturnRequests=false; if (orders && orders.length) { %>
-        <div class="bg-white rounded-lg shadow overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th
-                  class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Item</th>
-                <th
-                  class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User</th>
-                <th
-                  class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Payment Method</th>
-                <th
-                  class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Item Total Price</th>
-                <th
-                  class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Return Reason</th>
-                <th
-                  class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Returned At</th>
-                <th
-                  class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-100">
-              <% orders.forEach(order=> {
-                (order.orderedItems || []).forEach(item => {
-                if (item.status === 'Return Request') {
-                hasReturnRequests = true; %>
-                <tr>
-                  <!-- Item (image + product name) -->
-                  <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap flex items-center">
-                    <img src="<%= item.productId?.productImage?.[0]?.url || '/images/default.jpg' %>"
-                      alt="<%= item.productId?.productName || '' %>"
-                      class="w-10 h-10 md:w-12 md:h-12 rounded object-cover border mr-2 md:mr-3" />
-                    <span class="font-semibold text-sm md:text-base">
-                      <%= item.productId?.productName || '' %>
-                    </span>
-                  </td>
-                  <!-- User Details -->
-                  <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-700">
-                    <div><span class="font-medium">Name:</span>
-                      <%= order.userId?.firstName %>
-                        <%= order.userId?.lastName || "no lastName" %>
-                    </div>
-                    <div><span class="font-medium">Email:</span>
-                      <%= order.userId?.email %>
-                    </div>
-                  </td>
-                  <!-- Payment method -->
-                  <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-700">
-                    <%= order.paymentMethod %>
-                  </td>
-                  <!-- Item Total Price -->
-                  <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-700">₹<%=
-                      (item.price || 0).toFixed(2) %>
-                  </td>
-                  <!-- Return Reason -->
-                  <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-700">
-                    <%= item.returnReason || order.returnReason || '-' %>
-                  </td>
-                  <!-- Returned At -->
-                  <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs text-gray-500">
-                    <% if (item.itemReturnRequestAt) { %>
-                      <%= new Date(item.itemReturnRequestAt).toLocaleString('en-IN', { dateStyle: 'medium' ,
-                        timeStyle: 'short' }) %>
-                        <% } else { %>-<% } %>
-                  </td>
-                  <!-- Actions -->
-                  <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap space-x-1 md:space-x-2">
-                    <button
-                      class="px-2 md:px-3 py-1 text-xs md:text-sm bg-red-500 text-white rounded hover:bg-red-600 cancel-btn"
-                      data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">Cancel</button>
-                    <button
-                      class="px-2 md:px-3 py-1 text-xs md:text-sm bg-green-500 text-white rounded hover:bg-green-600 verify-btn"
-                      data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">Verify</button>
-                  </td>
-                </tr>
-                <% } }); }); %>
-            </tbody>
-          </table>
+        <div class="mb-6">
+          <h1 class="text-xl md:text-2xl font-bold text-gray-800">Return Requests</h1>
         </div>
-        <% } %>
 
-          <% if (!hasReturnRequests) { %>
-            <div class="flex items-center justify-center h-96">
-              <div class="bg-gray-50 border border-gray-200 rounded-lg shadow p-8 flex flex-col items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-gray-400 mb-4" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4 4m0 0l4-4m-4 4V3" />
-                </svg>
-                <div class="text-lg font-semibold text-gray-700 mb-1">No return requests found</div>
+        <% let hasReturnRequests=false; if (orders && orders.length) { %>
+          <div class="bg-white rounded-lg shadow overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Item</th>
+                  <th
+                    class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    User</th>
+                  <th
+                    class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Payment Method</th>
+                  <th
+                    class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Item Total Price</th>
+                  <th
+                    class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Return Reason</th>
+                  <th
+                    class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Returned At</th>
+                  <th
+                    class="px-2 md:px-4 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-100">
+                <% orders.forEach(order=> {
+                  (order.orderedItems || []).forEach(item => {
+                  if (item.status === 'Return Request') {
+                  hasReturnRequests = true; %>
+                  <tr>
+                    <!-- Item (image + product name) -->
+                    <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap flex items-center">
+                      <img src="<%= item.productId?.productImage?.[0]?.url || '/images/default.jpg' %>"
+                        alt="<%= item.productId?.productName || '' %>"
+                        class="w-10 h-10 md:w-12 md:h-12 rounded object-cover border mr-2 md:mr-3" />
+                      <span class="font-semibold text-sm md:text-base">
+                        <%= item.productId?.productName || '' %>
+                      </span>
+                    </td>
+                    <!-- User Details -->
+                    <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-700">
+                      <div><span class="font-medium">Name:</span>
+                        <%= order.userId?.firstName %>
+                          <%= order.userId?.lastName || "no lastName" %>
+                      </div>
+                      <div><span class="font-medium">Email:</span>
+                        <%= order.userId?.email %>
+                      </div>
+                    </td>
+                    <!-- Payment method -->
+                    <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-700">
+                      <%= order.paymentMethod %>
+                    </td>
+                    <!-- Item Total Price -->
+                    <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-700">₹<%=
+                        (item.price || 0).toFixed(2) %>
+                    </td>
+                    <!-- Return Reason -->
+                    <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs md:text-sm text-gray-700">
+                      <%= item.returnReason || order.returnReason || '-' %>
+                    </td>
+                    <!-- Returned At -->
+                    <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap text-xs text-gray-500">
+                      <% if (item.itemReturnRequestAt) { %>
+                        <%= new Date(item.itemReturnRequestAt).toLocaleString('en-IN', { dateStyle: 'medium' ,
+                          timeStyle: 'short' }) %>
+                          <% } else { %>-<% } %>
+                    </td>
+                    <!-- Actions -->
+                    <td class="px-2 md:px-4 py-2 md:py-4 whitespace-nowrap space-x-1 md:space-x-2">
+                      <button
+                        class="px-2 md:px-3 py-1 text-xs md:text-sm bg-red-500 text-white rounded hover:bg-red-600 cancel-btn"
+                        data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">Cancel</button>
+                      <button
+                        class="px-2 md:px-3 py-1 text-xs md:text-sm bg-green-500 text-white rounded hover:bg-green-600 verify-btn"
+                        data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">Verify</button>
+                    </td>
+                  </tr>
+                  <% } }); }); %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+
+            <% if (!hasReturnRequests) { %>
+              <div class="flex items-center justify-center h-96">
+                <div class="bg-gray-50 border border-gray-200 rounded-lg shadow p-8 flex flex-col items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 text-gray-400 mb-4" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8 17l4 4m0 0l4-4m-4 4V3" />
+                  </svg>
+                  <div class="text-lg font-semibold text-gray-700 mb-1">No return requests found</div>
+                </div>
               </div>
-            </div>
-            <% } %>
-    </div>
+              <% } %>
+      </main>
   </div>
 
   <!-- SweetAlert2 CDN -->

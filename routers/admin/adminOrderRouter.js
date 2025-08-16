@@ -13,7 +13,7 @@ router.patch('/orders/:orderId/status', adminAuth, adminOrderController.updateOr
 router.get('/returns/count', adminAuth, adminOrderController.getPendingReturnsCount);
 
 
-router.get('/returns', adminOrderController.getReturnedOrder)
+router.get('/returns', adminAuth,adminOrderController.getReturnedOrder)
 
 
 router.post('/return/verify/:orderId/:itemId',adminOrderController.verifyOrderReturn)
@@ -22,6 +22,6 @@ router.post('/return/verify/:orderId/:itemId',adminOrderController.verifyOrderRe
 router.patch('/return/cancel/:orderId/:itemId',adminOrderController.cancelReturnRequest)
 
 
-router.get('/view/orders/:orderId',adminOrderController.viewOrderDetails)
+router.get('/view/orders/:orderId',adminAuth,adminOrderController.viewOrderDetails)
 
 module.exports = router

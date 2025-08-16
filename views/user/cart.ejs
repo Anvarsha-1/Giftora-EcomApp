@@ -7,9 +7,7 @@
     <title>Cart - Your Store</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-   
-    <link rel="stylesheet" href="/styles/output.css">
-    <!-- Add custom CSS for toast -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
         .toast-container {
             position: fixed;
@@ -26,8 +24,8 @@
             padding: 12px 16px;
             background-color: #fff;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 320px;
             animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 4s forwards;
         }
 
@@ -41,6 +39,18 @@
 
         .toast.show {
             display: flex;
+        }
+
+        /* Ensure the body takes up at least the full viewport height */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        footer {
+            padding-top: 10rem;
+            text-align: center;
         }
 
         @keyframes slideIn {
@@ -58,15 +68,56 @@
                 opacity: 0;
             }
         }
+        @media (min-width: 1024px) {
+    .lg\:grid {
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+}
+
+        .cart-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 8px;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #f9fafb;
+        }
+
+        .btn {
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .qty-input {
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .qty-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        a.text-blue-600:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
+        }
     </style>
 </head>
 
-<body class="bg-gray-50 font-sans">
+<body class="bg-gray-100 font-sans antialiased">
     <!-- Navigation Breadcrumb -->
     <%- include('../partials/user/newheader.ejs') %>
+
         <!-- Main Content -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+        <div class="mx-auto px-2 sm:px-4 py-6 lg:max-w-none lg:px-0">
+            <div class="lg:grid lg:grid-cols-12 lg:gap-6">
                 <!-- Cart Items Section -->
                 <div class="lg:col-span-8">
                     <div class="bg-white rounded-lg shadow-sm p-6">
@@ -82,55 +133,53 @@
                                     <h3 class="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
                                     <p class="text-gray-500 mb-6">Let's find something for you!</p>
                                     <a href="/"
-                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors btn">
                                         <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
                                         Continue Shopping
                                     </a>
                                 </div>
                                 <% } else if (cartItems && cartItems.length> 0) { %>
                                     <% cartItems.reverse().forEach(item=> { %>
-                                        <div class="flex flex-col sm:flex-row items-start sm:items-center py-6 border-b border-gray-200 last:border-b-0"
+                                        <div class="cart-item flex flex-col sm:flex-row items-start sm:items-center py-4 border-b border-gray-200 last:border-b-0"
                                             data-item-id="<%= item._id %>">
                                             <!-- Product Image -->
-                                            <div class="flex-shrink-0 mb-4 sm:mb-0 sm:mr-6">
+                                            <div class="flex-shrink-0 mb-4 sm:mb-0 sm:mr-4">
                                                 <img src="<%= item.image || '/images/placeholder.jpg' %>"
                                                     alt="<%= item.name || 'Unnamed Product' %>"
-                                                    class="w-20 h-20 rounded-lg object-cover border border-gray-200">
+                                                    class="w-16 h-16 rounded-lg object-cover border border-gray-200">
                                             </div>
 
                                             <!-- Product Details -->
                                             <div class="flex-1 min-w-0">
-                                                <h3 class="text-lg font-medium text-gray-900 mb-2">
+                                                <h3 class="text-lg font-medium text-gray-900 mb-1">
                                                     <%= item.name || 'Unnamed Product' %>
                                                 </h3>
-                                                <p class="text-sm text-gray-500 mb-2">₹<%= (item.price ||
-                                                        0).toLocaleString() %> per item</p>
+                                                <p class="text-sm text-gray-600 mb-1">₹<%= (item.price ||
+                                                        0).toLocaleString() %>
+                                                        per item</p>
                                                 <% if (item.stock===0) { %>
-                                                    <p class="text-xs text-red-500 font-medium">
-                                                        Out of stock
-                                                    </p>
+                                                    <p class="text-xs text-red-500 font-medium">Out of stock</p>
                                                     <% } else { %>
                                                         <p class="text-xs text-gray-400">
                                                             <%= item.stock %> in stock
                                                         </p>
                                                         <% } %>
-
                                             </div>
 
                                             <!-- Quantity Controls -->
-                                            <div class="flex items-center space-x-3 mt-4 sm:mt-0 sm:mx-6">
+                                            <div class="flex items-center space-x-2 mt-4 sm:mt-0 sm:mx-4">
                                                 <button
-                                                    class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors minus-btn <%= (item.quantity <= 1 || !item.quantity) ? 'opacity-50 cursor-not-allowed' : '' %>"
+                                                    class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors minus-btn <%= (item.quantity <= 1 || !item.quantity) ? 'opacity-50 cursor-not-allowed' : '' %> btn"
                                                     data-item-id="<%= item._id %>"
                                                     data-quantity="<%= item.quantity || 1 %>">
                                                     <i data-lucide="minus" class="w-4 h-4"></i>
                                                 </button>
                                                 <input type="number" value="<%= item.quantity || 1 %>" min="1"
                                                     max="<%= item.stock || 0 %>" data-id="<%= item._id %>"
-                                                    class="w-16 text-center border border-gray-300 rounded-md py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 qty-input"
+                                                    class="w-14 text-center border border-gray-300 rounded-md py-1 focus:outline-none qty-input"
                                                     onchange="updateQuantity('<%= item._id %>', this.value)">
                                                 <button
-                                                    class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors plus-btn <%= (item.quantity >= item.stock || !item.stock) ? 'opacity-50 cursor-not-allowed' : '' %>"
+                                                    class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 transition-colors plus-btn <%= (item.quantity >= item.stock || !item.stock) ? 'opacity-50 cursor-not-allowed' : '' %> btn"
                                                     data-item-id="<%= item._id %>"
                                                     data-quantity="<%= item.quantity || 1 %>">
                                                     <i data-lucide="plus" class="w-4 h-4"></i>
@@ -146,8 +195,7 @@
                                                     </p>
                                                 </div>
                                                 <button type="button" onclick="removeItem('<%= item._id %>')"
-                                                    class="text-red-500 hover:text-red-700 transition-colors p-2"
-                                                    data-item-id="<%= item._id %>">
+                                                    class="text-red-500 hover:text-red-700 transition-colors p-2 btn">
                                                     <i data-lucide="trash-2" class="w-5 h-5"></i>
                                                 </button>
                                             </div>
@@ -159,8 +207,8 @@
                 </div>
 
                 <!-- Order Summary Section -->
-                <div class="lg:col-span-4 mt-8 lg:mt-0">
-                    <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+                <div class="lg:col-span-4 mt-6 lg:mt-0">
+                    <div class="bg-white rounded-lg shadow-sm p-6 sticky top-6">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
 
                         <!-- Pricing Details -->
@@ -170,7 +218,7 @@
                                         <%= totalQuantity || 0 %>
                                     </span> items)</span>
                                 <span class="font-medium" id="cart-subtotal">₹<%= (subTotal || 0).toLocaleString() %>
-                                </span>
+                                        </span>
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Tax (5%)</span>
@@ -203,17 +251,15 @@
                         <div class="mb-6">
                             <div class="flex space-x-2">
                                 <input type="text" id="couponCode" placeholder="Enter coupon code"
-                                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none qty-input">
                                 <button onclick="applyCoupon()"
-                                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium">
-                                    Apply
-                                </button>
+                                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium btn">Apply</button>
                             </div>
                         </div>
 
                         <!-- Checkout Button -->
                         <button id="checkoutBtn" onclick="proceedToCheckout()"
-                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors <%= (cartItems && cartItems.length === 0) ? 'disabled:bg-gray-300 disabled:cursor-not-allowed' : '' %>"
+                            class="w-full bg-blue-600 text-white py-3 rounded-md font-medium hover:bg-blue-700 transition-colors btn <%= (cartItems && cartItems.length === 0) ? 'opacity-50 cursor-not-allowed' : '' %>"
                             <%=(cartItems && cartItems.length===0) ? 'disabled' : '' %>>
                             Proceed to Checkout
                         </button>
@@ -229,6 +275,9 @@
                 </div>
             </div>
         </div>
+        <footer>
+            <%- include('../partials/user/footer.ejs') %>
+        </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Toast Container -->
@@ -238,7 +287,6 @@
             document.addEventListener('DOMContentLoaded', () => {
                 lucide.createIcons();
 
-                // Add click event listeners to plus and minus buttons
                 document.querySelectorAll('.plus-btn').forEach(btn => {
                     btn.addEventListener('click', () => {
                         const itemId = btn.getAttribute('data-item-id');
@@ -256,7 +304,6 @@
                 });
             });
 
-            // Show custom toast notification
             function showToast(message, type = 'success') {
                 const toastContainer = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
@@ -276,11 +323,7 @@
             `;
 
                 toastContainer.appendChild(toast);
-
-                // Show toast
                 setTimeout(() => toast.classList.add('show'), 100);
-
-                // Auto remove after 4 seconds
                 setTimeout(() => {
                     toast.classList.remove('show');
                     setTimeout(() => toast.remove(), 300);
@@ -296,23 +339,18 @@
                     });
 
                     const result = await response.json();
-                    console.log('Update Response:', result); // Debug the response
-
                     if (result.success) {
                         showToast('Quantity Updated', 'success');
 
-                        // Update item quantity
                         const qtyInput = document.querySelector(`input[data-id="${itemId}"]`);
                         if (qtyInput) qtyInput.value = result.itemQuantity;
 
-                        // Update item total price
                         const itemTotalEl = document.querySelector(`.item-total[data-id="${itemId}"]`);
                         if (itemTotalEl) {
                             const itemTotal = result.itemTotal || (result.price * result.itemQuantity);
-                            itemTotalEl.textContent = `₹${itemTotal.toLocaleString()}`;
+                            itemTotalEl.textContent = ` ₹${itemTotal.toLocaleString()}`;
                         }
 
-                        // Update order summary
                         const subtotalEl = document.getElementById('cart-subtotal');
                         if (subtotalEl) subtotalEl.textContent = `₹${result.subTotal.toLocaleString()}`;
 
@@ -330,7 +368,6 @@
                         const totalQtyEl = document.getElementById('total-items');
                         if (totalQtyEl) totalQtyEl.textContent = `${result.totalQuantity} items`;
 
-                        // Update button data-quantity attributes
                         const itemRow = document.querySelector(`div[data-item-id="${itemId}"]`);
                         if (itemRow) {
                             const minusBtn = itemRow.querySelector('.minus-btn');
@@ -338,7 +375,6 @@
                             if (minusBtn) minusBtn.setAttribute('data-quantity', result.itemQuantity);
                             if (plusBtn) plusBtn.setAttribute('data-quantity', result.itemQuantity);
 
-                            // Update button states
                             updateButtonStates(itemId, result.itemQuantity, result.stock);
                         }
                     } else {
@@ -350,28 +386,27 @@
                 }
             }
 
-            // Helper function to update button states
             function updateButtonStates(itemId, quantity, stock) {
                 const itemRow = document.querySelector(`div[data-item-id="${itemId}"]`);
                 if (!itemRow) return;
 
                 const minusBtn = itemRow.querySelector('.minus-btn');
                 const plusBtn = itemRow.querySelector('.plus-btn');
-                const qtyInput = itemRow.querySelector(`input[data-id="${itemId}"]`);
+                const qtyInput = document.querySelector(`input[data-id="${itemId}"]`);
 
                 if (minusBtn) {
                     minusBtn.disabled = quantity <= 1;
-                    minusBtn.classList.toggle('opacity-50', quantity <= 1); // Toggle single class
-                    minusBtn.classList.toggle('cursor-not-allowed', quantity <= 1); // Toggle single class
+                    minusBtn.classList.toggle('opacity-50', quantity <= 1);
+                    minusBtn.classList.toggle('cursor-not-allowed', quantity <= 1);
                 }
                 if (plusBtn) {
                     plusBtn.disabled = quantity >= stock;
-                    plusBtn.classList.toggle('opacity-50', quantity >= stock); // Toggle single class
-                    plusBtn.classList.toggle('cursor-not-allowed', quantity >= stock); // Toggle single class
+                    plusBtn.classList.toggle('opacity-50', quantity >= stock);
+                    plusBtn.classList.toggle('cursor-not-allowed', quantity >= stock);
                 }
                 if (qtyInput) {
                     qtyInput.max = stock;
-                    qtyInput.value = quantity; // Ensure input reflects the updated quantity
+                    qtyInput.value = quantity;
                 }
             }
 
@@ -396,7 +431,6 @@
                                 showToast('Item Removed', 'success');
                                 const itemRow = document.querySelector(`div[data-item-id="${productId}"]`);
                                 if (itemRow) itemRow.remove();
-                                // Optionally update cart count or reload page if needed
                                 window.location.reload();
                             } else {
                                 showToast(result.message || 'Failed to remove item', 'error');
@@ -434,36 +468,32 @@
                 }
             }
 
-           
-        </script>
-        <script>
             async function proceedToCheckout() {
-                    try {
-                        const response = await fetch('/checkout', {
-                            method: 'POST',
+                try {
+                    const response = await fetch('/checkout', {
+                        method: 'POST',
+                    });
+
+                    const data = await response.json();
+
+                    if (!data.success) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cannot Proceed',
+                            html: Array.isArray(data.item)
+                                ? data.item.map(i => `<p>${i.name}: ${i.reason}</p>`).join('')
+                                : `<p>${data.message || 'Unknown error'}</p>`,
+                            confirmButtonText: 'OK'
                         });
-
-                        const data = await response.json();
-
-                        if (!data.success) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Cannot Proceed',
-                                html: Array.isArray(data.item)
-                                    ? data.item.map(i => `<p>${i.name}: ${i.reason}</p>`).join('')
-                                    : `<p>${data.message || 'Unknown error'}</p>`,
-                                confirmButtonText: 'OK'
-                            });
-                            return;
-                        }else if(data.success){  
+                        return;
+                    } else if (data.success) {
                         window.location.href = '/checkout';
-                        }
-                    } catch (err) {
-                        console.error('Error:', err);
-                        Swal.fire('Something went wrong!', '', 'error');
                     }
+                } catch (err) {
+                    console.error('Error:', err);
+                    Swal.fire('Something went wrong!', '', 'error');
                 }
-
+            }
         </script>
 </body>
 

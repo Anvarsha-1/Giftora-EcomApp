@@ -27,7 +27,22 @@ const loadOrderDetails = async (req, res) => {
 
         const canReturn = order.status === "Delivered";
 
-        return res.render('orderDetails', { order, user, address, canReturn });
+        const subTotal = await Order.aggregate([
+            { $match: { orderId: orderId } },    
+            { $unwind: '$orderedItems' },         
+            {
+                $group: {
+                    _id: null,                       
+                    total: { $sum: '$orderedItems.price' }
+                }
+            }
+        ]);
+        
+        const totalAmount = subTotal.length > 0 ? subTotal[0].total : 0;
+        const tax = Math.floor(totalAmount*0.05)
+        const shipping = totalAmount >1000 ? 0 : 50
+
+        return res.render('orderDetails', { order, user, address, canReturn, tax, shipping, subTotal: totalAmount });
     } catch (error) {
         console.log("error while loading order details page", error.message);
         return res.render('error', {
@@ -78,7 +93,7 @@ const cancelProduct = async (req, res) => {
 
         const item = order.orderedItems.find(item => item._id.toString() === itemId);
 
-        
+
         if (!item) {
             return res.json({ success: false, message: "ordered product not found in this order" })
         }
@@ -97,12 +112,12 @@ const cancelProduct = async (req, res) => {
             order.status = "Cancelled"
         }
 
-       
+
 
         await order.save()
 
-        if(item && item.productId){
-            item.productId.quantity+=item.quantity
+        if (item && item.productId) {
+            item.productId.quantity += item.quantity
             await item.productId.save()
         }
 
@@ -134,12 +149,12 @@ const cancelOrder = async (req, res) => {
             return res.json({ success: false, message: "Order not found" })
         }
 
-        
+
         for (let item of order.orderedItems) {
             const wasPendingOrShipped = (item.status === 'Pending' || item.status === 'Shipped');
-            if(item.status==='Pending'){
-            item.status = "Cancelled";
-            item.cancellationReason = reason;
+            if (item.status === 'Pending') {
+                item.status = "Cancelled";
+                item.cancellationReason = reason;
             }
 
             if (wasPendingOrShipped) {
@@ -147,12 +162,12 @@ const cancelOrder = async (req, res) => {
                 await item.productId.save();
             }
         }
-       
+
 
         order.status = "Cancelled"
         order.cancellationReason = reason
 
-        await order.save()   
+        await order.save()
 
         return res.json({ success: true, message: "order has been cancelled" })
     } catch (error) {

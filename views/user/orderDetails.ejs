@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders</title>
-    <link href="/styles//output.css" rel="stylesheet">
+    <link href="/styles/output.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdn.tutorialjinni.com/sweetalert2/11.14.3/sweetalert2.min.css" />
     <style>
@@ -63,7 +63,7 @@
 
 <body class="bg-gray-100 min-h-screen">
     <!-- Header -->
-    <%-include("../partials/user/newheader.ejs") %>
+    <%- include("../partials/user/newheader.ejs") %>
 
         <div class="content-wrapper">
             <!-- Main Content -->
@@ -84,20 +84,21 @@
                                         <span class="px-4 py-2 bg-gray-200 text-gray-700 rounded font-medium">
                                             Return <%= order.returnStatus %>
                                         </span>
-                                    <% } else { %>
-                                        <button id="return-order-btn"
-                                            class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
-                                            data-order-id="<%= order.orderId %>">
-                                            Return Order
-                                        </button>
-                                    <% } %>
-                                <% } else if (order.status==='Pending' || order.status==='Shipping' ) { %>
-                                    <button id="cancelAllOrders"
-                                        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
-                                        data-order-id="<%= order.orderId %>">Cancel
-                                        All Orders</button>
-                                    <% } %>
+                                        <% } else { %>
+                                            <button id="return-order-btn"
+                                                class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
+                                                data-order-id="<%= order.orderId %>">
+                                                Return Order
+                                            </button>
                                             <% } %>
+                                                <% } else if (order.status==='Pending' || order.status==='Shipping' ) {
+                                                    %>
+                                                    <button id="cancelAllOrders"
+                                                        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
+                                                        data-order-id="<%= order.orderId %>">Cancel
+                                                        All Orders</button>
+                                                    <% } %>
+                                                        <% } %>
                     </div>
                 </div>
 
@@ -137,7 +138,7 @@
                                                         class="text-gray-800">
                                                         <%= order.paymentMethod %>
                                                     </span></div>
-                                                <% if(order.couponApplied) { %>
+                                                <% if (order.couponApplied) { %>
                                                     <div><span class="font-medium">Coupon Applied:</span> <span
                                                             class="text-gray-800">
                                                             <%= order.couponCode %> (₹<%= order.couponDiscount %>)
@@ -150,30 +151,37 @@
                                             <h3 class="text-md font-semibold text-gray-800 mb-1">Order Status & Price
                                             </h3>
                                             <span class="inline-block px-3 py-1 rounded-full text-xs font-medium
-                                                <%= order.status === 'pending' ? 'bg-red-100 text-red-700' :
-                                                    order.status === 'shipped' ? 'bg-yellow-100 text-yellow-700' :
-                                                    order.status === 'delivered' ? 'bg-green-100 text-green-700' :
-                                                    order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
-                                                    order.status === 'shipping' ? 'bg-yellow-100 text-yellow-700' :
-                                                    order.status === 'Pending' ? 'bg-red-100 text-red-700' :
-                                                    order.status === 'Shipping' ? 'bg-yellow-100 text-yellow-700' :
-                                                    order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
-                                                    order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                                                    'bg-gray-100 text-gray-700' %>">
+                                    <%= order.status === 'Pending' ? 'bg-red-100 text-red-700' :
+                                        order.status === 'Shipping' ? 'bg-yellow-100 text-yellow-700' :
+                                        order.status === 'Delivered' ? 'bg-green-100 text-green-700' :
+                                        order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                        'bg-gray-100 text-gray-700' %>">
                                                 <%= order.status %>
                                             </span>
-                                            <span class="text-lg font-semibold text-gray-800">Total: ₹<%=
-                                                    order.totalPrice?.toFixed(2) || '0.00' %></span>
-                                            <% if(order.discountPrice) { %>
-                                                <span class="text-gray-700">Discount: -₹<%=
-                                                        order.discountPrice.toFixed(2) %></span>
-                                                <% } %>
-                                                    <span class="text-lg font-bold text-blue-700">Final Amount: ₹<%=
-                                                            order.finalAmount?.toFixed(2) || '0.00' %></span>
+                                            <div class="text-gray-700 text-sm mt-2 space-y-1">
+                                                <div><span class="font-medium">Subtotal:</span> ₹<%=
+                                                        subTotal?.toFixed(2) || order.totalPrice?.toFixed(2)
+                                                        || '0.00' %>
+                                                </div>
+                                                <div><span class="font-medium">Tax(5%) :</span> ₹<%= tax?.toFixed(2)
+                                                        || '0.00' %>
+                                                </div>
+                                                <div><span class="font-medium">Shipping:</span> ₹<%=
+                                                        shipping?.toFixed(2) || '0.00' %>
+                                                </div>
+                                                <% if (order.discountPrice) { %>
+                                                    <div><span class="font-medium">Discount:</span> -₹<%=
+                                                            order.discountPrice.toFixed(2) %>
+                                                    </div>
+                                                    <% } %>
+                                                        <div class="text-lg font-bold text-blue-700 mt-2">Final Amount:
+                                                            ₹<%= order.finalAmount?.toFixed(2) || '0.00' %>
+                                                        </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <!-- Shipping Address -->
-                                    <% if(address) { %>
+                                    <% if (address) { %>
                                         <div class="border-t border-gray-200 pt-4 mb-4">
                                             <h3 class="text-md font-semibold text-gray-800 mb-2">Shipping Address</h3>
                                             <div class="text-gray-700 text-sm">
@@ -187,7 +195,7 @@
                                                     <%= address.address %>, <%= address.city %>, <%= address.district %>
                                                                 , <%= address.state %> - <%= address.pinCode %>
                                                 </div>
-                                                <% if(address.landmark) { %>
+                                                <% if (address.landmark) { %>
                                                     <div><span class="font-medium">Landmark:</span>
                                                         <%= address.landmark %>
                                                     </div>
@@ -202,67 +210,79 @@
                                             <div class="border-t border-gray-200 pt-4 mb-4">
                                                 <h3 class="text-md font-semibold text-gray-800 mb-2">Order Summary</h3>
                                                 <div class="space-y-2">
-                                                    <div class="space-y-2">
-    <div class="space-y-2">
-    <div class="space-y-2">
-    <div class="space-y-2">
-    <% order.orderedItems.forEach(function(item) { %>
-        <div class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
-            <div class="flex items-center gap-3">
-                <img src="<%= item.productId?.productImage?.[0]?.url || '/default-image.png' %>"
-                    alt="<%= item.productId?.productName || 'Product' %>"
-                    class="w-12 h-12 object-cover rounded border border-gray-200">
-                <div>
-                    <p class="font-medium text-gray-800">
-                        <%= item.productId?.productName || 'Unnamed Product' %>
-                    </p>
-                    <p class="text-xs text-gray-600">Qty: <%= item.quantity %> | ₹ <%= item.price?.toFixed(2) || 'N/A' %> each</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-4">
-                <p class="text-gray-700 font-semibold">₹<%= item.price ? (item.price * item.quantity).toFixed(2) : 'N/A' %></p>
-                <span class="text-xs font-medium
-                    <%= item.status === 'Pending' ? 'text-red-600' :
-                        item.status === 'Shipped' ? 'text-yellow-600' :
-                        item.status === 'Delivered' ? 'text-green-600' :
-                        item.status === 'Cancelled' ? 'text-red-600' :
-                        item.status === 'Returned' ? 'text-yellow-600' :
-                        'text-gray-600' %>">
-                    <%= item.status %>
-                </span>
-                <% if (item.status === 'Delivered') { %>
-                    <% if (item.adminApprovalStatus === 'Rejected') { %>
-                        <span class="text-xs font-medium text-red-600">
-                            Return Rejected Reason: <%= item.adminRejectionReason %>
-                        </span>
-                        <span class="text-xs font-medium text-red-600">
-                           Return Status: <%= item.adminApprovalStatus %>
-                        </span>
-                    <% } else if (item.returnStatus === "Return Request" || item.returnStatus === "Returned") { %>
-                        <span class="text-xs font-medium
-                            <%= item.adminApprovalStatus === 'Pending' ? 'text-yellow-600' :
-                                item.adminApprovalStatus === 'Approved' ? 'text-green-600' :
-                                item.adminApprovalStatus === 'Rejected' ? 'text-red-600' : 'text-gray-600' %>">
-                            Return <%= item.adminApprovalStatus %>
-                        </span>
-                    <% } else { %>
-                        <button
-                            class="return-item-btn px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
-                            data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
-                            Return Item
-                        </button>
-                    <% } %>
-                <% } else if (order.status === 'Pending' || order.status === 'Shipping') { %>
-                    <button
-                        class="cancel-item-btn px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
-                        data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
-                        Cancel Item
-                    </button>
-                <% } %>
-            </div>
-        </div>
-    <% }); %>
-</div>
+                                                    <% order.orderedItems.forEach(function(item) { %>
+                                                        <div
+                                                            class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
+                                                            <div class="flex items-center gap-3">
+                                                                <img src="<%= item.productId?.productImage?.[0]?.url || '/default-image.png' %>"
+                                                                    alt="<%= item.productId?.productName || 'Product' %>"
+                                                                    class="w-12 h-12 object-cover rounded border border-gray-200">
+                                                                <div>
+                                                                    <p class="font-medium text-gray-800">
+                                                                        <%= item.productId?.productName
+                                                                            || 'Unnamed Product' %>
+                                                                    </p>
+                                                                    <p class="text-xs text-gray-600">Qty: <%=
+                                                                            item.quantity %> | ₹<%=
+                                                                                item.price?.toFixed(2) || 'N/A' %> each
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex items-center gap-4">
+                                                                <p class="text-gray-700 font-semibold">₹<%= item.price ?
+                                                                        (item.price * item.quantity).toFixed(2) : 'N/A'
+                                                                        %>
+                                                                </p>
+                                                                <span class="text-xs font-medium
+                                                <%= item.status === 'Pending' ? 'text-red-600' :
+                                                    item.status === 'Shipped' ? 'text-yellow-600' :
+                                                    item.status === 'Delivered' ? 'text-green-600' :
+                                                    item.status === 'Cancelled' ? 'text-red-600' :
+                                                    item.status === 'Returned' ? 'text-yellow-600' :
+                                                    'text-gray-600' %>">
+                                                                    <%= item.status %>
+                                                                </span>
+                                                                <% if (item.status==='Delivered' ) { %>
+                                                                    <% if (item.adminApprovalStatus==='Rejected' ) { %>
+                                                                        <span class="text-xs font-medium text-red-600">
+                                                                            Return Rejected Reason: <%=
+                                                                                item.adminRejectionReason %>
+                                                                        </span>
+                                                                        <span class="text-xs font-medium text-red-600">
+                                                                            Return Status: <%= item.adminApprovalStatus
+                                                                                %>
+                                                                        </span>
+                                                                        <% } else if
+                                                                            (item.returnStatus==='Return Request' ||
+                                                                            item.returnStatus==='Returned' ) { %>
+                                                                            <span
+                                                                                class="text-xs font-medium
+                                                        <%= item.adminApprovalStatus === 'Pending' ? 'text-yellow-600' :
+                                                            item.adminApprovalStatus === 'Approved' ? 'text-green-600' :
+                                                            item.adminApprovalStatus === 'Rejected' ? 'text-red-600' : 'text-gray-600' %>">
+                                                                                Return <%= item.adminApprovalStatus %>
+                                                                            </span>
+                                                                            <% } else { %>
+                                                                                <button
+                                                                                    class="return-item-btn px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
+                                                                                    data-order-id="<%= order.orderId %>"
+                                                                                    data-item-id="<%= item._id %>">
+                                                                                    Return Item
+                                                                                </button>
+                                                                                <% } %>
+                                                                                    <% } else if
+                                                                                        (order.status==='Pending' ||
+                                                                                        order.status==='Shipping' ) { %>
+                                                                                        <button
+                                                                                            class="cancel-item-btn px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
+                                                                                            data-order-id="<%= order.orderId %>"
+                                                                                            data-item-id="<%= item._id %>">
+                                                                                            Cancel Item
+                                                                                        </button>
+                                                                                        <% } %>
+                                                            </div>
+                                                        </div>
+                                                        <% }); %>
                                                 </div>
                                             </div>
                         </div>
@@ -298,17 +318,17 @@
                         Swal.fire({
                             title: 'Cancel Order?',
                             html: `
-                <label for="cancel-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
-                <select id="cancel-reason-select" class="swal2-input" style="width:100%">
-                    <option value="">-- Please select --</option>
-                    <option value="Accidentally placed the order">Accidentally placed the order</option>
-                    <option value="Found a lower price elsewhere">Found a lower price elsewhere</option>
-                    <option value="Order taking too long to deliver">Order taking too long to deliver</option>
-                    <option value="Changed my mind">Changed my mind</option>
-                    <option value="Other">Other</option>
-                </select>
-                <input id="cancel-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
-            `,
+                            <label for="cancel-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
+                            <select id="cancel-reason-select" class="swal2-input" style="width:100%">
+                                <option value="">-- Please select --</option>
+                                <option value="Accidentally placed the order">Accidentally placed the order</option>
+                                <option value="Found a lower price elsewhere">Found a lower price elsewhere</option>
+                                <option value="Order taking too long to deliver">Order taking too long to deliver</option>
+                                <option value="Changed my mind">Changed my mind</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <input id="cancel-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
+                        `,
                             focusConfirm: false,
                             showCancelButton: true,
                             confirmButtonColor: '#d33',
@@ -378,17 +398,17 @@
                         Swal.fire({
                             title: 'Cancel Item?',
                             html: `
-                <label for="cancel-item-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
-                <select id="cancel-item-reason-select" class="swal2-input" style="width:100%">
-                    <option value="">-- Please select --</option>
-                    <option value="Accidentally placed the order">Accidentally placed the order</option>
-                    <option value="Found a lower price elsewhere">Found a lower price elsewhere</option>
-                    <option value="Order taking too long to deliver">Order taking too long to deliver</option>
-                    <option value="Changed my mind">Changed my mind</option>
-                    <option value="Other">Other</option>
-                </select>
-                <input id="cancel-item-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
-            `,
+                            <label for="cancel-item-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
+                            <select id="cancel-item-reason-select" class="swal2-input" style="width:100%">
+                                <option value="">-- Please select --</option>
+                                <option value="Accidentally placed the order">Accidentally placed the order</option>
+                                <option value="Found a lower price elsewhere">Found a lower price elsewhere</option>
+                                <option value="Order taking too long to deliver">Order taking too long to deliver</option>
+                                <option value="Changed my mind">Changed my mind</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <input id="cancel-item-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
+                        `,
                             focusConfirm: false,
                             showCancelButton: true,
                             confirmButtonColor: '#d33',
@@ -496,8 +516,6 @@
                     });
                 });
 
-
-
                 // Return Order
                 const returnOrderBtn = document.getElementById('return-order-btn');
                 if (returnOrderBtn) {
@@ -508,17 +526,17 @@
                         Swal.fire({
                             title: 'Return Order?',
                             html: `
-                <label for="return-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
-                <select id="return-reason-select" class="swal2-input" style="width:100%">
-                    <option value="">-- Please select --</option>
-                    <option value="Received wrong item">Received wrong item</option>
-                    <option value="Item damaged or defective">Item damaged or defective</option>
-                    <option value="Not satisfied with the product">Not satisfied with the product</option>
-                    <option value="Changed my mind">Changed my mind</option>
-                    <option value="Other">Other</option>
-                </select>
-                <input id="return-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
-            `,
+                            <label for="return-reason-select" class="block mb-2 text-sm font-medium text-gray-700">Select a reason</label>
+                            <select id="return-reason-select" class="swal2-input" style="width:100%">
+                                <option value="">-- Please select --</option>
+                                <option value="Received wrong item">Received wrong item</option>
+                                <option value="Item damaged or defective">Item damaged or defective</option>
+                                <option value="Not satisfied with the product">Not satisfied with the product</option>
+                                <option value="Changed my mind">Changed my mind</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            <input id="return-reason-other" class="swal2-input" style="display:none;margin-top:8px;" placeholder="Type your reason here...">
+                        `,
                             focusConfirm: false,
                             showCancelButton: true,
                             confirmButtonColor: '#d33',
@@ -576,7 +594,6 @@
                 } else {
                     console.log('Return Order button NOT found');
                 }
-                
             }
         </script>
 </body>

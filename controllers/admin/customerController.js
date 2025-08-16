@@ -1,8 +1,8 @@
-const User =  require('../../models/userSchema');
+const User = require('../../models/userSchema');
 
 const loadUserList = async (req, res) => {
     try {
-        const isClear =  req.query.clear==="1";
+        const isClear = req.query.clear === "1";
         const search = isClear ? "" : req.query.search?.trim() || '';
         const page = parseInt(req.query.page) || 1;
         const limit = 4;
@@ -29,8 +29,9 @@ const loadUserList = async (req, res) => {
             $or: [
                 { firstName: { $regex: new RegExp(search, 'i') } },
                 { email: { $regex: new RegExp(search, 'i') } },
-                { phone: { $regex: new RegExp(search, 'i') } } 
-        ]}).countDocuments();
+                { phone: { $regex: new RegExp(search, 'i') } }
+            ]
+        }).countDocuments();
 
         res.render('userListing', {
             users: userdata,
@@ -46,26 +47,26 @@ const loadUserList = async (req, res) => {
 };
 
 
-const blockUser = async(req,res)=>{
-     try{
+const blockUser = async (req, res) => {
+    try {
         const id = req.query.id;
-        if(!id) return res.status(400).json({message:"User ID is required"});
+        if (!id) return res.status(400).json({ message: "User ID is required" });
         const user = await User.findById(id)
         user.isBlocked = !user.isBlocked;
         await user.save();
-        const status = user.isBlocked ? "block": "unblock"
-        res.json({message:`Use ${status} Successfully`})
-     }catch(error){
-         console.log("Error happen while  blocking user",error.message);
-         res.status(500).json({message:'Internal Server Error'})
-     }
+        const status = user.isBlocked ? "block" : "unblock"
+        res.json({ message: `Use ${status} Successfully` })
+    } catch (error) {
+        console.log("Error happen while  blocking user", error.message);
+        res.status(500).json({ message: 'Internal Server Error' })
+    }
 }
 
 
 
 
-module.exports={
+module.exports = {
     loadUserList,
     blockUser,
-    
+
 }
