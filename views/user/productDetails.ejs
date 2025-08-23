@@ -79,6 +79,31 @@
             margin-bottom: 0.5rem;
         }
 
+        .wishlist-btn {
+            width: 3rem;
+            /* w-12 */
+            height: 3rem;
+            /* h-12 */
+            border: 1px solid #d1d5db;
+            /* border-gray-300 */
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #374151;
+            /* text-gray-700 */
+        }
+
+        .wishlist-btn.wishlist-active {
+            background: #ef4444;
+            /* red-500 */
+            border-color: #ef4444;
+            color: white;
+        }
+
+
+
         .product-rating {
             display: flex;
             align-items: center;
@@ -121,7 +146,7 @@
             font-weight: 500;
         }
 
-      
+
         .no-results {
             grid-column: 1 / -1;
             text-align: center;
@@ -172,7 +197,7 @@
             min-height: 200px;
         }
 
-        
+
 
         .add-to-cart:hover {
             background: #2563eb;
@@ -340,7 +365,7 @@
                             <span class="text-3xl font-bold text-gray-900">₹<%= product.salesPrice ||
                                     product.regularPrice %></span>
                             <span class="text-xl text-gray-500 line-through">₹<%= (product.regularPrice).toFixed() %>
-                                    </span>
+                            </span>
                             <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-2 rounded">
                                 Save ₹<%= (product.regularPrice - (product.salesPrice ||
                                     product.regularPrice)).toFixed(0) %>
@@ -364,22 +389,38 @@
                     </div>
 
                     <!-- Buttons Section -->
-                    <div class="flex items-center gap-3 mt-4">
-                        <!-- Add to Cart -->
+            <div class="flex items-center gap-3 mt-4">
+                <!-- Add to Cart -->
                 <button type="button" data-id="<%= product._id %>"
                     class="add-to-cart flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-all">
                     <i class="fas fa-shopping-cart"></i>
                     <span>Add to Cart</span>
                 </button>
+            
+                <!-- Wishlist -->
+                <button type="button" onclick="addWishlist('<%= product._id %>', this)" class="wishlist-btn w-12 h-12 bg-white border border-gray-300 rounded flex items-center justify-center text-gray-700 
+                         hover:border-red-500 hover:text-red-500
+                         <%= (wishlistId && wishlistId.includes(product._id.toString())) ? 'border-red-500 text-red-500' : '' %>">
+                
+                    <% if (wishlistId && wishlistId.includes(product._id.toString())) { %>
+                        <i class="fas fa-heart text-red-500 text-xl"></i>
+                        <% } else { %>
+                            <i class="far fa-heart text-xl"></i>
+                            <% } %>
+                </button>
+                <!-- Font Awesome -->
+                <i class="fas fa-heart text-red-500 text-3xl"></i>
+                
+                <!-- Remixicon -->
+                <i class="ri-heart-line text-3xl text-blue-500"></i>
 
 
 
-                        <!-- Wishlist -->
-                        <button type="button" onclick="addWishlist('<%=product._id%>')"
-                            class="w-12 h-12 border border-gray-300 rounded hover:border-red-500 hover:text-red-500 flex items-center justify-center">
-                            <i class="ri-heart-line text-xl"></i>
-                        </button>
-                    </div>
+            </div>
+
+
+
+
 
                     <div class="border-t pt-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Product Features</h3>
@@ -413,80 +454,86 @@
                 </div>
             </div>
 
-       
-        <section class="mb-16">
-            <h2 class="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
-            <div class="products-grid">
-                <% if (relatedProducts && relatedProducts.length> 0) { %>
-                    <% for (let i=0; i < relatedProducts.length; i++) { %>
-                        <div class="product-card">
-                            <div class="product-image">
-                                <% if (relatedProducts[i].productImage && relatedProducts[i].productImage[0]?.url) { %>
-                                    <a href="/productsDetails/<%= relatedProducts[i]._id %>">
-                                        <img src="<%= relatedProducts[i].productImage[0]?.url %>"
-                                            alt="<%= relatedProducts[i].productName %>" class="product-img">
-                                    </a>
-                                    <% } else { %>
-                                        <div
-                                            style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
-                                            <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
-                                        </div>
-                                        <% } %>
-                                            <% if (relatedProducts[i].salesPrice && relatedProducts[i].regularPrice>
-                                                relatedProducts[i].salesPrice) { %>
-                                                <div class="discount-badge">
-                                                    -<%= Math.round(((relatedProducts[i].regularPrice -
-                                                        relatedProducts[i].salesPrice) / relatedProducts[i].regularPrice) * 100)
-                                                        %>%
-                                                </div>
-                                                <% } %>
-                                                    <button type="button" onclick="addWishlist('<%= relatedProducts[i]._id %>')"
-                                                        class="wishlist-btn" title="Add to Wishlist">
-                                                        <i class="far fa-heart"></i>
-                                                    </button>
-                                                    
-                            </div>
-                            <div class="product-info">
-                                <div class="product-brand">PREMIUM</div>
-                                <h3 class="product-name">
-                                    <%= relatedProducts[i].productName %>
-                                </h3>
-                                <div class="product-rating">
-                                    <div class="stars">
-                                        <i class="fas fa-star star"></i>
-                                        <i class="fas fa-star star"></i>
-                                        <i class="fas fa-star star"></i>
-                                        <i class="fas fa-star star"></i>
-                                        <i class="fas fa-star star"></i>
-                                    </div>
-                                    <span class="rating-count">(247 reviews)</span>
-                                </div>
-                                <div class="product-prices">
-                                    <span class="current-price">₹<%= relatedProducts[i].salesPrice ||
-                                            relatedProducts[i].regularPrice %></span>
-                                    <span class="original-price">₹<%= relatedProducts[i].regularPrice.toFixed(0) %></span>
-                                    <span class="price-savings">Save ₹<%= (relatedProducts[i].regularPrice -
-                                            (relatedProducts[i].salesPrice || relatedProducts[i].regularPrice)).toFixed(0) %>
-                                            </span>
-                                </div>
-                                <button type="button" data-id="<%= relatedProducts[i]._id %>"
-                                    class="add-to-cart flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-800 transition-all">
-                                    <i class="fas fa-shopping-cart"></i>
-                                    <span>Add to Cart</span>
-                                </button>
 
-                            </div>
-                        </div>
-                        <% } %>
-                            <% } else { %>
-                                <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
-                                    <i class="fas fa-box-open" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                                    <p style="font-size: 1.2rem;">No products available</p>
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
+                <div class="products-grid">
+                    <% if (relatedProducts && relatedProducts.length> 0) { %>
+                        <% for (let i=0; i < relatedProducts.length; i++) { %>
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <% if (relatedProducts[i].productImage && relatedProducts[i].productImage[0]?.url) {
+                                        %>
+                                        <a href="/productsDetails/<%= relatedProducts[i]._id %>">
+                                            <img src="<%= relatedProducts[i].productImage[0]?.url %>"
+                                                alt="<%= relatedProducts[i].productName %>" class="product-img">
+                                        </a>
+                                        <% } else { %>
+                                            <div
+                                                style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
+                                                <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
+                                            </div>
+                                            <% } %>
+                                                <% if (relatedProducts[i].salesPrice && relatedProducts[i].regularPrice>
+                                                    relatedProducts[i].salesPrice) { %>
+                                                    <div class="discount-badge">
+                                                        -<%= Math.round(((relatedProducts[i].regularPrice -
+                                                            relatedProducts[i].salesPrice) /
+                                                            relatedProducts[i].regularPrice) * 100) %>%
+                                                    </div>
+                                                    <% } %>
+                                                        <button type="button"
+                                                            onclick="addWishlist('<%= relatedProducts[i]._id %>')"
+                                                            class="wishlist-btn" title="Add to Wishlist">
+                                                            <i class="far fa-heart"></i>
+                                                        </button>
+
                                 </div>
-                                <% } %>
-            </div>
-        </section>
-    
+                                <div class="product-info">
+                                    <div class="product-brand">PREMIUM</div>
+                                    <h3 class="product-name">
+                                        <%= relatedProducts[i].productName %>
+                                    </h3>
+                                    <div class="product-rating">
+                                        <div class="stars">
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                            <i class="fas fa-star star"></i>
+                                        </div>
+                                        <span class="rating-count">(247 reviews)</span>
+                                    </div>
+                                    <div class="product-prices">
+                                        <span class="current-price">₹<%= relatedProducts[i].salesPrice ||
+                                                relatedProducts[i].regularPrice %></span>
+                                        <span class="original-price">₹<%= relatedProducts[i].regularPrice.toFixed(0) %>
+                                                </span>
+                                        <span class="price-savings">Save ₹<%= (relatedProducts[i].regularPrice -
+                                                (relatedProducts[i].salesPrice ||
+                                                relatedProducts[i].regularPrice)).toFixed(0) %>
+                                        </span>
+                                    </div>
+                                    <button type="button" data-id="<%= relatedProducts[i]._id %>"
+                                        class="add-to-cart flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-800 transition-all">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <span>Add to Cart</span>
+                                    </button>
+
+                                </div>
+                            </div>
+                            <% } %>
+                                <% } else { %>
+                                    <div
+                                        style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
+                                        <i class="fas fa-box-open"
+                                            style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
+                                        <p style="font-size: 1.2rem;">No products available</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </section>
+
 
             <div class="bg-white rounded-lg shadow-sm border p-8 mb-16">
                 <div class="flex border-b mb-8">
@@ -865,11 +912,11 @@
 
             <script>
                 // Initialize Lucide icons
-              
-                    document.addEventListener("DOMContentLoaded", function () {
-                        lucide.createIcons();
-                       });
-           
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    lucide.createIcons();
+                });
+
 
                 // Quantity Selector
                 document.addEventListener('DOMContentLoaded', function () {
@@ -877,7 +924,7 @@
                     const increaseBtn = document.getElementById('increaseQty');
                     const quantityDisplay = document.getElementById('quantityDisplay');
                     const addToCartBtns = document.querySelectorAll('.add-to-cart');
-                    const maxStock = '<%= product.quantity %>'; 
+                    const maxStock = '<%= product.quantity %>';
                     let quantity = 1;
 
                     // Update button states based on quantity
@@ -910,36 +957,36 @@
                     });
 
                     // Add to Cart
-                    addToCartBtns.forEach(btn=>{
+                    addToCartBtns.forEach(btn => {
                         btn.addEventListener('click', async function () {
-                        const productId = this.getAttribute('data-id');
-                        try {
-                            const response = await fetch('/cart', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ productId, quantity })
-                            });
-                            const data = await response.json();
+                            const productId = this.getAttribute('data-id');
+                            try {
+                                const response = await fetch('/cart', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ productId, quantity })
+                                });
+                                const data = await response.json();
 
-                            if (data.success) {
-                                showToast('Product added to cart', 'success')                                
-                                    updateCartCount()                                                         
-                            } else {
-                                if (data.message === 'User not logged in') {
-                                    window.location.href = '/login';
+                                if (data.success) {
+                                    showToast('Product added to cart', 'success')
+                                    updateCartCount()
                                 } else {
-                                    showToast(data.message || 'Could not add product to cart', 'error');
+                                    if (data.message === 'User not logged in') {
+                                        window.location.href = '/login';
+                                    } else {
+                                        showToast(data.message || 'Could not add product to cart', 'error');
+                                    }
                                 }
+                            } catch (err) {
+                                console.error('Error adding to cart:', err);
+                                showToast('Something went wrong', 'error');
                             }
-                        } catch (err) {
-                            console.error('Error adding to cart:', err);
-                            showToast('Something went wrong', 'error');
-                        }
+                        });
                     });
-                });
-            })
+                })
 
                 // Show custom toast notification
                 function showToast(message, type = 'success') {
@@ -1131,8 +1178,8 @@
                             Toast.fire({
                                 icon: 'success',
                                 title: result.message || "Wishlist updated"
-                            }).then(()=>{
-                                 updateCartCount()
+                            }).then(() => {
+                                updateCartCount()
                             })
                         } else {
                             if (result.message === "user not found") {

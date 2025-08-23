@@ -8,6 +8,8 @@ const loadOrderPage = async (req, res) => {
         let { page = 1, status, sort = 'latest', search } = req.query;
         page = parseInt(page) || 1;
         const defaultPageSize = 10;
+       
+
 
         let filter = {};
 
@@ -109,9 +111,17 @@ const updateOrderStatus = async (req, res) => {
 
 const getPendingReturnsCount = async (req, res) => {
     try {
+        const [result] = await Order.aggregate([
+            { $unwind: "$orderedItems" },
+            { $match: { "orderedItems.status": "Return Request" } },
+            { $count: "totalReturnRequests" }
+        ]);
 
-        const count = await Return.countDocuments({ status: 'Pending' });
-        return res.json({ count: 10 });
+        const totalReturnRequests = result ? result.totalReturnRequests : 0;
+
+      
+       
+        return res.json({ count: totalReturnRequests  });
     } catch {
         return res.json({ count: 0 });
     }

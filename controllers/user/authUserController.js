@@ -569,7 +569,7 @@ const loadHomePage = async (req, res) => {
         products: newProductData,
         bestselling: bestsellingData,
         flashSales: flashSalesData,
-        wishlistId: wishlistId
+        wishlistId
       });
     }
 
@@ -578,7 +578,7 @@ const loadHomePage = async (req, res) => {
       products: productData,
       bestselling: bestsellingData,
       flashSales: flashSalesData,
-      wishlistId: null
+      wishlistId:[]
     });
 
   } catch (error) {

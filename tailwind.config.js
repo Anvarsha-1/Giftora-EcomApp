@@ -6,6 +6,9 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx}',
   ],
   safelist: [
+    "fas",
+    "far",
+    "fa-heart",
     'bg-yellow-500',
     'hover:bg-yellow-600',
     'text-white',

@@ -24,7 +24,7 @@ const loadProductListingPage = async (req, res) => {
     const categories = await category.find({ isListed: true, isDeleted: false });
 
     const wishlist = await Wishlist.findOne({ userId })
-    const wishlistId = wishlist ? wishlist.products.map(item => item.productId.toString()) : []
+
 
     let query = {
       isBlocked: false,
@@ -84,7 +84,7 @@ const loadProductListingPage = async (req, res) => {
     }
 
     res.render('user/productListingPage', {
-      user: userData,
+      user: userData || null,
       firstName: userData?.firstName || "",
       products: productData,
       cat: categories,
@@ -96,7 +96,7 @@ const loadProductListingPage = async (req, res) => {
       minPrice: req.query.minPrice || '',
       maxPrice: req.query.maxPrice || '',
       sort: sortOption,
-      wishlistId :wishlistId
+      wishlistId: wishlist ? wishlist.products.map(item => item.productId.toString()) : []
     });
 
   } catch (error) {
@@ -115,6 +115,8 @@ const viewProductDetails = async (req, res) => {
     const id = req.params.id
     const productData = await Products.findById(id)
     if (!productData) return res.status(404).json("product not found")
+    const userId= req.session.userId
+     const wishlist = await Wishlist.findOne({userId})
 
 
     if (productData.isBlocked || productData.isDeleted) {
@@ -141,7 +143,8 @@ const viewProductDetails = async (req, res) => {
       product: productData,
       relatedProducts: relatedProducts,
       mainImage,
-      subImage
+      subImage,   
+      wishlistId: wishlist ? wishlist.products.map((item) => item.productId.toString() ) : []
     })
   } catch (error) {
     console.log("Error while loading product Details", error.message);

@@ -547,7 +547,7 @@
 
         .wishlist-btn:hover {
             background: var(--accent-color);
-           
+
         }
 
         .product-overlay {
@@ -1010,13 +1010,18 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                <button type="button"
-                                                    onclick="addWishlist('<%= flashSales[i]._id %>', this)"
-                                                    class="wishlist-btn"
+                                            <% if  (typeof wishlistId !== 'undefined' && wishlistId.length)  { %>
+                                                <button type="button" onclick="addWishlist('<%= flashSales[i]._id %>', this)" class="wishlist-btn"
                                                     style="background-color: var(--white); color: <%= wishlistId.includes(flashSales[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
-                                                    <i
-                                                        class="<%= wishlistId.includes(flashSales[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
+                                                    <i class="<%= wishlistId.includes(flashSales[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
                                                 </button>
+                                                <% } else { %>
+                                                    <button type="button" onclick="Swal.fire('Please login to add items to your wishlist')" class="wishlist-btn"
+                                                        style="background-color: var(--white); color: var(--dark-gray)">
+                                                        <i class="far fa-heart"></i>
+                                                    </button>
+                                                    <% } %>
+
                                                 <div class="product-overlay">
                                                     <div class="quick-actions">
                                                         <button class="quick-btn">Quick View</button>
@@ -1141,13 +1146,18 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                <button type="button"
-                                                    onclick="addWishlist('<%= products[i]._id %>', this)"
-                                                    class="wishlist-btn"
+                                            <% if  (typeof wishlistId !== 'undefined' && wishlistId.length)  { %>
+                                                <button type="button" onclick="addWishlist('<%= products[i]._id %>', this)" class="wishlist-btn"
                                                     style="background-color: var(--white); color: <%= wishlistId.includes(products[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
-                                                    <i
-                                                        class="<%= wishlistId.includes(products[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
+                                                    <i class="<%= wishlistId.includes(products[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
                                                 </button>
+                                                <% } else { %>
+                                                    <button type="button" onclick="Swal.fire('Please login to add items to your wishlist')" class="wishlist-btn"
+                                                        style="background-color: var(--white); color: var(--dark-gray)">
+                                                        <i class="far fa-heart"></i>
+                                                    </button>
+                                                    <% } %>
+
                                                 <div class="product-overlay">
                                                     <div class="quick-actions">
                                                         <button class="quick-btn">Quick View</button>
@@ -1226,20 +1236,27 @@
                                             </div>
                                             <% } %>
                                                 <div class="discount-badge">-40%</div>
-                                                < <button type="button"
-                                                    onclick="addWishlist('<%= bestselling[i]._id %>', this)"
-                                                    class="wishlist-btn"
-                                                    style="background-color: var(--white); color: <%= wishlistId.includes(bestselling[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>;">
-                                                    <i
-                                                        class="<%= wishlistId.includes(bestselling[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
+                                                <% if  (typeof wishlistId !== 'undefined' && wishlistId.length)  { %>
+                                                    <button type="button"
+                                                        onclick="addWishlist('<%= bestselling[i]._id %>', this)"
+                                                        class="wishlist-btn"
+                                                        style="background-color: var(--white); color: <%= wishlistId.includes(bestselling[i]._id.toString()) ? '#c0392b' : '#636e72' %>">
+                                                        <i
+                                                            class="<%= wishlistId.includes(bestselling[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
                                                     </button>
+                                                    <% } else { %>
+                                                        <button type="button" onclick="window.location.href='/login'"
+                                                            class="wishlist-btn"
+                                                            style="background-color: var(--white); color: var(--dark-gray)">
+                                                            <i class="far fa-heart"></i>
+                                                        </button>
+                                                        <% } %>
 
-                                                    </button>
-                                                    <div class="product-overlay">
-                                                        <div class="quick-actions">
-                                                            <button class="quick-btn">Quick View</button>
-                                                        </div>
-                                                    </div>
+                                                            <div class="product-overlay">
+                                                                <div class="quick-actions">
+                                                                    <button class="quick-btn">Quick View</button>
+                                                                </div>
+                                                            </div>
                                 </div>
                                 <div class="product-info">
                                     <div class="product-brand">PREMIUM</div>

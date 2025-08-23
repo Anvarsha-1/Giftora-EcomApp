@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -710,7 +711,7 @@
 
           <div class="search-container">
             <input type="text" id="searchInput" class="search-input" placeholder="Search products..."
-              value="<%= search %>">
+              value="<%= typeof search !== 'undefined' ? search : '' %>">
             <div class="search-actions">
               <button class="search-btn" id="searchBtn" title="Search">
                 <i class="fas fa-search"></i>
@@ -741,9 +742,11 @@
                 <i class="fas fa-dollar-sign"></i> Price Range
               </label>
               <div class="price-range-container">
-                <input type="number" id="minPrice" class="filter-input" placeholder="Min $" min="0">
+                <input type="number" id="minPrice" class="filter-input" placeholder="Min $" min="0"
+                  value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>">
                 <span class="price-separator">-</span>
-                <input type="number" id="maxPrice" class="filter-input" placeholder="Max $" min="0">
+                <input type="number" id="maxPrice" class="filter-input" placeholder="Max $" min="0"
+                  value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>">
               </div>
             </div>
 
@@ -810,7 +813,7 @@
             </div>
 
             <div class="filter-actions">
-              <button class="btn btn-secondary" id="clearFiltersMobile" title="Clear Filters" value="1">
+              <button class="btn btn-secondary" id="clearFiltersMobile" title="Clear Filters">
                 <i class="fas fa-eraser"></i> Clear Filters
               </button>
               <button class="btn btn-primary" id="applyFiltersMobile" title="Apply Filters">
@@ -830,7 +833,7 @@
           <div class="results-header">
             <div class="results-info">
               Showing <span class="results-count" id="resultsCount">
-                <%= totalProduct %>
+                <%= typeof totalProduct !=='undefined' ? totalProduct : 0 %>
               </span> products
             </div>
           </div>
@@ -855,9 +858,18 @@
                           <div class="discount-badge <%= products[i].status === 'Available' ? '' : 'out-of-stock' %>">
                             <%= products[i].status==='Available' ? '-40%' : 'Out of Stock' %>
                           </div>
-                          <button type="button" class="wishlist-btn" onclick="addWishlist('<%= products[i]._id %>')">
-                            <i class="far fa-heart"></i>
-                          </button>
+                         
+                          <% if (!user) { %>
+                            <button type="button" class="wishlist-btn" style="color: var(--dark-gray)">
+                              <i class="far fa-heart"></i>
+                            </button>
+                            <% } else { %>
+                              <button type="button" class="wishlist-btn"
+                                style="color: <%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
+                                <i
+                                  class="<%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
+                              </button>
+                              <% } %>
                   </div>
                   <div class="product-info">
                     <div class="product-brand">PREMIUM</div>
@@ -898,26 +910,27 @@
           </div>
 
           <!-- Pagination -->
-          <% if (totalPage && totalPage>= 1) { %>
+          <% if (typeof totalPage !=='undefined' && totalPage>= 1) { %>
             <div class="pagination" id="pagination">
-              <% const page=Number(currentPage) || 1; const total=Number(totalPage) || 1; const searchQuery=typeof
-                search !=='undefined' ? encodeURIComponent(search) : '' ; %>
-                <% if (page> 1) { %>
-                  <a href="?page=<%= page - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>"
-                    class="page-link">Previous</a>
-                  <% } else { %>
-                    <a class="disabled">Previous</a>
-                    <% } %>
-                      <% for (let i=1; i <=total; i++) { %>
-                        <a href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>" <%=i===page
-                          ? 'class="active page-link"' : 'class="page-link"' %>><%= i %></a>
+              <% const page=Number(currentPage) || 1; %>
+                <% const total=Number(totalPage) || 1; %>
+                  <% const searchQuery=typeof search !=='undefined' && search ? encodeURIComponent(search) : '' ; %>
+                    <% if (page> 1) { %>
+                      <a href="?page=<%= page - 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>"
+                        class="page-link">Previous</a>
+                      <% } else { %>
+                        <a class="disabled">Previous</a>
                         <% } %>
-                          <% if (page < total) { %>
-                            <a href="?page=<%= page + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>"
-                              class="page-link">Next</a>
-                            <% } else { %>
-                              <a class="disabled">Next</a>
-                              <% } %>
+                          <% for (let i=1; i <=total; i++) { %>
+                            <a href="?page=<%= i %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>" <%=i===page
+                              ? 'class="active page-link"' : 'class="page-link"' %>><%= i %></a>
+                            <% } %>
+                              <% if (page < total) { %>
+                                <a href="?page=<%= page + 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>"
+                                  class="page-link">Next</a>
+                                <% } else { %>
+                                  <a class="disabled">Next</a>
+                                  <% } %>
             </div>
             <% } %>
         </div>
@@ -928,7 +941,16 @@
       <!-- Toast Container -->
       <div id="toastContainer" class="toast-container"></div>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+     
+      
 
+      <script>
+        // Initialize wishlistId and isLoggedIn
+        window.wishlistId = <%- JSON.stringify(wishlistId || []) %>;
+        window.isLoggedIn = <%- !!user %>;
+         
+       
+      </script>
       <script>
         const searchInput = document.getElementById('searchInput');
         const searchBtn = document.getElementById('searchBtn');
@@ -955,28 +977,23 @@
         let currentPage = parseInt('<%= currentPage || 1 %>');
 
         // Initialize filter inputs with backend values
-        minPrice.value = '<%= minPrice || "" %>';
-        maxPrice.value = '<%= maxPrice || "" %>';
-        minPriceSlider.value = parseFloat('<%= minPrice || 0 %>') || 0;
-        maxPriceSlider.value = parseFloat('<%= maxPrice || 1000 %>') || 1000;
-        sortBy.value = '<%= sort || "name-asc" %>';
-        sortByMobile.value = '<%= sort || "name-asc" %>';
+        minPrice.value = '<%= typeof minPrice !== "undefined" ? minPrice : "" %>';
+        maxPrice.value = '<%= typeof maxPrice !== "undefined" ? maxPrice : "" %>';
+        minPriceSlider.value = parseFloat('<%= typeof minPrice !== "undefined" ? minPrice : 0 %>') || 0;
+        maxPriceSlider.value = parseFloat('<%= typeof maxPrice !== "undefined" ? maxPrice : 1000 %>') || 1000;
+        sortBy.value = '<%= typeof sort !== "undefined" ? sort : "createdAt-desc" %>';
+        sortByMobile.value = '<%= typeof sort !== "undefined" ? sort : "createdAt-desc" %>';
 
-        // Toggle clear search button visibility with debug logging
+        // Toggle clear search button visibility
         function toggleClearSearchBtn() {
-          console.log('toggleClearSearchBtn called, input value:', searchInput.value);
           const hasValue = searchInput.value.trim().length > 0;
           clearSearchBtn.classList.toggle('hidden', !hasValue);
-          console.log('Clear button hidden class:', clearSearchBtn.classList.contains('hidden'), 'Display style:', window.getComputedStyle(clearSearchBtn).display);
         }
 
-        searchInput.addEventListener('input', () => {
-          console.log('Search input changed:', searchInput.value);
-          toggleClearSearchBtn();
-        });
-        toggleClearSearchBtn(); // Initial check
+        searchInput.addEventListener('input', toggleClearSearchBtn);
+        toggleClearSearchBtn();
 
-        // Debounce function to limit frequent calls
+        // Debounce function
         const debounce = (func, delay = 400) => {
           let timeout;
           return (...args) => {
@@ -990,11 +1007,14 @@
           return isNaN(num) ? fallback : num;
         };
 
+        // Check login status via AJAX
+       
+
         // Fetch products with filters and page
         async function fetchProducts(page = 1) {
-          const search = searchInput.value.trim();
-          const category = categoryFilter.value;
-          const sort = sortBy.value || sortByMobile.value || 'name-asc';
+          const search = encodeURIComponent(searchInput.value.trim());
+          const category = encodeURIComponent(categoryFilter.value);
+          const sort = encodeURIComponent(sortBy.value || sortByMobile.value || 'createdAt-desc');
 
           const params = new URLSearchParams({ search, category, sort, page });
 
@@ -1010,9 +1030,7 @@
           if (hasMin || hasMax) {
             if (!hasMin) min = 0;
             if (!hasMax) max = 100000;
-
             if (min > max) [min, max] = [max, min];
-
             params.append('minPrice', min);
             params.append('maxPrice', max);
           }
@@ -1020,11 +1038,12 @@
           try {
             productGrid.innerHTML = '<div class="loading">Loading...</div>';
             const res = await fetch(`/viewProducts?${params.toString()}`, {
-              headers: { Accept: 'application/json' }
+              headers: { Accept: 'application/json' },
+              credentials: 'include'
             });
             if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
             const data = await res.json();
-
+            window.products = data.products; // Store products for re-rendering
             renderProducts(data.products);
             resultsCount.textContent = data.total;
             currentPage = data.page;
@@ -1042,7 +1061,6 @@
 
         // Render products
         function renderProducts(products) {
-          console.log('Rendering products:', products.length);
           if (products.length === 0) {
             productGrid.innerHTML = `
           <div class="no-results">
@@ -1053,80 +1071,108 @@
             return;
           }
 
-          productGrid.innerHTML = products.map(p => `
-        <div class="product-card" data-id="${p._id}">
-          <div class="product-image">
-            <a href="/productsDetails/${p._id}">
-              <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
-            </a>
-            ${p.status === 'Available' ? `
-              <div class="discount-badge">-40%</div>
-            ` : `
-              <div class="discount-badge out-of-stock">Out of Stock</div>
-            `}
-            <button type="button" onclick="addWishlist('${p._id}')" class="wishlist-btn" title="Add to Wishlist">
-              <i class="far fa-heart"></i>
-            </button>
-          </div>
-          <div class="product-info">
-            <div class="product-brand">PREMIUM</div>
-            <h3 class="product-name">${p.productName}</h3>
-            <div class="product-rating">
-              <div class="stars">
-                ${'<i class="fas fa-star star"></i>'.repeat(5)}
+          productGrid.innerHTML = products.map(p => {
+            const inWishlist = Array.isArray(window.wishlistId) && window.wishlistId.includes(p._id);
+            const styleColor = window.isLoggedIn && inWishlist ? 'var(--accent-color)' : 'var(--dark-gray)';
+            const iconClass = window.isLoggedIn && inWishlist ? 'fas text-red-500' : 'far';
+
+            return `
+          <div class="product-card" data-id="${p._id}">
+            <div class="product-image">
+              <a href="/productsDetails/${p._id}">
+                <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
+              </a>
+              ${p.status === 'Available' ? `
+                <div class="discount-badge">-40%</div>
+              ` : `
+                <div class="discount-badge out-of-stock">Out of Stock</div>
+              `}
+              <button type="button" class="wishlist-btn" title="Add to Wishlist" style="color: ${styleColor}">
+                <i class="${iconClass} fa-heart"></i>
+              </button>
+            </div>
+            <div class="product-info">
+              <div class="product-brand">PREMIUM</div>
+              <h3 class="product-name">${p.productName}</h3>
+              <div class="product-rating">
+                <div class="stars">
+                  ${'<i class="fas fa-star star"></i>'.repeat(5)}
+                </div>
+                <span class="rating-count">(247 reviews)</span>
               </div>
-              <span class="rating-count">(247 reviews)</span>
+              <div class="product-prices">
+                <span class="current-price">₹${p.salesPrice.toLocaleString()}</span>
+                <span class="original-price">₹${p.regularPrice.toLocaleString()}</span>
+                <span class="price-savings">Save ₹${(p.regularPrice - p.salesPrice).toFixed(0)}</span>
+              </div>
+              ${p.status === 'Available' ? `
+                <button type="button" data-id="${p._id}" onclick="addToCart(this)" class="add-to-cart">
+                  <i class="fas fa-shopping-cart"></i>
+                  <span>Add to Cart</span>
+                </button>
+              ` : `
+                <button class="add-to-cart" disabled>
+                  <i class="fas fa-shopping-cart"></i>
+                  <span>Add to Cart</span>
+                </button>
+              `}
             </div>
-            <div class="product-prices">
-              <span class="current-price">₹${p.salesPrice.toLocaleString()}</span>
-              <span class="original-price">₹${p.regularPrice.toLocaleString()}</span>
-              <span class="price-savings">Save ₹${(p.regularPrice - p.salesPrice).toFixed(0)}</span>
-            </div>
-            ${p.status === 'Available' ? `
-              <button type="button" data-id="${p._id}" onclick="addToCart(this)" class="add-to-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Add to Cart</span>
-              </button>
-            ` : `
-              <button class="add-to-cart" disabled>
-                <i class="fas fa-shopping-cart"></i>
-                <span>Add to Cart</span>
-              </button>
-            `}
           </div>
-        </div>
-      `).join('');
+        `;
+          }).join('');
+
+          attachWishlistListeners();
         }
 
-        // Handle product image click for redirect
-        productGrid.addEventListener('click', function (e) {
-          const img = e.target.closest('.product-img');
-          if (img && img.dataset.id) {
-            console.log('Product image clicked, ID:', img.dataset.id, 'Redirecting to:', `/productsDetails/${img.dataset.id}`);
-            e.preventDefault(); // Prevent default <a> behavior
-            window.location.href = `/productsDetails/${img.dataset.id}`;
+        // Attach wishlist event listeners
+        function attachWishlistListeners() {
+          document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            btn.removeEventListener('click', handleWishlistClick); // Prevent duplicate listeners
+            btn.addEventListener('click', handleWishlistClick);
+          });
+        }
+       
+
+        function handleWishlistClick() {
+          if (!window.isLoggedIn) {
+            Swal.fire({
+              icon: 'info',
+              title: 'Login Required',
+              text: 'Please login to add items to your wishlist',
+              showCancelButton: true,
+              confirmButtonText: 'Login',
+              cancelButtonText: 'Cancel'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/login';
+              }
+            });
+            return;
           }
-        });
+          const productId = this.closest('.product-card').dataset.id;
+          addWishlist(productId, this);
+        }
 
         // Render pagination
         function renderPagination(currentPage, totalPages, params) {
           if (!pagination) return;
           params.delete('page');
-          const baseUrl = `/viewProducts?${params.toString()}`;
+          const baseQuery = params.toString();
+          const baseUrl = `/viewProducts${baseQuery ? `?${baseQuery}` : ''}`;
 
           let html = '';
           if (currentPage > 1) {
-            html += `<a href="${baseUrl}&page=${currentPage - 1}" class="page-link">Previous</a>`;
+            html += `<a href="${encodeURI(`${baseUrl}${baseQuery ? '&' : '?'}page=${currentPage - 1}`)}" class="page-link">Previous</a>`;
           } else {
             html += `<a class="disabled">Previous</a>`;
           }
 
           for (let i = 1; i <= totalPages; i++) {
-            html += `<a href="${baseUrl}&page=${i}" class="${i === currentPage ? 'active page-link' : 'page-link'}">${i}</a>`;
+            html += `<a href="${encodeURI(`${baseUrl}${baseQuery ? '&' : '?'}page=${i}`)}" class="${i === currentPage ? 'active page-link' : 'page-link'}">${i}</a>`;
           }
 
           if (currentPage < totalPages) {
-            html += `<a href="${baseUrl}&page=${currentPage + 1}" class="page-link">Next</a>`;
+            html += `<a href="${encodeURI(`${baseUrl}${baseQuery ? '&' : '?'}page=${currentPage + 1}`)}" class="page-link">Next</a>`;
           } else {
             html += `<a class="disabled">Next</a>`;
           }
@@ -1136,9 +1182,13 @@
           document.querySelectorAll('.page-link').forEach(link => {
             link.addEventListener('click', (e) => {
               e.preventDefault();
-              const url = new URL(link.href);
-              const page = parseInt(url.searchParams.get('page')) || 1;
-              fetchProducts(page);
+              try {
+                const url = new URL(link.href);
+                const page = parseInt(url.searchParams.get('page')) || 1;
+                fetchProducts(page);
+              } catch (err) {
+                console.error('Error parsing URL:', err);
+              }
             });
           });
         }
@@ -1149,117 +1199,113 @@
           maxPriceValue.textContent = maxPriceSlider.value;
         }
 
-        // Toggle mobile filter panel
-        filterToggleBtn.addEventListener('click', () => {
-          mobileFilterPanel.classList.toggle('active');
-        });
-
+        // Reset filters
         function resetPriceFilters() {
-          document.getElementById('minPrice').value = '';
-          document.getElementById('maxPrice').value = '';
-          document.getElementById('minPriceSlider').value = 0;
-          document.getElementById('maxPriceSlider').value = 1000;
-          document.getElementById('minPriceValue').textContent = '0';
-          document.getElementById('maxPriceValue').textContent = '1000';
-          document.getElementById('categoryFilter').value = '';
-          document.getElementById('sortBy').value = 'createdAt-desc';
+          minPrice.value = '';
+          maxPrice.value = '';
+          minPriceSlider.value = 0;
+          maxPriceSlider.value = 1000;
+          minPriceValue.textContent = '0';
+          maxPriceValue.textContent = '1000';
+          categoryFilter.value = '';
+          sortBy.value = 'createdAt-desc';
+          sortByMobile.value = 'createdAt-desc';
         }
 
         // Event listeners
         searchBtn.addEventListener('click', () => {
-          console.log('Search button clicked, search term:', searchInput.value);
           fetchProducts(1);
         });
 
         clearSearchBtn.addEventListener('click', () => {
-          console.log('Clear search button clicked');
-          const category = categoryFilter.value;
-          const min = minPrice.value;
-          const max = maxPrice.value;
-          const sort = sortBy.value;
-
           const params = new URLSearchParams();
-          if (category) params.set('category', category);
-          if (min) params.set('minPrice', min);
-          if (max) params.set('maxPrice', max);
-          if (sort) params.set('sort', sort);
-
+          if (categoryFilter.value) params.set('category', encodeURIComponent(categoryFilter.value));
+          if (minPrice.value) params.set('minPrice', minPrice.value);
+          if (maxPrice.value) params.set('maxPrice', maxPrice.value);
+          if (sortBy.value) params.set('sort', encodeURIComponent(sortBy.value));
           params.set('clearSearch', '1');
 
           fetch(`/viewProducts?${params.toString()}`, {
-            headers: { Accept: 'application/json' }
+            headers: { Accept: 'application/json' },
+            credentials: 'include'
           })
-            .then((res) => {
-              if (!res.ok) throw new Error("Failed to fetch");
+            .then(res => {
+              if (!res.ok) throw new Error('Failed to fetch');
               return res.json();
             })
-            .then((data) => {
+            .then(data => {
+              window.products = data.products;
               renderProducts(data.products);
               resultsCount.textContent = data.total;
               currentPage = data.page;
               renderPagination(data.page, data.totalPages, params);
-              searchInput.value = "";
+              searchInput.value = '';
               toggleClearSearchBtn();
             })
-            .catch((err) => {
-              console.error("Search clear error:", err.message);
+            .catch(err => {
+              console.error('Search clear error:', err.message);
             });
         });
 
         applyFiltersBtn.addEventListener('click', () => {
-          console.log('Apply filters button clicked');
           fetchProducts(1);
         });
 
         clearFiltersBtn.addEventListener('click', () => {
-          console.log('Clear filters button clicked');
           const params = new URLSearchParams({ clearFilter: 1 });
           fetch(`/viewProducts?${params.toString()}`, {
-            headers: { Accept: 'application/json' }
-          }).then((res) => {
-            if (!res.ok) throw new Error('failed to fetch');
-            return res.json();
-          }).then((data) => {
-            renderProducts(data.products);
-            resultsCount.textContent = data.total;
-            currentPage = data.page;
-            renderPagination(data.page, data.totalPages, params);
-            resetPriceFilters();
-            updateSliderValues();
-            searchInput.value = "";
-            toggleClearSearchBtn();
-          });
+            headers: { Accept: 'application/json' },
+            credentials: 'include'
+          })
+            .then(res => {
+              if (!res.ok) throw new Error('Failed to fetch');
+              return res.json();
+            })
+            .then(data => {
+              window.products = data.products;
+              renderProducts(data.products);
+              resultsCount.textContent = data.total;
+              currentPage = data.page;
+              renderPagination(data.page, data.totalPages, params);
+              resetPriceFilters();
+              updateSliderValues();
+              searchInput.value = '';
+              toggleClearSearchBtn();
+            });
         });
 
         applyFiltersMobile.addEventListener('click', () => {
-          console.log('Apply filters mobile button clicked');
           fetchProducts(1);
         });
 
         clearFiltersMobile.addEventListener('click', () => {
-          console.log('Clear filters mobile button clicked');
           const params = new URLSearchParams({ clear: 1 });
           fetch(`/viewProducts?${params.toString()}`, {
-            headers: { Accept: 'application/json' }
-          }).then((res) => {
-            if (!res.ok) throw new Error('failed to fetch');
-            return res.json();
-          }).then((data) => {
-            renderProducts(data.products);
-            resultsCount.textContent = data.total;
-            currentPage = data.page;
-            renderPagination(data.page, data.totalPages, params);
-            resetPriceFilters();
-            updateSliderValues();
-            searchInput.value = "";
-            toggleClearSearchBtn();
-          });
+            headers: { Accept: 'application/json' },
+            credentials: 'include'
+          })
+            .then(res => {
+              if (!res.ok) throw new Error('Failed to fetch');
+              return res.json();
+            })
+            .then(data => {
+              window.products = data.products;
+              renderProducts(data.products);
+              resultsCount.textContent = data.total;
+              currentPage = data.page;
+              renderPagination(data.page, data.totalPages, params);
+              resetPriceFilters();
+              updateSliderValues();
+              searchInput.value = '';
+              toggleClearSearchBtn();
+            });
         });
 
         sortBy.addEventListener('change', () => {
           sortByMobile.value = sortBy.value;
           fetchProducts(1);
         });
+
         sortByMobile.addEventListener('change', () => {
           sortBy.value = sortByMobile.value;
           fetchProducts(1);
@@ -1269,14 +1315,17 @@
           minPrice.value = minPriceSlider.value;
           updateSliderValues();
         });
+
         maxPriceSlider.addEventListener('input', () => {
           maxPrice.value = maxPriceSlider.value;
           updateSliderValues();
         });
+
         minPrice.addEventListener('input', () => {
           minPriceSlider.value = minPrice.value || 0;
           updateSliderValues();
         });
+
         maxPrice.addEventListener('input', () => {
           maxPriceSlider.value = maxPrice.value || 1000;
           updateSliderValues();
@@ -1288,11 +1337,85 @@
         maxPrice.addEventListener('input', debouncedFetch);
         categoryFilter.addEventListener('change', () => fetchProducts(1));
 
-        updateSliderValues();
-        fetchProducts(currentPage);
-      </script>
+        // Wishlist and cart scripts
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
+        });
 
-      <script>
+        async function addWishlist(productId, button) {
+          try {
+            const res = await fetch(`/wishlist/add/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              credentials: 'include', // Ensure cookies are sent
+              body: JSON.stringify({ productId })
+            });
+
+            const result = await res.json();
+
+            if (result.success) {
+              const icon = button.querySelector('i.fa-heart');
+              if (result.inWishlist) {
+                icon.classList.remove('far');
+                icon.classList.add('fas', 'text-red-500');
+                button.style.color = 'var(--accent-color)';
+                if (!window.wishlistId.includes(productId)) {
+                  window.wishlistId.push(productId);
+                }
+              } else {
+                icon.classList.remove('fas', 'text-red-500');
+                icon.classList.add('far');
+                button.style.color = 'var(--dark-gray)';
+                window.wishlistId = window.wishlistId.filter(id => id !== productId);
+              }
+              Toast.fire({
+                icon: 'success',
+                title: result.message || 'Wishlist updated'
+              }).then(() => {
+                
+                updateCartCount(); // Update cart/wishlist count if applicable
+              });
+            } else {
+              if (result.message === 'user not found') {
+                window.isLoggedIn = false; // Update login state
+                Swal.fire({
+                  icon: 'info',
+                  title: 'Login Required',
+                  text: 'Please login to continue',
+                  showCancelButton: true,
+                  confirmButtonText: 'Login',
+                  cancelButtonText: 'Cancel'
+                }).then((res) => {
+                  if (res.isConfirmed) {
+                    window.location.href = '/login';
+                  }
+                });
+                return;
+              }
+              Toast.fire({
+                icon: 'error',
+                title: result.message || 'Failed to update wishlist'
+              });
+            }
+          } catch (err) {
+            console.error('Wishlist error:', err);
+            Toast.fire({
+              icon: 'error',
+              title: 'Server error'
+            });
+          }
+        }
+
         const CartToast = Swal.mixin({
           toast: true,
           position: 'top-end',
@@ -1309,102 +1432,52 @@
           const productId = button.getAttribute('data-id');
           try {
             const response = await fetch('/cart', {
-              method: "POST",
+              method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
               },
+              credentials: 'include',
               body: JSON.stringify({ productId, quantity: 1 })
             });
             const data = await response.json();
             if (data.success) {
               CartToast.fire({
                 icon: 'success',
-                title: data.message || "Cart updated"
+                title: data.message || 'Cart updated'
               }).then(() => {
                 updateCartCount();
               });
             } else {
-              if (data.message === "User not logged in") {
+              if (data.message === 'User not logged in') {
+                window.isLoggedIn = false;
                 window.location.href = '/login';
+              } else {
+                CartToast.fire({
+                  icon: 'error',
+                  title: data.message || 'Failed to update cart'
+                });
               }
-              CartToast.fire({
-                icon: 'error',
-                title: data.message || 'Failed to update cart'
-              });
             }
           } catch (err) {
-            console.error(err);
+            console.error('Cart error:', err);
             CartToast.fire({
               icon: 'error',
               title: 'Server error'
             });
           }
         }
-      </script>
 
-      <script>
-        const Toast = Swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer);
-            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        // Handle product image click for redirect
+        productGrid.addEventListener('click', function (e) {
+          const img = e.target.closest('.product-img');
+          if (img && img.dataset.id) {
+            e.preventDefault();
+            window.location.href = `/productsDetails/${img.dataset.id}`;
           }
         });
 
-        async function addWishlist(productId) {
-          try {
-            console.log(productId);
-            const res = await fetch(`/wishlist/add/`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ productId }),
-            });
-
-            const result = await res.json();
-
-            if (result.success) {
-              Toast.fire({
-                icon: 'success',
-                title: result.message || "Wishlist updated"
-              }).then(() => {
-                updateCartCount();
-              });
-            } else {
-              if (result.message === "user not found") {
-                Swal.fire({
-                  icon: 'info',
-                  title: "Login Required",
-                  text: "Please login to continue",
-                  showCancelButton: true,
-                  confirmButtonText: "Login",
-                  cancelButtonText: "Cancel",
-                }).then((res) => {
-                  if (res.isConfirmed) {
-                    window.location.href = "/login";
-                  }
-                });
-                return;
-              }
-
-              Toast.fire({
-                icon: 'error',
-                title: result.message || 'Failed to update wishlist'
-              });
-            }
-          } catch (err) {
-            console.error(err);
-            Toast.fire({
-              icon: 'error',
-              title: 'Server error'
-            });
-          }
-        }
+        updateSliderValues();
+        fetchProducts(currentPage);
       </script>
 </body>
 
