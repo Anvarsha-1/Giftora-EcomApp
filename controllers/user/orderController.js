@@ -23,9 +23,9 @@ const loadOrderDetails = async (req, res) => {
         if (!order || order.orderedItems.length < 1) {
             return res.render('error', { title: 404, message: "not found" });
         }
-        const address = await Address.findById(order.address);
 
         const canReturn = order.status === "Delivered";
+        const orderHasReturn  = order.orderedItems.some((item)=>item.adminApprovalStatus==='Rejected')
 
         const subTotal = await Order.aggregate([
             { $match: { orderId: orderId } },    
@@ -42,7 +42,7 @@ const loadOrderDetails = async (req, res) => {
         const tax = Math.floor(totalAmount*0.05)
         const shipping = totalAmount >1000 ? 0 : 50
 
-        return res.render('orderDetails', { order, user, address, canReturn, tax, shipping, subTotal: totalAmount });
+        return res.render('orderDetails', { order, user, canReturn, tax, shipping, subTotal: totalAmount, orderHasReturn: orderHasReturn });
     } catch (error) {
         console.log("error while loading order details page", error.message);
         return res.render('error', {
@@ -57,7 +57,7 @@ const loadMyOrder = async (req, res) => {
     try {
         const userId = req.session.user
         const user = await User.findById(userId)
-        const order = await Order.find({ userId: userId }).populate('orderedItems.productId').populate('address')
+        const order = await Order.find({ userId: userId }).populate('orderedItems.productId')
 
         if (!order || order.length < 1) {
             return res.render('orderList', { order: null, user: user || null });
@@ -168,7 +168,8 @@ const cancelOrder = async (req, res) => {
         order.cancellationReason = reason
 
         await order.save()
-
+        
+        
         return res.json({ success: true, message: "order has been cancelled" })
     } catch (error) {
         console.log("error in order cancel page", error.message);
@@ -219,6 +220,11 @@ const returnOrder = async (req, res) => {
         if (!order) {
             return res({ success: false, message: "Order not Found" })
         }
+        
+        let hasRejectedItem =  order.orderedItems.some((val)=>val.adminApprovalStatus==='Rejected')
+       if(hasRejectedItem){
+        return res.json({success:false,message:"Product return request rejected.Already returned rejected product"})
+       }
 
         order.status = 'Return Request'
         order.returnReason = reason

@@ -84,7 +84,7 @@
                                         <span class="px-4 py-2 bg-gray-200 text-gray-700 rounded font-medium">
                                             Return <%= order.returnStatus %>
                                         </span>
-                                        <% } else { %>
+                                        <% }else if(order.status==='Delivered' && !orderHasReturn) { %>
                                             <button id="return-order-btn"
                                                 class="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition font-medium"
                                                 data-order-id="<%= order.orderId %>">
@@ -181,27 +181,27 @@
                                         </div>
                                     </div>
                                     <!-- Shipping Address -->
-                                    <% if (address) { %>
+                                    <% if (order.address) { %>
                                         <div class="border-t border-gray-200 pt-4 mb-4">
                                             <h3 class="text-md font-semibold text-gray-800 mb-2">Shipping Address</h3>
                                             <div class="text-gray-700 text-sm">
                                                 <div><span class="font-medium">Name:</span>
-                                                    <%= address.fullName %>
+                                                    <%= order.fullName %>
                                                 </div>
                                                 <div><span class="font-medium">Mobile:</span>
-                                                    <%= address.mobileNumber %>
+                                                    <%= order.mobileNumber %>
                                                 </div>
                                                 <div><span class="font-medium">Address:</span>
-                                                    <%= address.address %>, <%= address.city %>, <%= address.district %>
-                                                                , <%= address.state %> - <%= address.pinCode %>
+                                                    <%= order.address %>, <%= order.city %>, <%= order.district %>
+                                                                , <%= order.state %> - <%= order.pinCode %>
                                                 </div>
-                                                <% if (address.landmark) { %>
+                                                <% if (order.landmark) { %>
                                                     <div><span class="font-medium">Landmark:</span>
-                                                        <%= address.landmark %>
+                                                        <%= order.landmark %>
                                                     </div>
                                                     <% } %>
                                                         <div><span class="font-medium">Type:</span>
-                                                            <%= address.addressType %>
+                                                            <%= order.addressType %>
                                                         </div>
                                             </div>
                                         </div>

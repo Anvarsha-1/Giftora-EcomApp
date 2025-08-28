@@ -194,6 +194,7 @@ const verifyOrderReturn = async (req, res) => {
                     date: Date.now()
                 }]
             });
+
             await wallet.save();
         } else {
 
@@ -267,6 +268,16 @@ const cancelReturnRequest = async (req, res) => {
 
         await order.save()
 
+        const allOrderReturnCheck = order.orderedItems.every(item => item.status === 'Returned');
+        const OrderDeliveredStatus = order.orderedItems.some(item => item.status === "Delivered");
+
+        if (allOrderReturnCheck) {
+            order.status = 'Returned';
+        }
+        if (OrderDeliveredStatus) {
+            order.status = "Delivered";
+        }
+
         res.json({ success: true })
     } catch (error) {
         console.log("error while cancel return request ", error.message)
@@ -279,37 +290,30 @@ const viewOrderDetails = async (req, res) => {
         const orderId = req.params.orderId;
 
         if (!orderId || typeof orderId !== "string") {
-            return res.render('admin/viewOrderDetails', { order: null, user: null, address: null });
+            return res.render('admin/viewOrderDetails', { order: null, user: null});
         }
 
         const order = await Order.findOne({ orderId })
             .populate('orderedItems.productId')
-            .populate('address');
 
         if (!order) {
-            return res.render('admin/viewOrderDetails', { order: null, user: null, address: null });
+            return res.render('admin/viewOrderDetails', { order: null, user: null });
         }
 
         const userId = order.userId;
         if (!userId) {
-            return res.render('admin/viewOrderDetails', { order, user: null, address: order.address || null });
+            return res.render('admin/viewOrderDetails', { order, user: null});
         }
 
         const user = await User.findById(userId).lean();
         if (!user) {
-            return res.render('admin/viewOrderDetails', { order, user: null, address: order.address || null });
+            return res.render('admin/viewOrderDetails', { order, user: null});
         }
 
-        const addressId = order.address?._id || order.address;
-        let address = null;
-        if (addressId) {
-            address = await Address.findById(addressId).lean();
-        }
-
+       
         return res.render('admin/viewOrderDetails', {
             order,
             user,
-            address: address || null
         });
 
     } catch (error) {

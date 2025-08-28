@@ -158,7 +158,8 @@ const placeOrder = async (req, res) => {
         if (!userAddress) {
             return res.json({ success: false, message: "Invalid address" })
         }
-
+        console.log(userAddress)
+        console.log(userAddress.address)
         function generateOrderId() {
             const timestamp = Date.now().toString().slice(-5);
             const random = Math.floor(Math.random() * 90000 + 10000);
@@ -202,7 +203,16 @@ const placeOrder = async (req, res) => {
             address,
             status,
             createdOn: Date.now(),
-            paymentMethod
+            paymentMethod,
+            fullName:userAddress?.fullName,
+            mobileNumber:userAddress?.mobileNumber,
+            address:userAddress?.address,
+            city:userAddress?.city,
+            district:userAddress?.district,
+            state:userAddress?.state,
+            landmark:userAddress?.landmark,
+            pinCode:userAddress?.pinCode,
+            addressType:userAddress?.addressType
 
         })
 

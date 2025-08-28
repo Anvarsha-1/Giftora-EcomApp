@@ -74,14 +74,13 @@
                                 <div class="text-sm text-gray-500">Payment: <span class="text-gray-700">
                                     <%= orderItem.paymentMethod %>
                                   </span></div>
-                                  <% if(orderItem.address){ %>
                                     
                                 <div class="text-sm text-gray-500">Shipping Address: <span class="text-gray-700">
-                                   <%= orderItem.address.address %>, <%= orderItem.address.city %>, <%= orderItem.address.district %>
-                                                                , <%= orderItem.address.state %> - <%= orderItem.address.pinCode %>
+                                   <%=orderItem.address %>, <%= orderItem.city %>, <%=orderItem.district %>
+                                                                , <%= orderItem.state %> - <%= orderItem.pinCode %>
                                   </span></div>
                                  
-                                  <% } %>
+                                  
                               </div>
                               <div class="flex flex-col items-end text-right gap-2 mt-2 md:mt-0">
                                 <span class="inline-block px-3 py-1 rounded-full text-xs font-medium
