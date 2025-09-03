@@ -11,8 +11,10 @@ const loadWishlist = async (req, res) => {
             console.log('No user session found, rendering empty wishlist');
             return res.render('wishlist', { user: null, wishlistItem: [] });
         }
+        
 
         const user = await User.findById(userId);
+        console.log(user)
         if (!user) {
             console.log(`User not found for ID: ${userId}`);
             return res.render('wishlist', { user: null, wishlistItem: [] });

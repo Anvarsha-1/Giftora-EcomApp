@@ -1,7 +1,8 @@
 const Order = require('../../models/orderSchema')
 const User = require('../../models/userSchema')
-const Address = require('../../models/addressSchema')
 const BuildPDF = require('../../helpers/pdf-service')
+const Wallet = require('../../models/walletSchema.js')
+const Product = require('../../models/productSchema.js')
 
 
 
@@ -77,6 +78,7 @@ const loadMyOrder = async (req, res) => {
 
 const cancelProduct = async (req, res) => {
     try {
+        const userId = req.session.user
         const reason = req.body.reason
         const orderId = req.params.orderId
         const itemId = req.params.itemId
@@ -97,29 +99,64 @@ const cancelProduct = async (req, res) => {
         if (!item) {
             return res.json({ success: false, message: "ordered product not found in this order" })
         }
+        
+        if(item.status==='Cancelled'){
+            return res.json({success:false,message:"Item already cancelled"})
+        }else if(item.status==='Delivered'){
+            return res.json({success:false,message:"cannot return delivered item"})
+        }
 
         item.status = "Cancelled";
         item.cancellationReason = reason
 
-        let allCancelled = true
-        for (let item of order.orderedItems) {
-            if (item.status !== "Cancelled") {
-                allCancelled = false
-                break
-            }
-        }
-        if (allCancelled) {
-            order.status = "Cancelled"
-        }
+        const allCancelled = order.orderedItems.every(i => i.status === "Cancelled");
+        if (allCancelled) order.status = "Cancelled";
 
 
 
         await order.save()
 
-        if (item && item.productId) {
-            item.productId.quantity += item.quantity
-            await item.productId.save()
+        if (item?.productId) {
+            await Product.updateOne(
+                { _id: item.productId._id },
+                { $inc: { quantity: item.quantity } }
+            );
         }
+
+        const product = order.orderedItems.find(item =>
+            itemId.toString() === item._id.toString()
+        );
+
+        if (!product) {
+            return res.json({ success: false, message: "Product not found" });
+        }
+
+
+       
+         let TAX_RATE = 0.05
+        
+                const itemTotal = product.price * product.quantity;
+                const orderTotal = order.orderedItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+                const totalTax = orderTotal * TAX_RATE;
+                const itemTaxShare = (itemTotal / orderTotal) * totalTax;
+                const refundAmount = itemTotal + itemTaxShare
+        
+        const wallet = await Wallet.updateOne({ userId },
+            {
+                $inc: { amount: refundAmount },
+                $push: {
+                    transactions: {
+                        type: 'credit',
+                        amount: refundAmount,
+                        description: `Refund for cancel order ${orderId}`,
+                        date: Date.now()
+
+                    }
+                }
+            },
+            { $upsert: true }
+        )
+
 
         return res.json({ success: true })
 
@@ -134,6 +171,7 @@ const cancelOrder = async (req, res) => {
     try {
         const reason = req.body.reason
         const orderId = req.params.orderId
+        const userId = req.session.user
 
         if (!orderId) {
             return res.json({ success: false, message: "invalid request" })
@@ -168,6 +206,19 @@ const cancelOrder = async (req, res) => {
         order.cancellationReason = reason
 
         await order.save()
+        let refundAmount = order.totalPrice
+
+        const wallet  =  await Wallet.updateOne({userId},
+            {$inc:{amount:refundAmount},
+            $push:{ transactions:{
+                type:'credit',
+                amount:refundAmount,
+                description:`Refund for cancel order ${orderId}`,
+                date:Date.now()
+
+            }}},
+            {$upsert:true}
+        )
         
         
         return res.json({ success: true, message: "order has been cancelled" })
@@ -183,22 +234,20 @@ const downloadPdf = async (req, res) => {
         const orderId = req.params.orderId
         const order = await Order.findOne({ orderId }).populate("orderedItems.productId").lean()
 
-        const addressId = order.address
-        const address = await Address.findById(addressId)
+       
 
         if (!order) {
             return res.json({ success: false, message: "order not found" })
         }
         const stream = res.writeHead(200, { "Content-Type": "application/pdf", 'Content-Disposition': `attachment; filename=invoice-${orderId}.pdf` })
 
-        BuildPDF(order, address,
+        BuildPDF(order,
             (chunk) => stream.write(chunk),
             () => stream.end()
         )
 
 
     } catch (error) {
-
         console.log("Error in invoice page", error.message)
     }
 }
@@ -206,7 +255,7 @@ const downloadPdf = async (req, res) => {
 const returnOrder = async (req, res) => {
     try {
         const orderId = req.params.orderId
-        console.log(orderId)
+       
         const { reason } = req.body
         if (!orderId) {
             return res.json({ success: false, message: "Invalid request" })
@@ -223,7 +272,7 @@ const returnOrder = async (req, res) => {
         
         let hasRejectedItem =  order.orderedItems.some((val)=>val.adminApprovalStatus==='Rejected')
        if(hasRejectedItem){
-        return res.json({success:false,message:"Product return request rejected.Already returned rejected product"})
+        return res.json({success:false,message:"Product return request rejected. Already returned rejected product"})
        }
 
         order.status = 'Return Request'
@@ -262,7 +311,7 @@ const returnItemRequest = async (req, res) => {
 
         if (product.status === 'Delivered') {
             product.status = 'Return Request',
-                product.returnReason = reason
+            product.returnReason = reason
             product.itemReturnRequestAt = Date.now()
         }
 

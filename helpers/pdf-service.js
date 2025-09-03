@@ -2,7 +2,7 @@ const DocumentPDF = require('pdfkit')
 
 const PDFDocument = require('pdfkit');
 
-function BuildPDF(order, address, dataCallback, endCallback) {
+function BuildPDF(order, dataCallback, endCallback) {
     const doc = new PDFDocument({ margin: 50 });
 
     doc.on('data', dataCallback);
@@ -45,7 +45,7 @@ function BuildPDF(order, address, dataCallback, endCallback) {
     doc.moveDown(1);
 
     // ===== CUSTOMER DETAILS =====
-    if (address) {
+    if (order.address) {
         doc
             .fontSize(12)
             .fillColor('#2E3A59')
@@ -53,15 +53,15 @@ function BuildPDF(order, address, dataCallback, endCallback) {
             .text("Bill To:")
             .font('Helvetica')
             .fillColor('#333')
-            .text(address.fullName)
-            .text(`Mobile: ${address.mobileNumber}`)
-            .text(address.address)
-            .text(`City: ${address.city}`)
-            .text(`District: ${address.district}`)
-            .text(`State: ${address.state}`)
-            .text(`Landmark: ${address.landmark || ''}`)
-            .text(`Pin Code: ${address.pinCode}`)
-            .text(`Address Type: ${address.addressType}`);
+            .text(order.fullName)
+            .text(`Mobile: ${order.mobileNumber}`)
+            .text(order.address)
+            .text(`City: ${order.city}`)
+            .text(`District: ${order.district}`)
+            .text(`State: ${order.state}`)
+            .text(`Landmark: ${order.landmark || ''}`)
+            .text(`Pin Code: ${order.pinCode}`)
+            .text(`Address Type: ${order.addressType}`);
     }
     doc.moveDown(1);
 

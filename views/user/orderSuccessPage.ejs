@@ -5,26 +5,165 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Success | Your Shop Name</title>
-    <!-- Tailwind CSS (replace href with your actual build output path) -->
-    <link href="/styles/output.css" rel="stylesheet">
     <!-- RemixIcon CDN -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <!-- Favicon (optional) -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <!-- Custom animations and styles -->
     <style>
-        @keyframes fade-in-up {
-            0% {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
                 opacity: 0;
-                transform: translateY(32px);
+                transform: translateY(30px);
             }
 
-            100% {
+            to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
+        .illustration {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .success-checkmark {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            position: relative;
+            animation: scaleIn 0.6s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            width: 40px;
+            height: 20px;
+            border: 4px solid white;
+            border-top: none;
+            border-right: none;
+            animation: drawCheck 0.6s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+
+        @keyframes drawCheck {
+            to {
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .message {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .order-number {
+            background: #f5f5f5;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .order-number strong {
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        /* Confetti Animation */
         @keyframes confetti {
             0% {
                 transform: translateY(0) rotate(0deg);
@@ -35,10 +174,6 @@
                 transform: translateY(100vh) rotate(360deg);
                 opacity: 0;
             }
-        }
-
-        .animate-fade-in-up {
-            animation: fade-in-up 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .confetti {
@@ -63,14 +198,29 @@
             background: #96ceb4;
         }
 
-        .bg-gradient-custom {
-            background: linear-gradient(135deg, #e0f7fa 0%, #fff 100%);
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
-<body class="bg-gradient-custom min-h-screen flex items-center justify-center px-4 py-12">
-    <!-- Confetti Effect (triggered on page load) -->
+<body>
+    <!-- Confetti Effect -->
     <script>
         function createConfetti() {
             const confettiCount = 50;
@@ -87,72 +237,45 @@
         window.addEventListener('load', createConfetti);
     </script>
 
-    <div
-        class="w-full max-w-md mx-auto bg-white rounded-2xl shadow-2xl p-6 sm:p-8 flex flex-col items-center animate-fade-in-up">
-        <!-- Success Icon -->
-        <div class="bg-green-100 rounded-full p-5 mb-6 flex items-center justify-center">
-            <i class="ri-check-circle-fill text-5xl text-green-600"></i>
-        </div>
-        <!-- Headline -->
-        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 text-center tracking-tight">
-            Order Placed Successfully!
-        </h1>
-        <!-- Subtext -->
-        <p class="text-gray-600 text-center mb-6 text-base sm:text-lg">
-            Thank you for shopping with us! We’ll notify you via email or SMS when your order ships.
-        </p>
-        <!-- Order Details Card -->
-        <div class="w-full bg-gray-50 rounded-xl p-5 mb-6 shadow-md">
-            <div class="flex flex-col gap-3 text-gray-700 text-sm sm:text-base">
-                <div class="flex justify-between">
-                    <span class="font-medium">Order ID:</span>
-                    <span class="font-mono text-blue-600">
-                        <%= order?.orderId || 'N/A' %>
-                    </span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="font-medium">Order Date:</span>
-                    <span>
-                        <%= order?.createdOn ? new Date(order.createdOn).toLocaleString('en-US', { dateStyle: 'medium' ,
-                            timeStyle: 'short' }) : 'N/A' %>
-                    </span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="font-medium">Total Amount:</span>
-                    <span class="font-semibold text-green-600">₹<%= (order?.finalPrice || order?.totalPrice ||
-                            0).toLocaleString() %></span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="font-medium">Payment Method:</span>
-                    <span class="capitalize">
-                        <%= order?.paymentMethod || 'N/A' %>
-                    </span>
-                </div>
-                <% if (order?.trackingUrl) { %>
-                    <div class="flex justify-between">
-                        <span class="font-medium">Tracking:</span>
-                        <a href="<%= order.trackingUrl %>" target="_blank" class="text-blue-600 hover:underline">Track
-                            Order</a>
-                    </div>
-                    <% } %>
+    <div class="container">
+        <div class="illustration">
+            <div class="success-checkmark">
+                <div class="checkmark"></div>
             </div>
         </div>
-        <!-- Additional Info -->
-        <p class="text-gray-500 text-center mb-6 text-sm">
-            Need help? Contact our support team at <a href="mailto:support@yourshopname.com"
-                class="text-blue-600 hover:underline">support@yourshopname.com</a>.
+
+        <h1>Order Placed Successfully!</h1>
+        <p class="message">
+            Thank you for shopping with us! We’ll notify you via email or SMS when your order ships.
         </p>
-        <!-- Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 w-full justify-center">
-            <a href="/orders/details/?orderId=<%= order?.orderId || '' %>"
-                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-all duration-200">
-                <i class="ri-file-list-3-line"></i>
-                Track order
+
+        <div class="order-number">
+            <strong>Order ID:</strong>
+            <%= order?.orderId || 'ORD-2024-78945' %><br>
+                <strong>Order Date:</strong>
+                <%= order?.createdOn ? new Date(order.createdOn).toLocaleString('en-US', { dateStyle: 'medium' ,
+                    timeStyle: 'short' }) : 'N/A' %><br>
+                    <strong>Total Amount:</strong> ₹<%= (order?.finalPrice || order?.totalPrice || 0).toLocaleString()
+                        %><br>
+                        <strong>Payment Method:</strong>
+                        <%= order?.paymentMethod || 'N/A' %><br>
+                            <% if (order?.trackingUrl) { %>
+                                <strong>Tracking:</strong> <a href="<%= order.trackingUrl %>" target="_blank"
+                                    style="color: #667eea; text-decoration: underline;">Track Order</a>
+                                <% } %>
+        </div>
+
+        <p class="message">
+            Need help? Contact our support team at <a href="mailto:support@giftora.com"
+                style="color: #667eea; text-decoration: underline;">support@giftora.com</a>.
+        </p>
+
+        <div class="button-group">
+            <a href="/orders/details/?orderId=<%= order?.orderId || '' %>" class="btn btn-primary">
+                <i class="ri-file-list-3-line"></i> Track Order
             </a>
-            <a href="/viewproducts"
-                class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-white border border-gray-300 text-blue-600 font-semibold shadow-md hover:bg-gray-50 transition-all duration-200">
-                <i class="ri-shopping-bag-3-line"></i>
-                Continue Shopping
+            <a href="/viewproducts" class="btn btn-secondary">
+                <i class="ri-shopping-bag-3-line"></i> Continue Shopping
             </a>
         </div>
     </div>

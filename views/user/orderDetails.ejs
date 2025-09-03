@@ -91,7 +91,7 @@
                                                 Return Order
                                             </button>
                                             <% } %>
-                                                <% } else if (order.status==='Pending' || order.status==='Shipping' ) {
+                                                <% } else if (order.status==='Pending' || order.status==='Shipping' || order.status==='Processing') {
                                                     %>
                                                     <button id="cancelAllOrders"
                                                         class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
@@ -138,6 +138,12 @@
                                                         class="text-gray-800">
                                                         <%= order.paymentMethod %>
                                                     </span></div>
+                                                    <div>
+                                                        <span class="font-medium">Payment Status:</span>
+                                                        <span class="text-gray-800">
+                                                            <%= order.paymentStatus %>
+                                                        </span>
+                                                    </div>
                                                 <% if (order.couponApplied) { %>
                                                     <div><span class="font-medium">Coupon Applied:</span> <span
                                                             class="text-gray-800">
@@ -271,8 +277,8 @@
                                                                                 </button>
                                                                                 <% } %>
                                                                                     <% } else if
-                                                                                        (order.status==='Pending' ||
-                                                                                        order.status==='Shipping' ) { %>
+                                                                                        (item.status==='Pending' ||
+                                                                                        item.status==='Shipping'|| item.status==='Processing' ) { %>
                                                                                         <button
                                                                                             class="cancel-item-btn px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
                                                                                             data-order-id="<%= order.orderId %>"

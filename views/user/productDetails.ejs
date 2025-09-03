@@ -48,22 +48,41 @@
             object-fit: cover;
         }
 
-        .wishlist-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: white;
-            border: none;
-            padding: 8px;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: box-shadow 0.3s ease;
-        }
+        .related-wishlist-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 40px;
+    height: 40px;
+    background-color: #fff; /* base background */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
 
-        .wishlist-btn:hover {
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-        }
+
+
+/* Hover effect */
+.related-wishlist-btn:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+}
+
+/* Active heart (in wishlist) */
+.related-wishlist-btn.in-wishlist {
+    background-color: #fee2e2; /* soft red */
+    border-color: #ef4444;      /* stronger red border */
+}
+
+.related-wishlist-btn.in-wishlist i {
+    color: #ef4444; /* solid red heart */
+    transform: scale(1.2);
+}
+
 
         .product-info {
             padding: 1rem;
@@ -389,37 +408,27 @@
                     </div>
 
                     <!-- Buttons Section -->
-            <div class="flex items-center gap-3 mt-4">
-                <!-- Add to Cart -->
-                <button type="button" data-id="<%= product._id %>"
-                    class="add-to-cart flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-all">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span>Add to Cart</span>
-                </button>
-            
-                <!-- Wishlist -->
-                <button type="button" onclick="addWishlist('<%= product._id %>', this)" class="wishlist-btn w-12 h-12 bg-white border border-gray-300 rounded flex items-center justify-center text-gray-700 
-                         hover:border-red-500 hover:text-red-500
-                         <%= (wishlistId && wishlistId.includes(product._id.toString())) ? 'border-red-500 text-red-500' : '' %>">
-                
-                    <% if (wishlistId && wishlistId.includes(product._id.toString())) { %>
-                        <i class="fas fa-heart text-red-500 text-xl"></i>
-                        <% } else { %>
-                            <i class="far fa-heart text-xl"></i>
-                            <% } %>
-                </button>
-                <!-- Font Awesome -->
-                <i class="fas fa-heart text-red-500 text-3xl"></i>
-                
-                <!-- Remixicon -->
-                <i class="ri-heart-line text-3xl text-blue-500"></i>
+    <div class="flex items-center gap-3 mt-4">
+        <!-- Add to Cart -->
+        <button type="button" data-id="<%= product._id %>"
+            class="add-to-cart flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-all">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Add to Cart</span>
+        </button>
+        
+    
+        <!-- Wishlist -->
+        <button type="button" onclick="addWishlist('<%= product._id %>', this)"
+            class="wishlist-btn w-12 h-12 bg-yellow-100 border border-yellow-300 rounded flex items-center justify-center shadow <%= (wishlistId && wishlistId.includes(product._id.toString())) ? 'bg-yellow-200 border-yellow-500' : '' %>">
+        
+            <% if (wishlistId && wishlistId.includes(product._id.toString())) { %>
+                <i class="fas fa-heart text-red-600 text-xl"></i>
+                <% } else { %>
+                    <i class="far fa-heart text-red-400 text-xl"></i>
+                    <% } %>
+        </button>
 
-
-
-            </div>
-
-
-
+    </div>
 
 
                     <div class="border-t pt-6">
@@ -449,7 +458,7 @@
                                 </div>
                                 Eco-friendly packaging and materials
                             </li>
-                        </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -482,11 +491,17 @@
                                                             relatedProducts[i].regularPrice) * 100) %>%
                                                     </div>
                                                     <% } %>
-                                                        <button type="button"
-                                                            onclick="addWishlist('<%= relatedProducts[i]._id %>')"
-                                                            class="wishlist-btn" title="Add to Wishlist">
-                                                            <i class="far fa-heart"></i>
+                                                        <button type="button" onclick="addWishlist('<%= relatedProducts[i]._id %>', this)"
+                                                            class="related-wishlist-btn <%= (wishlistId && wishlistId.includes(relatedProducts[i]._id.toString())) ? 'bg-red-100 border-red-400' : '' %>"
+                                                            title="Add to Wishlist">
+                                                            <% if (wishlistId && wishlistId.includes(relatedProducts[i]._id.toString())) { %>
+                                                                <i class="fas fa-heart text-red-600"></i>
+                                                                <% } else { %>
+                                                                    <i class="far fa-heart text-red-400"></i>
+                                                                    <% } %>
                                                         </button>
+
+
 
                                 </div>
                                 <div class="product-info">
@@ -1160,27 +1175,56 @@
                         toast.addEventListener('mouseleave', Swal.resumeTimer)
                     }
                 });
+                window.isLoggedIn = <%- !!user %>
 
-                async function addWishlist(productId) {
+                async function addWishlist(productId, btn) {
                     try {
-                        console.log(productId);
+                         if (!window.isLoggedIn) {
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Login Required',
+                                text: 'Please login to add items to your wishlist',
+                                showCancelButton: true,
+                                confirmButtonText: 'Login',
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/login';
+                                }
+                            });
+                            return;
+                        }
+                        // Get the icon inside the button
+                        const icon = btn.querySelector('i');
+
                         const res = await fetch(`/wishlist/add/`, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ productId }),
                         });
 
                         const result = await res.json();
 
                         if (result.success) {
+                            if (result.inWishlist) {
+                                // Added to wishlist
+                                icon.classList.remove('far', 'text-red-400');
+                                icon.classList.add('fas', 'text-red-600');
+                                btn.classList.add('bg-red-100', 'border-red-400');
+                            } else {
+                                // Removed from wishlist
+                                icon.classList.remove('fas', 'text-red-600');
+                                icon.classList.add('far', 'text-red-400');
+                                btn.classList.remove('bg-red-100', 'border-red-400');
+                            }
+
                             Toast.fire({
                                 icon: 'success',
                                 title: result.message || "Wishlist updated"
                             }).then(() => {
-                                updateCartCount()
-                            })
+                                updateCartCount(); // optional
+                            });
+
                         } else {
                             if (result.message === "user not found") {
                                 Swal.fire({
@@ -1203,6 +1247,7 @@
                                 title: result.message || 'Failed to update wishlist'
                             });
                         }
+
                     } catch (err) {
                         console.error(err);
                         Toast.fire({
@@ -1211,8 +1256,8 @@
                         });
                     }
                 }
-
             </script>
+
 </body>
 
 </html>

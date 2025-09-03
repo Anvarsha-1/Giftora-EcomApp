@@ -6,9 +6,7 @@ const Order = require('../../models/orderSchema')
 const Wallet = require('../../models/walletSchema')
 
 const loadCheckoutPage = async (req, res) => {
-    if (!req.session.allowCheckout) {
-        return res.redirect("/cart")
-    }
+  
     try {
         const userId = req.session.user;
         const user = userId ? await User.findById(userId) : undefined;
@@ -103,10 +101,6 @@ const validateCheckout = async (req, res) => {
         let outOfStockItems = []
 
 
-
-
-
-
         for (let item of cart.items) {
             const product = item.productId
 
@@ -158,8 +152,7 @@ const placeOrder = async (req, res) => {
         if (!userAddress) {
             return res.json({ success: false, message: "Invalid address" })
         }
-        console.log(userAddress)
-        console.log(userAddress.address)
+        
         function generateOrderId() {
             const timestamp = Date.now().toString().slice(-5);
             const random = Math.floor(Math.random() * 90000 + 10000);
@@ -186,13 +179,17 @@ const placeOrder = async (req, res) => {
                 productId: product._id,
                 quantity: item.quantity,
                 price: product.salesPrice,
+                status: paymentMethod === "COD" ? "Pending" : 'Processing'
             })
         }
 
 
 
 
-        const status = paymentMethod === "COD" ? "Pending" : 'Processing'
+        const status = paymentMethod === "COD" ? "Pending" : 'pending'
+        const paymentStatus = paymentMethod === "COD" ? "Pending" : 'pending'
+    
+        console.log(status)
         const newOrder = new Order({
             userId: userId,
             orderId,
@@ -202,6 +199,7 @@ const placeOrder = async (req, res) => {
             finalAmount: finalPrice,
             address,
             status,
+            paymentStatus,
             createdOn: Date.now(),
             paymentMethod,
             fullName:userAddress?.fullName,
@@ -217,7 +215,7 @@ const placeOrder = async (req, res) => {
         })
 
         await newOrder.save()
-        req.session.allowSuccessPage = true
+       
         await Cart.updateOne(
             { userId },
             { $pull: { items: { productId: { $in: orderedItems.map(i => i.productId) } } } }
@@ -238,9 +236,7 @@ const placeOrder = async (req, res) => {
 
 const loadOrderSuccess = async (req, res) => {
     try {
-        if (!req.session.allowSuccessPage) {
-            return res.redirect('/cart')
-        }
+       
 
         const orderId = req.query.orderId
 
@@ -248,7 +244,7 @@ const loadOrderSuccess = async (req, res) => {
         if (!order) {
             return res.redirect('/cart')
         }
-        req.session.allowSuccessPage
+        
         res.render('orderSuccessPage', { order })
     } catch (error) {
         console.log("Error while loading success Page", error.message)

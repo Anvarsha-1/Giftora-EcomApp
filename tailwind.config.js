@@ -17,6 +17,10 @@ module.exports = {
     'py-1',
     'text-xs',
     'rounded',
+    'border-red-500',
+    'text-red-500',
+    'text-gray-400',
+    
     'bg-orange-50', 'bg-orange-100', 'bg-orange-200', 'bg-orange-300', 'bg-orange-400',
     'bg-orange-500', 'bg-orange-600', 'bg-orange-700', 'bg-orange-800', 'bg-orange-900',
     // Yellow backgrounds

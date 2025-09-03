@@ -3,6 +3,7 @@ const env = require("dotenv").config();
 const DB = require("./config/db");
 const path = require("path");
 const PORT = process.env.PORT || 3000;
+require('events').EventEmitter.defaultMaxListeners = 20;
 const userRouter = require("./routers/user/userRouter");
 const adminRouter = require('./routers/admin/adminRouter');
 const userAccount =  require('./routers/user/userAccount')
@@ -11,6 +12,7 @@ const userWishlist = require('./routers/user/userWishlist')
 const userCheckout = require('./routers/user/userCheckout')
 const userOrders = require('./routers/user/orderRouter')
 const adminOrders = require('./routers/admin/adminOrderRouter')
+const payment = require('./routers/user/payment.router')
 const session = require('express-session');
 const app = express();
 
@@ -84,6 +86,7 @@ app.use('/checkout', userCheckout)
 app.use('/orders', userOrders)
 app.use('/', userRouter);
 app.use('/admin', adminOrders)
+app.use('/payment',payment)
 
 
 

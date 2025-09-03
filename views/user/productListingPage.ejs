@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -345,11 +344,19 @@
       color: var(--dark-gray);
     }
 
+    /* Existing .products-grid styles */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 280px));
       gap: 2rem;
       justify-content: center;
+      /* This centers the grid items */
+    }
+
+    /* New rule for single product */
+    .products-grid.single-product {
+      justify-content: flex-start;
+      /* Align to the left */
     }
 
     .product-card {
@@ -858,7 +865,7 @@
                           <div class="discount-badge <%= products[i].status === 'Available' ? '' : 'out-of-stock' %>">
                             <%= products[i].status==='Available' ? '-40%' : 'Out of Stock' %>
                           </div>
-                         
+
                           <% if (!user) { %>
                             <button type="button" class="wishlist-btn" style="color: var(--dark-gray)">
                               <i class="far fa-heart"></i>
@@ -941,15 +948,15 @@
       <!-- Toast Container -->
       <div id="toastContainer" class="toast-container"></div>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-     
-      
+
+
 
       <script>
         // Initialize wishlistId and isLoggedIn
         window.wishlistId = <%- JSON.stringify(wishlistId || []) %>;
         window.isLoggedIn = <%- !!user %>;
-         
-       
+
+
       </script>
       <script>
         const searchInput = document.getElementById('searchInput');
@@ -1008,7 +1015,7 @@
         };
 
         // Check login status via AJAX
-       
+
 
         // Fetch products with filters and page
         async function fetchProducts(page = 1) {
@@ -1060,14 +1067,15 @@
         }
 
         // Render products
+        // Render products
         function renderProducts(products) {
           if (products.length === 0) {
             productGrid.innerHTML = `
-          <div class="no-results">
-            <i class="fas fa-box-open"></i>
-            <h3>No Products Found</h3>
-            <p>Try adjusting your filters or search terms (e.g., gift, candle, romantic)</p>
-          </div>`;
+      <div class="no-results">
+        <i class="fas fa-box-open"></i>
+        <h3>No Products Found</h3>
+        <p>Try adjusting your filters or search terms (e.g., gift, candle, romantic)</p>
+      </div>`;
             return;
           }
 
@@ -1077,49 +1085,52 @@
             const iconClass = window.isLoggedIn && inWishlist ? 'fas text-red-500' : 'far';
 
             return `
-          <div class="product-card" data-id="${p._id}">
-            <div class="product-image">
-              <a href="/productsDetails/${p._id}">
-                <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
-              </a>
-              ${p.status === 'Available' ? `
-                <div class="discount-badge">-40%</div>
-              ` : `
-                <div class="discount-badge out-of-stock">Out of Stock</div>
-              `}
-              <button type="button" class="wishlist-btn" title="Add to Wishlist" style="color: ${styleColor}">
-                <i class="${iconClass} fa-heart"></i>
-              </button>
+      <div class="product-card" data-id="${p._id}">
+        <div class="product-image">
+          <a href="/productsDetails/${p._id}">
+            <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
+          </a>
+          ${p.status === 'Available' ? `
+            <div class="discount-badge">-40%</div>
+          ` : `
+            <div class="discount-badge out-of-stock">Out of Stock</div>
+          `}
+          <button type="button" class="wishlist-btn" title="Add to Wishlist" style="color: ${styleColor}">
+            <i class="${iconClass} fa-heart"></i>
+          </button>
+        </div>
+        <div class="product-info">
+          <div class="product-brand">PREMIUM</div>
+          <h3 class="product-name">${p.productName}</h3>
+          <div class="product-rating">
+            <div class="stars">
+              ${'<i class="fas fa-star star"></i>'.repeat(5)}
             </div>
-            <div class="product-info">
-              <div class="product-brand">PREMIUM</div>
-              <h3 class="product-name">${p.productName}</h3>
-              <div class="product-rating">
-                <div class="stars">
-                  ${'<i class="fas fa-star star"></i>'.repeat(5)}
-                </div>
-                <span class="rating-count">(247 reviews)</span>
-              </div>
-              <div class="product-prices">
-                <span class="current-price">₹${p.salesPrice.toLocaleString()}</span>
-                <span class="original-price">₹${p.regularPrice.toLocaleString()}</span>
-                <span class="price-savings">Save ₹${(p.regularPrice - p.salesPrice).toFixed(0)}</span>
-              </div>
-              ${p.status === 'Available' ? `
-                <button type="button" data-id="${p._id}" onclick="addToCart(this)" class="add-to-cart">
-                  <i class="fas fa-shopping-cart"></i>
-                  <span>Add to Cart</span>
-                </button>
-              ` : `
-                <button class="add-to-cart" disabled>
-                  <i class="fas fa-shopping-cart"></i>
-                  <span>Add to Cart</span>
-                </button>
-              `}
-            </div>
+            <span class="rating-count">(247 reviews)</span>
           </div>
-        `;
+          <div class="product-prices">
+            <span class="current-price">₹${p.salesPrice.toLocaleString()}</span>
+            <span class="original-price">₹${p.regularPrice.toLocaleString()}</span>
+            <span class="price-savings">Save ₹${(p.regularPrice - p.salesPrice).toFixed(0)}</span>
+          </div>
+          ${p.status === 'Available' ? `
+            <button type="button" data-id="${p._id}" onclick="addToCart(this)" class="add-to-cart">
+              <i class="fas fa-shopping-cart"></i>
+              <span>Add to Cart</span>
+            </button>
+          ` : `
+            <button class="add-to-cart" disabled>
+              <i class="fas fa-shopping-cart"></i>
+              <span>Add to Cart</span>
+            </button>
+          `}
+        </div>
+      </div>
+    `;
           }).join('');
+
+          // Add class 'single-product' if there is only one product
+          productGrid.classList.toggle('single-product', products.length === 1);
 
           attachWishlistListeners();
         }
@@ -1131,7 +1142,7 @@
             btn.addEventListener('click', handleWishlistClick);
           });
         }
-       
+
 
         function handleWishlistClick() {
           if (!window.isLoggedIn) {
@@ -1382,7 +1393,7 @@
                 icon: 'success',
                 title: result.message || 'Wishlist updated'
               }).then(() => {
-                
+
                 updateCartCount(); // Update cart/wishlist count if applicable
               });
             } else {

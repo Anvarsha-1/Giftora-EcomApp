@@ -20,7 +20,7 @@ const loadProductListingPage = async (req, res) => {
     const sortOption = clearFilter ? 'createdAt-desc' : req.query.sort || 'createdAt-desc';
 
     const userData = req.session?.user ? await User.findById(req.session?.user) : undefined
-    const userId = req.session.user 
+    const userId = req.session.user
     const categories = await category.find({ isListed: true, isDeleted: false });
 
     const wishlist = await Wishlist.findOne({ userId })
@@ -101,9 +101,9 @@ const loadProductListingPage = async (req, res) => {
 
   } catch (error) {
     console.error("Error in loadProductListingPage:", error.message);
-    res.status(500).render('user/error',{
-      title:500,
-      message:"something went wrong. please try again"
+    res.status(500).render('user/error', {
+      title: 500,
+      message: "something went wrong. please try again"
     })
   }
 };
@@ -111,49 +111,69 @@ const loadProductListingPage = async (req, res) => {
 
 const viewProductDetails = async (req, res) => {
   try {
-    const userData = req.session?.user ? await User.findById(req.session?.user) : undefined
-    const id = req.params.id
-    const productData = await Products.findById(id)
-    if (!productData) return res.status(404).json("product not found")
-    const userId= req.session.userId
-     const wishlist = await Wishlist.findOne({userId})
+    const userData = req.session?.user
+      ? await User.findById(req.session?.user)
+      : undefined;
 
+    const id = req.params.id;
+
+    const productData = await Products.findById(id);
+    if (!productData) return res.status(404).json("product not found");
+
+    const userId = req.session.user;
+    
+
+    let wishlistIds = [];
+
+    if (userId) {
+      const wishlistDoc = await Wishlist.findOne({ userId });
+     
+      if (wishlistDoc) {
+        wishlistIds = wishlistDoc.products.map(item =>
+          item.productId.toString()
+        );
+       
+      }
+    }
 
     if (productData.isBlocked || productData.isDeleted) {
-      return res.status(404).render('error', {
+      return res.status(404).render("error", {
         title: "404",
-        message: "product not available"
-      })
+        message: "product not available",
+      });
     }
 
     const relatedProducts = await Products.find({
       category: productData.category,
       isBlocked: false,
       isDeleted: false,
-      _id: { $ne: productData._id }
-    }).limit(4).sort({ createdAt: -1 })
+      _id: { $ne: productData._id },
+    })
+      .limit(4)
+      .sort({ createdAt: -1 });
 
+    const [mainImage, ...subImage] = productData.productImage;
 
-    const [mainImage, ...subImage] = productData.productImage
+  
 
-
-    return res.render('user/productDetails', {
+    return res.render("user/productDetails", {
       user: userData,
       firstName: userData?.firstName || "",
-      product: productData,
-      relatedProducts: relatedProducts,
+      product: productData, 
+      relatedProducts,
       mainImage,
-      subImage,   
-      wishlistId: wishlist ? wishlist.products.map((item) => item.productId.toString() ) : []
-    })
+      subImage,
+      wishlistId: wishlistIds, 
+    });
   } catch (error) {
     console.log("Error while loading product Details", error.message);
-    return res.status(404).render('user/error', {
+    return res.status(404).render("user/error", {
       title: "404",
-      message: "Page not found"
-    })
+      message: "Page not found",
+    });
   }
-}
+};
+
 
 
 
