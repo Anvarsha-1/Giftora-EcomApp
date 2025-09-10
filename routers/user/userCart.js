@@ -9,7 +9,7 @@ const { userAuth } = require('../../middlewares/auth')
 router.get('/', userAuth, cartController.loadCart);
 router.post('/', cartController.addToCart);
 router.patch('/', userAuth, cartController.updateCartQuantity);
-router.delete('/:id', cartController.removeCartItem)
-router.get('/count', cartController.updateCartCount)
+router.delete('/:id', userAuth, cartController.removeCartItem)
+router.get('/count', userAuth, cartController.updateCartCount)
 
 module.exports = router

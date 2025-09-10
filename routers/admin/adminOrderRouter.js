@@ -16,10 +16,10 @@ router.get('/returns/count', adminAuth, adminOrderController.getPendingReturnsCo
 router.get('/returns', adminAuth,adminOrderController.getReturnedOrder)
 
 
-router.post('/return/verify/:orderId/:itemId',adminOrderController.verifyOrderReturn)
+router.post('/return/verify/:orderId/:itemId',adminAuth,adminOrderController.verifyOrderReturn)
 
 
-router.patch('/return/cancel/:orderId/:itemId',adminOrderController.cancelReturnRequest)
+router.patch('/return/cancel/:orderId/:itemId',adminAuth,adminOrderController.cancelReturnRequest)
 
 
 router.get('/view/orders/:orderId',adminAuth,adminOrderController.viewOrderDetails)

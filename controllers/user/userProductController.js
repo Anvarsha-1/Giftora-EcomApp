@@ -121,18 +121,18 @@ const viewProductDetails = async (req, res) => {
     if (!productData) return res.status(404).json("product not found");
 
     const userId = req.session.user;
-    
+
 
     let wishlistIds = [];
 
     if (userId) {
       const wishlistDoc = await Wishlist.findOne({ userId });
-     
+
       if (wishlistDoc) {
         wishlistIds = wishlistDoc.products.map(item =>
           item.productId.toString()
         );
-       
+
       }
     }
 
@@ -154,16 +154,16 @@ const viewProductDetails = async (req, res) => {
 
     const [mainImage, ...subImage] = productData.productImage;
 
-  
+
 
     return res.render("user/productDetails", {
       user: userData,
       firstName: userData?.firstName || "",
-      product: productData, 
+      product: productData,
       relatedProducts,
       mainImage,
       subImage,
-      wishlistId: wishlistIds, 
+      wishlistId: wishlistIds,
     });
   } catch (error) {
     console.log("Error while loading product Details", error.message);

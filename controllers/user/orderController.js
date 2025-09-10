@@ -131,15 +131,19 @@ const cancelProduct = async (req, res) => {
             return res.json({ success: false, message: "Product not found" });
         }
 
+        const OnlinePayment = order.paymentMethod === 'ONLINE'
 
-       
-         let TAX_RATE = 0.05
+
+        if (OnlinePayment){
+     
         
                 const itemTotal = product.price * product.quantity;
                 const orderTotal = order.orderedItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-                const totalTax = orderTotal * TAX_RATE;
+                const totalTax = orderTotal * order.tax;
                 const itemTaxShare = (itemTotal / orderTotal) * totalTax;
                 const refundAmount = itemTotal + itemTaxShare
+
+
         
         const wallet = await Wallet.updateOne({ userId },
             {
@@ -156,6 +160,7 @@ const cancelProduct = async (req, res) => {
             },
             { $upsert: true }
         )
+    }
 
 
         return res.json({ success: true })

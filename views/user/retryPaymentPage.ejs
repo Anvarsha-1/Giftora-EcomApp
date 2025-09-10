@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retry Payment - Order #ORD-2024-1234</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .order-info {
+            background: linear-gradient(135deg, #f8f9ff, #e8efff);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .order-info h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .order-info h2::before {
+            content: '📋';
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .status-failed {
+            color: #e74c3c;
+            background: #ffeaea;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .order-items {
+            margin-bottom: 30px;
+        }
+
+        .order-items h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .order-items h2::before {
+            content: '🛍️';
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .item-card {
+            background: white;
+            border: 2px solid #f1f2f6;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .item-specs {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .item-quantity {
+            background: #f8f9ff;
+            color: #667eea;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .item-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #27ae60;
+        }
+
+        .order-summary {
+            background: linear-gradient(135deg, #f8f9ff, #e8efff);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .order-summary h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .order-summary h2::before {
+            content: '💰';
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            border-top: 2px solid #667eea;
+            margin-top: 10px;
+            padding-top: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .summary-label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .item-image img {
+            width: 80px;
+            /* fixed size */
+            height: 80px;
+            object-fit: cover;
+            /* crop nicely */
+            border-radius: 8px;
+        }
+
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 180px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+
+            .item-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Retry Payment</h1>
+            <p>Complete your order to continue with your purchase</p>
+        </div>
+
+        <div class="content">
+
+            <!-- Order Information -->
+            <div class="order-info">
+                <h2>Order Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Order ID</div>
+                        <div class="info-value">
+                            <%= order.orderId %>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Order Date</div>
+                        <div class="info-value">
+                            <%= new Date(order.createdOn).toLocaleDateString('en-US', { dateStyle: 'medium' }) %>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Created On</div>
+                        <div class="info-value">
+                            <%= new Date(order.createdOn).toLocaleTimeString('en-US', { timeStyle: 'short' }) %>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Payment Status</div>
+                        <div class="info-value">
+                            <% if(order.paymentStatus==='Failed' ){ %>
+                                <span class="status-failed">Payment Failed</span>
+                                <% } else if(order.paymentStatus==='Completed' ){ %>
+                                    <span class="status-success">Paid</span>
+                                    <% } else { %>
+                                        <span class="status-pending">
+                                            <%= order.paymentStatus %>
+                                        </span>
+                                        <% } %>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Payment Method</div>
+                        <div class="info-value">
+                            <%= order.paymentMethod %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="order-items">
+                <h2>Order Items</h2>
+
+                <% order.orderedItems.forEach(item=> { %>
+                    <div class="item-card">
+                        <div class="item-image">
+                            <% if (item.productId?.productImage?.[0]?.url) { %>
+                                <img src="<%= item.productId.productImage[0].url %>"
+                                    alt="<%= item.productId?.productName || 'Product' %>" />
+                                <% } else { %>
+                                    <img src="/images/default-product.png" alt="Default Product Image" />
+                                    <% } %>
+                        </div>
+                        <div class="item-details">
+                            <div class="item-name">
+                                <%= item.productId?.productName || 'Product' %>
+                            </div>
+                            <div class="item-specs">Price: ₹<%= item.price %>
+                            </div>
+                            <span class="item-quantity">Qty: <%= item.quantity %></span>
+                        </div>
+                        <div class="item-price">₹<%= item.price * item.quantity %>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+
+            <!-- Order Summary -->
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+        
+            <div class="summary-row">
+                <span class="summary-label">Subtotal</span>
+                <span class="summary-value">₹<%= order.totalPrice %></span>
+            </div>
+        
+            <% if(order.tax) { %>
+                <div class="summary-row">
+                    <span class="summary-label">Tax (5%)</span>
+                    <span class="summary-value">₹<%= order.tax %></span>
+                </div>
+                <% } %>
+        
+                    <% if(order.shippingCharge) { %>
+                        <div class="summary-row">
+                            <span class="summary-label">Shipping</span>
+                            <span class="summary-value">₹<%= order.shippingCharge %></span>
+                        </div>
+                        <% } %>
+        
+                            <% if(order.discountPrice> 0) { %>
+                                <div class="summary-row">
+                                    <span class="summary-label">Discount</span>
+                                    <span class="summary-value">- ₹<%= order.discountPrice %></span>
+                                </div>
+                                <% } %>
+        
+                                    <div class="summary-row total-row">
+                                        <span class="summary-label">Total Amount</span>
+                                        <span class="summary-value">₹<%= order.finalAmount %></span>
+                                    </div>
+        </div>
+
+
+            <!-- Delivery Address -->
+            <div class="order-address">
+                <h2>Delivery Address</h2>
+                <p><strong>
+                        <%= order.fullName %>
+                    </strong></p>
+                <p>
+                    <%= order.address %>, <%= order.city %>, <%= order.district %>, <%= order.state %>
+                </p>
+                <p>Landmark: <%= order.landmark %>
+                </p>
+                <p>Pin Code: <%= order.pinCode %>
+                </p>
+                <p>Mobile: <%= order.mobileNumber %>
+                </p>
+                <p>Type: <%= order.addressType %>
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="retryPayment('<%=order.orderId %>')">
+                🔄 Retry Payment
+            </button>
+            <a href="#" class="btn btn-secondary" onclick="goBackToOrders()">
+                ← Back to Orders
+            </a>
+        </div>
+    </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+       async function retryPayment(orderId) {
+            try {
+               
+                console.log('payment in fun', orderId)
+                
+                const res = await fetch('/payment/retry-order', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId }) // same backend order, new Razorpay order
+                });
+                const keyRes = await fetch('/payment/get-key')
+
+                const { key } = await keyRes.json()
+                const { success, order, user } = await res.json();
+                if (!success) {
+                    return Swal.fire({
+                        icon: 'error',
+                        title: 'Retry Failed',
+                        text: 'Unable to start payment retry.',
+                        confirmButtonColor: '#d33'
+                    });
+                }
+
+                // 2️⃣ Open Razorpay checkout again
+                const options = {
+                    key,
+                    amount: order.amount,
+                    currency: order.currency,
+                    name: "Giftora",
+                    description: "Retry Payment",
+                    order_id: order.id,
+                    image: '/images/header/giftora.png',
+                    prefill: {
+                        name: user.firstName,
+                        email: user.email,
+                        contact: user.phone
+                    },
+                    handler: async function (response) {
+                        // 3️⃣ Verify payment after success
+                        const verifyRes = await fetch('/payment/verify-payment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                orderId
+                            })
+                        });
+
+                        const verifyResult = await verifyRes.json();
+
+                        if (verifyResult.success) {
+                            window.location.href = `/checkout/order-success?orderId=${orderId}`;
+                        } else {
+                            window.location.href = `/payment/failure-page/${orderId }`;
+                        }
+                    },
+                    theme: { color: "#3399cc" }
+                };
+
+                const rzp = new Razorpay(options);
+
+                // Handle retry failure again
+                rzp.on('payment.failed', function () {
+                    window.location.href = `/payment/failure-page/${ orderId }`;
+                });
+
+                rzp.open();
+            } catch (err) {
+                console.error("Retry payment error:", err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong during retry.'
+                });
+            }
+        }
+
+        
+
+        // Add subtle animations on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.item-card, .order-info, .order-summary').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>

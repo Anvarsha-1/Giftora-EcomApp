@@ -3,22 +3,42 @@ const User = require('../../models/userSchema')
 const { generateOtp } = require('../../helpers/helper')
 const { sendVerificationEmail, securePassword } = require('../../helpers/helper')
 const extractImageData = require('../../helpers/imageprocess')
+const Wishlist = require('../../models/wishListSchema')
 const cloudinary = require('../../helpers/cloudinary')
 const bcrypt = require("bcrypt")
 const Wallet = require('../../models/walletSchema')
+const mongoose = require('mongoose')
+const Order = require('../../models/orderSchema.js')
+const Product = require('../../models/productSchema.js')
 
 
 
 const myAccountDetails = async (req, res) => {
     try {
         const id = req.session.user
+        console.log(id)
+        const result = await Wishlist.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(id) } },
+            { $project: { userId: 1, WishlistCount: { $size: "$products" } } }
+        ]);
 
+        const wishlistCount = result[0]?.WishlistCount || 0;
+
+        const OrderResult = await Order.aggregate([
+            { $group: { _id: "$id", Count: { $sum: 1 } } }
+        ]);
+
+        const total = await Order.aggregate([{ $match: { userId: new mongoose.Types.ObjectId(id), status: 'Delivered' } }, { $group: { _id: '$id', amount: { $sum: '$totalPrice' } } }])
+
+        const totalAmount = total[0]?.amount
+
+        const orderCount = OrderResult[0]?.Count || 0
 
         if (!id) return res.render('error-page', { showSwal: true, message: "User not found" })
 
         const userData = await User.findById(id);
 
-        return res.render('myAccount', { user: userData })
+        return res.render('myAccount', { user: userData, wishlistCount, orderCount, totalAmount })
 
     }
     catch (error) {
@@ -33,6 +53,7 @@ const loadUpdateEmail = async (req, res) => {
         const userData = req.session.user ? await User.findById(req.session.user) : undefined
 
         res.render('user/changeemail', { user: userData })
+        
     } catch (error) {
         console.log("Error while loading update email", error.message)
         res.status(500).render('error-page', { showSwal: true, message: "something went wrong .Please try again" })
@@ -138,7 +159,7 @@ const updateUserDetails = async (req, res) => {
         const validName = /^[A-Za-z\s]+$/;
         const phoneRegex = /^[6-9]\d{9}$/;
 
-        
+
         if (!firstName || !lastName || !phone) {
             return res.json({ success: false, message: "All fields required" });
         }
@@ -152,49 +173,47 @@ const updateUserDetails = async (req, res) => {
             return res.json({ success: false, message: "Please enter a valid phone number" });
         }
 
-       
-        const existing = await User.findOne({ firstName: firstName.trim(), _id: { $ne: id } });
-        if (existing) {
-            return res.json({ success: false, message: "Name is already taken" });
-        }
 
-        const existingPhone = await User.findOne({ phone, _id: { $ne: id } });
-        if (existingPhone) {
-            return res.json({ success: false, message: "Number is already existing" });
-        }
 
-        
+
+        // const existingPhone = await User.findOne({ phone, _id: { $ne: id } });
+        // if (existingPhone) {
+        //     return res.json({ success: false, message: "Number is already existing" });
+        // }
+
+
         const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        
+
         const uploadedImage = req.file;
         const wantsToRemoveImage = removeProfileImage === 'true';
         const hasCloudinaryImage = user.profileImage?.public_id;
-        const hasGoogleImage = user.profileImage?.url?.includes('googleusercontent');
+        const hasGoogleImage = user.profileImage?.url?.includes('googleusercontent')
+
 
         if ((wantsToRemoveImage || uploadedImage) && (hasCloudinaryImage || hasGoogleImage)) {
-            
+
             if (hasCloudinaryImage) {
                 await cloudinary.uploader.destroy(user.profileImage.public_id);
             }
 
-            
+
             user.profileImage = null;
         }
 
-       
+
         let image = null
-        
-        if(req.file){
+
+        if (req.file) {
             image = extractImageData([req.file])[0];
-        if (image) {
-            user.profileImage = image;
+            if (image) {
+                user.profileImage = image;
+            }
         }
-      }
-        
+
         user.firstName = firstName;
         user.lastName = lastName;
         user.phone = phone;
@@ -210,61 +229,61 @@ const updateUserDetails = async (req, res) => {
 };
 
 
-const loadPasswordChange = async (req,res) =>{
-    try{
-    const userData =  req.session.user ? await User.findById(req.session.user) : undefined
-    return res.render('changePassword',{user:userData})
-    }catch(error){
-     console.log("Error while loading change password",error.message)
-     return res.status(500).render('error-page')
+const loadPasswordChange = async (req, res) => {
+    try {
+        const userData = req.session.user ? await User.findById(req.session.user) : undefined
+        return res.render('changePassword', { user: userData })
+    } catch (error) {
+        console.log("Error while loading change password", error.message)
+        return res.status(500).render('error-page')
     }
 
 }
 
 
-const changePassword = async (req,res)=>{
-    try{
-        const { currentPassword, newPassword, confirmPassword} = req.body
+const changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmPassword } = req.body
         console.log(currentPassword, newPassword, confirmPassword)
-       const user = await User.findById(req.session.user)
+        const user = await User.findById(req.session.user)
 
-    if (!currentPassword || !confirmPassword || !newPassword ){
-        return res.json({success:false,message:"All field is required"})
-    }
-       
-       if(!user){
-        return res.json({success:false,message:"User not found .Please try again"})
-       }
-       
-        const match = await bcrypt.compare(currentPassword,user?.password)
+        if (!currentPassword || !confirmPassword || !newPassword) {
+            return res.json({ success: false, message: "All field is required" })
+        }
 
-       if(!match){
-          return res.json({success:false,message:"Incorrect current password"})
-       }
+        if (!user) {
+            return res.json({ success: false, message: "User not found .Please try again" })
+        }
 
-       if(newPassword.length<6){
-        return res.json({success:false,message:"new password length must be at least 6 characters"})
-       }
-       if(newPassword!==confirmPassword){
-        return res.json({success:false,message:"new Password and confirm password  does not match"})
-       }
-       
-       const hashedPassword = await  securePassword(newPassword)
+        const match = await bcrypt.compare(currentPassword, user?.password)
 
-       if(!hashedPassword){
-        return res.json({success:false,message:"An error occured while hashing password. Please try again"})
-       }
-       
-       console.log(hashedPassword)
+        if (!match) {
+            return res.json({ success: false, message: "Incorrect current password" })
+        }
 
-       user.password = hashedPassword
+        if (newPassword.length < 6) {
+            return res.json({ success: false, message: "new password length must be at least 6 characters" })
+        }
+        if (newPassword !== confirmPassword) {
+            return res.json({ success: false, message: "new Password and confirm password  does not match" })
+        }
 
-       await user.save()
+        const hashedPassword = await securePassword(newPassword)
 
-       return res.json({success:true,message:"Password Update Successfully"})
+        if (!hashedPassword) {
+            return res.json({ success: false, message: "An error occured while hashing password. Please try again" })
+        }
 
-    }catch(error){
-      
+        console.log(hashedPassword)
+
+        user.password = hashedPassword
+
+        await user.save()
+
+        return res.json({ success: true, message: "Password Update Successfully" })
+
+    } catch (error) {
+
         console.error("Error during password update:", error.message);
 
         return res.status(500).json({
@@ -283,11 +302,11 @@ const loadMyWallet = async (req, res) => {
 
         if (!wallet) {
             return res.render('user/myWallet', {
-                wallet: { balance: 0, transactions: [] },user
+                wallet: { balance: 0, transactions: [] }, user
             });
         }
 
-        res.render('user/myWallet', { wallet ,user});
+        res.render('user/myWallet', { wallet, user });
     } catch (error) {
         console.error("Error loading wallet:", error.message);
         res.render('user/myWallet', {
@@ -310,5 +329,5 @@ module.exports = {
     loadPasswordChange,
     changePassword,
     loadMyWallet
-   
+
 }

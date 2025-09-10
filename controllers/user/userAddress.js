@@ -195,16 +195,16 @@ const deleteAddress = async (req, res) => {
 }
 
 
-const setDefaultAddress = async(req,res)=>{
-    try{
+const setDefaultAddress = async (req, res) => {
+    try {
         const addressId = req.params.addressId
         const userId = req.session.user
-        await Address.updateOne({userId:userId,'isDefault':true},{$set:{'isDefault':false}})
-        await Address.updateOne({_id:addressId},{$set:{"isDefault":true}})
-        return res.json({success:true})
-    }catch(error){
-        console.log("Error while setting address to default",error.message)
-        return res.json({success:false,message:"Something went wrong. Please try again"})
+        await Address.updateOne({ userId: userId, 'isDefault': true }, { $set: { 'isDefault': false } })
+        await Address.updateOne({ _id: addressId }, { $set: { "isDefault": true } })
+        return res.json({ success: true })
+    } catch (error) {
+        console.log("Error while setting address to default", error.message)
+        return res.json({ success: false, message: "Something went wrong. Please try again" })
     }
 }
 

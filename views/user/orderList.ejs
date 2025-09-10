@@ -69,7 +69,7 @@
                                     <%= orderItem.orderId %>
                                   </span></div>
                                 <div class="text-sm text-gray-500">Order Date: <span class="text-gray-700">
-                                    <%= orderItem.createdOn %>
+                                    <%= new Date(orderItem.createdOn).toLocaleString("en-US", { dateStyle: "medium" , timeStyle: "short" }) %>
                                   </span></div>
                                 <div class="text-sm text-gray-500">Payment: <span class="text-gray-700">
                                     <%= orderItem.paymentMethod %>

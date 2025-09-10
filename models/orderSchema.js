@@ -50,6 +50,14 @@ const orderSchema = new Schema({
       type: String
     }
   }],
+  tax: {
+    type: Number,
+    default: 0
+  },
+  shippingCharge: {
+    type: Number,
+    default: 0
+  },
   totalPrice: {
     type: Number,
     required: true

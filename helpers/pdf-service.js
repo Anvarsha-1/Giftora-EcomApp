@@ -109,9 +109,9 @@ function BuildPDF(order, dataCallback, endCallback) {
     // ===== TOTALS SECTION WITH SHADED BOX =====
     let totalsTop = doc.y;
     // Calculate tax and shipping
-    const tax = Math.round(subtotal * 0.05);
-    const shipping = subtotal < 1000 ? 50 : 0;
-    let grandTotal = subtotal + tax + shipping;
+    
+  
+    
     let offset = 10;
     doc
         .rect(350, totalsTop, 200, 120)
@@ -131,7 +131,7 @@ function BuildPDF(order, dataCallback, endCallback) {
         .text(`Tax (5%):`, 360, totalsTop + offset, { continued: true })
         .font('Helvetica')
         .fillColor('#333')
-        .text(`Rs.${tax}`, 430, totalsTop + offset);
+        .text(`Rs.${order.tax}`, 430, totalsTop + offset);
     offset += 18;
     doc
         .font('Helvetica-Bold')
@@ -139,7 +139,7 @@ function BuildPDF(order, dataCallback, endCallback) {
         .text(`Shipping:`, 360, totalsTop + offset, { continued: true })
         .font('Helvetica')
         .fillColor('#333')
-        .text(`Rs.${shipping}`, 430, totalsTop + offset);
+        .text(`Rs.${order.shippingCharge}`, 430, totalsTop + offset);
     offset += 18;
     if (order.discountPrice > 0) {
         doc
@@ -149,7 +149,7 @@ function BuildPDF(order, dataCallback, endCallback) {
             .font('Helvetica')
             .fillColor('#27ae60')
             .text(`-Rs.${order.discountPrice}`, 430, totalsTop + offset);
-        grandTotal -= order.discountPrice;
+        order.finalPrice -= order.discountPrice;
         offset += 15;
     }
     if (order.couponDiscount > 0) {
@@ -160,7 +160,7 @@ function BuildPDF(order, dataCallback, endCallback) {
             .font('Helvetica')
             .fillColor('#27ae60')
             .text(`-Rs.${order.couponDiscount}`, 430, totalsTop + offset);
-        grandTotal -= order.couponDiscount;
+        order.finalPrice -= order.couponDiscount;
         offset += 15;
     }
     doc
@@ -170,7 +170,7 @@ function BuildPDF(order, dataCallback, endCallback) {
         .text(`Grand Total:`, 360, totalsTop + offset + 5, { continued: true })
         .font('Helvetica')
         .fillColor('#e67e22')
-        .text(`Rs.${grandTotal}`, 400, totalsTop + offset);
+        .text(`Rs.${order.finalAmount}`, 400, totalsTop + offset);
     doc.moveDown(4);
 
     // ===== FOOTER =====

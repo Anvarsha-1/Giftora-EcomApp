@@ -1341,20 +1341,13 @@
                     event.target.closest('.category-card').style.transform = 'translateY(-4px)';
                     event.target.closest('.category-card').style.boxShadow = 'var(--shadow-heavy)';
 
-                    showToast(`Showing ${category} products`, 'success');
+                   
                 }
 
 
 
                 // Product card click handler
-                document.querySelectorAll('.product-card').forEach(card => {
-                    card.addEventListener('click', function (e) {
-                        if (!e.target.closest('.wishlist-btn') && !e.target.closest('.add-to-cart') && !e.target.closest('.quick-btn')) {
-                            const productName = this.querySelector('.product-name').textContent;
-                            showToast(`Viewing ${productName}`, 'success');
-                        }
-                    });
-                });
+                
 
                 // Image loading simulation
                 document.querySelectorAll('.product-img').forEach(img => {

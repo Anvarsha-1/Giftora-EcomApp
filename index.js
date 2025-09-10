@@ -16,8 +16,12 @@ const payment = require('./routers/user/payment.router')
 const session = require('express-session');
 const app = express();
 
+
 const flash = require('express-flash');
 const passport = require("./config/passport");
+
+app.disable('x-powered-by');
+
 
 DB();
 
@@ -39,6 +43,7 @@ app.use(
     cookie: { 
       secure: false, 
       httpOnly: true, 
+      sameSite: 'Strict',
       maxAge: 24 * 60 * 60 * 1000 
     }, 
   })

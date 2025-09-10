@@ -38,7 +38,7 @@ router.put('/edit/addresses/:id', userAuth, userAddress.editAddress)
 
 router.delete('/delete/addresses/:id', userAuth, userAddress.deleteAddress)
 
-router.patch('/set-default/addresses/:addressId',userAuth,userAddress.setDefaultAddress)
+router.patch('/set-default/addresses/:addressId', userAuth, userAddress.setDefaultAddress)
 
 
 //USER WALLET

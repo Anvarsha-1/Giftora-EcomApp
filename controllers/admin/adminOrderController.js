@@ -9,8 +9,6 @@ const loadOrderPage = async (req, res) => {
         page = parseInt(page) || 1;
         const defaultPageSize = 10;
        
-
-
         let filter = {};
 
 
@@ -89,14 +87,16 @@ const updateOrderStatus = async (req, res) => {
         const { orderId } = req.params;
 
         const { status } = req.body;
-        console.log(status)
+       
         if (!orderId || !status) return res.status(400).json({ success: false, message: 'Invalid payload' });
         const order = await Order.findOne({ orderId }).populate('orderedItems.productId')
         console.log(order)
         if (!order) return res.status(404).json({ success: false, message: 'Order not found' });
         order.status = status
         order.orderedItems.forEach((item) => {
+            if (item.status !== 'Cancelled' && item.status !== 'Delivered' && item.status !== 'Return Request' && item.status !== 'Returned'){
             item.status = status
+            }
         })
         if (status === 'Delivered') {
             order.paymentStatus = "Completed"

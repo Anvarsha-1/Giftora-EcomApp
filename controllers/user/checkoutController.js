@@ -4,6 +4,7 @@ const Address = require('../../models/addressSchema')
 const Product = require('../../models/productSchema')
 const Order = require('../../models/orderSchema')
 const Wallet = require('../../models/walletSchema')
+const mongoose = require("mongoose");
 
 const loadCheckoutPage = async (req, res) => {
   
@@ -184,20 +185,41 @@ const placeOrder = async (req, res) => {
         }
 
 
+        const subTotal = await Cart.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+            { $unwind: '$items' },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$items.totalPrice' }
+                }
+            }
+        ]);
+
+        console.log(subTotal[0].total)
+                
+        
+
+        const tax = Math.round(subTotal[0].total * 0.05);
+        const shipping = finalPrice >= 1000 ? parseInt(0) : parseInt(50);
+        console.log(tax, totalPrice)
+
 
 
         const status = paymentMethod === "COD" ? "Pending" : 'pending'
         const paymentStatus = paymentMethod === "COD" ? "Pending" : 'pending'
     
-        console.log(status)
+    
         const newOrder = new Order({
             userId: userId,
-            orderId,
+            orderId,        
             orderedItems,
             totalPrice,
             discountPrice,
             finalAmount: finalPrice,
             address,
+            tax,
+            shippingCharge: shipping,
             status,
             paymentStatus,
             createdOn: Date.now(),
@@ -220,7 +242,7 @@ const placeOrder = async (req, res) => {
             { userId },
             { $pull: { items: { productId: { $in: orderedItems.map(i => i.productId) } } } }
 
-        ); console.log(newOrder.orderId)
+        ); 
         return res.json({
             success: true,
             message: "Order placed successfully",
@@ -241,6 +263,7 @@ const loadOrderSuccess = async (req, res) => {
         const orderId = req.query.orderId
 
         const order = await Order.findOne({ orderId })
+        console.log("order in success page",order)
         if (!order) {
             return res.redirect('/cart')
         }

@@ -401,54 +401,51 @@
                                     const orderRes = await fetch('/payment/create-order', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ amount: totalPrice,addressId:addressSelected})
+                                        body: JSON.stringify({ addressId: addressSelected })
                                     });
 
-                                    const { razorpayOrder, user ,userAddress} = await orderRes.json();
+                                    const { razorpayOrder, user, userAddress, orderId } = await orderRes.json();
 
-                                    
+                                    // 3️⃣ Razorpay checkout options
                                     const options = {
                                         key,
                                         amount: razorpayOrder.amount,
                                         currency: razorpayOrder.currency,
                                         name: "Giftora",
                                         description: "Order Payment",
-                                        order_id: razorpayOrder.id,
+                                        image: '/images/header/giftora.png',
+                                        order_id: razorpayOrder.id, // Razorpay order ID
                                         prefill: {
                                             name: userAddress.fullName,
                                             email: user.email,
                                             contact: userAddress.mobileNumber
                                         },
 
+                                        // 4️⃣ Payment handler
                                         handler: async function (response) {
-                                           
-                                           const verifyRes = await fetch('/payment/verify-payment', {
+                                            const verifyRes = await fetch('/payment/verify-payment', {
                                                 method: 'POST',
                                                 headers: { 'Content-Type': 'application/json' },
                                                 body: JSON.stringify({
                                                     razorpay_order_id: response.razorpay_order_id,
                                                     razorpay_payment_id: response.razorpay_payment_id,
                                                     razorpay_signature: response.razorpay_signature,
-                                                    addressId: addressSelected,  // 👈 required to build DB order
+                                                    orderId //  DB orderId
                                                 })
                                             });
-
+                                            console.log('verify Result', await verifyRes.json)
 
                                             const verifyResult = await verifyRes.json();
-                                            console.log(verifyResult)
+                                            
 
-                                            if (verifyResult.success && verifyResult.order?.orderId) {
-                                                console.log('ji')
+                                            if (verifyResult.success) {
                                                 Swal.fire({
                                                     icon: 'success',
                                                     title: 'Payment Successful!',
                                                     text: 'Your order has been placed successfully.',
                                                     confirmButtonColor: '#3b82f6'
                                                 }).then(() => {
-                                                    console.log("Swal callback triggered");
-                                                    console.log("orderId from backend:", verifyResult.order.orderId);
-
-                                                    window.location.href = `/checkout/order-success?orderId=${verifyResult.order.orderId}`;
+                                                    window.location.href = `/checkout/order-success?orderId=${verifyResult.orderId}`;
                                                 });
                                             } else {
                                                 Swal.fire({
@@ -457,7 +454,7 @@
                                                     text: 'We could not verify your payment.',
                                                     confirmButtonColor: '#d33'
                                                 }).then(() => {
-                                                    window.location.href = `/payment/failure-page/${verifyResult.order.orderId}`;
+                                                    window.location.href = `/payment/failure-page/${verifyResult.orderId}`;
                                                 });
                                             }
                                         },
@@ -468,7 +465,7 @@
                                                 await fetch('/payment/failure', {
                                                     method: 'POST',
                                                     headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ orderId: razorpayOrder.id })
+                                                    body: JSON.stringify({ orderId }) // use DB orderId
                                                 });
                                                 Swal.fire({
                                                     icon: 'error',
@@ -486,9 +483,10 @@
 
                                     // 6️⃣ Razorpay "payment.failed" event
                                     rzp.on('payment.failed', function () {
-                                        window.location.href = `/payment/failure-page/${razorpayOrder.id}`;
+                                        window.location.href = `/payment/failure-page/${orderId}`; // ✅ DB orderId
                                     });
 
+                                    // 7️⃣ Open Razorpay modal
                                     rzp.open();
 
                                 } catch (err) {

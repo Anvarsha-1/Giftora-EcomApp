@@ -74,7 +74,7 @@
                         <a href="/orders"
                             class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Back to
                             my order</a>
-                        <% if (order) { %>
+                        <% if (order && order.paymentStatus!=='Failed') { %>
                             <% if (order.status==='Cancelled' ) { %>
                                 <span
                                     class="px-5 py-2 rounded bg-red-100 text-red-600 font-medium border border-red-200">Order
@@ -169,11 +169,11 @@
                                                         subTotal?.toFixed(2) || order.totalPrice?.toFixed(2)
                                                         || '0.00' %>
                                                 </div>
-                                                <div><span class="font-medium">Tax(5%) :</span> ₹<%= tax?.toFixed(2)
+                                                <div><span class="font-medium">Tax(5%) :</span> ₹<%= order.tax?.toFixed(2)
                                                         || '0.00' %>
                                                 </div>
                                                 <div><span class="font-medium">Shipping:</span> ₹<%=
-                                                        shipping?.toFixed(2) || '0.00' %>
+                                                        order.shippingCharge?.toFixed(2) || '0.00' %>
                                                 </div>
                                                 <% if (order.discountPrice) { %>
                                                     <div><span class="font-medium">Discount:</span> -₹<%=
@@ -248,6 +248,7 @@
                                                     'text-gray-600' %>">
                                                                     <%= item.status %>
                                                                 </span>
+                                                                <% if(order.paymentStatus!=='Failed'){ %>
                                                                 <% if (item.status==='Delivered' ) { %>
                                                                     <% if (item.adminApprovalStatus==='Rejected' ) { %>
                                                                         <span class="text-xs font-medium text-red-600">
@@ -286,11 +287,22 @@
                                                                                             Cancel Item
                                                                                         </button>
                                                                                         <% } %>
+                                                                                        <% } %>
                                                             </div>
                                                         </div>
                                                         <% }); %>
                                                 </div>
                                             </div>
+                                        
+                                           <% if(order.paymentStatus==='Failed'){ %>      
+                                            <div class="text-center mt-6">
+                                                <button onclick="retryPayment(`<%=order.orderId %>`)" id="retryPaymentBtn"
+                                                    class="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 transition">
+                                                    ⟳ Retry Payment
+                                                </button>
+                                            </div>
+                                            <% } %>
+
                         </div>
                     </div>
                     <% } else { %>
@@ -312,6 +324,12 @@
         <!-- Only one SweetAlert2 script, at the end of body -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
+
+
+              function retryPayment(orderId) {
+                    window.location.href = `/payment/retry-payment/${orderId}`
+                }
+
             // Run after DOM is loaded
             window.onload = function () {
                 // Cancel All Orders
