@@ -250,7 +250,7 @@ const updateCartQuantity = async (req, res) => {
         }
 
         if (newQuantity > 10) {
-            return res.json({ success: false, message: "cart quantity limit reached" })
+            return res.json({ success: false, message: "cart quantity limit reached (10)" })
         }
 
         if (newQuantity > product.quantity) {

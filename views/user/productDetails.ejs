@@ -925,112 +925,108 @@
             <script src="https://cdn.jsdelivr.net/npm/jquery-zoom/jquery.zoom.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-            <script>
-                // Initialize Lucide icons
+           <script>
+            // Initialize Lucide icons
+            document.addEventListener("DOMContentLoaded", function () {
+                lucide.createIcons();
+            });
 
-                document.addEventListener("DOMContentLoaded", function () {
-                    lucide.createIcons();
+            // Quantity Selector
+            document.addEventListener('DOMContentLoaded', function () {
+                const decreaseBtn = document.getElementById('decreaseQty');
+                const increaseBtn = document.getElementById('increaseQty');
+                const quantityDisplay = document.getElementById('quantityDisplay');
+                const addToCartBtns = document.querySelectorAll('.add-to-cart');
+                const maxStock = '<%= product.quantity %>';
+                let quantity = 1;
+
+                // Update button states based on quantity
+                function updateButtonStates() {
+                    decreaseBtn.disabled = quantity <= 1;
+                    increaseBtn.disabled = quantity >= maxStock;
+                }
+
+                updateButtonStates();
+
+                // Decrease quantity
+                decreaseBtn.addEventListener('click', function () {
+                    if (quantity > 1) {
+                        quantity--;
+                        quantityDisplay.textContent = quantity;
+                        updateButtonStates();
+                    }
                 });
 
-
-                // Quantity Selector
-                document.addEventListener('DOMContentLoaded', function () {
-                    const decreaseBtn = document.getElementById('decreaseQty');
-                    const increaseBtn = document.getElementById('increaseQty');
-                    const quantityDisplay = document.getElementById('quantityDisplay');
-                    const addToCartBtns = document.querySelectorAll('.add-to-cart');
-                    const maxStock = '<%= product.quantity %>';
-                    let quantity = 1;
-
-                    // Update button states based on quantity
-                    function updateButtonStates() {
-                        decreaseBtn.disabled = quantity <= 1;
-                        increaseBtn.disabled = quantity >= maxStock;
-                    }
-
-                    // Initialize button states
-                    updateButtonStates();
-
-                    // Decrease quantity
-                    decreaseBtn.addEventListener('click', function () {
-                        if (quantity > 1) {
-                            quantity--;
-                            quantityDisplay.textContent = quantity;
-                            updateButtonStates();
-                        }
-                    });
-
-                    // Increase quantity
-                    increaseBtn.addEventListener('click', function () {
-                        if (quantity < maxStock) {
-                            quantity++;
-                            quantityDisplay.textContent = quantity;
-                            updateButtonStates();
-                        } else {
-                            showToast('Reached maximum stock', 'error');
-                        }
-                    });
-
-                    // Add to Cart
-                    addToCartBtns.forEach(btn => {
-                        btn.addEventListener('click', async function () {
-                            const productId = this.getAttribute('data-id');
-                            try {
-                                const response = await fetch('/cart', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({ productId, quantity })
-                                });
-                                const data = await response.json();
-
-                                if (data.success) {
-                                    showToast('Product added to cart', 'success')
-                                    updateCartCount()
-                                } else {
-                                    if (data.message === 'User not logged in') {
-                                        window.location.href = '/login';
-                                    } else {
-                                        showToast(data.message || 'Could not add product to cart', 'error');
-                                    }
-                                }
-                            } catch (err) {
-                                console.error('Error adding to cart:', err);
-                                showToast('Something went wrong', 'error');
-                            }
+                // Increase quantity
+                increaseBtn.addEventListener('click', function () {
+                    if (quantity < maxStock) {
+                        quantity++;
+                        quantityDisplay.textContent = quantity;
+                        updateButtonStates();
+                    } else {
+                        SwalToast.fire({
+                            icon: 'error',
+                            title: 'Reached maximum stock'
                         });
+                    }
+                });
+
+                const SwalToast = Swal.mixin({
+                    toast: true,
+                    position: 'bottom-end',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    }
+                });
+
+                // Add to Cart
+                addToCartBtns.forEach(btn => {
+                    btn.addEventListener('click', async function () {
+                        const productId = this.getAttribute('data-id');
+                        try {
+                            const response = await fetch('/cart', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ productId, quantity })
+                            });
+                            const data = await response.json();
+
+                            if (data.success) {
+                                SwalToast.fire({
+                                    icon: 'success',
+                                    title: 'Product added to cart'
+                                });
+                                updateCartCount();
+                            } else {
+                                if (data.message === 'User not logged in') {
+                                    window.location.href = '/login';
+                                } else {
+                                    SwalToast.fire({
+                                        icon: 'error',
+                                        title: data.message || 'Could not add product to cart'
+                                    });
+                                }
+                            }
+                        } catch (err) {
+                            console.error('Error adding to cart:', err);
+                            SwalToast.fire({
+                                icon: 'error',
+                                title: 'Something went wrong'
+                            });
+                        }
                     });
-                })
+                });
 
-                // Show custom toast notification
-                function showToast(message, type = 'success') {
-                    const toastContainer = document.getElementById('toastContainer');
-                    const toast = document.createElement('div');
-                    toast.className = `toast ${type}`;
+                // ✅ Closing brace added here
+            });
+        </script>
 
-                    const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
-                    const iconColor = type === 'success' ? 'text-green-600' : 'text-red-600';
-
-                    toast.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <i class="${icon} ${iconColor}"></i>
-                    <span class="text-gray-900 font-medium">${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-gray-400 hover:text-gray-600">
-                        <i class="ri-close-line"></i>
-                    </button>
-                </div>
-            `;
-
-                    toastContainer.appendChild(toast);
-
-                    setTimeout(() => toast.classList.add('show'), 100);
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                        setTimeout(() => toast.remove(), 300);
-                    }, 4000);
-                }
-            </script>
 
             <script>
                 $(function () {

@@ -15,6 +15,8 @@ const adminOrders = require('./routers/admin/adminOrderRouter')
 const payment = require('./routers/user/payment.router')
 const session = require('express-session');
 const app = express();
+const AdminCoupon  = require('./routers/admin/admin-coupon-management')
+const userCoupon = require('./routers/user/userCouponRouter')
 
 
 const flash = require('express-flash');
@@ -83,15 +85,22 @@ app.set('views', [
 
 // Routes
 
-app.use('/admin', adminRouter);
-app.use('/account',userAccount)
-app.use('/cart', userCart)
-app.use('/wishlist', userWishlist)
-app.use('/checkout', userCheckout)
-app.use('/orders', userOrders)
+//User
+app.use('/account',userAccount);
+app.use('/cart', userCart);
+app.use('/wishlist', userWishlist);
+app.use('/checkout', userCheckout);
+app.use('/orders', userOrders);
 app.use('/', userRouter);
-app.use('/admin', adminOrders)
-app.use('/payment',payment)
+app.use('/coupons', userCoupon);
+
+
+//Admin
+app.use('/admin', adminRouter);
+app.use('/admin', adminOrders);
+app.use('/payment',payment);
+app.use('/admin', AdminCoupon);
+
 
 
 

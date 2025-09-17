@@ -45,4 +45,8 @@ router.patch('/set-default/addresses/:addressId', userAuth, userAddress.setDefau
 router.get('/wallet', userAuth, userAccount.loadMyWallet)
 
 
+//USER REFERRAL
+router.get('/referral',userAuth,userAccount.loadReferral)
+
+
 module.exports = router

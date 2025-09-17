@@ -242,19 +242,12 @@
                         <div class="bg-green-50 border border-green-200 rounded-md p-3 mb-4">
                             <p class="text-sm text-green-700">
                                 <i data-lucide="truck" class="w-4 h-4 inline mr-1"></i>
-                                <%= deliveryMessage || 'Free delivery on order above ₹1000' %>
+                                <%= deliveryMessage || 'Congrats free delivery on order above ₹1000' %>
                             </p>
                         </div>
 
                         <!-- Coupon Section -->
-                        <div class="mb-6">
-                            <div class="flex space-x-2">
-                                <input type="text" id="couponCode" placeholder="Enter coupon code"
-                                    class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none qty-input">
-                                <button onclick="applyCoupon()"
-                                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium btn">Apply</button>
-                            </div>
-                        </div>
+                        
 
                         <!-- Checkout Button -->
                         <button id="checkoutBtn" onclick="proceedToCheckout()"
@@ -330,60 +323,87 @@
             }
 
             async function updateQuantity(itemId, newQuantity) {
-                try {
-                    const response = await fetch('/cart', {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ itemId, quantity: parseInt(newQuantity) })
-                    });
+                    try {
+                        const response = await fetch('/cart', {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ itemId, quantity: parseInt(newQuantity) })
+                        });
 
-                    const result = await response.json();
-                    if (result.success) {
-                        showToast('Quantity Updated', 'success');
+                        const result = await response.json();
+                        if (result.success) {
+                            // ✅ Success Toast
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Quantity Updated',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
 
-                        const qtyInput = document.querySelector(`input[data-id="${itemId}"]`);
-                        if (qtyInput) qtyInput.value = result.itemQuantity;
+                            const qtyInput = document.querySelector(`input[data-id="${itemId}"]`);
+                            if (qtyInput) qtyInput.value = result.itemQuantity;
 
-                        const itemTotalEl = document.querySelector(`.item-total[data-id="${itemId}"]`);
-                        if (itemTotalEl) {
-                            const itemTotal = result.itemTotal || (result.price * result.itemQuantity);
-                            itemTotalEl.textContent = ` ₹${itemTotal.toLocaleString()}`;
+                            const itemTotalEl = document.querySelector(`.item-total[data-id="${itemId}"]`);
+                            if (itemTotalEl) {
+                                const itemTotal = result.itemTotal || (result.price * result.itemQuantity);
+                                itemTotalEl.textContent = ` ₹${itemTotal.toLocaleString()}`;
+                            }
+
+                            const subtotalEl = document.getElementById('cart-subtotal');
+                            if (subtotalEl) subtotalEl.textContent = `₹${result.subTotal.toLocaleString()}`;
+
+                            const taxEl = document.getElementById('cart-tax');
+                            if (taxEl) taxEl.textContent = `₹${result.tax.toLocaleString()}`;
+
+                            const shippingEl = document.getElementById('cart-shipping');
+                            if (shippingEl) {
+                                shippingEl.textContent = result.shipping === 0 ? 'FREE' : `₹${result.shipping}`;
+                            }
+
+                            const totalEl = document.getElementById('cart-total');
+                            if (totalEl) totalEl.textContent = `₹${result.total.toLocaleString()}`;
+
+                            const totalQtyEl = document.getElementById('total-items');
+                            if (totalQtyEl) totalQtyEl.textContent = `${result.totalQuantity} items`;
+
+                            const itemRow = document.querySelector(`div[data-item-id="${itemId}"]`);
+                            if (itemRow) {
+                                const minusBtn = itemRow.querySelector('.minus-btn');
+                                const plusBtn = itemRow.querySelector('.plus-btn');
+                                if (minusBtn) minusBtn.setAttribute('data-quantity', result.itemQuantity);
+                                if (plusBtn) plusBtn.setAttribute('data-quantity', result.itemQuantity);
+
+                                updateButtonStates(itemId, result.itemQuantity, result.stock);
+                            }
+                        } else {
+                            // ❌ Error Toast
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: result.message || 'Failed to update quantity',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
                         }
-
-                        const subtotalEl = document.getElementById('cart-subtotal');
-                        if (subtotalEl) subtotalEl.textContent = `₹${result.subTotal.toLocaleString()}`;
-
-                        const taxEl = document.getElementById('cart-tax');
-                        if (taxEl) taxEl.textContent = `₹${result.tax.toLocaleString()}`;
-
-                        const shippingEl = document.getElementById('cart-shipping');
-                        if (shippingEl) {
-                            shippingEl.textContent = result.shipping === 0 ? 'FREE' : `₹${result.shipping}`;
-                        }
-
-                        const totalEl = document.getElementById('cart-total');
-                        if (totalEl) totalEl.textContent = `₹${result.total.toLocaleString()}`;
-
-                        const totalQtyEl = document.getElementById('total-items');
-                        if (totalQtyEl) totalQtyEl.textContent = `${result.totalQuantity} items`;
-
-                        const itemRow = document.querySelector(`div[data-item-id="${itemId}"]`);
-                        if (itemRow) {
-                            const minusBtn = itemRow.querySelector('.minus-btn');
-                            const plusBtn = itemRow.querySelector('.plus-btn');
-                            if (minusBtn) minusBtn.setAttribute('data-quantity', result.itemQuantity);
-                            if (plusBtn) plusBtn.setAttribute('data-quantity', result.itemQuantity);
-
-                            updateButtonStates(itemId, result.itemQuantity, result.stock);
-                        }
-                    } else {
-                        showToast(result.message || 'Failed to update quantity', 'error');
+                    } catch (error) {
+                        console.error('Update Quantity Error:', error);
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: 'Failed to update quantity',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
                     }
-                } catch (error) {
-                    console.error('Update Quantity Error:', error);
-                    showToast('Failed to update quantity', 'error');
                 }
-            }
+
 
             function updateButtonStates(itemId, quantity, stock) {
                 const itemRow = document.querySelector(`div[data-item-id="${itemId}"]`);
@@ -441,31 +461,7 @@
                 });
             }
 
-            async function applyCoupon() {
-                const couponCode = document.getElementById('couponCode').value.trim();
-                if (!couponCode) {
-                    showToast('Please enter a coupon code', 'error');
-                    return;
-                }
-
-                try {
-                    const response = await fetch('/cart/apply-coupon', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ couponCode })
-                    });
-                    const result = await response.json();
-
-                    if (result.success) {
-                        showToast(`Coupon Applied! You saved ₹${result.discount}`, 'success');
-                        window.location.reload();
-                    } else {
-                        showToast(result.message || 'This coupon code is not valid', 'error');
-                    }
-                } catch (error) {
-                    showToast('Failed to apply coupon', 'error');
-                }
-            }
+            
 
             async function proceedToCheckout() {
                 try {

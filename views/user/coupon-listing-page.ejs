@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Coupons - E-commerce Store</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user/smooth.css">
+    <style>
+        * {
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .coupon-card {
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .coupon-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .stagger {
+            animation: slideUp 0.4s ease-out both;
+        }
+
+        .stagger:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stagger:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stagger:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stagger:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .stagger:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-btn.active {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .coupon-expired {
+            opacity: 0.6;
+        }
+
+        .coupon-used {
+            background: #F3F4F6;
+            opacity: 0.7;
+        }
+
+        .coupon-active {
+            border-left: 4px solid #10B981;
+        }
+
+        .coupon-inactive {
+            border-left: 4px solid #EF4444;
+        }
+
+        .pagination-btn {
+            transition: all 0.2s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .copy-success {
+            background: #10b981 !important;
+            transform: scale(0.98);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .search-input {
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="flex flex-col md:flex-row gap-8">
+            <%- include('../partials/user/myaccountSidebar.ejs') %>
+                <main
+                    class="flex-1 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+                            <a href="/" class="hover:text-gray-700 transition-colors">Home</a>
+                            <i class="ri-arrow-right-s-line text-gray-400"></i>
+                            <a href="/account/profile" class="hover:text-gray-700 transition-colors">My Account</a>
+                            <i class="ri-arrow-right-s-line text-gray-400"></i>
+                            <span class="text-gray-900">My Coupons</span>
+                        </nav>
+                        <h1 class="text-2xl font-display text-gray-900">My Coupons</h1>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="content-section">
+                            <div class="mb-8">
+                                <p class="text-gray-600 font-body mb-6">Manage and track your available coupons and
+                                    discount codes</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+                                    <div class="bg-blue-50 rounded-lg p-4 border border-blue-100 stagger">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <i class="ri-coupon-line text-blue-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-2xl font-semibold text-gray-900">
+                                                    <%= TotalCouponCount %>
+                                                </p>
+                                                <p class="text-sm text-gray-600 font-body">Total Coupons</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 rounded-lg p-4 border border-green-100 stagger">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                                <i class="ri-check-line text-green-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-2xl font-semibold text-gray-900">
+                                                    <%= couponIsActive %>
+                                                </p>
+                                                <p class="text-sm text-gray-600 font-body">Active</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-orange-50 rounded-lg p-4 border border-orange-100 stagger">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                                                <i class="ri-time-line text-orange-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-2xl font-semibold text-gray-900">
+                                                    <%= totalUsedCount %>
+                                                </p>
+                                                <p class="text-sm text-gray-600 font-body">Used</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-red-50 rounded-lg p-4 border border-red-100 stagger">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                                                <i class="ri-close-line text-red-600"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-2xl font-semibold text-gray-900">
+                                                    <%= expiredCount%>
+                                                </p>
+                                                <p class="text-sm text-gray-600 font-body">Expired</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-6 mb-8 stagger">
+                                <form action="/coupons" method="GET" class="flex flex-col lg:flex-row gap-4">
+                                    <div class="flex-1">
+                                        <div class="relative">
+                                            <i
+                                                class="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <input type="text" name="search" id="searchInput"
+                                                placeholder="Search coupons by code or description..."
+                                                value="<%= searchQuery || '' %>"
+                                                class="search-input w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 font-body">
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button type="submit" name="show" value="all"
+                                            class="filter-btn <%= !show || show === 'all' ? 'active' : '' %> px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors">All</button>
+                                        <button type="submit" name="show" value="active"
+                                            class="filter-btn <%= show === 'active' ? 'active' : '' %> px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors">Active</button>
+                                        <button type="submit" name="show" value="expired"
+                                            class="filter-btn <%= show === 'expired' ? 'active' : '' %> px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors">Expired</button>
+                                        <button type="submit" name="show" value="flat"
+                                            class="filter-btn <%= show === 'flat' ? 'active' : '' %> px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors">Flat
+                                            Discount</button>
+                                        <button type="submit" name="show" value="percentage"
+                                            class="filter-btn <%= show === 'percentage' ? 'active' : '' %> px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors">Percentage</button>
+                                        <button type="submit" name="clear" value="1"
+                                            class="filter-btn px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors">Clear</button>
+                                    </div>
+                                    <div class="relative">
+                                        <select name="sort" id="sortSelect"
+                                            class="px-4 py-3 border border-gray-200 rounded-lg bg-white text-gray-700 font-medium focus:outline-none focus:border-blue-500" onchange="this.form.submit()">
+                                            <option value="newest" <%=sort==='newest' ? 'selected' : '' %>
+                                                >Newest First</option>
+                                            <option value="oldest" <%=sort==='oldest' ? 'selected' : '' %>
+                                                >Oldest First</option>
+                                            <option value="expiry-soon" <%=sort==='expiry-soon' ? 'selected'
+                                                : '' %>>Expiring Soon</option>
+                                            <option value="most-used" <%=sort==='most-used' ? 'selected' : ''
+                                                %>>Most Used</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div id="couponsContainer" class="space-y-4 mb-8">
+                                <% if (coupon.length===0) { %>
+                                    <div id="emptyState" class="text-center py-12">
+                                        <div
+                                            class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i class="ri-coupon-line text-4xl text-gray-400"></i>
+                                        </div>
+                                        <h3 class="text-xl font-display text-gray-900 mb-2">No Coupons Found</h3>
+                                        <p class="text-gray-600 font-body">Try adjusting your search or filter criteria.
+                                        </p>
+                                    </div>
+                                    <% } else { %>
+                                        <% coupon.forEach((coupon, index)=> { %>
+                                            <% const isExpired=new Date(coupon.expiry) < new Date(); %>
+                                                <% const daysUntilExpiry=Math.ceil((new Date(coupon.expiry) - new
+                                                    Date()) / (1000 * 60 * 60 * 24)); %>
+                                                    <% let statusClass=isExpired ? 'coupon-expired' : (coupon.isActive
+                                                        ? 'coupon-active' : 'coupon-inactive' ); %>
+                                                        <div
+                                                            class="coupon-card <%= statusClass %> bg-white border border-gray-200 rounded-lg p-6 stagger">
+                                                            <div
+                                                                class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                                                <div class="flex-1">
+                                                                    <div class="flex items-start gap-4">
+                                                                        <div
+                                                                            class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                                            <i
+                                                                                class="ri-coupon-line text-2xl text-white"></i>
+                                                                        </div>
+                                                                        <div class="flex-1 min-w-0">
+                                                                            <div class="flex items-center gap-2 mb-2">
+                                                                                <h3
+                                                                                    class="text-xl font-bold text-gray-900 font-mono tracking-wider">
+                                                                                    <%= coupon.code %>
+                                                                                </h3>
+                                                                                <span
+                                                                                    class="flex items-center gap-1 text-sm">
+                                                                                    <i
+                                                                                        class="ri-<%= isExpired ? 'close-circle-line text-red-600' : (coupon.isActive ? 'check-circle-line text-green-600' : 'close-circle-line text-red-600') %>"></i>
+                                                                                    <span class="font-medium">
+                                                                                        <%= isExpired ? 'Expired' :
+                                                                                            (coupon.isActive ? 'Active'
+                                                                                            : 'Inactive' ) %>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </div>
+                                                                            <p
+                                                                                class="text-gray-600 font-body mb-3 leading-relaxed">
+                                                                                <%= coupon.description %>
+                                                                            </p>
+                                                                            <div
+                                                                                class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+                                                                                <div class="flex items-center gap-2">
+                                                                                    <i
+                                                                                        class="ri-price-tag-line text-blue-600"></i>
+                                                                                    <span class="text-gray-600">
+                                                                                        <%= coupon.discountType==='percentage'
+                                                                                            ? `${coupon.discount}% Off`
+                                                                                            : `₹${coupon.discount} Off`
+                                                                                            %>
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div class="flex items-center gap-2">
+                                                                                    <i
+                                                                                        class="ri-shopping-cart-line text-green-600"></i>
+                                                                                    <span class="text-gray-600">Min: ₹
+                                                                                        <%= coupon.minPurchase %>
+                                                                                            </span>
+                                                                                </div>
+                                                                                <div class="flex items-center gap-2">
+                                                                                    <i
+                                                                                        class="ri-time-line text-orange-600"></i>
+                                                                                    <span class="text-gray-600">
+                                                                                        <%= daysUntilExpiry> 0 ?
+                                                                                            `${daysUntilExpiry} days
+                                                                                            left` : 'Expired' %>
+                                                                                    </span>
+                                                                                </div>
+                                                                                <div class="flex items-center gap-2">
+                                                                                    <i
+                                                                                        class="ri-refresh-line text-purple-600"></i>
+                                                                                    <span class="text-gray-600">Used <%=
+                                                                                            coupon.usedCount %>x</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex flex-col gap-3 lg:w-48">
+                                                                    <div class="text-right lg:text-center">
+                                                                        <div
+                                                                            class="text-2xl font-bold text-gray-900 mb-1">
+                                                                            <%= coupon.discountType==='percentage' ?
+                                                                                `${coupon.discount}%` :
+                                                                                `₹${coupon.discount}` %>
+                                                                        </div>
+                                                                        <div class="text-sm text-gray-500">
+                                                                            <%= coupon.discountType==='percentage'
+                                                                                ? 'Discount' : 'Off' %>
+                                                                        </div>
+                                                                    </div>
+                                                                    <% if (coupon.isActive && !isExpired) { %>
+                                                                        <button
+                                                                            onclick="copyCouponCode('<%= coupon.code %>')"
+                                                                            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 justify-center">
+                                                                            <i class="ri-file-copy-line"></i>
+                                                                            Copy Code
+                                                                        </button>
+                                                                        <% } else { %>
+                                                                            <button disabled
+                                                                                class="bg-gray-300 text-gray-500 px-6 py-3 rounded-lg font-semibold cursor-not-allowed flex items-center gap-2 justify-center">
+                                                                                <i
+                                                                                    class="ri-<%= isExpired ? 'close-line' : 'check-line' %>"></i>
+                                                                                <%= isExpired ? 'Expired' : 'Used' %>
+                                                                            </button>
+                                                                            <% } %>
+                                                                                <div
+                                                                                    class="text-xs text-gray-500 text-center">
+                                                                                    Expires: <%= new
+                                                                                        Date(coupon.expiry).toLocaleDateString()
+                                                                                        %>
+                                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% }) %>
+                                                            <% } %>
+                            </div>
+
+                            <% if (totalPages> 1) { %>
+                                <div id="paginationContainer" class="flex justify-center items-center gap-2 mt-8">
+                                    <div class="flex items-center gap-2">
+                                        <a href="?page=<%= parseInt(page || 1) - 1 %>&search=<%= searchQuery || '' %>&show=<%=show || 'all' %>&sort=<%= sort || 'newest' %>"
+                                            class="pagination-btn px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-700 font-medium <%= parseInt(page || 1) === 1 ? 'opacity-50 cursor-not-allowed' : '' %>">
+                                            <i class="ri-arrow-left-s-line"></i>
+                                        </a>
+                                        <% const startPage=Math.max(1, parseInt(page || 1) - 2); %>
+                                            <% const endPage=Math.min(totalPages, parseInt(page || 1) + 2); %>
+                                                <% if (startPage> 1) { %>
+                                                    <a href="?page=1&search=<%= searchQuery || '' %>&show=<%= show || 'all' %>&sort=<%= sort || 'newest' %>"
+                                                        class="pagination-btn px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-700 font-medium">1</a>
+                                                    <% if (startPage> 2) { %>
+                                                        <span class="px-2 text-gray-400">...</span>
+                                                        <% } %>
+                                                            <% } %>
+                                                                <% for (let i=startPage; i <=endPage; i++) { %>
+                                                                    <a href="?page=<%= i %>&search=<%= searchQuery || '' %>&show=<%= show || 'all' %>&sort=<%= sort || 'newest' %>"
+                                                                        class="pagination-btn px-4 py-2 border rounded-lg font-medium <%= parseInt(page || 1) === i ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-200' %>">
+                                                                        <%= i %>
+                                                                    </a>
+                                                                    <% } %>
+                                                                        <% if (endPage < totalPages) { %>
+                                                                            <% if (endPage < totalPages - 1) { %>
+                                                                                <span
+                                                                                    class="px-2 text-gray-400">...</span>
+                                                                                <% } %>
+                                                                                    <a href="?page=<%= totalPages %>&search=<%= searchQuery || '' %>&show=<%= show || 'all' %>&sort=<%= sort || 'newest' %>"
+                                                                                        class="pagination-btn px-4 py-2 border border-gray-200 rounded-lg bg-white text-gray-700 font-medium">
+                                                                                        <%= totalPages %>
+                                                                                    </a>
+                                                                                    <% } %>
+                                                                                        <button <%=page>= totalPages ? "disabled" : "" %>
+                                                                                            onclick="if(<%= page < totalPages %>) window.location.href='?page=<%= parseInt(page || 1) + 1 %>&search=<%=
+                                                                                                        searchQuery || '' %>&show=<%= show || 'all' %>&sort=<%= sort || 'newest' %>'"
+                                                                                                                class="pagination-btn px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-700
+                                                                                                                font-medium <%= page>= totalPages ? 'opacity-50 cursor-not-allowed' : '' %>">
+                                                                                                                    <i class="ri-arrow-right-s-line"></i>
+                                                                                        </button>
+
+                                    </div>
+                                    <div class="text-sm text-gray-600 ml-4">
+                                        Showing <%= (parseInt(page || 1) - 1) * limit + 1 %> to <%=
+                                                Math.min(parseInt(page || 1) * limit, TotalCouponCount) %> of <%=
+                                                    TotalCouponCount %> coupons
+                                    </div>
+                                </div>
+                                <% } %>
+                        </div>
+                    </div>
+                </main>
+        </div>
+    </div>
+
+    <div id="notification" class="notification bg-white border border-gray-200 rounded-lg shadow-lg p-4 min-w-[300px]">
+        <div class="flex items-center gap-3">
+            <div id="notificationIcon" class="w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="ri-check-line text-white"></i>
+            </div>
+            <div>
+                <p id="notificationTitle" class="font-semibold text-gray-900"></p>
+                <p id="notificationMessage" class="text-sm text-gray-600"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyCouponCode(code) {
+            navigator.clipboard.writeText(code).then(function () {
+                showNotification('Success!', `Coupon code "${code}" copied to clipboard`, 'success');
+            }).catch(function () {
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showNotification('Success!', `Coupon code "${code}" copied to clipboard`, 'success');
+                } catch (err) {
+                    showNotification('Error', 'Failed to copy coupon code', 'error');
+                }
+                document.body.removeChild(textArea);
+            });
+        }
+
+        function showNotification(title, message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const titleEl = document.getElementById('notificationTitle');
+            const messageEl = document.getElementById('notificationMessage');
+
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            if (type === 'success') {
+                icon.className = 'w-8 h-8 bg-green-500 rounded-full flex items-center justify-center';
+                icon.innerHTML = '<i class="ri-check-line text-white"></i>';
+            } else {
+                icon.className = 'w-8 h-8 bg-red-500 rounded-full flex items-center justify-center';
+                icon.innerHTML = '<i class="ri-close-line text-white"></i>';
+            }
+
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

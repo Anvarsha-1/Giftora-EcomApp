@@ -1,7 +1,7 @@
 const User = require('../models/userSchema'); 
 
 const validateSignupForm = async (formData) => {
-  const { firstName, lastName, phone, email, password, confirmPassword } = formData;
+  const { firstName, lastName, phone, email, password, confirmPassword ,referralCode} = formData;
   let errors = {};
 
   const nameRegex = /^[A-Za-z\s'-]+$/;
@@ -45,6 +45,12 @@ const validateSignupForm = async (formData) => {
 
   if (confirmPassword !== password) {
     errors.confirmPassword = "Passwords do not match";
+  } 
+  if (referralCode){
+    const inviter = await User.findOne({ referralCode: referralCode })
+     if(!inviter){
+       errors.referralCode = "Invalid code"
+     }
   }
 
   return errors;

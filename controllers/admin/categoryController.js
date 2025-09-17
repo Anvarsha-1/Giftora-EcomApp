@@ -1,5 +1,6 @@
 const Category = require("../../models/categorySchema");
 const mongoose = require("mongoose");
+const Product = require('../../models/productSchema')
 
 const categoryManagement = async (req, res) => {
   try {
@@ -50,7 +51,7 @@ const categoryManagement = async (req, res) => {
 
 const addCategory = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description ,offerPercentage} = req.body;
 
     const existingCategory = await Category.findOne({
       name: { $regex: `^${name}$`, $options: "i" }
@@ -59,9 +60,11 @@ const addCategory = async (req, res) => {
     if (existingCategory) {
       return res.status(400).json({ error: "Category already exists" });
     }
+
     const newCategory = new Category({
       name: name.trim(),
       description: description.trim(),
+      categoryOffer: offerPercentage 
     });
     await newCategory.save();
     return res.status(201).json({ message: "Category added successfully" });
@@ -99,49 +102,79 @@ const categoryToggle = async (req, res) => {
   }
 };
 
+
+
 const editCategory = async (req, res) => {
   try {
     const id = req.params.id;
-    const { name, description } = req.body;
+    const { name, description, offerPercentage } = req.body;
 
+    // Check duplicate category name
     const existing = await Category.findOne({
       name: { $regex: `^${name.trim()}$`, $options: "i" },
       _id: { $ne: id },
     });
-
     if (existing) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Category already exists" });
+      return res.status(400).json({ success: false, error: "Category already exists" });
     }
 
-    const updated = await Category.findByIdAndUpdate(
+    // Update category
+    const updatedCategory = await Category.findByIdAndUpdate(
       id,
-      {
-        name,
-        description,
-      },
+      { name, description, categoryOffer:offerPercentage },
       { new: true }
     );
 
-    if (!updated)
-      return res.status(404).json({ message: "category not found" });
+    if (!updatedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
 
-    res.status(200).json({ message: "Category edited successfully" });
+   
+
+    
+
+    await Product.updateMany(
+      { category: id },
+      [
+        {
+          $set: {
+            bestOffer: { $max: ["$productOffer", offerPercentage || 0] },
+            salesPrice: {
+              $round: [
+                {
+                  $subtract: [
+                    "$regularPrice",
+                    {
+                      $multiply: [
+                        "$regularPrice",
+                        { $divide: [{ $max: ["$productOffer", offerPercentage || 0] }, 100] }
+                      ]
+                    }
+                  ]
+                },
+                2
+              ]
+            }
+          }
+        }
+      ]
+    );
+
+    res.status(200).json({ message: "Category and related products updated successfully" });
   } catch (error) {
     console.error("Edit category error:", error);
     res.status(500).json({ message: "Server error while updating category" });
   }
 };
 
+
+
 const deleteCategory = async (req, res) => {
   try {
     const id = req.params.id;
-
-
     const existing = await Category.findById(id);
 
-    if (!existing) return res.status(404).json({ error: "User not found" });
+    if (!existing) return res.status(404).json({ error: "category not found" });
 
     const update = await Category.findByIdAndUpdate(
       id,
@@ -152,6 +185,14 @@ const deleteCategory = async (req, res) => {
     if (!update) {
       res.status(400).json({ error: "Unable to delete Category" });
     }
+
+    await Product.updateMany(
+      { category: id },
+      { status: "Discontinued",
+        isBlocked: true
+      }
+    );
+
 
     res.status(200).json({ message: "Category deleted successfully" });
   } catch (error) {

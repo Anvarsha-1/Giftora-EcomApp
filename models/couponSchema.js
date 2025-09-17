@@ -1,39 +1,84 @@
-const mongoose = required("mongoose");
-const {Schema} = mongoose;
+const mongoose = require('mongoose');
 
-const couponSchema = new Schema({
-    name:{
-        type:String,
-        required:true,
-        unique:true,
+const couponSchema = new mongoose.Schema({
+    code: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        uppercase: true,
     },
-    createdOn: {
+    description: {
+        type: String,
+        required: true,
+    },
+    discountType: {
+        type: String,
+        enum: ['percentage', 'flat'],
+        required: true,
+    },
+    discount: {
+        type: Number,
+        required: true,
+    },
+    minPurchase: {
+        type: Number,
+        required: true,
+    },
+    maxDiscount: {
+        type: Number,
+        required: true,
+    },
+    startDate: {
         type: Date,
-        default:Date.now,
-        required:true,
+        required: true,
     },
-    expiredOn:{
-        type:Date,
-        required:true,
+    expiry: {
+        type: Date,
+        required: true,
     },
-    offerPrice:{
-        type:Number,
-        required:true,
+    usageLimit: {
+        type: Number,
+        required: true,
     },
-    minimumPrice:{
-        type:Number,
-        required: true
+    userUsageLimit: {
+        type: Number,
+        required: true,
     },
-    isListed:{
-        type:Boolean,
-        default:true,
+    usedCount: {
+        type: Number,
+        default: 0,
     },
-    userId:[{
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
+    deletedAt: {
+        type: Date,
+        default: null,
+    },
+    applicableCategories: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref:"User",
+        ref: 'Category',
+    }],
+    applicableProducts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+    }],
+    userUsage: [{
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        orderIds: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Order'
+        }],
     }]
-})
+}, { timestamps: true });
 
-const Coupon = mongoose.model("Coupon",couponSchema);
-
-module.exports = Coupon;
+module.exports = mongoose.model('Coupon', couponSchema);

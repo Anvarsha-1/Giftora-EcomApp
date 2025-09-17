@@ -81,12 +81,13 @@ const addProduct = async (req, res) => {
       quantity,
       regularPrice,
       status,
-      salesPrice,
+      offerPercentage,
     } = req.body;
 
     console.log("Product name in add product", productName)
 
-    if (!productName || !description || !category || !quantity || !regularPrice || !salesPrice) {
+    if (!productName || !description || !category || !quantity || !regularPrice || !offerPercentage) {
+      if (req.files && req.files.length > 0) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
@@ -94,6 +95,7 @@ const addProduct = async (req, res) => {
         formData: req.body,
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
+    }
     }
 
     const validNameRegex = /^[a-zA-Z0-9 _-]+$/
@@ -109,14 +111,16 @@ const addProduct = async (req, res) => {
     }
 
 
-    if (isNaN(quantity) || quantity < 0 || isNaN(regularPrice) || regularPrice < 0 || isNaN(salesPrice) || salesPrice < 0) {
+    if (isNaN(quantity) || quantity < 0 || isNaN(regularPrice) || regularPrice < 0 || isNaN(offerPercentage) || offerPercentage < 0) {
+      if (req.files && req.files.length > 0) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
-        error: 'Quantity, regular price, and sales price must be non-negative numbers',
+        error: 'Quantity, regular price, and offerPercentage must be non-negative numbers',
         formData: req.body,
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
+    }
     }
 
 
@@ -129,6 +133,7 @@ const addProduct = async (req, res) => {
     });
 
     console.log('Duplicate product found:', productExists);
+
     if (productExists) {
       console.log('Duplicate product found:', productExists);
       await deleteUploadedImages(req.files);
@@ -164,15 +169,26 @@ const addProduct = async (req, res) => {
     }
 
 
+    if (status === "Available" && quantity <= 0) {
+      await deleteUploadedImages(req.files);
+      return res.status(400).json({
+        success: false,
+        error: "Quantity must be greater than 0 when status is Available",
+        formData: req.body,
+        cat: await Category.find({ isListed: true, isDeleted: false }),
+      });
+    }
+
     if (status !== "Available" && quantity > 0) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
-        success: false
-        , error: "Quantity must be 0 ",
+        success: false,
+        error: "Quantity must be 0 when product is not Available",
         formData: req.body,
-        cat: await Category.find({ isListed: true, isDeleted: false })
-      })
+        cat: await Category.find({ isListed: true, isDeleted: false }),
+      });
     }
+
 
     console.log("Files received:");
     console.log(req.files.map(file => ({
@@ -181,9 +197,21 @@ const addProduct = async (req, res) => {
       type: file.mimetype
     })));
 
+   
+
+
 
     const images = extractImageData(req.files);
 
+   
+    const productOffer = offerPercentage || 0;
+    const categoryOffer = categoryDoc?.categoryOffer || 0;
+
+
+    const appliedOffer = Math.max(productOffer, categoryOffer);
+
+    const finalPrice = regularPrice - (regularPrice * appliedOffer / 100);
+     
 
     const newProduct = new Product({
       productName: productName.trim(),
@@ -191,9 +219,11 @@ const addProduct = async (req, res) => {
       category: categoryDoc._id,
       regularPrice,
       quantity,
-      salesPrice,
+      salesPrice: finalPrice,
       productImage: images,
       status: status || 'Available',
+      productOffer: offerPercentage || 0,
+      bestOffer: appliedOffer
     });
 
     await newProduct.save();
@@ -258,7 +288,7 @@ const uploadEditProduct = async (req, res) => {
       productId,
       existingImages = [],
       removedImages = [],
-      salesPrice,
+      offerPercentage,
     } = req.body;
 
 
@@ -274,7 +304,7 @@ const uploadEditProduct = async (req, res) => {
     }
 
 
-    if (!productName.trim() || !description.trim() || !category || !quantity.trim() || !regularPrice.trim() || !salesPrice.trim()) {
+    if (!productName.trim() || !description.trim() || !category || !quantity.trim() || !regularPrice.trim() || !offerPercentage.trim()) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
@@ -284,15 +314,16 @@ const uploadEditProduct = async (req, res) => {
       });
     }
 
-    if (isNaN(quantity) || quantity < 0 || isNaN(regularPrice) || regularPrice < 0 || isNaN(salesPrice) || salesPrice < 0) {
+    if (isNaN(quantity) || quantity < 0 || isNaN(regularPrice) || regularPrice < 0 || isNaN(offerPercentage) || offerPercentage < 0) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
-        error: "Quantity, regular price, and sales price must be non-negative numbers",
+        error: "Quantity, regular price, and offerPercentage  must be non-negative numbers",
         formData: req.body,
         cat: await Category.find({ isBlocked: true, isDeleted: false }),
       });
     }
+    const categoryDoc = await Category.find({ isListed: true, isDeleted: false })
 
     const validNameRegex = /^[a-zA-Z0-9 _-]+$/
 
@@ -302,7 +333,7 @@ const uploadEditProduct = async (req, res) => {
         error: "Product only contain alphabets",
         message: "Product only contain alphabets",
         formData: req.body,
-        cat: await Category.find({ isBlocked: true, isDeleted: false }),
+        cat: categoryDoc,
       })
     }
 
@@ -328,7 +359,7 @@ const uploadEditProduct = async (req, res) => {
         success: false,
         error: `You must have exactly 3 images (existing + new). Currently have ${finalImages.length} images.`,
         formData: req.body,
-        cat: await Category.find({ isListed: true, isDeleted: false }),
+        cat: categoryDoc,
       });
     }
 
@@ -339,7 +370,7 @@ const uploadEditProduct = async (req, res) => {
         success: false
         , error: "Quantity must be 0 ",
         formData: req.body,
-        cat: await Category.find({ isListed: true, isDeleted: false })
+        cat: categoryDoc
       })
     }
 
@@ -355,7 +386,21 @@ const uploadEditProduct = async (req, res) => {
         }
       }
     }
+   
 
+    const categoryDetails = await Category.findById(category)
+
+    const catOffer = categoryDetails?.categoryOffer || 0
+    const proOffer = offerPercentage || 0
+
+    
+
+   
+    const appliedOffer = Math.max(catOffer, proOffer)
+
+    const finalAmount = regularPrice  - (appliedOffer*regularPrice) / 100
+
+  
 
     product.productName = productName;
 
@@ -367,9 +412,13 @@ const uploadEditProduct = async (req, res) => {
 
     product.regularPrice = regularPrice;
 
-    product.salesPrice = salesPrice;
+    product.salesPrice = finalAmount;
 
     product.status = status || "Available";
+
+    product.productOffer = offerPercentage;
+
+    product.bestOffer = appliedOffer
 
     product.productImage = finalImages;
 

@@ -10,6 +10,7 @@ const bcrypt = require("bcrypt");
 const product = require("../../models/productSchema")
 const category = require('../../models/categorySchema')
 const Wishlist = require('../../models/wishListSchema')
+const createUniqueReferralCode = require('../../helpers/generateReferralCode')
 
 
 
@@ -103,6 +104,7 @@ const signUp = async (req, res) => {
       confirmPassword,
       referralCode,
     } = req.body;
+    
     const errors = await validateSignupForm(req.body);
 
     if (Object.keys(errors).length > 0) {
@@ -128,6 +130,21 @@ const signUp = async (req, res) => {
         error
       });
     }
+
+    const invitedUser = await User.findOne({ referralCode, referralCode })
+
+    if(!invitedUser){
+      return res.render("user/signUp-page", {
+        errors:error.referralCode="User not found",
+        formData: req.body,
+        message: "",
+        error
+      });
+    }
+
+    
+
+
 
     req.session.userOtp = otp;
     req.session.userData = {
@@ -219,6 +236,11 @@ const verifyOtp = async (req, res) => {
     const { firstName, lastName, phone, email, password, referralCode } =
       req.session.userData;
     const passwordHash = await securePassword(password);
+ 
+
+    const invitedPersonDetails = await User.findOne({ referralCode: referralCode })
+
+    
 
     const newUser = new User({
       firstName,
@@ -226,9 +248,17 @@ const verifyOtp = async (req, res) => {
       phone,
       email,
       password: passwordHash,
-      referralCode,
+      referralCode: await createUniqueReferralCode(),
+      invitedBy: invitedPersonDetails ? invitedPersonDetails._id : null,
+      invitedAt: invitedPersonDetails ? Date.now() : null
     });
     await newUser.save();
+
+    invitedPersonDetails.redeemedUser = newUser._id
+    invitedPersonDetails.referralRewardType = "Coupon"
+    invitedPersonDetails.referralCreatedAt = Date.now()
+
+   
 
     req.session.userOtp = null;
     req.session.userData = null;

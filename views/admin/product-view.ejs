@@ -526,12 +526,15 @@
                     data-status="<%= product.isBlocked ?  'unlisted' : 'listed' %>">
                     <%= product.isBlocked ?   'Unblock':'Block' %>
                   </button>
-                  <button class="action-btn offer" data-id="<%= product._id %>">Add Offer</button>
+                  
                 </td>
               </tr>
               <% }); %>
           </tbody>
         </table>
+
+       
+
 
         <% if (totalPages && totalPages>= 1) { %>
           <div class="pagination">
@@ -825,6 +828,49 @@
       });
     }
   </script>
+
+  <script>
+    const modal = document.getElementById("offerModal");
+    const closeModal = document.getElementById("closeModal");
+    const saveOffer = document.getElementById("saveOffer");
+
+    // Open modal when clicking "Add Offer"
+    document.querySelectorAll(".action-btn.offer").forEach(btn => {
+      btn.addEventListener("click", function () {
+        modal.classList.remove("hidden");
+        modal.dataset.productId = this.dataset.id; // store product id
+      });
+    });
+
+    // Close modal
+    closeModal.addEventListener("click", () => {
+      modal.classList.add("hidden");
+    });
+
+    // Save offer
+    saveOffer.addEventListener("click", () => {
+      const percentage = document.getElementById("offerPercentage").value;
+      const productId = modal.dataset.productId;
+
+      if (!percentage || percentage < 1 || percentage > 100) {
+        alert("Enter a valid percentage (1-100)");
+        return;
+      }
+
+      // Example: send via fetch
+      fetch(`/admin/add-offer/${productId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ percentage })
+      }).then(res => res.json())
+        .then(data => {
+          alert("Offer added successfully!");
+          modal.classList.add("hidden");
+        });
+    });
+  </script>
+
+
 </body>
 
 </html>

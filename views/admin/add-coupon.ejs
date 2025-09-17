@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Coupon</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background-color: #f7fafc;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 896px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+
+        .breadcrumbs {
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .breadcrumbs a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumbs span {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-icon {
+            width: 2rem;
+            height: 2rem;
+            background-color: #1f2937;
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        p {
+            color: #4b5563;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: transparent;
+            box-shadow: 0 0 0 2px #2563eb;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            transition: all 0.2s;
+        }
+
+        .radio-toggle.active {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .radio-toggle.inactive {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .radio-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 9999px;
+        }
+
+        .radio-dot.active {
+            background-color: #ffffff;
+        }
+
+        .radio-dot.inactive {
+            background-color: #9ca3af;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+
+        .input-with-prefix {
+            padding-left: 2rem;
+        }
+
+        .input-with-suffix {
+            padding-right: 2rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .toggle-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-button.active {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .toggle-button.inactive {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .toggle-button:hover {
+            filter: brightness(90%);
+        }
+
+        .category-list,
+        .product-list {
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .category-list.hidden,
+        .product-list.hidden {
+            display: none;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        @media (min-width: 768px) {
+            .checkbox-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .checkbox {
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            accent-color: #2563eb;
+        }
+
+        .product-search {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .product-checkboxes {
+            max-height: 12rem;
+            overflow-y: auto;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .button.secondary {
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+
+        .button.secondary:hover {
+            background-color: #f9fafb;
+        }
+
+        .button.primary {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .button.primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Custom Calendar Popup Styling */
+        .date-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: transparent;
+            box-shadow: 0 0 0 2px #2563eb;
+        }
+
+        .calendar-icon {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .calendar-popup {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            z-index: 1000;
+            width: 300px;
+            margin-top: 0.5rem;
+        }
+
+        .calendar-popup.active {
+            display: block;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+        }
+
+        .calendar-day {
+            padding: 0.2rem;
+            text-align: center;
+            cursor: pointer;
+            color: #374151;
+        }
+
+        .calendar-day:hover {
+            background-color: #e5e7eb;
+            border-radius: 0.25rem;
+        }
+
+        .calendar-day.selected {
+            background-color: #2563eb;
+            color: #ffffff;
+            border-radius: 0.25rem;
+        }
+
+        .calendar-day.header {
+            font-weight: bold;
+            color: #6b7280;
+            cursor: default;
+        }
+
+        .calendar-day.disabled {
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .breadcrumbs {
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .breadcrumbs a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumbs span {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .calendar-day.disabled:hover {
+            background-color: transparent;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-nav {
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .calendar-nav:hover {
+            color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <%-include('../partials/admin/header.ejs') %>
+            <div class="card">
+                <div class="header">
+                    <div class="header-icon">
+                        <i class="ri-coupon-3-line"></i>
+                    </div>
+                    <h1>Add New Coupon</h1>
+                </div>
+                <p>Create a new discount coupon for your customers</p>
+            </div>
+
+            <div class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a> &gt;
+                <a href="/admin/coupons">Coupons</a> &gt;
+                <span>Add New Coupon</span>
+            </div>
+
+            <div class="card">
+                <form id="couponForm">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-coupon-line"></i>
+                            Coupon Code *
+                        </label>
+                        <input type="text" id="couponCode" placeholder="Enter coupon code" class="form-input">
+                        <p id="couponCodeError" class="error-message">Coupon code is required.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-file-text-line"></i>
+                            Description
+                        </label>
+                        <textarea id="description" placeholder="Enter coupon description" class="form-textarea"
+                            rows="4"></textarea>
+                        <p id="descriptionError" class="error-message">Description must be 500 characters or less.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-price-tag-3-line"></i>
+                            Discount Type *
+                        </label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="discountType" value="flat" checked class="sr-only"
+                                    onchange="toggleDiscountType('flat')">
+                                <div id="flatToggle" class="radio-toggle active">
+                                    <div class="radio-dot active"></div>
+                                    <span>₹ Flat Amount (₹)</span>
+                                </div>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="discountType" value="percentage" class="sr-only"
+                                    onchange="toggleDiscountType('percentage')">
+                                <div id="percentageToggle" class="radio-toggle inactive">
+                                    <div class="radio-dot inactive"></div>
+                                    <span>% Percentage (%)</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label id="discountAmountLabel" class="form-label">
+                            <i class="ri-price-tag-3-line"></i>
+                            ₹ Discount Amount *
+                        </label>
+                        <div class="input-group">
+                            <span id="discountPrefix" class="input-prefix">₹</span>
+                            <input type="number" id="discountAmount" placeholder="Enter discount amount"
+                                class="form-input input-with-prefix">
+                        </div>
+                        <p id="discountAmountError" class="error-message">Discount amount must be greater than 0.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-price-tag-3-line"></i>
+                            Maximum Discount Amount
+                        </label>
+                        <div class="input-group">
+                            <span class="input-prefix">₹</span>
+                            <input type="number" id="maxDiscountAmount" placeholder="Enter maximum discount amount"
+                                class="form-input input-with-prefix">
+                        </div>
+                        <p id="maxDiscountAmountError" class="error-message">Maximum discount amount must be greater
+                            than 0
+                            if provided.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-shopping-cart-line"></i>
+                            Minimum Order Amount *
+                        </label>
+                        <input type="number" id="minimumOrderAmount" placeholder="Enter minimum order amount"
+                            class="form-input">
+                        <p id="minimumOrderAmountError" class="error-message">Minimum order amount must be 0 or greater.
+                        </p>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="ri-calendar-line"></i>
+                                Start Date *
+                            </label>
+                            <div class="input-group">
+                                <input type="text" id="startDate" placeholder="Select start date" class="date-input"
+                                    readonly>
+                                <i class="ri-calendar-line calendar-icon" onclick="toggleCalendar('startDate')"></i>
+                                <div id="startDatePopup" class="calendar-popup"></div>
+                            </div>
+                            <p id="startDateError" class="error-message">Start date is required.</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="ri-calendar-line"></i>
+                                Expiration Date *
+                            </label>
+                            <div class="input-group">
+                                <input type="text" id="expirationDate" placeholder="Select expiration date"
+                                    class="date-input" readonly>
+                                <i class="ri-calendar-line calendar-icon"
+                                    onclick="toggleCalendar('expirationDate')"></i>
+                                <div id="expirationDatePopup" class="calendar-popup"></div>
+                            </div>
+                            <p id="expirationDateError" class="error-message">Expiration date is required.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-price-tag-3-line"></i>
+                            Applicable Categories *
+                        </label>
+                        <div id="allCategoriesBtn" class="toggle-button active" onclick="toggleCategories()">
+                            <i class="ri-checkbox-circle-line"></i>
+                            <i class="ri-folder-line"></i>
+                            <span>Apply to All Categories</span>
+                        </div>
+                        <div id="categoryList" class="category-list hidden">
+                            <div class="checkbox-grid">
+                                <% if(category && category.length>1){ %>
+                                    <% category.forEach((cat)=>{%>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" class="checkbox" value="<%=cat._id %>" data-name="<%=cat.name %>">
+                                            <span>
+                                                <%=cat.name %>
+                                            </span>
+                                        </label>
+                                        <% }) %>
+                                            <% } %>
+                            </div>
+                            <p id="categoryListError" class="error-message">At least one category must be selected.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-shopping-cart-line"></i>
+                            Applicable Products *
+                        </label>
+                        <div id="allProductsBtn" class="toggle-button active" onclick="toggleProducts()">
+                            <i class="ri-checkbox-circle-line"></i>
+                            <i class="ri-shopping-bag-line"></i>
+                            <span>Apply to All Products</span>
+                        </div>
+                        <div id="productList" class="product-list hidden">
+                            <div class="product-search">
+                                <i class="ri-search-line search-icon"></i>
+                                <input type="text" placeholder="Search products..." class="form-input input-with-prefix"
+                                    id="productSearch" oninput="filterProducts()">
+                            </div>
+                            <div id="productCheckboxes" class="checkbox-grid product-checkboxes">
+                                <% if(product && product.length>1){ %>
+                                    <% product.forEach((pro)=>{%>
+                                        <label class="checkbox-label product-item" data-id="<%= pro._id %>" data-name="<%= pro.productName %>">
+                                            <input type="checkbox" class="checkbox" value="<%= pro._id %>">
+                                            <span>
+                                                <%= pro.productName %>
+                                            </span>
+                                        </label>
+                                        <% }) %>
+                                            <% } %>
+                            </div>
+                            <p id="productListError" class="error-message">At least one product must be selected.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <h3 class="form-label" style="font-size: 1.125rem; margin-bottom: 1rem;">
+                            <i class="ri-list-check"></i>
+                            Usage Limits
+                        </h3>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="ri-user-line"></i>
+                                    Maximum Uses Per User
+                                </label>
+                                <input type="number" id="maxUsesPerUser" value="1" min="1" class="form-input">
+                                <p id="maxUsesPerUserError" class="error-message">Maximum uses per user must be at least
+                                    1.
+                                </p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="ri-group-line"></i>
+                                    Total Usage Limit
+                                </label>
+                                <input type="number" id="totalUsageLimit" placeholder="Leave empty for unlimited"
+                                    min="1" class="form-input">
+                                <p id="totalUsageLimitError" class="error-message">Total usage limit must be at least 1
+                                    if
+                                    provided.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="radio-label">
+                            <input type="checkbox" id="activeStatus" checked class="sr-only"
+                                onchange="toggleActiveStatus()">
+                            <div id="statusToggle" class="toggle-button active">
+                                <i class="ri-checkbox-circle-line"></i>
+                                <i class="ri-check-line"></i>
+                                <span>Active Status</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="button secondary" onclick="goBack()">
+                            <i class="ri-arrow-left-line"></i>
+                            Back to List
+                        </button>
+                        <button type="submit" class="button primary">
+                            <i class="ri-add-line"></i>
+                            Create Coupon
+                        </button>
+                    </div>
+                </form>
+            </div>
+    </div>
+
+    <script>
+        function toggleDiscountType(type) {
+            const flatToggle = document.getElementById('flatToggle');
+            const percentageToggle = document.getElementById('percentageToggle');
+            const discountAmountLabel = document.getElementById('discountAmountLabel');
+            const discountPrefix = document.getElementById('discountPrefix');
+            const discountAmount = document.getElementById('discountAmount');
+            const maxDiscountAmount = document.getElementById('maxDiscountAmount');
+
+            if (type === 'flat') {
+                flatToggle.className = 'radio-toggle active';
+                percentageToggle.className = 'radio-toggle inactive';
+                discountAmountLabel.innerHTML = `
+                    <i class="ri-price-tag-3-line"></i>
+                    ₹ Discount Amount *
+                `;
+                discountPrefix.innerText = '₹';
+                discountPrefix.className = 'input-prefix';
+                discountAmount.className = 'form-input input-with-prefix';
+                discountAmount.placeholder = 'Enter discount amount';
+                maxDiscountAmount.value = '';
+                maxDiscountAmount.disabled = true;
+            } else {
+                flatToggle.className = 'radio-toggle inactive';
+                percentageToggle.className = 'radio-toggle active';
+                discountAmountLabel.innerHTML = `
+                    <i class="ri-price-tag-3-line"></i>
+                    % Discount Percentage *
+                `;
+                discountPrefix.innerText = '%';
+                discountPrefix.className = 'input-suffix';
+                discountAmount.className = 'form-input input-with-suffix';
+                discountAmount.placeholder = 'Enter discount percentage';
+                maxDiscountAmount.disabled = false;
+            }
+        }
+
+        function toggleCategories() {
+            const categoryList = document.getElementById('categoryList');
+            const allCategoriesBtn = document.getElementById('allCategoriesBtn');
+
+            if (categoryList.classList.contains('hidden')) {
+                categoryList.classList.remove('hidden');
+                allCategoriesBtn.className = 'toggle-button inactive';
+                allCategoriesBtn.innerHTML = `
+                    <i class="ri-folder-line"></i>
+                    <span>Select Specific Categories</span>
+                `;
+            } else {
+                categoryList.classList.add('hidden');
+                allCategoriesBtn.className = 'toggle-button active';
+                allCategoriesBtn.innerHTML = `
+                    <i class="ri-checkbox-circle-line"></i>
+                    <i class="ri-folder-line"></i>
+                    <span>Apply to All Categories</span>
+                `;
+            }
+        }
+
+        function toggleProducts() {
+            const productList = document.getElementById('productList');
+            const allProductsBtn = document.getElementById('allProductsBtn');
+
+            if (productList.classList.contains('hidden')) {
+                productList.classList.remove('hidden');
+                allProductsBtn.className = 'toggle-button inactive';
+                allProductsBtn.innerHTML = `
+                    <i class="ri-shopping-bag-line"></i>
+                    <span>Select Specific Products</span>
+                `;
+            } else {
+                productList.classList.add('hidden');
+                allProductsBtn.className = 'toggle-button active';
+                allProductsBtn.innerHTML = `
+                    <i class="ri-checkbox-circle-line"></i>
+                    <i class="ri-shopping-bag-line"></i>
+                    <span>Apply to All Products</span>
+                `;
+            }
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const productItems = document.querySelectorAll('.product-item');
+
+            productItems.forEach(item => {
+                const nameAttr = item.getAttribute('data-name') || '';
+                const productName = nameAttr.toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleActiveStatus() {
+            const statusToggle = document.getElementById('statusToggle');
+            const activeStatus = document.getElementById('activeStatus');
+
+            if (activeStatus.checked) {
+                statusToggle.className = 'toggle-button active';
+                statusToggle.innerHTML = `
+                    <i class="ri-checkbox-circle-line"></i>
+                    <i class="ri-check-line"></i>
+                    <span>Active Status</span>
+                `;
+            } else {
+                statusToggle.className = 'toggle-button inactive';
+                statusToggle.innerHTML = `
+                    <i class="ri-close-circle-line"></i>
+                    <span>Inactive Status</span>
+                `;
+            }
+        }
+
+        function goBack() {
+            window.location.href = '/admin/coupons'
+        }
+
+        // Custom Calendar Logic
+        let currentDate = new Date();
+
+        function toggleCalendar(inputId) {
+            const popup = document.getElementById(`${inputId}Popup`);
+            popup.classList.toggle('active');
+            if (popup.classList.contains('active')) {
+                renderCalendar(inputId, currentDate.getMonth(), currentDate.getFullYear());
+            }
+        }
+
+        function renderCalendar(inputId, month, year) {
+            const popup = document.getElementById(`${inputId}Popup`);
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const prevLastDay = new Date(year, month, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+
+            popup.innerHTML = `
+                <div class="calendar-header">
+                    <i class="ri-arrow-left-s-line calendar-nav" onclick="changeMonth('${inputId}', -1)"></i>
+                    <span>${new Date(year, month).toLocaleString('default', { month: 'long' })} ${year}</span>
+                    <i class="ri-arrow-right-s-line calendar-nav" onclick="changeMonth('${inputId}', 1)"></i>
+                </div>
+                <div class="calendar-grid" id="${inputId}Grid">
+                    ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => `<div class="calendar-day header">${day}</div>`).join('')}
+                </div>
+            `;
+
+            const grid = document.getElementById(`${inputId}Grid`);
+            // Add padding days from previous month
+            for (let i = startingDay - 1; i >= 0; i--) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day disabled';
+                day.textContent = prevLastDay.getDate() - i;
+                grid.appendChild(day);
+            }
+            // Add days of the current month
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day';
+                const date = new Date(year, month, i).toLocaleDateString('en-CA'); // 'en-CA' gives YYYY-MM-DD in local time
+                day.textContent = i;
+                day.dataset.date = date;
+                grid.appendChild(day);
+            }
+            // Add padding days from next month
+            const nextDays = 7 - (lastDay.getDay() + 1);
+            for (let i = 1; i <= nextDays; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day disabled';
+                day.textContent = i;
+                grid.appendChild(day);
+            }
+
+            // Add event delegation for selecting dates
+            grid.addEventListener('click', function (e) {
+                const dayElement = e.target.closest('.calendar-day');
+                if (dayElement && !dayElement.classList.contains('disabled') && !dayElement.classList.contains('header')) {
+                    const date = dayElement.dataset.date;
+                    document.getElementById(inputId).value = date;
+                    popup.classList.remove('active');
+                    currentDate = new Date(date);
+                    renderCalendar(inputId, currentDate.getMonth(), currentDate.getFullYear()); // Re-render to highlight selected date
+                }
+            });
+
+            // Highlight selected date if it exists
+            const selectedDate = document.getElementById(inputId).value;
+            if (selectedDate) {
+                const selectedDay = grid.querySelector(`[data-date="${selectedDate}"]`);
+                if (selectedDay) selectedDay.classList.add('selected');
+            }
+        }
+
+        function changeMonth(inputId, offset) {
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            renderCalendar(inputId, currentDate.getMonth(), currentDate.getFullYear());
+        }
+
+        document.getElementById('couponForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+
+            const couponCode = document.getElementById('couponCode').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const discountType = document.querySelector('input[name="discountType"]:checked').value;
+            const discountAmount = parseFloat(document.getElementById('discountAmount').value);
+            const maxDiscountAmount = document.getElementById('maxDiscountAmount').value.trim() === '' ? null : parseFloat(document.getElementById('maxDiscountAmount').value);
+            const minimumOrderAmount = parseFloat(document.getElementById('minimumOrderAmount').value);
+            const startDate = document.getElementById('startDate').value;
+            const expirationDate = document.getElementById('expirationDate').value;
+            const maxUsesPerUser = parseInt(document.getElementById('maxUsesPerUser').value);
+            const totalUsageLimit = document.getElementById('totalUsageLimit').value.trim() === '' ? null : parseInt(document.getElementById('totalUsageLimit').value);
+            const activeStatus = document.getElementById('activeStatus').checked;
+
+            let hasError = false;
+
+            if (!couponCode) {
+                document.getElementById('couponCodeError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (description.length > 500) {
+                document.getElementById('descriptionError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (isNaN(discountAmount) || discountAmount <= 0) {
+                document.getElementById('discountAmountError').textContent = 'Discount amount must be greater than 0.';
+                document.getElementById('discountAmountError').style.display = 'block';
+                hasError = true;
+            } else if (discountType === 'percentage' && (discountAmount > 100 || discountAmount < 0)) {
+                document.getElementById('discountAmountError').textContent = 'Discount percentage must be between 0 and 100.';
+                document.getElementById('discountAmountError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (maxDiscountAmount !== null && (isNaN(maxDiscountAmount) || maxDiscountAmount <= 0)) {
+                document.getElementById('maxDiscountAmountError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (isNaN(minimumOrderAmount) || minimumOrderAmount < 0) {
+                document.getElementById('minimumOrderAmountError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (!startDate) {
+                document.getElementById('startDateError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (!expirationDate) {
+                document.getElementById('expirationDateError').style.display = 'block';
+                hasError = true;
+            } else if (startDate && new Date(startDate) > new Date(expirationDate)) {
+                document.getElementById('expirationDateError').textContent = 'Expiration date must be after or equal to start date.';
+                document.getElementById('expirationDateError').style.display = 'block';
+                hasError = true;
+            }
+
+            const categoryList = document.getElementById('categoryList');
+            if (!categoryList.classList.contains('hidden')) {
+                const selectedCategories = document.querySelectorAll('#categoryList input[type="checkbox"]:checked');
+                if (selectedCategories.length === 0) {
+                    document.getElementById('categoryListError').style.display = 'block';
+                    hasError = true;
+                }
+            }
+
+            const productList = document.getElementById('productList');
+            if (!productList.classList.contains('hidden')) {
+                const selectedProducts = document.querySelectorAll('#productList input[type="checkbox"]:checked');
+                if (selectedProducts.length === 0) {
+                    document.getElementById('productListError').style.display = 'block';
+                    hasError = true;
+                }
+            }
+
+            if (isNaN(maxUsesPerUser) || maxUsesPerUser < 1) {
+                document.getElementById('maxUsesPerUserError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (totalUsageLimit !== null && (isNaN(totalUsageLimit) || totalUsageLimit < 1)) {
+                document.getElementById('totalUsageLimitError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (hasError) {
+                return;
+            }
+
+            const maxDiscount = discountType === 'flat' ? discountAmount : maxDiscountAmount;
+            const formData = {
+                couponCode,
+                description,
+                discountType,
+                discountAmount,
+                maxDiscount,
+                minimumOrderAmount,
+                startDate,
+                expirationDate,
+                maxUsesPerUser,
+                totalUsageLimit,
+                activeStatus
+            };
+
+            if (!categoryList.classList.contains('hidden')) {
+                const selectedCategories = [];
+                document.querySelectorAll('#categoryList input[type="checkbox"]:checked').forEach(cb => {
+                    selectedCategories.push(cb.value);
+                });
+                formData.selectedCategories = selectedCategories;
+            } else {
+                formData.applicableCategories = 'all';
+            }
+
+            if (!productList.classList.contains('hidden')) {
+                const selectedProducts = [];
+                document.querySelectorAll('#productList input[type="checkbox"]:checked').forEach(cb => {
+                    selectedProducts.push(cb.value);
+                });
+                formData.selectedProducts = selectedProducts;
+            } else {
+                formData.applicableProducts = 'all';
+            }
+
+            try {
+                const response = await fetch('/admin/coupons/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+              if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.message || 'Coupon created successfully!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then(()=>{
+                        window.location.href="/admin/coupons"
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Something went wrong while creating coupon',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to create coupon.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleActiveStatus();
+            document.getElementById('maxDiscountAmount').disabled = true;
+        });
+
+        // Close calendar popup when clicking outside
+        document.addEventListener('click', function (e) {
+            const popups = document.querySelectorAll('.calendar-popup');
+            popups.forEach(popup => {
+                if (!popup.contains(e.target) && !e.target.classList.contains('calendar-icon')) {
+                    popup.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

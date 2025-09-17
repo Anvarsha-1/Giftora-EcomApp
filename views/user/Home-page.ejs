@@ -1009,7 +1009,7 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge">-40%</div>
+                                                <div class="discount-badge">-<%=flashSales[i].bestOffer%>%</div>
                                             <% if (user)  { %>
                                                 <button type="button" onclick="addWishlist('<%= flashSales[i]._id %>', this)" class="wishlist-btn"
                                                     style="background-color: var(--white); color: <%= wishlistId.includes(flashSales[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
@@ -1145,10 +1145,10 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge">-40%</div>
+                                                <div class="discount-badge">-<%=products[i].bestOffer%>%</div>
                                             <% if  (typeof wishlistId !== 'undefined' && wishlistId.length)  { %>
                                                 <button type="button" onclick="addWishlist('<%= products[i]._id %>', this)" class="wishlist-btn"
-                                                    style="background-color: var(--white); color: <%= wishlistId.includes(products[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
+                                                        style="background-color: var(--white); color: <%= wishlistId.includes(products[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
                                                     <i class="<%= wishlistId.includes(products[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
                                                 </button>
                                                 <% } else { %>
@@ -1235,7 +1235,7 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge">-40%</div>
+                                                <div class="discount-badge">-<%=bestselling[i].bestOffer%>%</div>
                                                 <% if  (typeof wishlistId !== 'undefined' && wishlistId.length)  { %>
                                                     <button type="button"
                                                         onclick="addWishlist('<%= bestselling[i]._id %>', this)"
@@ -1436,37 +1436,51 @@
                 }
 
                 async function addToCart(button) {
-                    const productId = button.getAttribute('data-id');
+                        const productId = button.getAttribute('data-id');
 
-                    try {
-                        const response = await fetch('/cart', {
-                            method: "POST",
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ productId, quantity: 1 })
-                        });
-                        const data = await response.json();
+                        try {
+                            const response = await fetch('/cart', {
+                                method: "POST",
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ productId, quantity: 1 })
+                            });
+                            const data = await response.json();
 
-                        if (data.success) {
-                            showToast('Product added to cart', 'success');
-                            await updateCartCount();
-                        } else {
-                            if (data.message === "User not logged in") {
-                                window.location.href = '/login';
+                            if (data.success) {
+                                // ✅ Success toast
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: 'Product added to cart'
+                                });
+                                await updateCartCount();
                             } else {
-                                showToast(data.message || 'Could not add product to cart', 'error');
+                                if (data.message === "User not logged in") {
+                                    window.location.href = '/login';
+                                } else {
+                                    // ❌ Error toast
+                                    Toast.fire({
+                                        icon: 'error',
+                                        title: data.message || 'Could not add product to cart'
+                                    });
+                                }
                             }
+                        } catch (err) {
+                            console.error(err);
+                            // ❌ Error toast
+                            Toast.fire({
+                                icon: 'error',
+                                title: 'Something went wrong'
+                            });
                         }
-                    } catch (err) {
-                        console.error(err);
-                        showToast('Something went wrong', 'error');
                     }
-                }
+
+              
 
                 const Toast = Swal.mixin({
                     toast: true,
-                    position: 'top-end',
+                    position: 'bottom-end',
                     showConfirmButton: false,
                     timer: 2000,
                     timerProgressBar: true,

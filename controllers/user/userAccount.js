@@ -315,6 +315,19 @@ const loadMyWallet = async (req, res) => {
     }
 };
 
+const loadReferral = async(req,res)=>{
+    try{
+       const userId = req.session.user
+       if(!userId)return res.json({success:false,message:"User not found"})
+       const userDate = await User.findById(userId)
+        if (!userDate) return res.json.json({ success: false, message: "User not found" })
+        return res.render('referralPage',{user:userDate})
+    }catch(error){
+      console.log("Error in loadReferral",error.message)
+      return res.json({success:false,message:"Something went wrong"})
+    }
+}
+
 
 
 
@@ -328,6 +341,7 @@ module.exports = {
     updateUserDetails,
     loadPasswordChange,
     changePassword,
-    loadMyWallet
+    loadMyWallet,
+    loadReferral
 
 }

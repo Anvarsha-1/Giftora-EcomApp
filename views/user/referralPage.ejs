@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Referral Program - E-commerce Store</title>
+    <link rel="stylesheet" href="/styles/output.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .content-section {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .referral-card {
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .referral-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .reward-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+
+        .reward-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+        }
+
+        .stagger {
+            animation: slideUp 0.4s ease-out both;
+        }
+
+        .stagger:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .stagger:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .stagger:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .stagger:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            53%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40%,
+            43% {
+                transform: translateY(-8px);
+            }
+
+            70% {
+                transform: translateY(-4px);
+            }
+        }
+
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2.4);
+                opacity: 0;
+            }
+        }
+
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        .font-body {
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .font-medium {
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+
+        .font-semibold {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .copy-success {
+            background: #10b981 !important;
+            transform: scale(0.98);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<%- include('../partials/user/newheader.ejs') %>
+
+    <body class="bg-gray-50 min-h-screen">
+        <!-- Main Container -->
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Sidebar -->
+                <%- include('../partials/user/myaccountSidebar.ejs') %>
+
+                    <!-- Main Content -->
+                    <main
+                        class="flex-1 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
+                        <!-- Breadcrumb -->
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-4">
+                                <a href="/" class="hover:text-gray-700 transition-colors">Home</a>
+                                <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                <a href="/account/profile" class="hover:text-gray-700 transition-colors">My Account</a>
+                                <i class="ri-arrow-right-s-line text-gray-400"></i>
+                                <span class="text-gray-900">Referral Program</span>
+                            </nav>
+                            <h1 class="text-2xl font-display text-gray-900">Referral Program</h1>
+                        </div>
+
+                        <!-- Content Area -->
+                        <div class="p-6">
+                            <div id="referral-content" class="content-section">
+                                <!-- Header Section -->
+                                <div class="mb-8">
+                                    <p class="text-gray-600 font-body mb-6">Share your referral code with friends and
+                                        earn rewards when they make their first purchase</p>
+
+                                    <!-- Stats Overview -->
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-100 stagger">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                    <i class="ri-group-line text-blue-600"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-2xl font-semibold text-gray-900" id="totalReferred">5
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 font-body">Total Referred</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-green-50 rounded-lg p-4 border border-green-100 stagger">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                                    <i class="ri-check-double-line text-green-600"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-2xl font-semibold text-gray-900"
+                                                        id="successfulReferrals">3</p>
+                                                    <p class="text-sm text-gray-600 font-body">Successful</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-purple-50 rounded-lg p-4 border border-purple-100 stagger">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                                    <i class="ri-gift-line text-purple-600"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-2xl font-semibold text-gray-900">₹450</p>
+                                                    <p class="text-sm text-gray-600 font-body">Rewards Earned</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reward Available Section -->
+                                <div id="rewardSection" class="reward-card rounded-lg p-6 mb-8 text-white stagger">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="flex items-center gap-3">
+                                            <i class="ri-trophy-line text-3xl bounce"></i>
+                                            <div>
+                                                <h3 class="text-xl font-display">Congratulations!</h3>
+                                                <p class="text-purple-100 font-body">You've earned rewards from
+                                                    referrals</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-3xl font-bold">₹150</p>
+                                            <p class="text-purple-100 text-sm">Available to use</p>
+                                        </div>
+                                    </div>
+                                    <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <p class="text-white font-semibold">Referral Bonus</p>
+                                                <p class="text-purple-100 text-sm font-body">Use on your next purchase
+                                                </p>
+                                            </div>
+                                            <button
+                                                class="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                                                Apply Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <!-- Referral Code Section -->
+                                    <div class="referral-card bg-gray-50 rounded-lg p-6 border border-gray-200 stagger">
+                                        <div class="text-center mb-6">
+                                            <h2
+                                                class="text-xl font-display text-gray-900 mb-2 flex items-center justify-center gap-2">
+                                                <i class="ri-share-line text-blue-600"></i>
+                                                Your Referral Code
+                                            </h2>
+                                            <p class="text-gray-600 font-body">Share this code with your friends</p>
+                                        </div>
+
+                                        <!-- Referral Code Display -->
+                                        <div
+                                            class="bg-white rounded-lg p-6 border-2 border-dashed border-gray-200 mb-6">
+                                            <div class="text-center">
+                                                <div class="text-3xl font-mono font-bold text-gray-900 mb-3 tracking-wider"
+                                                    id="referralCode">
+                                                    <%=user?.referralCode %>
+                                                </div>
+                                                <button onclick="copyReferralCode()" id="copyReferralBtn"
+                                                    class="relative pulse-ring bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 mx-auto">
+                                                    <i class="ri-file-copy-line" id="copyIcon"></i>
+                                                    <span id="copyText">Copy Code</span>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Share Options -->
+                                        <div class="space-y-3">
+                                            <p class="text-sm font-semibold text-gray-700 mb-3">Quick Share:</p>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <button onclick="shareWhatsApp()"
+                                                    class="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center gap-2 justify-center font-medium">
+                                                    <i class="ri-whatsapp-line"></i>
+                                                    WhatsApp
+                                                </button>
+                                                <button onclick="shareLink()"
+                                                    class="bg-gray-700 text-white px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors duration-200 flex items-center gap-2 justify-center font-medium">
+                                                    <i class="ri-share-line"></i>
+                                                    Share Link
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Referred Friends List -->
+                                    <div class="referral-card bg-gray-50 rounded-lg p-6 border border-gray-200 stagger">
+                                        <h3 class="text-xl font-display text-gray-900 mb-6 flex items-center gap-2">
+                                            <i class="ri-team-line text-blue-600"></i>
+                                            Referred Friends
+                                        </h3>
+
+                                        <div class="space-y-3 max-h-80 overflow-y-auto" id="referredFriends">
+                                            <!-- Friends list will be populated by JavaScript -->
+                                        </div>
+
+                                        <div class="mt-6 text-center">
+                                            <p class="text-sm text-gray-500 font-body">
+                                                Keep sharing to earn more rewards!
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- How It Works Section -->
+                                <div class="mt-12 bg-gray-50 rounded-lg p-8 border border-gray-200">
+                                    <h3 class="text-2xl font-display text-gray-900 mb-8 text-center">
+                                        How Referral Program Works
+                                    </h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                                        <div class="text-center stagger">
+                                            <div
+                                                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <i class="ri-share-forward-line text-blue-600 text-2xl"></i>
+                                            </div>
+                                            <h4 class="text-lg font-semibold text-gray-900 mb-2">1. Share Your Code</h4>
+                                            <p class="text-gray-600 font-body leading-relaxed">Share your unique
+                                                referral code with friends and family through social media or direct
+                                                messaging</p>
+                                        </div>
+                                        <div class="text-center stagger">
+                                            <div
+                                                class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <i class="ri-user-add-line text-green-600 text-2xl"></i>
+                                            </div>
+                                            <h4 class="text-lg font-semibold text-gray-900 mb-2">2. Friend Makes
+                                                Purchase</h4>
+                                            <p class="text-gray-600 font-body leading-relaxed">Your friend uses your
+                                                code during checkout and makes their first purchase on our store</p>
+                                        </div>
+                                        <div class="text-center stagger">
+                                            <div
+                                                class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <i class="ri-gift-2-line text-purple-600 text-2xl"></i>
+                                            </div>
+                                            <h4 class="text-lg font-semibold text-gray-900 mb-2">3. Both Get Rewards
+                                            </h4>
+                                            <p class="text-gray-600 font-body leading-relaxed">You earn ₹50 credit and
+                                                your friend gets 10% off their first order. Win-win!</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Terms Section -->
+                                <div class="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                                    <h4 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                        <i class="ri-information-line text-yellow-600"></i>
+                                        Terms & Conditions
+                                    </h4>
+                                    <ul class="text-sm text-gray-700 space-y-1 font-body">
+                                        <li>• Referral rewards are credited after successful purchase by referred user
+                                        </li>
+                                        <li>• Maximum 5 successful referrals per month</li>
+                                        <li>• Rewards cannot be transferred or converted to cash</li>
+                                        <li>• Referral code is valid for new customers only</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="notification"
+            class="notification bg-white border border-gray-200 rounded-lg shadow-lg p-4 min-w-[300px]">
+            <div class="flex items-center gap-3">
+                <div id="notificationIcon" class="w-8 h-8 rounded-full flex items-center justify-center">
+                    <i class="ri-check-line text-white"></i>
+                </div>
+                <div>
+                    <p id="notificationTitle" class="font-semibold text-gray-900"></p>
+                    <p id="notificationMessage" class="text-sm text-gray-600"></p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Sample data for referred friends
+            const referredFriends = [
+                { id: 1, name: "Sarah Johnson", phone: "+91 98765 43210", status: "completed", reward: 50, date: "2024-12-15", initials: "SJ" },
+                { id: 2, name: "Mike Chen", phone: "+91 98765 43211", status: "completed", reward: 50, date: "2024-12-14", initials: "MC" },
+                { id: 3, name: "Emily Davis", phone: "+91 98765 43212", status: "pending", reward: 0, date: "2024-12-13", initials: "ED" },
+                { id: 4, name: "Alex Kumar", phone: "+91 98765 43213", status: "completed", reward: 50, date: "2024-12-12", initials: "AK" },
+                { id: 5, name: "Lisa Wang", phone: "+91 98765 43214", status: "pending", reward: 0, date: "2024-12-11", initials: "LW" },
+            ];
+
+            const referralCode = "<%= user.referralCode %>";
+            const referralLink = `https://yourstore.com/ref/${referralCode}`;
+
+            // Initialize the page
+            function init() {
+                populateFriendsList();
+                updateStats();
+            }
+
+            // Populate friends list
+            function populateFriendsList() {
+                const friendsList = document.getElementById('referredFriends');
+                friendsList.innerHTML = '';
+
+                referredFriends.forEach(friend => {
+                    const friendCard = document.createElement('div');
+                    friendCard.className = `flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-all duration-200`;
+
+                    friendCard.innerHTML = `
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+                                ${friend.initials}
+                            </div>
+                            <div>
+                                <div class="font-semibold text-gray-900">${friend.name}</div>
+                                <div class="text-sm text-gray-500 flex items-center gap-1">
+                                    <i class="ri-phone-line text-xs"></i>
+                                    ${friend.phone}
+                                </div>
+                                <div class="text-xs text-gray-400 mt-1">Referred: ${formatDate(friend.date)}</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            ${friend.status === 'completed' ?
+                            `<div class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                                    <i class="ri-check-line"></i>
+                                    Completed
+                                </div>
+                                <div class="text-sm text-green-600 font-semibold mt-1">+₹${friend.reward}</div>` :
+                            `<div class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                                    <i class="ri-time-line"></i>
+                                    Pending
+                                </div>
+                                <div class="text-sm text-gray-400 mt-1">₹0</div>`
+                        }
+                        </div>
+                    `;
+
+                    friendsList.appendChild(friendCard);
+                });
+            }
+
+            // Update statistics
+            function updateStats() {
+                const totalReferred = referredFriends.length;
+                const successful = referredFriends.filter(friend => friend.status === 'completed').length;
+
+                document.getElementById('totalReferred').textContent = totalReferred;
+                document.getElementById('successfulReferrals').textContent = successful;
+            }
+
+            // Copy referral code
+            async function copyReferralCode() {
+                try {
+                    await navigator.clipboard.writeText(referralCode);
+                    const copyBtn = document.getElementById('copyReferralBtn');
+                    const copyIcon = document.getElementById('copyIcon');
+                    const copyText = document.getElementById('copyText');
+
+                    // Visual feedback
+                    copyBtn.classList.add('copy-success');
+                    copyIcon.className = 'ri-check-line';
+                    copyText.textContent = 'Copied!';
+
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copy-success');
+                        copyIcon.className = 'ri-file-copy-line';
+                        copyText.textContent = 'Copy Code';
+                    }, 2000);
+
+                    showNotification('Success!', 'Referral code copied to clipboard', 'success');
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                    showNotification('Error', 'Failed to copy referral code', 'error');
+                }
+            }
+
+            // Share via WhatsApp
+            function shareWhatsApp() {
+                const message = `🛍️ Hey! I found this amazing store with great products! Use my referral code "${referralCode}" and get 10% off your first order! Check it out: ${referralLink}`;
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+                showNotification('Shared!', 'Opening WhatsApp to share your code', 'info');
+            }
+
+            // Share link
+            async function shareLink() {
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: 'Great Deals Await!',
+                            text: `Use my referral code "${referralCode}" for 10% off your first order!`,
+                            url: referralLink
+                        });
+                        showNotification('Shared!', 'Thanks for sharing your referral code', 'success');
+                    } catch (err) {
+                        console.log('Error sharing:', err);
+                        copyShareLink();
+                    }
+                } else {
+                    copyShareLink();
+                }
+            }
+
+            // Copy share link as fallback
+            async function copyShareLink() {
+                try {
+                    const message = `🛍️ Use my referral code "${referralCode}" for 10% off your first order! ${referralLink}`;
+                    await navigator.clipboard.writeText(message);
+                    showNotification('Copied!', 'Share message copied to clipboard', 'success');
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                    showNotification('Error', 'Failed to copy share link', 'error');
+                }
+            }
+
+            // Format date
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            }
+
+            // Show notification
+            function showNotification(title, message, type = 'info') {
+                const notification = document.getElementById('notification');
+                const icon = document.getElementById('notificationIcon');
+                const titleEl = document.getElementById('notificationTitle');
+                const messageEl = document.getElementById('notificationMessage');
+
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+
+                // Set icon and color based on type
+                if (type === 'success') {
+                    icon.className = 'w-8 h-8 bg-green-500 rounded-full flex items-center justify-center';
+                    icon.innerHTML = '<i class="ri-check-line text-white"></i>';
+                } else if (type === 'error') {
+                    icon.className = 'w-8 h-8 bg-red-500 rounded-full flex items-center justify-center';
+                    icon.innerHTML = '<i class="ri-close-line text-white"></i>';
+                } else {
+                    icon.className = 'w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center';
+                    icon.innerHTML = '<i class="ri-information-line text-white"></i>';
+                }
+
+                // Show notification
+                notification.classList.add('show');
+
+                // Hide after 4 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+            }
+
+            // Initialize when page loads
+            document.addEventListener('DOMContentLoaded', init);
+        </script>
+    </body>
+
+</html>

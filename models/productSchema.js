@@ -33,6 +33,10 @@ const productSchema = new mongoose.Schema({
         require:true,
         default:0,
       },
+      bestOffer: {
+        type: Number,
+        default: 0
+      },
       productImage:[
       {
         url:String,

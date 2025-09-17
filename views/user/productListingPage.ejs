@@ -862,9 +862,10 @@
                           <i class="fas fa-image text-[3rem] text-[#6c757d] opacity-30"></i>
                         </div>
                         <% } %>
-                          <div class="discount-badge <%= products[i].status === 'Available' ? '' : 'out-of-stock' %>">
-                            <%= products[i].status==='Available' ? '-40%' : 'Out of Stock' %>
-                          </div>
+                        <div class="discount-badge <%= products[i].status === 'Available' ? '' : 'out-of-stock' %>">
+                          <%= products[i].status==='Available' ? `-${products[i].bestOffer}%` : 'Out of Stock' %>
+                        </div>
+
 
                           <% if (!user) { %>
                             <button type="button" class="wishlist-btn" style="color: var(--dark-gray)">
@@ -1091,7 +1092,7 @@
             <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
           </a>
           ${p.status === 'Available' ? `
-            <div class="discount-badge">-40%</div>
+            <div class="discount-badge">-${p.bestOffer}%</div>
           ` : `
             <div class="discount-badge out-of-stock">Out of Stock</div>
           `}
@@ -1351,7 +1352,7 @@
         // Wishlist and cart scripts
         const Toast = Swal.mixin({
           toast: true,
-          position: 'top-end',
+          position: 'bottom-end',
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,
@@ -1429,7 +1430,7 @@
 
         const CartToast = Swal.mixin({
           toast: true,
-          position: 'top-end',
+          position: 'bottom-end',
           showConfirmButton: false,
           timer: 2000,
           timerProgressBar: true,

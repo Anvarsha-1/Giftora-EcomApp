@@ -191,6 +191,9 @@ const cancelOrder = async (req, res) => {
         if (!order) {
             return res.json({ success: false, message: "Order not found" })
         }
+        if(order.status==='Delivered'){
+            return res.json({message:"Invalid request",success:false})
+        }
 
 
         for (let item of order.orderedItems) {
@@ -263,7 +266,7 @@ const returnOrder = async (req, res) => {
        
         const { reason } = req.body
         if (!orderId) {
-            return res.json({ success: false, message: "Invalid request" })
+            return res.json({ success: false, message: "Invalid request .Cannot return delivered Item" })
         }
         if (!reason || reason.length < 3 || reason.length > 50) {
             return res.json({ success: false, message: "reason required or reason  must be 3-50 characters" })

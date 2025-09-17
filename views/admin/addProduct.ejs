@@ -80,13 +80,20 @@
                     <span class="error" id="regularPrice-error"></span>
                   </div>
                   <div class="form-group">
-                    <label for="salesPrice">Sales Price</label>
-                    <input type="number" id="salesPrice" name="salesPrice" min="0" step="1"
-                      value="<%= typeof formData !== 'undefined' ? formData.salesPrice : '' %>" />
-                    <span class="error" id="salesPrice-error"></span>
+                    <label for="offerPercentage">Offer Percentage (%)</label>
+                    <input type="number" id="offerPercentage" name="offerPercentage" min="0" max="100" step="0.01"
+                      value="<%= typeof formData !== 'undefined' ? formData.offerPercentage : '' %>" />
+                    <span class="error" id="offerPercentage-error"></span>
                   </div>
                   <div class="form-group">
-                    <label for="status">Status</label>
+                    <label for="calculatedSalesPrice">Calculated Sales Price</label>
+                    <input type="number" id="calculatedSalesPrice" name="salesPrice" readonly
+                      style="background-color: #f5f5f5; cursor: not-allowed;" />
+                    <small style="color: #666;">This price is automatically calculated based on regular price and offer
+                      percentage</small>
+                  </div>
+                  <div class="form-group">
+                   <label for="status">Status</label>
                     <select id="status" name="status">
                       <option value="Available" <%=typeof formData !=='undefined' && formData.status==='Available'
                         ? 'selected' : '' %>>Available</option>
@@ -144,6 +151,27 @@
     const submitButton = document.getElementById('submitButton');
     const serverError = document.getElementById('server-error');
     const imagesError = document.getElementById('imagesError');
+
+    // Function to calculate sales price based on regular price and offer percentage
+    function calculateSalesPrice() {
+      const regularPrice = parseFloat(document.getElementById('regularPrice').value) || 0;
+      const offerPercentage = parseFloat(document.getElementById('offerPercentage').value) || 0;
+
+      if (regularPrice > 0 && offerPercentage >= 0) {
+        const discount = (regularPrice * offerPercentage) / 100;
+        const salesPrice = regularPrice - discount;
+        document.getElementById('calculatedSalesPrice').value = salesPrice.toFixed(2);
+      } else {
+        document.getElementById('calculatedSalesPrice').value = '';
+      }
+    }
+
+    // Add event listeners for automatic calculation
+    document.getElementById('regularPrice').addEventListener('input', calculateSalesPrice);
+    document.getElementById('offerPercentage').addEventListener('input', calculateSalesPrice);
+
+    // Initialize calculation on page load
+    calculateSalesPrice();
 
     // Initialize file inputs
     document.querySelectorAll('input[type="file"]').forEach((input, index) => {
@@ -284,13 +312,14 @@
         document.getElementById('regularPrice-error').textContent = 'Please enter a valid price.';
         valid = false;
       }
-      const salesPrice = document.getElementById('salesPrice');
-      if (!salesPrice.value || salesPrice.value < 0) {
-        document.getElementById('salesPrice-error').textContent = 'Please enter a valid sales price.';
+      const offerPercentage = document.getElementById('offerPercentage');
+      if (!offerPercentage.value || offerPercentage.value < 0 || offerPercentage.value > 100) {
+        document.getElementById('offerPercentage-error').textContent = 'Please enter a valid offer percentage (0-100).';
         valid = false;
       }
-      if (parseFloat(salesPrice.value) >= parseFloat(regularPrice.value)) {
-        document.getElementById('salesPrice-error').textContent = 'Sales price must be less than regular price.';
+      const calculatedSalesPrice = document.getElementById('calculatedSalesPrice');
+      if (!calculatedSalesPrice.value || parseFloat(calculatedSalesPrice.value) >= parseFloat(regularPrice.value)) {
+        document.getElementById('offerPercentage-error').textContent = 'Offer percentage must result in a sales price less than regular price.';
         valid = false;
       }
       if (!validateImages()) {
@@ -347,8 +376,9 @@
             document.getElementById('category').value = result.formData.category || '';
             document.getElementById('quantity').value = result.formData.quantity || '';
             document.getElementById('regularPrice').value = result.formData.regularPrice || '';
-            document.getElementById('salesPrice').value = result.formData.salesPrice || '';
+            document.getElementById('offerPercentage').value = result.formData.offerPercentage || '';
             document.getElementById('status').value = result.formData.status || 'Available';
+            calculateSalesPrice(); // Recalculate after setting values
           }
           await Swal.fire({
             icon: 'error',

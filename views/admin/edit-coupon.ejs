@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Coupon</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    body {
+        background-color: #f7fafc;
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        margin: 0;
+    }
+
+    .container {
+        max-width: 896px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .breadcrumbs {
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .breadcrumbs a {
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumbs span {
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .header-icon {
+        width: 2rem;
+        height: 2rem;
+        background-color: #1f2937;
+        border-radius: 0.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #1f2937;
+    }
+
+    p {
+        color: #4b5563;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-input,
+    .form-textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+        box-sizing: border-box;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: transparent;
+        box-shadow: 0 0 0 2px #2563eb;
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .error-message {
+        color: #ef4444;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+        display: none;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .radio-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .radio-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        transition: all 0.2s;
+    }
+
+    .radio-toggle.active {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+
+    .radio-toggle.inactive {
+        background-color: #e5e7eb;
+        color: #374151;
+    }
+
+    .radio-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 9999px;
+    }
+
+    .radio-dot.active {
+        background-color: #ffffff;
+    }
+
+    .radio-dot.inactive {
+        background-color: #9ca3af;
+    }
+
+    .input-group {
+        position: relative;
+    }
+
+    .input-prefix {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+    }
+
+    .input-suffix {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+    }
+
+    .input-with-prefix {
+        padding-left: 2rem;
+    }
+
+    .input-with-suffix {
+        padding-right: 2rem;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+        .grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .toggle-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .toggle-button.active {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+
+    .toggle-button.inactive {
+        background-color: #e5e7eb;
+        color: #374151;
+    }
+
+    .toggle-button:hover {
+        filter: brightness(90%);
+    }
+
+    .category-list,
+    .product-list {
+        background-color: #f9fafb;
+        border-radius: 0.5rem;
+        padding: 1rem;
+    }
+
+    .category-list.hidden,
+    .product-list.hidden {
+        display: none;
+    }
+
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    @media (min-width: 768px) {
+        .checkbox-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+    }
+
+    .checkbox {
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        accent-color: #2563eb;
+    }
+
+    .product-search {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+    }
+
+    .product-checkboxes {
+        max-height: 12rem;
+        overflow-y: auto;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .button.secondary {
+        border: 1px solid #d1d5db;
+        color: #374151;
+    }
+
+    .button.secondary:hover {
+        background-color: #f9fafb;
+    }
+
+    .button.primary {
+        background-color: #2563eb;
+        color: #ffffff;
+    }
+
+    .button.primary:hover {
+        background-color: #1d4ed8;
+    }
+
+    /* Custom Calendar Popup Styling */
+    .date-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        transition: all 0.2s;
+        cursor: pointer;
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    .date-input:focus {
+        outline: none;
+        border-color: transparent;
+        box-shadow: 0 0 0 2px #2563eb;
+    }
+
+    .calendar-icon {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .calendar-popup {
+        display: none;
+        position: absolute;
+        background-color: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        z-index: 1000;
+        width: 300px;
+        margin-top: 0.5rem;
+    }
+
+    .calendar-popup.active {
+        display: block;
+    }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.25rem;
+    }
+
+    .calendar-day {
+        padding: 0.5rem;
+        text-align: center;
+        cursor: pointer;
+        color: #374151;
+    }
+
+    .calendar-day:hover {
+        background-color: #e5e7eb;
+        border-radius: 0.25rem;
+    }
+
+    .calendar-day.selected {
+        background-color: #2563eb;
+        color: #ffffff;
+        border-radius: 0.25rem;
+    }
+
+    .calendar-day.header {
+        font-weight: bold;
+        color: #6b7280;
+        cursor: default;
+    }
+
+    .calendar-day.disabled {
+        color: #9ca3af;
+        cursor: not-allowed;
+    }
+
+    .breadcrumbs {
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .breadcrumbs a {
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+        text-decoration: underline;
+    }
+
+    .breadcrumbs span {
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .calendar-day.disabled:hover {
+        background-color: transparent;
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .calendar-nav {
+        cursor: pointer;
+        color: #6b7280;
+    }
+
+    .calendar-nav:hover {
+        color: #2563eb;
+    }
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div class="header-icon">
+                    <i class="ri-coupon-3-line"></i>
+                </div>
+                <h1>Edit Coupon</h1>
+            </div>
+            <p>Update the details of an existing coupon</p>
+        </div>
+
+        <div class="breadcrumbs">
+            <a href="/admin/dashboard">Dashboard</a> &gt;
+            <a href="/admin/coupons">Coupons</a> &gt;
+            <span>Edit Coupon</span>
+        </div>
+
+        <div class="card">
+            <form id="couponForm">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="ri-coupon-line"></i>
+                        Coupon Code *
+                    </label>
+                    <input type="text" id="couponCode" name="code" value="<%= coupon.code %>"
+                        placeholder="Enter coupon code" class="form-input">
+                    <p id="couponCodeError" class="error-message">Coupon code is required.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="ri-file-text-line"></i>
+                        Description
+                    </label>
+                    <textarea id="description" name="description" placeholder="Enter coupon description"
+                        class="form-textarea" rows="4"><%= coupon.description %></textarea>
+                    <p id="descriptionError" class="error-message">Description must be 500 characters or less.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="ri-price-tag-3-line"></i>
+                        Discount Type *
+                    </label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="discountType" value="flat" <%=coupon.discountType==='flat'
+                                ? 'checked' : '' %> class="sr-only" onchange="toggleDiscountType('flat')">
+                            <div id="flatToggle"
+                                class="radio-toggle <%= coupon.discountType === 'flat' ? 'active' : 'inactive' %>">
+                                <div class="radio-dot <%= coupon.discountType === 'flat' ? 'active' : 'inactive' %>">
+                                </div>
+                                <span>₹ Flat Amount (₹)</span>
+                            </div>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="discountType" value="percentage"
+                                <%=coupon.discountType==='percentage' ? 'checked' : '' %> class="sr-only"
+                            onchange="toggleDiscountType('percentage')">
+                            <div id="percentageToggle"
+                                class="radio-toggle <%= coupon.discountType === 'percentage' ? 'active' : 'inactive' %>">
+                                <div
+                                    class="radio-dot <%= coupon.discountType === 'percentage' ? 'active' : 'inactive' %>">
+                                </div>
+                                <span>% Percentage (%)</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="discountAmountLabel" class="form-label">
+                        <i class="ri-price-tag-3-line"></i>
+                        <%= coupon.discountType==='flat' ? '₹ Discount Amount *' : '% Discount Percentage *' %>
+                    </label>
+                    <div class="input-group">
+                        <span id="discountPrefix"
+                            class="<%= coupon.discountType === 'flat' ? 'input-prefix' : 'input-suffix' %>">
+                            <%= coupon.discountType==='flat' ? '₹' : '%' %>
+                        </span>
+                        <input type="number" id="discountAmount" name="discount" value="<%= coupon.discount %>"
+                            placeholder="<%= coupon.discountType === 'flat' ? 'Enter discount amount' : 'Enter discount percentage' %>"
+                            class="form-input <%= coupon.discountType === 'flat' ? 'input-with-prefix' : 'input-with-suffix' %>">
+                    </div>
+                    <p id="discountAmountError" class="error-message">Discount amount must be greater than 0.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="ri-price-tag-3-line"></i>
+                        Maximum Discount Amount
+                    </label>
+                    <div class="input-group">
+                        <span class="input-prefix">₹</span>
+                        <input type="number" id="maxDiscountAmount" name="maxDiscount" value="<%= coupon.maxDiscount %>"
+                            placeholder="Enter maximum discount amount" class="form-input input-with-prefix"
+                            <%=coupon.discountType==='flat' ? 'disabled' : '' %>>
+                    </div>
+                    <p id="maxDiscountAmountError" class="error-message">Maximum discount amount must be greater than 0
+                        if provided.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="ri-shopping-cart-line"></i>
+                        Minimum Order Amount *
+                    </label>
+                    <input type="number" id="minimumOrderAmount" name="minPurchase" value="<%= coupon.minPurchase %>"
+                        placeholder="Enter minimum order amount" class="form-input">
+                    <p id="minimumOrderAmountError" class="error-message">Minimum order amount must be 0 or greater.</p>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-calendar-line"></i>
+                            Start Date *
+                        </label>
+                        <div class="input-group">
+                            <input type="text" id="startDate" name="startDate"
+                                value="<%= coupon.startDate.toISOString().split('T')[0] %>"
+                                placeholder="Select start date" class="date-input" readonly>
+                            <i class="ri-calendar-line calendar-icon" onclick="toggleCalendar('startDate')"></i>
+                            <div id="startDatePopup" class="calendar-popup"></div>
+                        </div>
+                        <p id="startDateError" class="error-message">Start date is required.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="ri-calendar-line"></i>
+                            Expiration Date *
+                        </label>
+                        <div class="input-group">
+                            <input type="text" id="expirationDate" name="expiry"
+                                value="<%= coupon.expiry.toISOString().split('T')[0] %>"
+                                placeholder="Select expiration date" class="date-input" readonly>
+                            <i class="ri-calendar-line calendar-icon" onclick="toggleCalendar('expirationDate')"></i>
+                            <div id="expirationDatePopup" class="calendar-popup"></div>
+                        </div>
+                        <p id="expirationDateError" class="error-message">Expiration date is required.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="ri-price-tag-3-line"></i>
+                        Applicable Categories *
+                    </label>
+                    <div id="allCategoriesBtn"
+                        class="toggle-button <%= coupon.applicableCategories.length === 0 ? 'active' : 'inactive' %>"
+                        onclick="toggleCategories()">
+                        <i
+                            class="ri-<%= coupon.applicableCategories.length === 0 ? 'checkbox-circle-line' : 'folder-line' %>"></i>
+                        <span>
+                            <%= coupon.applicableCategories.length===0 ? 'Apply to All Categories'
+                                : 'Select Specific Categories' %>
+                        </span>
+                    </div>
+                    <div id="categoryList"
+                        class="category-list <%= coupon.applicableCategories.length === 0 ? 'hidden' : '' %>">
+                        <div class="checkbox-grid">
+                            <% categories.forEach(category=> { %>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="applicableCategories" value="<%= category._id %>"
+                                        <%=coupon.applicableCategories.includes(category._id) ? 'checked' : '' %>
+                                    class="checkbox">
+                                    <span>
+                                        <%= category.name %>
+                                    </span>
+                                </label>
+                                <% }) %>
+                        </div>
+                        <p id="categoryListError" class="error-message">At least one category must be selected.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="ri-shopping-cart-line"></i>
+                        Applicable Products *
+                    </label>
+                    <div id="allProductsBtn"
+                        class="toggle-button <%= coupon.applicableProducts.length === 0 ? 'active' : 'inactive' %>"
+                        onclick="toggleProducts()">
+                        <i
+                            class="ri-<%= coupon.applicableProducts.length === 0 ? 'checkbox-circle-line' : 'shopping-bag-line' %>"></i>
+                        <span>
+                            <%= coupon.applicableProducts.length===0 ? 'Apply to All Products'
+                                : 'Select Specific Products' %>
+                        </span>
+                    </div>
+                    <div id="productList"
+                        class="product-list <%= coupon.applicableProducts.length === 0 ? 'hidden' : '' %>">
+                        <div class="product-search">
+                            <i class="ri-search-line search-icon"></i>
+                            <input type="text" placeholder="Search products..." class="form-input input-with-prefix"
+                                id="productSearch" oninput="filterProducts()">
+                        </div>
+                        <div id="productCheckboxes" class="checkbox-grid product-checkboxes">
+                            <% products.forEach(product=> { %>
+                                <label class="checkbox-label product-item"
+                                    data-product="<%= product.productName.toLowerCase() %>">
+                                    <input type="checkbox" name="applicableProducts" value="<%= product._id %>"
+                                        <%=coupon.applicableProducts.includes(product._id) ? 'checked' : '' %>
+                                    class="checkbox">
+                                    <span>
+                                        <%= product.productName %>
+                                    </span>
+                                </label>
+                                <% }) %>
+                        </div>
+                        <p id="productListError" class="error-message">At least one product must be selected.</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <h3 class="form-label" style="font-size: 1.125rem; margin-bottom: 1rem;">
+                        <i class="ri-list-check"></i>
+                        Usage Limits
+                    </h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="ri-user-line"></i>
+                                Maximum Uses Per User
+                            </label>
+                            <input type="number" id="maxUsesPerUser" name="userUsageLimit"
+                                value="<%= coupon.userUsageLimit %>" min="1" class="form-input">
+                            <p id="maxUsesPerUserError" class="error-message">Maximum uses per user must be at least 1.
+                            </p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="ri-group-line"></i>
+                                Total Usage Limit
+                            </label>
+                            <input type="number" id="totalUsageLimit" name="usageLimit" value="<%= coupon.usageLimit %>"
+                                placeholder="Leave empty for unlimited" min="1" class="form-input">
+                            <p id="totalUsageLimitError" class="error-message">Total usage limit must be at least 1 if
+                                provided.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="radio-label">
+                        <input type="checkbox" id="activeStatus" name="isActive" <%=coupon.isActive ? 'checked' : '' %>
+                        class="sr-only" onchange="toggleActiveStatus()">
+                        <div id="statusToggle" class="toggle-button <%= coupon.isActive ? 'active' : 'inactive' %>">
+                            <i class="ri-<%= coupon.isActive ? 'checkbox-circle-line' : 'close-circle-line' %>"></i>
+                            <i class="ri-<%= coupon.isActive ? 'check-line' : '' %>"></i>
+                            <span>
+                                <%= coupon.isActive ? 'Active Status' : 'Inactive Status' %>
+                            </span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="button secondary" onclick="window.location.href='/admin/coupons'">
+                        <i class="ri-arrow-left-line"></i>
+                        Back to List
+                    </button>
+                    <button type="submit" class="button primary">
+                        <i class="ri-save-line"></i>
+                        Update Coupon
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize coupon ID from URL
+        const couponId = '<%= coupon._id %>';
+
+        // Initialize discount type
+        toggleDiscountType('<%= coupon.discountType %>');
+
+        function toggleDiscountType(type) {
+            const flatToggle = document.getElementById('flatToggle');
+            const percentageToggle = document.getElementById('percentageToggle');
+            const discountAmountLabel = document.getElementById('discountAmountLabel');
+            const discountPrefix = document.getElementById('discountPrefix');
+            const discountAmount = document.getElementById('discountAmount');
+            const maxDiscountAmount = document.getElementById('maxDiscountAmount');
+
+            if (type === 'flat') {
+                flatToggle.className = 'radio-toggle active';
+                percentageToggle.className = 'radio-toggle inactive';
+                discountAmountLabel.innerHTML = `<i class="ri-price-tag-3-line"></i> ₹ Discount Amount *`;
+                discountPrefix.innerText = '₹';
+                discountPrefix.className = 'input-prefix';
+                discountAmount.className = 'form-input input-with-prefix';
+                discountAmount.placeholder = 'Enter discount amount';
+                maxDiscountAmount.value = '';
+                maxDiscountAmount.disabled = true;
+            } else {
+                flatToggle.className = 'radio-toggle inactive';
+                percentageToggle.className = 'radio-toggle active';
+                discountAmountLabel.innerHTML = `<i class="ri-price-tag-3-line"></i> % Discount Percentage *`;
+                discountPrefix.innerText = '%';
+                discountPrefix.className = 'input-suffix';
+                discountAmount.className = 'form-input input-with-suffix';
+                discountAmount.placeholder = 'Enter discount percentage';
+                maxDiscountAmount.disabled = false;
+            }
+        }
+
+        function toggleCategories() {
+            const categoryList = document.getElementById('categoryList');
+            const allCategoriesBtn = document.getElementById('allCategoriesBtn');
+
+            if (categoryList.classList.contains('hidden')) {
+                categoryList.classList.remove('hidden');
+                allCategoriesBtn.className = 'toggle-button inactive';
+                allCategoriesBtn.innerHTML = `<i class="ri-folder-line"></i><span>Select Specific Categories</span>`;
+            } else {
+                categoryList.classList.add('hidden');
+                allCategoriesBtn.className = 'toggle-button active';
+                allCategoriesBtn.innerHTML = `<i class="ri-checkbox-circle-line"></i><i class="ri-folder-line"></i><span>Apply to All Categories</span>`;
+            }
+        }
+
+        function toggleProducts() {
+            const productList = document.getElementById('productList');
+            const allProductsBtn = document.getElementById('allProductsBtn');
+
+            if (productList.classList.contains('hidden')) {
+                productList.classList.remove('hidden');
+                allProductsBtn.className = 'toggle-button inactive';
+                allProductsBtn.innerHTML = `<i class="ri-shopping-bag-line"></i><span>Select Specific Products</span>`;
+            } else {
+                productList.classList.add('hidden');
+                allProductsBtn.className = 'toggle-button active';
+                allProductsBtn.innerHTML = `<i class="ri-checkbox-circle-line"></i><i class="ri-shopping-bag-line"></i><span>Apply to All Products</span>`;
+            }
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            const productItems = document.querySelectorAll('.product-item');
+
+            productItems.forEach(item => {
+                const productName = item.getAttribute('data-product').toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleActiveStatus() {
+            const statusToggle = document.getElementById('statusToggle');
+            const activeStatus = document.getElementById('activeStatus');
+
+            if (activeStatus.checked) {
+                statusToggle.className = 'toggle-button active';
+                statusToggle.innerHTML = `<i class="ri-checkbox-circle-line"></i><i class="ri-check-line"></i><span>Active Status</span>`;
+            } else {
+                statusToggle.className = 'toggle-button inactive';
+                statusToggle.innerHTML = `<i class="ri-close-circle-line"></i><span>Inactive Status</span>`;
+            }
+        }
+
+        let currentDate = new Date();
+
+        function toggleCalendar(inputId) {
+            const popup = document.getElementById(`${inputId}Popup`);
+            popup.classList.toggle('active');
+            if (popup.classList.contains('active')) {
+                renderCalendar(inputId, currentDate.getMonth(), currentDate.getFullYear());
+            }
+        }
+
+        function renderCalendar(inputId, month, year) {
+            const popup = document.getElementById(`${inputId}Popup`);
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const prevLastDay = new Date(year, month, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay();
+
+            popup.innerHTML = `
+                <div class="calendar-header">
+                    <i class="ri-arrow-left-s-line calendar-nav" onclick="changeMonth('${inputId}', -1)"></i>
+                    <span>${new Date(year, month).toLocaleString('default', { month: 'long' })} ${year}</span>
+                    <i class="ri-arrow-right-s-line calendar-nav" onclick="changeMonth('${inputId}', 1)"></i>
+                </div>
+                <div class="calendar-grid" id="${inputId}Grid">
+                    ${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => `<div class="calendar-day header">${day}</div>`).join('')}
+                </div>
+            `;
+
+            const grid = document.getElementById(`${inputId}Grid`);
+            for (let i = startingDay - 1; i >= 0; i--) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day disabled';
+                day.textContent = prevLastDay.getDate() - i;
+                grid.appendChild(day);
+            }
+            for (let i = 1; i <= daysInMonth; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day';
+                const date = new Date(year, month, i).toLocaleDateString('en-CA');
+                day.textContent = i;
+                day.dataset.date = date;
+                grid.appendChild(day);
+            }
+            const nextDays = 7 - (lastDay.getDay() + 1);
+            for (let i = 1; i <= nextDays; i++) {
+                const day = document.createElement('div');
+                day.className = 'calendar-day disabled';
+                day.textContent = i;
+                grid.appendChild(day);
+            }
+
+            grid.addEventListener('click', function (e) {
+                const dayElement = e.target.closest('.calendar-day');
+                if (dayElement && !dayElement.classList.contains('disabled') && !dayElement.classList.contains('header')) {
+                    const date = dayElement.dataset.date;
+                    document.getElementById(inputId).value = date;
+                    popup.classList.remove('active');
+                    currentDate = new Date(date);
+                    renderCalendar(inputId, currentDate.getMonth(), currentDate.getFullYear());
+                }
+            });
+
+            const selectedDate = document.getElementById(inputId).value;
+            if (selectedDate) {
+                const selectedDay = grid.querySelector(`[data-date="${selectedDate}"]`);
+                if (selectedDay) selectedDay.classList.add('selected');
+            }
+        }
+
+        function changeMonth(inputId, offset) {
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            renderCalendar(inputId, currentDate.getMonth(), currentDate.getFullYear());
+        }
+
+        document.getElementById('couponForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+
+            const couponCode = document.getElementById('couponCode').value.trim();
+            const description = document.getElementById('description').value.trim();
+            const discountType = document.querySelector('input[name="discountType"]:checked').value;
+            const discountAmount = parseFloat(document.getElementById('discountAmount').value);
+            const maxDiscountAmount = document.getElementById('maxDiscountAmount').value.trim() === '' ? null : parseFloat(document.getElementById('maxDiscountAmount').value);
+            const minimumOrderAmount = parseFloat(document.getElementById('minimumOrderAmount').value);
+            const startDate = document.getElementById('startDate').value;
+            const expirationDate = document.getElementById('expirationDate').value;
+            const maxUsesPerUser = parseInt(document.getElementById('maxUsesPerUser').value);
+            const totalUsageLimit = document.getElementById('totalUsageLimit').value.trim() === '' ? null : parseInt(document.getElementById('totalUsageLimit').value);
+            const activeStatus = document.getElementById('activeStatus').checked;
+
+            let hasError = false;
+
+            if (!couponCode) {
+                document.getElementById('couponCodeError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (description.length > 500) {
+                document.getElementById('descriptionError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (isNaN(discountAmount) || discountAmount <= 0) {
+                document.getElementById('discountAmountError').textContent = 'Discount amount must be greater than 0.';
+                document.getElementById('discountAmountError').style.display = 'block';
+                hasError = true;
+            } else if (discountType === 'percentage' && (discountAmount > 100 || discountAmount < 0)) {
+                document.getElementById('discountAmountError').textContent = 'Discount percentage must be between 0 and 100.';
+                document.getElementById('discountAmountError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (maxDiscountAmount !== null && (isNaN(maxDiscountAmount) || maxDiscountAmount <= 0)) {
+                document.getElementById('maxDiscountAmountError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (isNaN(minimumOrderAmount) || minimumOrderAmount < 0) {
+                document.getElementById('minimumOrderAmountError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (!startDate) {
+                document.getElementById('startDateError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (!expirationDate) {
+                document.getElementById('expirationDateError').style.display = 'block';
+                hasError = true;
+            } else if (startDate && new Date(startDate) > new Date(expirationDate)) {
+                document.getElementById('expirationDateError').textContent = 'Expiration date must be after or equal to start date.';
+                document.getElementById('expirationDateError').style.display = 'block';
+                hasError = true;
+            }
+
+            const categoryList = document.getElementById('categoryList');
+            let applicableCategories = [];
+            if (!categoryList.classList.contains('hidden')) {
+                const selectedCategories = document.querySelectorAll('#categoryList input[type="checkbox"]:checked');
+                if (selectedCategories.length === 0) {
+                    document.getElementById('categoryListError').style.display = 'block';
+                    hasError = true;
+                } else {
+                    selectedCategories.forEach(cb => {
+                        applicableCategories.push(cb.value);
+                    });
+                }
+            }
+
+            const productList = document.getElementById('productList');
+            let applicableProducts = [];
+            if (!productList.classList.contains('hidden')) {
+                const selectedProducts = document.querySelectorAll('#productList input[type="checkbox"]:checked');
+                if (selectedProducts.length === 0) {
+                    document.getElementById('productListError').style.display = 'block';
+                    hasError = true;
+                } else {
+                    selectedProducts.forEach(cb => {
+                        applicableProducts.push(cb.value);
+                    });
+                }
+            }
+
+            if (isNaN(maxUsesPerUser) || maxUsesPerUser < 1) {
+                document.getElementById('maxUsesPerUserError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (totalUsageLimit !== null && (isNaN(totalUsageLimit) || totalUsageLimit < 1)) {
+                document.getElementById('totalUsageLimitError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (hasError) {
+                return;
+            }
+
+            const formData = {
+                code: couponCode,
+                description,
+                discountType,
+                discount: discountAmount,
+                maxDiscount: maxDiscountAmount,
+                minPurchase: minimumOrderAmount,
+                startDate,
+                expiry: expirationDate,
+                userUsageLimit: maxUsesPerUser,
+                usageLimit: totalUsageLimit,
+                isActive: activeStatus,
+                applicableCategories,
+                applicableProducts
+            };
+
+            try {
+                const response = await fetch(`/admin/coupons/edit/${couponId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Coupon updated successfully!',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then(() => {
+                        window.location.href = '/admin/coupons';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Failed to update coupon.',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'An unexpected error occurred.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleActiveStatus();
+            document.getElementById('maxDiscountAmount').disabled = '<%= coupon.discountType %>' === 'flat';
+        });
+
+        document.addEventListener('click', function (e) {
+            const popups = document.querySelectorAll('.calendar-popup');
+            popups.forEach(popup => {
+                if (!popup.contains(e.target) && !e.target.classList.contains('calendar-icon')) {
+                    popup.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
