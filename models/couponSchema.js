@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const couponSchema = new mongoose.Schema({
     code: {
@@ -69,16 +70,13 @@ const couponSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
     }],
-    userUsage: [{
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User'
-        },
-        orderIds: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Order'
-        }],
-    }]
+    usedBy: [
+  {
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    orderId: { type: Schema.Types.ObjectId, ref: "Order" },
+    usedAt: { type: Date, default: Date.now }
+  }
+],
 }, { timestamps: true });
 
 module.exports = mongoose.model('Coupon', couponSchema);

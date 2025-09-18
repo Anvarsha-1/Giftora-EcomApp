@@ -24,6 +24,26 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
+        .coupon-error {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #dc2626;
+            /* Tailwind red-600 */
+            font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            letter-spacing: 0.3px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .coupon-error.hidden {
+            opacity: 0;
+        }
+
+        .coupon-error.visible {
+            opacity: 1;
+        }
+
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -225,9 +245,9 @@
                         </h2>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <!-- COD -->
-                            <label class="block cursor-pointer">
-                                <input type="radio" name="paymentMethod" value="COD" class="peer hidden" <%=total <=4000
-                                    ? 'checked' : '' %>>
+                            <label class="block cursor-pointer <%= total > 4000 ? 'pointer-events-none opacity-50' : '' %>">
+                                <input type="radio" name="paymentMethod" value="COD" class="peer hidden" <%=total <=4000 ? 'checked' : 'disabled' %>
+                                >
                                 <div
                                     class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 peer-checked:border-blue-600 peer-checked:bg-blue-50">
                                     <i class="ri-money-rupee-circle-line text-2xl text-blue-600 mb-1"></i>
@@ -239,6 +259,7 @@
                                     </div>
                                     <% } %>
                             </label>
+
 
                             <!-- Online Payment -->
                             <label class="block cursor-pointer">
@@ -282,6 +303,7 @@
                         <button class="text-xs text-blue-600 hover:underline" id="ShowAvailableCoupon"
                             type="button">View Available
                             Coupons</button>
+                        <span id="couponError" style="color:red; display:none;"></span>
                     </div>
                     <!-- Order Summary Card -->
                     <div class="card">
@@ -312,23 +334,43 @@
                                     <span class="text-gray-600">Subtotal</span>
                                     <span>₹<%= subTotal.toLocaleString() %></span>
                                 </div>
+                                
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Tax (5%)</span>
                                     <span>₹<%= tax.toLocaleString() %></span>
                                 </div>
+                                
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Shipping</span>
                                     <% if (shipping===0) { %>
                                         <span class="text-green-600 font-medium">FREE</span>
                                         <% } else { %>
-                                            <span class="text-gray-700 font-medium">₹<%= shipping %></span>
+                                            <span class="text-gray-700 font-medium">₹<%= shipping.toLocaleString() %></span>
                                             <% } %>
                                 </div>
-                                <div class="flex justify-between font-semibold">
+                                
+                                <!-- ✅ New Discount row -->
+                            <!-- Product/Category Offer Discount -->
+                            <div class="flex justify-between text-red-600 font-medium" id="offer-discount-row"style="<%= offer ? 'display:flex;' : 'display:none;' %>">
+                                <span>Product Offer Discount</span>
+                                <span id="offer-discount-amount">- ₹<%= offer ? offer.toLocaleString() : 0 %></span>
+                            </div>
+                            
+                            <!-- Coupon Discount -->
+                            <div class="flex justify-between text-blue-600 font-medium" id="coupon-discount-row"style="<%= discount ? 'display:flex;' : 'display:none;' %>">
+                                <span>Coupon Discount</span>
+                                <span id="coupon-discount-amount">- ₹<%= discount ? discount.toLocaleString() : 0 %></span>
+                            </div>
+
+
+                                
+                                <div class="flex justify-between font-semibold border-t border-gray-300 pt-2 mt-2">
                                     <span>Total</span>
-                                    <span id="total-price" data-total-price="<%= subTotal + tax + shipping%>">₹<%=
-                                            subTotal + tax + shipping%></span>
+                                    <span id="total-price" data-total-price="<%= total  %>">
+                                        ₹<%= (total ).toLocaleString() %>
+                                    </span>
                                 </div>
+
                             </div>
                             <% } %>
                     </div>
@@ -452,9 +494,7 @@
                         try {
                             const response = await fetch('/coupons/apply', {
                                 method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
+                                headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
                                     couponCode,
                                     cartItems: JSON.parse(document.getElementById('cartItems').value),
@@ -464,37 +504,51 @@
 
                             const result = await response.json();
 
-                            if (!response.ok) {
-                                throw new Error(result.message || 'Failed to apply coupon');
+                            if (!response.ok || response.success===false) {
+                                document.getElementById("couponError").innerText = result.message || "Something went wrong";
+                                document.getElementById("couponError").style.display = "block";
+                                const couponDiscountRow = document.getElementById("coupon-discount-row");
+                                const couponDiscountAmount = document.getElementById("coupon-discount-amount");
+                                couponDiscountRow.style.display = "none";
+                                return; // stop here on error
                             }
 
+                            // ✅ success case
                             const { newTotal, discount, couponId } = result;
                             const totalElement = document.getElementById('total-price');
                             totalElement.setAttribute('data-total-price', newTotal);
-                            totalElement.textContent = `₹${newTotal.toLocaleString()}`;
+                            totalElement.textContent = `₹${newTotal}`;
+                            
+                            const couponDiscountRow = document.getElementById("coupon-discount-row");
+                            const couponDiscountAmount = document.getElementById("coupon-discount-amount");
 
-                            // Update couponApplied and couponId for order placement
+                            if (couponDiscountRow) {   // ✅ prevent null error
+                                if (discount > 0) {
+                                    couponDiscountRow.style.display = "flex";
+                                    couponDiscountAmount.textContent = `- ₹${discount.toLocaleString()}`;
+                                } else {
+                                    couponDiscountRow.style.display = "none";
+                                }
+                            }
+
                             window.couponApplied = true;
                             window.couponId = couponId;
+                            document.getElementById("couponError").innerText = "";
 
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Coupon Applied',
-                                text: `Coupon ${couponCode} applied successfully! You saved ₹${discount.toLocaleString()}`,
+                                text: `Coupon ${couponCode} applied successfully! You saved ₹${discount}`,
                                 timer: 2000,
                                 showConfirmButton: false
                             });
 
                         } catch (error) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: error.message || 'Invalid coupon code',
-                                timer: 3000,
-                                showConfirmButton: false
-                            });
+                            document.getElementById("couponError").innerText = error.message;
+                            document.getElementById("couponError").style.display = "block";
                         }
                     };
+
                     const placeOrderBtn = document.getElementById('placeOrderBtn');
                     if (placeOrderBtn) {
                         placeOrderBtn.addEventListener('click', async function () {
@@ -511,6 +565,14 @@
                                     icon: 'warning',
                                     title: 'Select Address',
                                     text: 'Please select a delivery address before placing your order.',
+                                    confirmButtonColor: '#3085d6'
+                                });
+                            }
+                            if (!paymentMethod) {
+                                return Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Select Payment Method',
+                                    text: 'Please select a Payment Method before placing your order.',
                                     confirmButtonColor: '#3085d6'
                                 });
                             }

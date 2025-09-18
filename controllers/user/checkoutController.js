@@ -4,7 +4,9 @@ const Address = require('../../models/addressSchema')
 const Product = require('../../models/productSchema')
 const Order = require('../../models/orderSchema')
 const Wallet = require('../../models/walletSchema')
+const Category = require('../../models/categorySchema')
 const mongoose = require("mongoose");
+const Coupon = require('../../models/couponSchema')
 
 const loadCheckoutPage = async (req, res) => {
   
@@ -17,6 +19,8 @@ const loadCheckoutPage = async (req, res) => {
         const addresses = await Address.find({ userId }) || [];
 
         const wallet = await Wallet.findOne({userId})
+        
+        let offer = 0
 
         if (!cart || !cart.items || cart.items.length === 0 ) {
             return res.render('user/checkout', {
@@ -27,7 +31,9 @@ const loadCheckoutPage = async (req, res) => {
                 shipping: 0,
                 total: 0,
                 addresses,
-                wallet
+                wallet,
+                offer : offer || 0,
+                discount:0
             });
         }
 
@@ -48,6 +54,7 @@ const loadCheckoutPage = async (req, res) => {
             const price = Number(product.salesPrice) || 0;
             const safeQuantity = Math.min(item.quantity, product.quantity || 1);
             const itemTotal = price * safeQuantity;
+            offer += (product.regularPrice - product.salesPrice) * item.quantity
 
             subTotal += itemTotal;
 
@@ -58,6 +65,8 @@ const loadCheckoutPage = async (req, res) => {
                 quantity: safeQuantity,
                 image: product.productImage?.[0]?.url || '/images/placeholder.jpg',
                 totalPrice: itemTotal,
+                offer: Math.abs(offer) || 0,
+                discount:0
             };
         });
 
@@ -77,7 +86,10 @@ const loadCheckoutPage = async (req, res) => {
             addresses,
             shipping,
             total,
-            wallet
+            wallet,
+            offer: offer || 0,
+            discount:0
+       
         });
 
     } catch (error) {
@@ -131,92 +143,95 @@ const validateCheckout = async (req, res) => {
 
 const placeOrder = async (req, res) => {
     try {
-        const userId = req.session.user
-
-
-        const { totalPrice, discountPrice, finalPrice, address, paymentMethod } = req.body
+        const userId = req.session.user;
+        const { totalPrice, discountPrice, finalPrice, address, paymentMethod } = req.body;
 
         if (!address) {
-            return res.json({ success: false, message: "Please select a address to continue" })
+            return res.json({ success: false, message: "Please select a address to continue" });
         }
         if (!paymentMethod) {
-            return res.json({ success: false, message: "Please select a payment method" })
+            return res.json({ success: false, message: "Please select a payment method" });
         }
-        const cart = await Cart.findOne({ userId })
 
+        const cart = await Cart.findOne({ userId });
         if (!cart || !cart.items || cart.items.length < 1) {
-            return res.json({ success: false, message: "Cart items not found" })
+            return res.json({ success: false, message: "Cart items not found" });
         }
 
-        const userAddress = await Address.findById(address)
-
+        const userAddress = await Address.findById(address);
         if (!userAddress) {
-            return res.json({ success: false, message: "Invalid address" })
+            return res.json({ success: false, message: "Invalid address" });
         }
-        
+
         function generateOrderId() {
             const timestamp = Date.now().toString().slice(-5);
             const random = Math.floor(Math.random() * 90000 + 10000);
-            return timestamp + random;
+            return "ORD" + timestamp + random;
         }
 
-        const orderId = "ORD" + generateOrderId()
-
-        const orderedItems = []
+        const orderId = generateOrderId();
+        const orderedItems = [];
 
         for (let item of req.body.orderedItems) {
-
-            const product = await Product.findById(item.productId)
+            const product = await Product.findById(item.productId);
 
             if (!product || item.quantity > product.quantity) {
-                return res.json({ success: false, message: `Insufficient stock for ${product?.productName} ` })
-            } if (item.quantity > 10) {
-                return res.json({ success: false, message: "Only 10 quantity approved" })
+                return res.json({ success: false, message: `Insufficient stock for ${product?.productName}` });
             }
-            product.quantity -= item.quantity
-            await product.save()
+            if (item.quantity > 10) {
+                return res.json({ success: false, message: "Only 10 quantity approved" });
+            }
+
+            product.quantity -= item.quantity;
+            await product.save();
 
             orderedItems.push({
                 productId: product._id,
                 quantity: item.quantity,
                 price: product.salesPrice,
-                status: paymentMethod === "COD" ? "Pending" : 'Processing'
-            })
+                status: paymentMethod === "COD" ? "Pending" : "Processing"
+            });
         }
 
-
-        const subTotal = await Cart.aggregate([
+      
+        const subTotalAgg = await Cart.aggregate([
             { $match: { userId: new mongoose.Types.ObjectId(userId) } },
-            { $unwind: '$items' },
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: '$items.totalPrice' }
-                }
-            }
+            { $unwind: "$items" },
+            { $group: { _id: null, total: { $sum: "$items.totalPrice" } } }
         ]);
 
-        console.log(subTotal[0].total)
-                
-        
+        const originalAmount = subTotalAgg[0]?.total || 0;
+        const tax = Math.round(originalAmount * 0.05);
+        const shipping = finalPrice >= 1000 ? 0 : 50;
 
-        const tax = Math.round(subTotal[0].total * 0.05);
-        const shipping = finalPrice >= 1000 ? parseInt(0) : parseInt(50);
-        console.log(tax, totalPrice)
+        const status = paymentMethod === "COD" ? "Pending" : "pending";
+        const paymentStatus = paymentMethod === "COD" ? "Pending" : "pending";
 
+      
+        let couponApplied = false;
+        let couponCode = null;
+        let couponDiscount = 0;
 
+        if (req.session.applyCoupon) {
+            const { newTotal, discount, Code } = req.session.applyCoupon;
+            couponApplied = true;
+            couponCode = Code;
+            couponDiscount = discount;
+        }
+        console.log("coupon applied",req.session.applyCoupon)
 
-        const status = paymentMethod === "COD" ? "Pending" : 'pending'
-        const paymentStatus = paymentMethod === "COD" ? "Pending" : 'pending'
-    
-    
+      
         const newOrder = new Order({
-            userId: userId,
-            orderId,        
+            userId,
+            orderId,
             orderedItems,
-            totalPrice,
-            discountPrice,
-            finalAmount: finalPrice,
+            totalPrice: originalAmount,     
+            discountPrice: couponDiscount,   
+            finalAmount: finalPrice,         
+            originalAmount: originalAmount,  
+            couponApplied,
+            couponCode,
+            couponDiscount,
             address,
             tax,
             shippingCharge: shipping,
@@ -224,37 +239,58 @@ const placeOrder = async (req, res) => {
             paymentStatus,
             createdOn: Date.now(),
             paymentMethod,
-            fullName:userAddress?.fullName,
-            mobileNumber:userAddress?.mobileNumber,
-            address:userAddress?.address,
-            city:userAddress?.city,
-            district:userAddress?.district,
-            state:userAddress?.state,
-            landmark:userAddress?.landmark,
-            pinCode:userAddress?.pinCode,
-            addressType:userAddress?.addressType
+            fullName: userAddress?.fullName,
+            mobileNumber: userAddress?.mobileNumber,
+            address: userAddress?.address,
+            city: userAddress?.city,
+            district: userAddress?.district,
+            state: userAddress?.state,
+            landmark: userAddress?.landmark,
+            pinCode: userAddress?.pinCode,
+            addressType: userAddress?.addressType
+        });
 
-        })
+        await newOrder.save();
 
-        await newOrder.save()
+        if(req.session.applyCoupon){
+            const updatedCoupon = await Coupon.findOneAndUpdate(
+                { code: couponCode },
+                {
+                    $inc: { usedCount: 1 },
+                    $push: {
+                        usedBy: {
+                            userId: new mongoose.Types.ObjectId(req.session.user),
+                            orderId: newOrder._id,
+                            usedAt: new Date()
+                        }
+                    }
+                },
+                { new: true } 
+            );
+
+            
+
+        
+    }
+
        
         await Cart.updateOne(
             { userId },
             { $pull: { items: { productId: { $in: orderedItems.map(i => i.productId) } } } }
+        );
 
-        ); 
         return res.json({
             success: true,
             message: "Order placed successfully",
             orderId: newOrder.orderId,
             orderDetails: newOrder
         });
-
     } catch (error) {
-        console.log("Error while placing Order", error.message)
-        return res.json({ success: false, message: "Something went wrong. Please try again" })
+        console.log("Error while placing Order", error.message);
+        return res.json({ success: false, message: "Something went wrong. Please try again" });
     }
-}
+};
+
 
 const loadOrderSuccess = async (req, res) => {
     try {
