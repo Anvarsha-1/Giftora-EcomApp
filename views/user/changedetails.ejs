@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-  
+
     <style>
         .content-section {
             animation: fadeIn 0.5s ease-out;
@@ -30,32 +29,163 @@
             }
         }
 
+        .profile-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .image-wrapper {
+            position: relative;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+        }
+
+        .image-wrapper:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
         .profile-image-preview {
             width: 120px;
             height: 120px;
             object-fit: cover;
-            border: 2px solid #e5e7eb;
+            display: block;
         }
 
-        .profile-image-container {
-            position: relative;
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.6));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .image-wrapper:hover .image-overlay {
+            opacity: 1;
+        }
+
+        .camera-icon {
+            color: white;
+            font-size: 24px;
+            transition: transform 0.2s ease;
+        }
+
+        .image-wrapper:hover .camera-icon {
+            transform: scale(1.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-choose,
+        .btn-remove {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-choose {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-choose:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-remove {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-remove:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Enhanced form styling */
+        .form-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-input {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .save-btn:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .cancel-btn {
+            background: white;
+            border: 2px solid #e5e7eb;
+            padding: 12px 24px;
+            border-radius: 12px;
+            color: #6b7280;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: inline-block;
         }
 
-        .edit-icon {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background-color: rgba(0, 0, 0, 0.6);
-            border-radius: 50%;
-            padding: 6px;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .edit-icon:hover {
-            background-color: rgba(0, 0, 0, 0.8);
+        .cancel-btn:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(-1px);
+            text-decoration: none;
         }
     </style>
 </head>
@@ -73,7 +203,7 @@
                     <nav class="flex items-center space-x-2 text-sm text-gray-500">
                         <a href="/" class="hover:text-gray-700">Home</a>
                         <i class="ri-arrow-right-s-line"></i>
-                        <a href="/account" class="hover:text-gray-700">My Account</a>
+                        <a href="/account/profile" class="hover:text-gray-700">My Account</a>
                         <i class="ri-arrow-right-s-line"></i>
                         <span class="text-gray-900">Edit Profile</span>
                     </nav>
@@ -81,60 +211,72 @@
                 <!-- Content Area -->
                 <div class="p-6">
                     <div class="content-section">
-                        <div class="bg-white rounded-lg w-full max-w-2xl mx-auto">
-                            <div class="p-6">
-                                <div class="flex items-center justify-between mb-6">
-                                    <h3 class="text-xl font-semibold text-gray-900">Edit Profile Details</h3>
-                                    <a href="/account/profile" class="text-gray-400 hover:text-gray-600">
-                                        <i class="ri-close-line ri-lg"></i>
-                                    </a>
-                                </div>
-                                <form id="profileEditForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <!-- Profile Image Upload -->
-                                    <div class="md:col-span-2">
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Profile Image</label>
-                                        <div class="flex items-center gap-4">
-                                            <div class="profile-image-container relative">
-                                                <img id="profileImagePreview" src="<%= user.profileImage?.url || '/images/default-profile.png' %>"
-                                                    alt="Profile Preview" class="profile-image-preview rounded-full w-24 h-24 object-cover border" />
-                                                <i class="ri-pencil-fill absolute bottom-1 right-1 bg-white p-1 rounded-full shadow cursor-pointer"
-                                                    onclick="document.getElementById('profileImage').click()"></i>
-                                                <input type="file" id="profileImage" accept="image/*" class="hidden">
+                        <div class="form-container w-full max-w-2xl mx-auto">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-xl font-semibold text-gray-900">Edit Profile Details</h3>
+                                <a href="/account/profile" class="text-gray-400 hover:text-gray-600">
+                                    <i class="ri-close-line ri-lg"></i>
+                                </a>
+                            </div>
+                            <form id="profileEditForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Profile Image Upload -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-4">Profile Image</label>
+
+                                    <div class="profile-image-container">
+                                        <div class="image-wrapper">
+                                            <img id="profileImagePreview"
+                                                src="<%= user.profileImage?.url || '/images/default-profile.png' %>"
+                                                alt="Profile Preview" class="profile-image-preview" />
+
+                                            <div class="image-overlay"
+                                                onclick="document.getElementById('profileImage').click()">
+                                                <i class="ri-camera-line camera-icon"></i>
                                             </div>
-                                            <button type="button" id="removeProfileImage"
-                                                class="px-4 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50">
+
+                                            <input type="file" id="profileImage" accept="image/*" class="hidden">
+                                        </div>
+
+                                        <div class="action-buttons">
+                                            <button type="button" id="chooseImageBtn" class="btn-choose">
+                                                <i class="ri-image-add-line"></i>
+                                                <span id="chooseBtnText">Choose Image</span>
+                                            </button>
+
+                                            <button type="button" id="removeProfileImage" class="btn-remove"
+                                                style="display: none;">
+                                                <i class="ri-delete-bin-line"></i>
                                                 Remove
                                             </button>
                                         </div>
-                                        <p class="text-xs text-gray-500 mt-1">Max file size: 2MB. Accepted formats: JPG, PNG</p>
                                     </div>
 
-                                    <!-- Existing Form Fields -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                                        <input type="text" id="editFirstName" value="<%= user.firstName %>"
-                                            class="w-full px-4 py-2 border rounded-lg">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                                        <input type="text" id="editLastName" value="<%= user.lastName %>"
-                                            class="w-full px-4 py-2 border rounded-lg">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                                        <input type="tel" id="editPhone" value="<%= user.phone %>"
-                                            class="w-full px-4 py-2 border rounded-lg">
-                                    </div>
-                                </form>
-                                <div class="flex justify-end gap-4 mt-6">
-                                    <a href="/account/profile"
-                                        class="px-6 py-3 border rounded-button hover:bg-gray-100">Cancel</a>
-                                <button onclick="saveProfileChanges()"
-                                    class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                                    <p class="text-xs text-gray-500 mt-3 text-center">Max file size: 2MB. Accepted
+                                        formats: JPG, PNG</p>
+                                </div>
+
+                                <!-- Existing Form Fields -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                    <input type="text" id="editFirstName" value="<%= user.firstName %>"
+                                        class="form-input w-full">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                    <input type="text" id="editLastName" value="<%= user.lastName %>"
+                                        class="form-input w-full">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                                    <input type="tel" id="editPhone" value="<%= user.phone %>"
+                                        class="form-input w-full">
+                                </div>
+                            </form>
+                            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+                                <a href="/account/profile" class="cancel-btn">Cancel</a>
+                                <button onclick="saveProfileChanges()" class="save-btn flex items-center justify-center gap-2">
                                     Save Changes
                                 </button>
-
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -144,140 +286,176 @@
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    let removeProfileImage = false;
+        <script>
+            let removeProfileImage = false;
+            let hasCurrentImage = <%= user.profileImage?.url ? 'true' : 'false' %>;
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const profileImageInput = document.getElementById('profileImage');
-        const profileImagePreview = document.getElementById('profileImagePreview');
-        const removeProfileImageBtn = document.getElementById('removeProfileImage');
+            document.addEventListener("DOMContentLoaded", function () {
+                const profileImageInput = document.getElementById('profileImage');
+                const profileImagePreview = document.getElementById('profileImagePreview');
+                const removeProfileImageBtn = document.getElementById('removeProfileImage');
+                const chooseImageBtn = document.getElementById('chooseImageBtn');
+                const chooseBtnText = document.getElementById('chooseBtnText');
 
-        profileImageInput.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                if (file.size > 2 * 1024 * 1024) {
+                // Initialize UI based on current image state
+                updateImageUI();
+
+                // Choose image button click
+                chooseImageBtn.addEventListener('click', function () {
+                    profileImageInput.click();
+                });
+
+                profileImageInput.addEventListener('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        if (file.size > 2 * 1024 * 1024) {
+                            Swal.fire({
+                                toast: true,
+                                icon: 'error',
+                                position: 'top-end',
+                                title: 'File size exceeds 2MB',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                background: '#EF4444',
+                                color: '#fff'
+                            });
+                            this.value = '';
+                            return;
+                        }
+
+                        if (!file.type.startsWith('image/')) {
+                            Swal.fire({
+                                toast: true,
+                                icon: 'error',
+                                position: 'top-end',
+                                title: 'Invalid image format',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                background: '#EF4444',
+                                color: '#fff'
+                            });
+                            this.value = '';
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            profileImagePreview.src = e.target.result;
+                            hasCurrentImage = true;
+                            removeProfileImage = false; // reset flag
+                            updateImageUI();
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                removeProfileImageBtn.addEventListener('click', function () {
+                    Swal.fire({
+                        title: 'Remove Profile Image?',
+                        text: 'This will revert your image to default.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#EF4444',
+                        cancelButtonColor: '#6B7280',
+                        confirmButtonText: 'Yes, remove it'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            profileImagePreview.src = '/images/default-profile.png';
+                            profileImageInput.value = '';
+                            hasCurrentImage = false;
+                            removeProfileImage = true;
+                            updateImageUI();
+                        }
+                    });
+                });
+
+                function updateImageUI() {
+                    if (hasCurrentImage && !removeProfileImage) {
+                        // Show remove button, change text to "Change Image"
+                        removeProfileImageBtn.style.display = 'flex';
+                        chooseBtnText.textContent = 'Change Image';
+                        chooseImageBtn.querySelector('i').className = 'ri-image-edit-line';
+                    } else {
+                        // Hide remove button, change text to "Choose Image"
+                        removeProfileImageBtn.style.display = 'none';
+                        chooseBtnText.textContent = 'Choose Image';
+                        chooseImageBtn.querySelector('i').className = 'ri-image-add-line';
+                    }
+                }
+            });
+
+            async function saveProfileChanges() {
+                const firstName = document.getElementById('editFirstName').value.trim();
+                const lastName = document.getElementById('editLastName').value.trim();
+                const phone = document.getElementById('editPhone').value.trim();
+                const profileImage = document.getElementById('profileImage').files[0];
+
+                const saveBtn = document.querySelector('.save-btn');
+                const originalBtnHTML = saveBtn.innerHTML;
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Saving...`;
+
+                const formData = new FormData();
+                formData.append('firstName', firstName);
+                formData.append('lastName', lastName);
+                formData.append('phone', phone);
+                formData.append('removeProfileImage', removeProfileImage);
+
+                if (profileImage) {
+                    formData.append('profileImage', profileImage);
+                }
+
+                try {
+                    const response = await fetch('/account/profile/update/details', {
+                        method: 'PATCH',
+                        body: formData // No headers
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'success',
+                            title: 'Profile updated successfully!',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            background: '#10B981',
+                            color: '#fff'
+                        }).then(() => {
+                            window.location.href = "/account/profile"
+                        });
+                    } else {
+                        Swal.fire({
+                            toast: true,
+                            icon: 'error',
+                            title: data.message || 'Failed to update',
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            background: '#EF4444',
+                            color: '#fff'
+                        });
+                    }
+                } catch (error) {
                     Swal.fire({
                         toast: true,
                         icon: 'error',
+                        title: 'Error updating profile',
                         position: 'top-end',
-                        title: 'File size exceeds 2MB',
                         showConfirmButton: false,
                         timer: 3000,
                         background: '#EF4444',
                         color: '#fff'
                     });
-                    this.value = '';
-                    return;
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = originalBtnHTML;
                 }
-
-                if (!file.type.startsWith('image/')) {
-                    Swal.fire({
-                        toast: true,
-                        icon: 'error',
-                        position: 'top-end',
-                        title: 'Invalid image format',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        background: '#EF4444',
-                        color: '#fff'
-                    });
-                    this.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    profileImagePreview.src = e.target.result;
-                    removeProfileImage = false; // reset flag
-                };
-                reader.readAsDataURL(file);
             }
-        });
-
-        removeProfileImageBtn.addEventListener('click', function () {
-            Swal.fire({
-                title: 'Remove Profile Image?',
-                text: 'This will revert your image to default.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#EF4444',
-                cancelButtonColor: '#6B7280',
-                confirmButtonText: 'Yes, remove it'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    profileImagePreview.src = '/images/default-profile.png';
-                    profileImageInput.value = '';
-                    removeProfileImage = true;
-                }
-            });
-        });
-    });
-
-    async function saveProfileChanges() {
-        const firstName = document.getElementById('editFirstName').value.trim();
-        const lastName = document.getElementById('editLastName').value.trim();
-        const phone = document.getElementById('editPhone').value.trim();
-        const profileImage = document.getElementById('profileImage').files[0];
-
-        const formData = new FormData();
-        formData.append('firstName', firstName);
-        formData.append('lastName', lastName);
-        formData.append('phone', phone);
-        formData.append('removeProfileImage', removeProfileImage);
-
-        if (profileImage) {
-            formData.append('profileImage', profileImage);
-        }
-
-        try {
-            const response = await fetch('/account/profile/update/details', {
-                method: 'PATCH',
-                body: formData // No headers
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                Swal.fire({
-                    toast: true,
-                    icon: 'success',
-                    title: 'Profile updated successfully!',
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    background: '#10B981',
-                    color: '#fff'
-                }).then(() => {
-                    window.location.href="/account/profile"
-                });
-            } else {
-                Swal.fire({
-                    toast: true,
-                    icon: 'error',
-                    title: data.message || 'Failed to update',
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    background: '#EF4444',
-                    color: '#fff'
-                });
-            }
-        } catch (error) {
-            Swal.fire({
-                toast: true,
-                icon: 'error',
-                title: 'Error updating profile',
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                background: '#EF4444',
-                color: '#fff'
-            });
-        }
-    }
-</script>
+        </script>
 
 </body>
 
 </html>
-```

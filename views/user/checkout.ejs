@@ -245,8 +245,10 @@
                         </h2>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <!-- COD -->
-                            <label class="block cursor-pointer <%= total > 4000 ? 'pointer-events-none opacity-50' : '' %>">
-                                <input type="radio" name="paymentMethod" value="COD" class="peer hidden" <%=total <=4000 ? 'checked' : 'disabled' %>
+                            <label
+                                class="block cursor-pointer <%= total > 4000 ? 'pointer-events-none opacity-50' : '' %>">
+                                <input type="radio" name="paymentMethod" value="COD" class="peer hidden" <%=total <=4000
+                                    ? 'checked' : 'disabled' %>
                                 >
                                 <div
                                     class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 peer-checked:border-blue-600 peer-checked:bg-blue-50">
@@ -272,16 +274,21 @@
                             </label>
 
                             <!-- Wallet Payment -->
-                            <label class="block cursor-pointer">
-                                <input type="radio" name="paymentMethod" value="WALLET" class="peer hidden" disabled>
-                                <div class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 
-                                          bg-gray-100 text-gray-400 opacity-50 cursor-not-allowed">
-                                    <i class="ri-wallet-3-line text-2xl mb-1"></i>
-                                    <span class="font-medium">Wallet Payment</span>
-                                    <span
-                                        class="<%= wallet.balance > 0 ? 'text-xs text-green-600 mt-1' : 'text-xs text-red-500 mt-1' %>">
-                                        <%= wallet && wallet.balance> 0 ? wallet.balance : "₹0 (Insufficient)" %>
-                                    </span>
+                            <label
+                                class="block cursor-pointer <%= (wallet && wallet.balance >= total) ? '' : 'opacity-50 cursor-not-allowed' %>">
+                                <input type="radio" name="paymentMethod" value="WALLET" class="peer hidden" <%=(wallet
+                                    && wallet.balance>= total) ? '' : 'disabled' %>>
+                                <div
+                                    class="border rounded-lg p-4 flex flex-col items-center transition-all duration-150 peer-checked:border-blue-600 peer-checked:bg-blue-50">
+                                    <i class="ri-wallet-3-line text-2xl text-blue-600 mb-1"></i>
+                                    <span class="font-medium text-gray-900">Wallet Payment</span>
+                                    <span class="text-xs text-gray-500 mt-1">Balance: ₹<%= wallet ?
+                                            wallet.balance.toLocaleString() : '0' %></span>
+                                    <% if (!wallet || wallet.balance < total) { %>
+                                        <div class="text-xs text-red-600 mt-2 text-center">
+                                            Insufficient balance
+                                        </div>
+                                        <% } %>
                                 </div>
                             </label>
                         </div>
@@ -294,17 +301,34 @@
                         <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                             <i class="ri-ticket-line text-blue-600"></i> Coupon
                         </h2>
-                        <div class="flex space-x-2 mb-2">
+
+                        <div class="flex space-x-2 mb-2 relative">
                             <input type="text" id="couponCode" placeholder="Enter coupon code"
-                                class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <button onclick="applyCoupon()"
-                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium">Apply</button>
+                                class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-8">
+
+
+
+
+
+                            <button  id="ApplyButtonId"  onclick="applyCoupon()"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium">
+                                Apply
+                            </button>
+
+
+                            <button id="removeBtn" onclick="removeCoupon()" style="display: none; "
+                                class="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors text-sm font-medium">
+                                Remove
+                            </button>
                         </div>
-                        <button class="text-xs text-blue-600 hover:underline" id="ShowAvailableCoupon"
-                            type="button">View Available
-                            Coupons</button>
+
+                        <button class="text-xs text-blue-600 hover:underline" id="ShowAvailableCoupon" type="button">
+                            View Available Coupons
+                        </button>
+
                         <span id="couponError" style="color:red; display:none;"></span>
                     </div>
+
                     <!-- Order Summary Card -->
                     <div class="card">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -334,36 +358,37 @@
                                     <span class="text-gray-600">Subtotal</span>
                                     <span>₹<%= subTotal.toLocaleString() %></span>
                                 </div>
-                                
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Tax (5%)</span>
-                                    <span>₹<%= tax.toLocaleString() %></span>
-                                </div>
-                                
+
+
+
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Shipping</span>
                                     <% if (shipping===0) { %>
                                         <span class="text-green-600 font-medium">FREE</span>
                                         <% } else { %>
-                                            <span class="text-gray-700 font-medium">₹<%= shipping.toLocaleString() %></span>
+                                            <span class="text-gray-700 font-medium">₹<%= shipping.toLocaleString() %>
+                                                    </span>
                                             <% } %>
                                 </div>
-                                
+
                                 <!-- ✅ New Discount row -->
-                            <!-- Product/Category Offer Discount -->
-                            <div class="flex justify-between text-red-600 font-medium" id="offer-discount-row"style="<%= offer ? 'display:flex;' : 'display:none;' %>">
-                                <span>Product Offer Discount</span>
-                                <span id="offer-discount-amount">- ₹<%= offer ? offer.toLocaleString() : 0 %></span>
-                            </div>
-                            
-                            <!-- Coupon Discount -->
-                            <div class="flex justify-between text-blue-600 font-medium" id="coupon-discount-row"style="<%= discount ? 'display:flex;' : 'display:none;' %>">
-                                <span>Coupon Discount</span>
-                                <span id="coupon-discount-amount">- ₹<%= discount ? discount.toLocaleString() : 0 %></span>
-                            </div>
+                                <!-- Product/Category Offer Discount -->
+                                <div class="flex justify-between text-blue-600 font-medium" id="offer-discount-row"
+                                    style='display:flex'>
+                                    <span>Product Offer Discount</span>
+                                    <span id="offer-discount-amount">- ₹<%= offer ? offer.toLocaleString() : 0 %></span>
+                                </div>
+
+                                <!-- Coupon Discount -->
+                                <div class="flex justify-between text-green-600 font-medium" id="coupon-discount-row"
+                                    style="display:flex">
+                                    <span>Coupon Discount</span>
+                                    <span id="coupon-discount-amount">- ₹<%= discount ? discount.toLocaleString() : 0 %>
+                                            </span>
+                                </div>
 
 
-                                
+
                                 <div class="flex justify-between font-semibold border-t border-gray-300 pt-2 mt-2">
                                     <span>Total</span>
                                     <span id="total-price" data-total-price="<%= total  %>">
@@ -433,13 +458,18 @@
 
     <!-- Apply Button -->
     <button 
-      class="apply-coupon-btn px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition font-medium text-sm flex-shrink-0"
+      class="apply-coupon-btn px-4 py-2 rounded font-medium text-sm flex-shrink-0 
+             ${coupon.alreadyUsed
+                                    ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
+                                    : 'bg-blue-600 text-white hover:bg-blue-700 transition'}"
       data-coupon-code="${coupon.code}"
+      ${coupon.alreadyUsed ? 'disabled' : ''}
     >
-      Apply
+      ${coupon.alreadyUsed ? 'Already Used' : 'Apply'}
     </button>
   </div>
 `).join('');
+
 
 
                             Swal.fire({
@@ -482,10 +512,11 @@
                         const couponCode = document.getElementById('couponCode').value.trim();
                         if (!couponCode) {
                             Swal.fire({
+                                toast:true,
+                                position:'top-end',
                                 icon: 'warning',
                                 title: 'No Coupon Code',
-                                text: 'Please enter a coupon code',
-                                timer: 2000,
+                                timer: 1000,
                                 showConfirmButton: false
                             });
                             return;
@@ -504,30 +535,59 @@
 
                             const result = await response.json();
 
-                            if (!response.ok || response.success===false) {
+                            if (!response.ok || response.success === false) {
                                 document.getElementById("couponError").innerText = result.message || "Something went wrong";
                                 document.getElementById("couponError").style.display = "block";
-                                const couponDiscountRow = document.getElementById("coupon-discount-row");
-                                const couponDiscountAmount = document.getElementById("coupon-discount-amount");
-                                couponDiscountRow.style.display = "none";
+                                if (result.discount && result.newTotal && result.Code) {
+                                    console.log()
+                                    const totalElement = document.getElementById('total-price');
+                                    totalElement.setAttribute('data-total-price', result.newTotal);
+                                    totalElement.textContent = `₹${result.newTotal}`;
+                                    
+                                    const couponDiscountRow = document.getElementById("coupon-discount-row");
+                                    const couponDiscountAmount = document.getElementById("coupon-discount-amount");
+                                    const removeButton = document.getElementById('removeBtn')
+                                    const DiscountInput = document.getElementById('couponCode')
+
+                                    removeButton.style.display='flex' // if success show remove button
+                                    DiscountInput.disabled = false; // if error remove disable input
+
+
+                                    if (couponDiscountRow) {   // ✅ prevent null error
+                                        if (result.discount > 0) {
+                                            couponDiscountRow.style.display = "flex";
+                                            couponDiscountAmount.textContent = `- ₹${result.discount.toLocaleString()}`;
+                                        } else {
+                                            couponDiscountAmount.textContent = 0
+                                        }
+                                    }
+
+                                }
                                 return; // stop here on error
                             }
 
                             // ✅ success case
                             const { newTotal, discount, couponId } = result;
                             const totalElement = document.getElementById('total-price');
+                            const DiscountInput = document.getElementById('couponCode')
+                            const appliedButton = document.getElementById('ApplyButtonId')
+                            const removeButton = document.getElementById('removeBtn')
                             totalElement.setAttribute('data-total-price', newTotal);
                             totalElement.textContent = `₹${newTotal}`;
-                            
+
                             const couponDiscountRow = document.getElementById("coupon-discount-row");
                             const couponDiscountAmount = document.getElementById("coupon-discount-amount");
+
+                           DiscountInput.disabled = true;
 
                             if (couponDiscountRow) {   // ✅ prevent null error
                                 if (discount > 0) {
                                     couponDiscountRow.style.display = "flex";
                                     couponDiscountAmount.textContent = `- ₹${discount.toLocaleString()}`;
+                                    appliedButton.style.display='none' //if success remove apply button
+                                    removeButton.style.display ='flex' //if success show remove button 
                                 } else {
-                                    couponDiscountRow.style.display = "none";
+                                    couponDiscountAmount.textContent = 0
                                 }
                             }
 
@@ -536,12 +596,15 @@
                             document.getElementById("couponError").innerText = "";
 
                             Swal.fire({
+                                toast: true,
+                                position: 'top-end',
                                 icon: 'success',
                                 title: 'Coupon Applied',
-                                text: `Coupon ${couponCode} applied successfully! You saved ₹${discount}`,
-                                timer: 2000,
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                timer: 1000,
+                                timerProgressBar: true
                             });
+
 
                         } catch (error) {
                             document.getElementById("couponError").innerText = error.message;
@@ -552,7 +615,7 @@
                     const placeOrderBtn = document.getElementById('placeOrderBtn');
                     if (placeOrderBtn) {
                         placeOrderBtn.addEventListener('click', async function () {
-                            const addressSelected = document.querySelector('input[name="selectedAddress"]:checked').value;
+                            const addressSelected = document.querySelector('input[name="selectedAddress"]:checked');
                             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
                             const totalPriceEl = document.getElementById('total-price');
                             const totalPrice = totalPriceEl ? parseFloat(totalPriceEl.getAttribute('data-total-price')) : 0;
@@ -562,26 +625,27 @@
 
                             if (!addressSelected) {
                                 return Swal.fire({
+                                    toast:true,
+                                    position:'top-end',
                                     icon: 'warning',
                                     title: 'Select Address',
-                                    text: 'Please select a delivery address before placing your order.',
-                                    confirmButtonColor: '#3085d6'
+                                    timer: 1500,
+                                    showConfirmButton: false
                                 });
                             }
                             if (!paymentMethod) {
                                 return Swal.fire({
+                                    toast:true,
+                                    position:'top-end',
                                     icon: 'warning',
+                                    timer: 1500,
                                     title: 'Select Payment Method',
-                                    text: 'Please select a Payment Method before placing your order.',
-                                    confirmButtonColor: '#3085d6'
+                                    showConfirmButton: false
                                 });
                             }
 
                             const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-                            const orderedItems = cartItems.map(item => ({
-                                productId: item._id,
-                                quantity: item.quantity
-                            }));
+                           
 
                             const confirmation = await Swal.fire({
                                 title: 'Confirm Your Order',
@@ -614,7 +678,7 @@
                                         const orderRes = await fetch('/payment/create-order', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
-                                            body: JSON.stringify({ addressId: addressSelected })
+                                            body: JSON.stringify({ addressId: addressSelected.value })
                                         });
 
                                         const { razorpayOrder, user, userAddress, orderId } = await orderRes.json();
@@ -717,14 +781,13 @@
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({
-                                            address: addressSelected,
+                                            address: addressSelected.value,
                                             paymentMethod,
                                             totalPrice,
                                             discountPrice: 0,
                                             finalPrice: totalPrice,
                                             couponApplied,
                                             couponId,
-                                            orderedItems
                                         })
                                     });
 
@@ -760,6 +823,64 @@
                         });
                     }
                 }); // <-- Add this closing brace for DOMContentLoaded
+
+               async function removeCoupon() {
+                    const input = document.getElementById("couponCode");
+                               fetch("/coupons/remove", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                            })
+                                .then(res => res.json())
+                                .then(data => {
+                                    const DiscountInput = document.getElementById('couponCode')
+                                    input.value = "";
+                                    document.getElementById("couponError").style.display = "none";
+                                    document.getElementById('ApplyButtonId').style.display = 'flex';
+                                    document.getElementById('removeBtn').style.display = 'none';
+                                    DiscountInput.disabled = false;
+                                    updateOrderSummary(data.summary); // update the summary
+                                    Swal.fire({
+                                        toast:true,
+                                        icon: 'success',
+                                        position:'top-end',
+                                        title: 'Removed!',
+                                        timer: 1000,
+                                        showConfirmButton: false
+                                    });
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops!',
+                                        text: 'Something went wrong. Please try again.',
+                                    });
+                                });
+                        
+                    
+                }
+
+                function updateOrderSummary(summary) {
+                    if (!summary) return;
+
+                    // Safe defaults if undefined
+                    const couponDiscount = summary.couponDiscount || 0;
+                    const total = summary.total || 0;
+
+                    // Grab DOM elements
+                    const totalElem = document.getElementById("total-price");
+                    const couponAmount = document.getElementById("coupon-discount-amount");
+
+                    if (!totalElem || !couponAmount) {
+                        console.warn("Order summary elements missing!");
+                        return;
+                    }
+
+                    // Update only coupon discount and total
+                    couponAmount.innerText = `- ₹${couponDiscount.toLocaleString()}`;
+                    totalElem.innerText = `₹${total.toLocaleString()}`;
+                }
+
 
             </script>
 

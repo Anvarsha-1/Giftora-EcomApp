@@ -556,12 +556,6 @@
                     <span class="summary-value">₹<%= order.totalPrice %></span>
                 </div>
 
-                <% if(order.tax) { %>
-                    <div class="summary-row">
-                        <span class="summary-label">Tax (5%)</span>
-                        <span class="summary-value">₹<%= order.tax %></span>
-                    </div>
-                    <% } %>
 
                         <% if(order.shippingCharge) { %>
                             <div class="summary-row">

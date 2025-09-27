@@ -10,8 +10,8 @@ const loadProductListingPage = async (req, res) => {
     const limit = 9;
     const skip = (page - 1) * limit;
 
-    const clearFilter = req.query.clearFilter === '1'
-    const clearSearch = req.query.clearSearch === '1'
+    const clearFilter = req.query.clearFilter === '1';
+    const clearSearch = req.query.clearSearch === '1';
 
     const search = clearSearch ? "" : req.query.search || "";
     const selectedCategory = clearFilter ? "" : req.query?.category || '';
@@ -19,60 +19,66 @@ const loadProductListingPage = async (req, res) => {
     const maxPrice = clearFilter ? Number.MAX_VALUE : parseFloat(req.query?.maxPrice) || Number.MAX_VALUE;
     const sortOption = clearFilter ? 'createdAt-desc' : req.query.sort || 'createdAt-desc';
 
-    const userData = req.session?.user ? await User.findById(req.session?.user) : undefined
-    const userId = req.session.user
+    const userData = req.session?.user ? await User.findById(req.session?.user) : undefined;
+    const userId = req.session.user;
     const categories = await category.find({ isListed: true, isDeleted: false });
+    const wishlist = await Wishlist.findOne({ userId });
 
-    const wishlist = await Wishlist.findOne({ userId })
+    let aggregation = [];
 
+    if (search) {
+      aggregation.push({
+        $search: {
+          index: 'productSearchIndex',
+          text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } }
+        }
+      });
+    }
 
-    let query = {
+    const match = {
       isBlocked: false,
       isDeleted: false,
       quantity: { $gt: 0 },
-      salesPrice: { $gte: minPrice, $lte: maxPrice },
+      salesPrice: { $gte: minPrice, $lte: maxPrice }
     };
+    if (selectedCategory) match.category = selectedCategory;
 
-    if (search) {
-      query.productName = { $regex: search, $options: 'i' };
-    }
+    aggregation.push({ $match: match });
 
-    if (selectedCategory) {
-      query.category = selectedCategory;
-    }
-
-
-    let sort = {};
+    let sortObj = { createdAt: -1 };
     switch (sortOption) {
-      case 'name-asc':
-        sort = { productName: 1 };
-        break;
-      case 'name-desc':
-        sort = { productName: -1 };
-        break;
-      case 'price-asc':
-        sort = { salesPrice: 1 };
-        break;
-      case 'price-desc':
-        sort = { salesPrice: -1 };
-        break;
-      case 'createdAt-desc':
-      default:
-        sort = { createdAt: -1 };
-        break;
+      case 'name-asc': sortObj = { productName: 1 }; break;
+      case 'name-desc': sortObj = { productName: -1 }; break;
+      case 'price-asc': sortObj = { salesPrice: 1 }; break;
+      case 'price-desc': sortObj = { salesPrice: -1 }; break;
     }
 
-    const total = await Products.countDocuments(query);
-
-    let productData = await Products.find(query)
-      .skip(skip)
-      .limit(limit)
-      .sort(sort);
-
+    aggregation.push({ $sort: sortObj });
+    aggregation.push({ $skip: skip });
+    aggregation.push({ $limit: limit });
+    
+  
+    let productData = await Products.aggregate(aggregation);
     productData = productData.map(pro => ({
-      ...pro._doc,
-      productImage: pro.productImage?.[0]?.url || null,
+      ...pro,
+      productImage: pro.productImage?.[0]?.url || null
     }));
+
+    let countPipeline = [];
+    if (search) {
+      countPipeline.push({
+        $search: {
+          index: 'productSearchIndex',
+          text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } }
+        }
+      });
+    }
+    countPipeline.push({ $match: match });
+    countPipeline.push({ $count: "total" });
+
+    const totalResult = await Products.aggregate(countPipeline);
+    const total = totalResult[0]?.total || 0;
+ 
 
     if (req.xhr || req.headers.accept.indexOf('json') > -1) {
       return res.json({
@@ -104,9 +110,10 @@ const loadProductListingPage = async (req, res) => {
     res.status(500).render('user/error', {
       title: 500,
       message: "something went wrong. please try again"
-    })
+    });
   }
 };
+
 
 
 const viewProductDetails = async (req, res) => {
@@ -155,7 +162,7 @@ const viewProductDetails = async (req, res) => {
     const [mainImage, ...subImage] = productData.productImage;
 
 
-
+console.log(productData)
     return res.render("user/productDetails", {
       user: userData,
       firstName: userData?.firstName || "",

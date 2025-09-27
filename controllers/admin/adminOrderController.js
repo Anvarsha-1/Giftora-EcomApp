@@ -2,6 +2,8 @@ const Order = require('../../models/orderSchema')
 const Wallet = require('../../models/walletSchema.js')
 const User = require('../../models/userSchema')
 const Address = require('../../models/addressSchema')
+const Coupon = require('../../models/couponSchema.js')
+const mongoose = require('mongoose')
 
 const loadOrderPage = async (req, res) => {
     try {
@@ -148,7 +150,7 @@ const getReturnedOrder = async (req, res) => {
 }
 
 
-const TAX_RATE = 0.05;
+
 
 const verifyOrderReturn = async (req, res) => {
     try {
@@ -157,84 +159,161 @@ const verifyOrderReturn = async (req, res) => {
         const order = await Order.findOne({ orderId })
             .populate('orderedItems.productId');
         if (!order) {
-            return res.json({ success: false, message: "Invalid request Order not found" });
+            return res.json({ success: false, message: 'Invalid request Order not found' });
         }
 
-        const product = order.orderedItems.find(item =>
-            itemId.toString() === item._id.toString()
-        );
-        if (!product) {
-            return res.json({ success: false, message: "Product not found" });
+        const item = order.orderedItems.find(i => itemId.toString() === i._id.toString());
+        if (!item) {
+            return res.json({ success: false, message: 'Product not found' });
+        }
+        if (item.status !== 'Return Request' && item.status !== 'Delivered') {
+            return res.json({ success: false, message: 'Invalid return state for this item' });
         }
 
-        const userId = order.userId
+        const userId = order.userId;
 
-        let wallet = await Wallet.findOne({ userId });
+        // Compute item total
+        const unitPrice = Number.isFinite(Number(item.price)) ? Number(item.price) : Number(item.productId?.price) || 0;
+        const quantity = Number(item.quantity) || 0;
+        const itemTotal = unitPrice * quantity;
 
+        // Subtotal of all active (non-cancelled and non-returned) items before this approval
+        const activeSubtotal = order.orderedItems.reduce((sum, i) => {
+            if (i._id.toString() === item._id.toString()) {
+                // include current item
+            } else if (i.status === 'Cancelled' || i.status === 'Returned') {
+                return sum;
+            }
+            const p = Number.isFinite(Number(i.price)) ? Number(i.price) : Number(i.productId?.price) || 0;
+            const q = Number(i.quantity) || 0;
+            return sum + (p * q);
+        }, 0);
 
-        const itemTotal = product.price * product.quantity;
-        const orderTotal = order.orderedItems.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-        const totalTax = orderTotal * TAX_RATE;
-        const itemTaxShare = (itemTotal / orderTotal) * totalTax;
-        const refundAmount = itemTotal + itemTaxShare
-
-
-
-
-
-        if (!wallet) {
-
-            wallet = new Wallet({
-                userId,
-                balance: refundAmount,
-                transactions: [{
-                    type: 'credit',
-                    amount: refundAmount,
-                    description: `Refund for returned item ${product.productId?.productName}`,
-                    date: Date.now()
-                }]
-            });
-
-            await wallet.save();
-        } else {
-
-            wallet.balance += refundAmount;
-            wallet.transactions.push({
-                type: 'credit',
-                amount: refundAmount,
-                description: `Refund for returned item ${product.productId?.productName}`,
-            });
-            await wallet.save();
+        if (!Number.isFinite(itemTotal) || itemTotal <= 0) {
+            return res.json({ success: false, message: 'Invalid item total for refund' });
+        }
+        if (!Number.isFinite(activeSubtotal) || activeSubtotal <= 0) {
+            return res.json({ success: false, message: 'Invalid order total' });
         }
 
+        const newBalanceSubtotal = activeSubtotal - itemTotal;
 
+        // Start from full item price, then adjust for coupon rules
+        let baseRefund = itemTotal;
+        const amountPaidRemaining = Number(order.finalAmount) || 0; // includes shipping already paid
+        const hadCouponApplied = !!order.couponApplied && !!order.couponCode;
 
+        let couponDoc = null;
+        if (hadCouponApplied) {
+            couponDoc = await Coupon.findOne({ code: order.couponCode }).lean();
+        }
 
-        product.status = "Returned";
-        product.adminApprovalStatus = 'Approved';
+        let couponRevoked = false;
+        let newCouponDiscount = Number(order.couponDiscount || 0);
 
-        const allOrderReturnCheck = order.orderedItems.every(item => item.status === 'Returned');
-        const OrderDeliveredStatus = order.orderedItems.some(item => item.status === "Delivered");
+        if (hadCouponApplied && couponDoc) {
+            if (newBalanceSubtotal < Number(couponDoc.minPurchase || 0)) {
+                // Lose eligibility: the first return approval absorbs the full remaining coupon discount
+                baseRefund = Math.max(0, itemTotal - Number(order.couponDiscount || 0));
+                couponRevoked = true;
+                newCouponDiscount = 0;
+            } else {
+                // Still eligible: prorate discount on this item
+                if (couponDoc.discountType === 'flat') {
+                    const flat = Number(couponDoc.discount) || 0;
+                    const couponShare = Math.ceil((itemTotal / activeSubtotal) * flat);
+                    baseRefund = Math.max(0, itemTotal - couponShare);
+                    newCouponDiscount = Math.max(0, Number(order.couponDiscount || 0) - couponShare);
+                } else {
+                    const pct = Number(couponDoc.discount) || 0;
+                    const couponShare = Math.ceil((pct / 100) * itemTotal);
+                    baseRefund = Math.max(0, itemTotal - couponShare);
+                    newCouponDiscount = Math.max(0, Number(order.couponDiscount || 0) - couponShare);
+                }
+            }
+        }
+
+        // Cap refund so cumulative refunds never exceed amount paid
+        const refundAmount = Math.min(baseRefund, amountPaidRemaining);
+
+        // Update order monetary fields: keep shipping charge unchanged; lower payable by refund
+        order.totalPrice = Math.max(0, newBalanceSubtotal);
+        order.finalAmount = Math.max(0, amountPaidRemaining - refundAmount);
+        order.couponDiscount = newCouponDiscount;
+        order.discountPrice = newCouponDiscount;
+
+        if (couponRevoked) {
+            const prevCode = order.couponCode;
+            order.couponApplied = false;
+            order.couponDiscount = 0;
+            order.discountPrice = 0;
+            order.couponCode = null;
+            if (prevCode) {
+                await Coupon.updateOne(
+                    { code: prevCode },
+                    {
+                        $pull: {
+                            usedBy: {
+                                userId: new mongoose.Types.ObjectId(userId),
+                                orderId: order._id
+                            }
+                        }
+                    }
+                );
+            }
+        }
+
+        // Always credit refund to wallet for returns, regardless of payment method
+        if (refundAmount > 0) {
+            const walletUpdate = await Wallet.updateOne(
+                { userId: new mongoose.Types.ObjectId(userId) },
+                {
+                    $inc: { balance: refundAmount },
+                    $push: {
+                        transactions: {
+                            type: 'credit',
+                            amount: refundAmount,
+                            description: `Refund for returned item ${item._id} in order ${orderId}`,
+                            date: new Date()
+                        }
+                    }
+                },
+                { upsert: true }
+            );
+            if (!walletUpdate.acknowledged) {
+                return res.json({ success: false, message: 'Failed to update wallet' });
+            }
+        }
+
+        // Mark item returned
+        item.status = 'Returned';
+        item.adminApprovalStatus = 'Approved';
+
+        // Update order status rollup
+        const allOrderReturnCheck = order.orderedItems.every(i => i.status === 'Returned');
+        const OrderDeliveredStatus = order.orderedItems.some(i => i.status === 'Delivered');
 
         if (allOrderReturnCheck) {
             order.status = 'Returned';
-        }
-        if (OrderDeliveredStatus) {
-            order.status = "Delivered";
+            if (order.finalAmount === 0) {
+                order.paymentStatus = 'Refunded';
+            }
+        } else if (OrderDeliveredStatus) {
+            order.status = 'Delivered';
         }
 
         await order.save();
 
-        if (product && product.productId) {
-            product.productId.quantity += product.quantity
-            await product.productId.save();
+        // Restore stock
+        if (item && item.productId) {
+            item.productId.quantity += item.quantity;
+            await item.productId.save();
         }
-
 
         return res.json({ success: true });
     } catch (error) {
-        console.log("error while updating verify orderReturn ", error.message);
-        return res.json({ success: false, message: "Something went wrong please try again" });
+        console.log('error while updating verify orderReturn ', error.message);
+        return res.json({ success: false, message: 'Something went wrong please try again' });
     }
 };
 

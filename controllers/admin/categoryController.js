@@ -51,10 +51,32 @@ const categoryManagement = async (req, res) => {
 
 const addCategory = async (req, res) => {
   try {
-    const { name, description ,offerPercentage} = req.body;
+    const { name, description, offerPercentage } = req.body;
+    const trimmedName = name ? name.trim() : '';
+    const trimmedDescription = description ? description.trim() : '';
+
+    // --- Validation ---
+    const validCharRegex = /^[a-zA-Z\s]+$/;
+    if (!trimmedName || trimmedName.length < 3 || trimmedName.length > 25) {
+      return res.status(400).json({ error: 'Name must be between 3 and 25 characters.' });
+    }
+    if (!validCharRegex.test(trimmedName)) {
+      return res.status(400).json({ error: 'Name can only contain letters and spaces.' });
+    }
+    if (!trimmedDescription || trimmedDescription.length < 10 || trimmedDescription.length > 100) {
+      return res.status(400).json({ error: 'Description must be between 10 and 100 characters.' });
+    }
+    if (!validCharRegex.test(trimmedDescription)) {
+      return res.status(400).json({ error: 'Description can only contain letters and spaces.' });
+    }
+    const offer = parseFloat(offerPercentage);
+    if (isNaN(offer) || offer < 0 || offer > 100) {
+      return res.status(400).json({ error: "Offer percentage must be a number between 0 and 100." });
+    }
+    // --- End Validation ---
 
     const existingCategory = await Category.findOne({
-      name: { $regex: `^${name}$`, $options: "i" }
+      name: { $regex: `^${trimmedName}$`, $options: "i" }
     });
 
     if (existingCategory) {
@@ -62,9 +84,9 @@ const addCategory = async (req, res) => {
     }
 
     const newCategory = new Category({
-      name: name.trim(),
-      description: description.trim(),
-      categoryOffer: offerPercentage 
+      name: trimmedName,
+      description: trimmedDescription,
+      categoryOffer: offer
     });
     await newCategory.save();
     return res.status(201).json({ message: "Category added successfully" });
@@ -108,10 +130,32 @@ const editCategory = async (req, res) => {
   try {
     const id = req.params.id;
     const { name, description, offerPercentage } = req.body;
+    const trimmedName = name ? name.trim() : '';
+    const trimmedDescription = description ? description.trim() : '';
+
+    // --- Validation ---
+    const validCharRegex = /^[a-zA-Z\s]+$/;
+    if (!trimmedName || trimmedName.length < 3 || trimmedName.length > 25) {
+      return res.status(400).json({ error: 'Name must be between 3 and 25 characters.' });
+    }
+    if (!validCharRegex.test(trimmedName)) {
+      return res.status(400).json({ error: 'Name can only contain letters and spaces.' });
+    }
+    if (!trimmedDescription || trimmedDescription.length < 10 || trimmedDescription.length > 100) {
+      return res.status(400).json({ error: 'Description must be between 10 and 100 characters.' });
+    }
+    if (!validCharRegex.test(trimmedDescription)) {
+      return res.status(400).json({ error: 'Description can only contain letters and spaces.' });
+    }
+    const offer = parseFloat(offerPercentage);
+    if (isNaN(offer) || offer < 0 || offer > 100) {
+      return res.status(400).json({ error: "Offer percentage must be a number between 0 and 100." });
+    }
+    // --- End Validation ---
 
     // Check duplicate category name
     const existing = await Category.findOne({
-      name: { $regex: `^${name.trim()}$`, $options: "i" },
+      name: { $regex: `^${trimmedName}$`, $options: "i" },
       _id: { $ne: id },
     });
     if (existing) {
@@ -121,7 +165,7 @@ const editCategory = async (req, res) => {
     // Update category
     const updatedCategory = await Category.findByIdAndUpdate(
       id,
-      { name, description, categoryOffer:offerPercentage },
+      { name: trimmedName, description: trimmedDescription, categoryOffer: offer },
       { new: true }
     );
 
@@ -138,7 +182,7 @@ const editCategory = async (req, res) => {
       [
         {
           $set: {
-            bestOffer: { $max: ["$productOffer", offerPercentage || 0] },
+            bestOffer: { $max: ["$productOffer", offer || 0] },
             salesPrice: {
               $round: [
                 {
@@ -147,7 +191,7 @@ const editCategory = async (req, res) => {
                     {
                       $multiply: [
                         "$regularPrice",
-                        { $divide: [{ $max: ["$productOffer", offerPercentage || 0] }, 100] }
+                        { $divide: [{ $max: ["$productOffer", offer || 0] }, 100] }
                       ]
                     }
                   ]

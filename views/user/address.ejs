@@ -144,11 +144,12 @@
                                     </button>
                                 </div>
 
-                                <% if (addresses && addresses.length> 0) { %>
-                                    <!-- Address Cards Grid -->
-                                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                <!-- Address Cards Grid -->
+                                <div id="address-grid"
+                                    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 <%= (!addresses || addresses.length === 0) ? 'hidden' : '' %>">
+                                    <% if (addresses && addresses.length > 0) { %>
                                         <% addresses.forEach((address, index)=> { %>
-                                            <div
+                                            <div id="address-<%= address._id %>"
                                                 class="address-card stagger bg-gray-50 rounded-lg p-4 border border-gray-200 <%= address.isDefault ? 'default' : '' %>">
                                                 <!-- Header -->
                                                 <div class="flex items-start justify-between mb-3">
@@ -228,25 +229,26 @@
                                                 </div>
                                             </div>
                                             <% }) %>
-                                    </div>
-                                    <% } else { %>
-                                        <!-- Empty State -->
-                                        <div class="text-center py-16">
-                                            <div
-                                                class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                                <i class="ri-map-pin-line text-gray-400 text-2xl"></i>
-                                            </div>
-                                            <h3 class="text-lg font-display text-gray-900 mb-2">No addresses saved</h3>
-                                            <p class="text-gray-500 mb-6 max-w-md mx-auto font-body leading-relaxed">
-                                                Add your first address to get started with faster checkout and seamless
-                                                delivery
-                                            </p>
-                                            <button onclick="window.location.href='/account/add/addresses'"
-                                                class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
-                                                Add Your First Address
-                                            </button>
-                                        </div>
                                         <% } %>
+                                </div>
+
+                                <!-- Empty State -->
+                                <div id="empty-address-state"
+                                    class="text-center py-16 <%= (addresses && addresses.length > 0) ? 'hidden' : '' %>">
+                                    <div
+                                        class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                        <i class="ri-map-pin-line text-gray-400 text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-lg font-display text-gray-900 mb-2">No addresses saved</h3>
+                                    <p class="text-gray-500 mb-6 max-w-md mx-auto font-body leading-relaxed">
+                                        Add your first address to get started with faster checkout and seamless
+                                        delivery
+                                    </p>
+                                    <button onclick="window.location.href='/account/add/addresses'"
+                                        class="bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
+                                        Add Your First Address
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </main>
@@ -314,10 +316,20 @@
                                             icon: 'success',
                                             title: 'Address deleted successfully',
                                             showConfirmButton: false,
-                                            timer: 2000,
-                                            timerProgressBar: true
+                                            timer: 1500,
+                                            timerProgressBar: true,
+                                            background: '#10B981',
+                                            color: '#fff',
                                         }).then(() => {
-                                            location.reload();
+                                            const addressCard = document.getElementById(`address-${addressId}`);
+                                            if (addressCard) {
+                                                addressCard.remove();
+                                            }
+                                            const remainingCards = document.querySelectorAll('.address-card');
+                                            if (remainingCards.length === 0) {
+                                                document.getElementById('address-grid').classList.add('hidden');
+                                                document.getElementById('empty-address-state').classList.remove('hidden');
+                                            }
                                         });
                                     } else {
                                         Swal.fire({
@@ -327,7 +339,9 @@
                                             title: data.message || 'Failed to delete address',
                                             showConfirmButton: false,
                                             timer: 2000,
-                                            timerProgressBar: true
+                                            timerProgressBar: true,
+                                             color: '#fff',
+                                             background:'EF4444'
                                         });
                                     }
                                 })
@@ -339,7 +353,9 @@
                                         title: 'Something went wrong. Please try again.',
                                         showConfirmButton: false,
                                         timer: 2000,
-                                        timerProgressBar: true
+                                        timerProgressBar: true,
+                                         color: '#fff',
+                                        background: 'EF4444'
                                     });
                                 });
                         }
@@ -382,9 +398,26 @@
                                             title: 'Address set as default successfully',
                                             showConfirmButton: false,
                                             timer: 2000,
-                                            timerProgressBar: true
+                                            timerProgressBar: true,
+                                             background: '#10B981',
+                                            color: '#fff',
                                         }).then(() => {
-                                            location.reload();
+                                            // Remove default status from old default card
+                                            const oldDefaultCard = document.querySelector('.address-card.default');
+                                            if (oldDefaultCard) {
+                                                oldDefaultCard.classList.remove('default');
+                                                const oldDefaultBtn = oldDefaultCard.querySelector('button[disabled]');
+                                                oldDefaultBtn.disabled = false;
+                                                oldDefaultBtn.textContent = 'Set as Default';
+                                                oldDefaultBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                                            }
+                                            // Add default status to the new card
+                                            const newDefaultCard = document.getElementById(`address-${addressId}`);
+                                            newDefaultCard.classList.add('default');
+                                            const newDefaultBtn = newDefaultCard.querySelector('button:not([disabled])');
+                                            newDefaultBtn.disabled = true;
+                                            newDefaultBtn.textContent = 'Default';
+                                            newDefaultBtn.classList.add('opacity-50', 'cursor-not-allowed');
                                         });
                                     } else {
                                         Swal.fire({
@@ -394,7 +427,9 @@
                                             title: data.message || 'Failed to set default address',
                                             showConfirmButton: false,
                                             timer: 2000,
-                                            timerProgressBar: true
+                                            timerProgressBar: true,
+                                             color: '#fff',
+                                            background: 'EF4444'
                                         });
                                     }
                                 })
@@ -406,7 +441,9 @@
                                         title: 'Something went wrong. Please try again.',
                                         showConfirmButton: false,
                                         timer: 2000,
-                                        timerProgressBar: true
+                                        timerProgressBar: true,
+                                         color: '#fff',
+                                        background: 'EF4444'
                                     });
                                 });
                         }

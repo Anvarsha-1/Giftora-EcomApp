@@ -175,20 +175,18 @@
                                                             subTotal?.toFixed(2) || order.totalPrice?.toFixed(2)
                                                             || '0.00' %>
                                                     </div>
-                                                    <div><span class="font-medium">Tax(5%) :</span> ₹<%=
-                                                            order.tax?.toFixed(2) || '0.00' %>
-                                                    </div>
+                                                    
                                                     <div><span class="font-medium">Shipping:</span> ₹<%=
                                                             order.shippingCharge?.toFixed(2) || '0.00' %>
                                                     </div>
-                                                    <% if (order.discountPrice) { %>
-                                                        <div><span class="font-medium">Discount:</span> -₹<%=
-                                                                order.discountPrice.toFixed(2) %>
+                                                    <% if (order.couponDiscount) { %>
+                                                        <div><span class="font-medium">Coupon Discount:</span> -₹<%=
+                                                                order.couponDiscount.toFixed(2) %>
                                                         </div>
                                                         <% } %>
                                                             <div class="text-lg font-bold text-blue-700 mt-2">Final
                                                                 Amount:
-                                                                ₹<%= order.finalAmount?.toFixed(2) || '0.00' %>
+                                                                ₹<%=  order.finalAmount?.toFixed(2) || '0.00' %>
                                                             </div>
                                                 </div>
                                             </div>

@@ -336,7 +336,8 @@
                         <!-- Main Image as first thumbnail -->
                         <div class="relative w-[170px] h-[170px] overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
                             data-image="<%= mainImage.url %>">
-                            <img src="<%= mainImage.url %>" alt="" class="w-full h-full object-cover p-1" />
+                            <img src="<%= mainImage.url.replace('/upload/', '/upload/w_600,h_600,c_fill,q_auto:best,f_auto/') %>" alt="" class="w-full h-full object-cover p-1" />
+                            <% console.log(mainImage.url.replace('/upload/', '/upload/w_600,h_600,c_fill,q_auto:best,f_auto/')) %>
                         </div>
 
                         <!-- Sub Images -->
@@ -562,20 +563,7 @@
 
                 <div id="description" class="tab-content">
                     <h3 class="text-xl font-semibold text-gray-900 mb-4">Product Description</h3>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        Our Premium Luxury Gift Box Collection represents the pinnacle of elegant packaging design.
-                        Crafted with meticulous attention to detail, each box features premium materials and
-                        sophisticated
-                        finishing that makes every gift-giving moment truly special.
-                    </p>
-                    <p class="text-gray-700 leading-relaxed mb-4">
-                        The collection includes various sizes to accommodate different gift types, from jewelry and
-                        accessories to gourmet treats and personal items. The interior features soft velvet lining that
-                        protects your precious gifts while adding an extra touch of luxury.
-                    </p>
-                    <p class="text-gray-700 leading-relaxed">
-                        Whether you're celebrating birthdays, anniversaries, holidays, or any special occasion, these
-                        gift boxes elevate the presentation and create lasting memories for your loved ones.
+                    <p class="text-gray-700 leading-relaxed mb-4"><%=product.description %>
                     </p>
                 </div>
 

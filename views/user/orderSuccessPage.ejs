@@ -255,7 +255,7 @@
                 <strong>Order Date:</strong>
                 <%= order?.createdOn ? new Date(order.createdOn).toLocaleString('en-US', { dateStyle: 'medium' ,
                     timeStyle: 'short' }) : 'N/A' %><br>
-                    <strong>Total Amount:</strong> ₹<%= (order?.finalPrice || order?.totalPrice || 0).toLocaleString()
+                    <strong>Total Amount:</strong> ₹<%= (order?.finalAmount || order?.totalPrice || 0).toLocaleString()
                         %><br>
                         <strong>Payment Method:</strong>
                         <%= order?.paymentMethod || 'N/A' %><br>

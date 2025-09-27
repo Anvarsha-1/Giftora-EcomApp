@@ -17,6 +17,8 @@ const session = require('express-session');
 const app = express();
 const AdminCoupon  = require('./routers/admin/admin-coupon-management')
 const userCoupon = require('./routers/user/userCouponRouter')
+const adminSales = require('./routers/admin/adminSalesReportRouter')
+const errorHandler = require('./helpers/error-handler-middleware')
 
 
 const flash = require('express-flash');
@@ -100,8 +102,17 @@ app.use('/admin', adminRouter);
 app.use('/admin', adminOrders);
 app.use('/payment',payment);
 app.use('/admin', AdminCoupon);
+app.use('/sales', adminSales)
 
 
+app.use((req, res, next) => {
+  const err = new Error("Page not found");
+  err.status = 404;
+  next(err); 
+});
+
+//error handling middleware 
+app.use(errorHandler)
 
 
 app.listen(PORT, () => {

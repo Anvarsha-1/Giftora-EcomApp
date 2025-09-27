@@ -13,6 +13,15 @@ const couponSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    couponType :{
+      type: String,
+      enum :["common",'referral'],
+      default:'common'
+    },
+    isPersonalized: {
+        type: Boolean,
+        default: false,
+    },
     discountType: {
         type: String,
         enum: ['percentage', 'flat'],

@@ -10,6 +10,7 @@ const Wallet = require('../../models/walletSchema')
 const mongoose = require('mongoose')
 const Order = require('../../models/orderSchema.js')
 const Product = require('../../models/productSchema.js')
+const UserCoupon = require('../../models/Referral-Coupon-Schema')
 
 
 
@@ -62,6 +63,7 @@ const loadUpdateEmail = async (req, res) => {
 
 const updateEmailAddress = async (req, res) => {
     try {
+        if (req.session.otp && req.session.email) return res.json({success:true,message:"Otp already sended"})
         const { email } = req.body
 
         console.log(email)
@@ -104,33 +106,33 @@ const verifyOtp = async (req, res) => {
         const OTP = otp.trim()
 
         if (!OTP) {
-            res.json({ success: false, message: "OTP required" })
+            return res.json({ success: false, message: "OTP required" })
         }
 
         if (OTP.length < 6) {
-            res.json({ success: false, message: "Invalid otp" })
+            return res.json({ success: false, message: "Invalid otp" })
         }
         if (OTP !== req.session.otp) {
-            res.json({ success: false, message: "Invalid otp" })
+            return res.json({ success: false, message: "Invalid otp" })
         }
         if (OTP === req.session.otp) {
             const user = await User.findById(req.session.user)
 
             if (!user) {
-                return res.json({ success: false, message: "User not found" })
+                return res.json({ success: false, message: "User not found" });
             }
 
             user.email = req.session.email
 
             await user.save()
+            delete req.session.email
+            delete req.session.otp
 
             return res.json({ success: true, message: 'Email update successfully' })
-        }
+        } 
 
     } catch (error) {
-
         console.log("Error while email change verify otp ", error.message)
-
         return res.json({ success: false, message: "Something went wrong while updating email. Please try again" })
 
     }
@@ -315,16 +317,67 @@ const loadMyWallet = async (req, res) => {
     }
 };
 
-const loadReferral = async(req,res)=>{
-    try{
-       const userId = req.session.user
-       if(!userId)return res.json({success:false,message:"User not found"})
-       const userDate = await User.findById(userId)
-        if (!userDate) return res.json.json({ success: false, message: "User not found" })
-        return res.render('referralPage',{user:userDate})
-    }catch(error){
-      console.log("Error in loadReferral",error.message)
-      return res.json({success:false,message:"Something went wrong"})
+const loadReferral = async (req, res) => {
+    try {
+        const userId = req.session.user;
+        if (!userId) {
+            return res.redirect('/login');
+        }
+
+        const user = await User.findById(userId).populate({
+            path: 'redeemedUser',
+            select: 'firstName lastName phone invitedAt'
+        });
+
+        if (!user) {
+            return res.status(404).render('error', { message: "User not found" });
+        }
+
+        const userCoupons = await UserCoupon.find({ userId: userId }).populate({
+            path: 'couponId',
+            match: { couponType: 'referral' }
+        });
+
+        const referralCoupons = userCoupons.filter(uc => uc.couponId);
+
+        let totalRewardsEarned = 0;
+        let availableRewards = 0;
+        referralCoupons.forEach(uc => {
+            if (uc.couponId && typeof uc.couponId.discount === 'number') {
+                totalRewardsEarned += uc.couponId.discount;
+                if (!uc.isUsed) {
+                    availableRewards += uc.couponId.discount;
+                }
+            }
+        });
+
+        const referredUserIds = user.redeemedUser.map(u => u._id);
+        let successfulReferralUserIds = [];
+        if (referredUserIds.length > 0) {
+            const successfulReferrals = await Order.distinct('userId', {
+                userId: { $in: referredUserIds },
+                status: { $nin: ['Cancelled', 'Returned', 'Return Request'] }
+            });
+            successfulReferralUserIds = successfulReferrals.map(id => id.toString());
+        }
+
+        const referredFriends = user.redeemedUser.map(referredUser => {
+            const isSuccessful = successfulReferralUserIds.includes(referredUser._id.toString());
+            const rewardAmount = 100; // As per awardReferralCoupon logic
+            return {
+                name: `${referredUser.firstName} ${referredUser.lastName}`,
+                phone: referredUser.phone || 'N/A',
+                date: referredUser.invitedAt,
+                status: isSuccessful ? 'completed' : 'pending',
+                reward: rewardAmount,
+                initials: `${referredUser.firstName?.[0] || ''}${referredUser.lastName?.[0] || ''}`.toUpperCase()
+            };
+        });
+
+        return res.render('referralPage', { user, totalReferred: user.redeemedUser.length, successfulReferrals: successfulReferralUserIds.length, totalRewardsEarned, availableRewards, referredFriends });
+    } catch (error) {
+        console.log("Error in loadReferral", error.message);
+        return res.status(500).render('error', { message: "Something went wrong while loading the referral page." });
     }
 }
 

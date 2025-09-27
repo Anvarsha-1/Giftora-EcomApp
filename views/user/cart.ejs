@@ -125,21 +125,22 @@
 
                         <!-- Cart Items Container -->
                         <div id="cartItemsContainer">
-                            <% if (!cartItems || cartItems.length===0) { %>
-                                <div id="emptyCartMessage" class="text-center py-12">
-                                    <div class="mb-4">
-                                        <i data-lucide="shopping-cart" class="w-16 h-16 text-gray-300 mx-auto"></i>
-                                    </div>
-                                    <h3 class="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
-                                    <p class="text-gray-500 mb-6">Let's find something for you!</p>
-                                    <a href="/"
-                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors btn">
-                                        <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
-                                        Continue Shopping
-                                    </a>
+                            <!-- Empty Cart Message (conditionally hidden) -->
+                            <div id="emptyCartMessage" class="text-center py-12 <%= (cartItems && cartItems.length > 0) ? 'hidden' : '' %>">
+                                <div class="mb-4">
+                                    <i data-lucide="shopping-cart" class="w-16 h-16 text-gray-300 mx-auto"></i>
                                 </div>
-                                <% } else if (cartItems && cartItems.length> 0) { %>
-                                    <% cartItems.reverse().forEach(item=> { %>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
+                                <p class="text-gray-500 mb-6">Let's find something for you!</p>
+                                <a href="/"
+                                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors btn">
+                                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                                    Continue Shopping
+                                </a>
+                            </div>
+
+                            <% if (cartItems && cartItems.length > 0) { %>
+                                <% cartItems.reverse().forEach(item => { %>
                                         <div class="cart-item flex flex-col sm:flex-row items-start sm:items-center py-4 border-b border-gray-200 last:border-b-0"
                                             data-item-id="<%= item._id %>">
                                             <!-- Product Image -->
@@ -199,8 +200,8 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <% }); %>
-                                            <% } %>
+                                <% }); %>
+                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -219,10 +220,7 @@
                                 <span class="font-medium" id="cart-subtotal">₹<%= (subTotal || 0).toLocaleString() %>
                                         </span>
                             </div>
-                            <div class="flex justify-between text-sm">
-                                <span class="text-gray-600">Tax (5%)</span>
-                                <span class="font-medium" id="cart-tax">₹<%= (tax || 0).toLocaleString() %></span>
-                            </div>
+                           
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Shipping</span>
                                 <span class="font-medium" id="cart-shipping">
@@ -355,9 +353,7 @@
                             const subtotalEl = document.getElementById('cart-subtotal');
                             if (subtotalEl) subtotalEl.textContent = `₹${result.subTotal.toLocaleString()}`;
 
-                            const taxEl = document.getElementById('cart-tax');
-                            if (taxEl) taxEl.textContent = `₹${result.tax.toLocaleString()}`;
-
+                           
                             const shippingEl = document.getElementById('cart-shipping');
                             if (shippingEl) {
                                 shippingEl.textContent = result.shipping === 0 ? 'FREE' : `₹${result.shipping}`;
@@ -449,8 +445,36 @@
                             if (result.success) {
                                 showToast('Item Removed', 'success');
                                 const itemRow = document.querySelector(`div[data-item-id="${productId}"]`);
-                                if (itemRow) itemRow.remove();
-                                window.location.reload();
+                                if (itemRow) {
+                                    itemRow.remove();
+                                }
+
+                                // Update cart count in header
+                                if (typeof updateCartCount === 'function') {
+                                    updateCartCount();
+                                }
+
+                                const cartItemsContainer = document.getElementById('cartItemsContainer');
+                                const remainingItems = cartItemsContainer.querySelectorAll('.cart-item');
+
+                                if (remainingItems.length === 0) {
+                                    // Show empty cart message
+                                    const emptyCartMessage = document.getElementById('emptyCartMessage');
+                                    if (emptyCartMessage) {
+                                        emptyCartMessage.classList.remove('hidden');
+                                    }
+                                    // Update summary to zero
+                                    document.getElementById('total-items').textContent = '0';
+                                    document.getElementById('cart-subtotal').textContent = '₹0';
+                                    document.getElementById('cart-shipping').textContent = '₹50';
+                                    document.getElementById('cart-total').textContent = '₹50';
+                                    // Disable checkout button
+                                    const checkoutBtn = document.getElementById('checkoutBtn');
+                                    checkoutBtn.disabled = true;
+                                    checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                                } else {
+                                    window.location.reload(); // Reload to get correct totals if items remain
+                                }
                             } else {
                                 showToast(result.message || 'Failed to remove item', 'error');
                             }

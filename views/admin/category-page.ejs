@@ -429,11 +429,11 @@
         </div>
         <button class="add-category-btn" onclick="openCategoryModal('add')">Add Category</button>
         <div class="search-container">
-          <form action="/admin/category" method="GET" id="searchForm">
+          <form id="searchForm" style="display: contents;">
             <input type="text" id="searchInput" name="search" placeholder="Search Categories..."
               value="<%= typeof search !== 'undefined' ? search : '' %>" />
             <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
-            <button type="submit" class="clear-btn" name="clear" value="1"><i class="fas fa-times"></i></button>
+            <button type="button" id="clearBtn" class="clear-btn"><i class="fas fa-times"></i></button>
           </form>
         </div>
         <table class="category-table">
@@ -446,7 +446,7 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="categoryTableBody">
             <% cat.forEach((category, index)=> { %>
               <tr>
                 <td>
@@ -480,7 +480,7 @@
               <% }) %>
           </tbody>
         </table>
-        <div class="pagination">
+        <div id="paginationContainer" class="pagination">
           <% const total=Number(totalPages) || 1; const searchQuery=typeof search !=='undefined' ?
             encodeURIComponent(search) : '' ; %>
             <% if (currentPage> 1) { %>
@@ -522,8 +522,7 @@
               <!-- New Offer Percentage Field -->
               <div class="form-group">
                 <label for="offerPercentage">Offer Percentage (%)</label>
-                <input type="number" id="offerPercentage" name="offerPercentage" placeholder="Enter Offer Percentage (0-100)" min="0"
-                  max="100" />
+                <input type="number" id="offerPercentage" name="offerPercentage" placeholder="Enter Offer Percentage (0-100)"  />
                 <span id="offerpercentage-error" class="error-message"></span>
               </div>
 
@@ -547,10 +546,10 @@
     // Initialize layout and event listeners
     document.addEventListener("DOMContentLoaded", () => {
       const currentPath = window.location.pathname;
-      const navLinks = document.querySelectorAll(".nav-item");
-      navLinks.forEach((link) => {
-        if (link.getAttribute("href") === currentPath) {
-          link.classList.add("active");
+      const navLinks = document.querySelectorAll(".nav-item a");
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+          link.parentElement.classList.add('active');
         } else {
           link.classList.remove("active");
         }
@@ -558,64 +557,10 @@
 
       // Initialize button event listeners
       document.querySelectorAll(".action-btn.edit").forEach((button) => {
-        button.addEventListener("click", () => {
-          const id = button.dataset.id;
-          const name = button.dataset.name;
-          const description = button.dataset.description;
-          const offerPercentage = button.dataset.offerpercentage;
-          openCategoryModal("edit", id, name, description, offerPercentage);
-        });
+        button.addEventListener("click", handleEditClick);
       });
-
       document.querySelectorAll(".action-btn.delete").forEach((button) => {
-        button.addEventListener("click", () => {
-          const id = button.dataset.id;
-          deleteCategory(id);
-        });
-      });
-
-      // Initialize layout
-      const isCollapsed = document.body.classList.contains("sidebar-collapsed");
-      updateLayout(isCollapsed);
-
-      // Handle pagination clicks
-      document.querySelectorAll(".pagination a").forEach((link) => {
-        link.addEventListener("click", (e) => {
-          if (link.classList.contains("disabled")) {
-            e.preventDefault();
-            return;
-          }
-          const href = link.getAttribute("href");
-          const pageNum = parseInt(new URLSearchParams(href.split("?")[1]).get("page"));
-          const totalPages = '<%= totalPages || 1 %>';
-          if (pageNum < 1 || pageNum > totalPages) {
-            e.preventDefault();
-            Swal.fire({
-              icon: "error",
-              title: "Invalid Page",
-              text: "The requested page does not exist.",
-            });
-            return;
-          }
-          window.location.href = href;
-        });
-      });
-
-      // Handle search form submission
-      const searchForm = document.getElementById("searchForm");
-      searchForm.addEventListener("submit", (e) => {
-        const clearButton = e.submitter && e.submitter.name === "clear";
-        if (clearButton) {
-          e.preventDefault();
-          window.location.href = "/admin/category?page=1";
-        } else {
-          // Reset to page 1 on new search
-          const searchInput = document.getElementById("searchInput").value.trim();
-          if (searchInput) {
-            e.preventDefault();
-            window.location.href = `/admin/category?page=1&search=${encodeURIComponent(searchInput)}`;
-          }
-        }
+        button.addEventListener("click", handleDeleteClick);
       });
     });
 
@@ -676,13 +621,7 @@
       const offerPercentage = document.getElementsByName("offerPercentage")[0].value.trim();
       const url = id ? `/admin/category/${id}` : "/admin/category";
       const method = id ? "PATCH" : "POST";
-
-      // Preserve pagination and search parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const page = urlParams.get("page") || "1";
-      const search = urlParams.get("search") || "";
-      const redirectUrl = `/admin/category?page=${page}${search ? "&search=" + encodeURIComponent(search) : ""}`;
-
+      
       fetch(url, {
         method: method,
         headers: { "Content-Type": "application/json" },
@@ -703,7 +642,7 @@
             text: data.message || `Category ${id ? "updated" : "added"} successfully`,
           }).then(() => {
             closeCategoryModal();
-            window.location.href = redirectUrl;
+            fetchCategories(); // Refresh the table dynamically
           });
         })
         .catch((error) => {
@@ -719,37 +658,46 @@
 
     // Form validation
     function validateForm() {
-      clearErrorMessages();
-      const name = document.getElementsByName("Name")[0].value.trim();
-      const description = document.getElementsByName("Description")[0].value.trim();
-      const offerPercentage = document.getElementsByName("offerPercentage")[0].value.trim();
-      let isValid = true;
+        clearErrorMessages();
+        const name = document.getElementsByName("Name")[0].value.trim();
+        const description = document.getElementsByName("Description")[0].value.trim();
+        const offerPercentage = document.getElementsByName("offerPercentage")[0].value.trim();
+        let isValid = true;
 
-      if (name === "") {
-        displayErrorMessage("name-error", "Please enter a name");
-        isValid = false;
-      } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-        displayErrorMessage("name-error", "Name should contain only alphabetic characters");
-        isValid = false;
-      }
+        // Regex to block emojis and most special characters, allowing only letters and spaces.
+        const invalidCharRegex = /[^a-zA-Z\s]/;
 
-      if (description === "") {
-        displayErrorMessage("description-error", "Please enter a description");
-        isValid = false;
-      } else if (!/^[a-zA-Z\s]+$/.test(description)) {
-        displayErrorMessage("description-error", "Description should contain only alphabetic characters");
-        isValid = false;
-      }
+        // --- Name Validation ---
+        if (name === "") {
+            displayErrorMessage("name-error", "Please enter a category name.");
+            isValid = false;
+        } else if (name.length < 3 || name.length > 25) {
+            displayErrorMessage("name-error", "Name must be between 3 and 25 characters.");
+            isValid = false;
+        } else if (invalidCharRegex.test(name)) {
+            displayErrorMessage("name-error", "Name can only contain letters and spaces.");
+            isValid = false;
+        }
 
-      if (offerPercentage === "") {
-        displayErrorMessage("offerpercentage-error", "Please enter an offer percentage");
-        isValid = false;
-      } else if (isNaN(offerPercentage) || offerPercentage < 0 || offerPercentage > 100) {
-        displayErrorMessage("offerpercentage-error", "Offer percentage must be a number between 0 and 100");
-        isValid = false;
-      }
+        // --- Description Validation ---
+        if (description === "") {
+            displayErrorMessage("description-error", "Please enter a description.");
+            isValid = false;
+        } else if (description.length < 10 || description.length > 100) {
+            displayErrorMessage("description-error", "Description must be between 10 and 100 characters.");
+            isValid = false;
+        } else if (invalidCharRegex.test(description)) {
+            displayErrorMessage("description-error", "Description can only contain letters and spaces.");
+            isValid = false;
+        }
 
-      return isValid;
+        // --- Offer Percentage Validation ---
+        if (offerPercentage === "" || isNaN(offerPercentage) || offerPercentage < 0 || offerPercentage > 100) {
+            displayErrorMessage("offerpercentage-error", "Offer percentage must be a number between 0 and 100.");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     function displayErrorMessage(elementId, message) {
@@ -771,13 +719,6 @@
     // Toggle List/Unlist
     function toggleCategory(event, id, isListed) {
       event.preventDefault();
-
-      // Preserve pagination and search parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const page = urlParams.get("page") || "1";
-      const search = urlParams.get("search") || "";
-      const redirectUrl = `/admin/category?page=${page}${search ? "&search=" + encodeURIComponent(search) : ""}`;
-
       Swal.fire({
         title: `Are you sure you want to ${isListed ? "unlist" : "list"} this category?`,
         icon: "warning",
@@ -805,7 +746,7 @@
                 title: "Success",
                 text: data.message,
               }).then(() => {
-                window.location.href = redirectUrl;
+                fetchCategories(); // Refresh the table dynamically
               });
             })
             .catch((error) => {
@@ -821,12 +762,6 @@
 
     // Delete Category
     function deleteCategory(id) {
-      // Preserve pagination and search parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const page = parseInt(urlParams.get("page")) || 1;
-      const search = urlParams.get("search") || "";
-      const totalPages = `<%= totalPages || 1 %>`;
-
       Swal.fire({
         title: "Are you sure you want to delete this category?",
         icon: "warning",
@@ -853,12 +788,7 @@
                 title: "Success",
                 text: data.message,
               }).then(() => {
-                // Adjust page if current page exceeds totalPages after deletion
-                const totalCategories = ` <%= totalCategory || 0 %>`;
-                const limit = 4; // Match backend limit
-                const newTotalPages = Math.ceil((totalCategories - 1) / limit);
-                const newPage = page > newTotalPages ? (newTotalPages > 0 ? newTotalPages : 1) : page;
-                window.location.href = `/admin/category?page=${newPage}${search ? "&search=" + encodeURIComponent(search) : ""}`;
+                fetchCategories(); // Refresh the table dynamically
               });
             })
             .catch((error) => {
@@ -871,5 +801,107 @@
         }
       });
     }
+
+    // --- DYNAMIC FETCH LOGIC ---
+
+    let searchTimeout;
+
+    // Main function to fetch and render categories
+    async function fetchCategories(page = 1, search = null) {
+      const currentSearch = search !== null ? search : document.getElementById('searchInput').value;
+      const url = `/admin/category?page=${page}&search=${encodeURIComponent(currentSearch)}&isAjax=true`;
+
+      try {
+        const response = await fetch(url);
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const newTbody = doc.getElementById('categoryTableBody');
+        const newPagination = doc.getElementById('paginationContainer');
+
+        if (newTbody) document.getElementById('categoryTableBody').innerHTML = newTbody.innerHTML;
+        if (newPagination) document.getElementById('paginationContainer').innerHTML = newPagination.innerHTML;
+
+        // Update URL in browser history without reloading
+        const newUrl = `/admin/category?page=${page}&search=${encodeURIComponent(currentSearch)}`;
+        history.pushState({ page, search: currentSearch }, '', newUrl);
+
+        // Re-attach event listeners to the new dynamic content
+        reinitializeEventListeners();
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        Swal.fire('Error', 'Could not load category data.', 'error');
+      }
+    }
+
+    // Re-attach event listeners to new buttons
+    function reinitializeEventListeners() {
+      document.querySelectorAll(".action-btn.edit").forEach(button => button.addEventListener("click", handleEditClick));
+      document.querySelectorAll(".action-btn.delete").forEach(button => button.addEventListener("click", handleDeleteClick));
+      document.querySelectorAll(".list-button").forEach(button => button.addEventListener("click", (e) => {
+        const row = e.target.closest('tr');
+        const id = row.querySelector('.action-btn.delete').dataset.id;
+        const isListed = e.target.classList.contains('unlist');
+        toggleCategory(e, id, isListed);
+      }));
+    }
+
+    // Handlers to get data from the element and call the main logic
+    function handleEditClick(event) {
+      const button = event.currentTarget;
+      const id = button.dataset.id;
+      const name = button.dataset.name;
+      const description = button.dataset.description;
+      const offerPercentage = button.dataset.offerpercentage;
+      openCategoryModal("edit", id, name, description, offerPercentage);
+    }
+
+    function handleDeleteClick(event) {
+      const button = event.currentTarget;
+      const id = button.dataset.id;
+      deleteCategory(id);
+    }
+
+    // --- EVENT LISTENERS FOR DYNAMIC ACTIONS ---
+
+    // Live search with debouncing
+    document.getElementById('searchInput').addEventListener('keyup', (event) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        fetchCategories(1, event.target.value);
+      }, 300); // 300ms delay
+    });
+
+    // Search form submission (for pressing enter)
+    document.getElementById('searchForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const searchInput = document.getElementById('searchInput').value.trim();
+      fetchCategories(1, searchInput);
+    });
+
+    // Clear search button
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      const searchInput = document.getElementById('searchInput');
+      if (searchInput.value) {
+        searchInput.value = '';
+        fetchCategories(1, '');
+      }
+    });
+
+    // Pagination click handler
+    document.getElementById('paginationContainer').addEventListener('click', (e) => {
+      if (e.target.tagName === 'A' && !e.target.classList.contains('disabled')) {
+        e.preventDefault();
+        const url = new URL(e.target.href);
+        const page = url.searchParams.get('page');
+        fetchCategories(page);
+      }
+    });
+
+    // Initial setup
+    document.addEventListener('DOMContentLoaded', () => {
+      reinitializeEventListeners();
+    });
   </script>
 </body>

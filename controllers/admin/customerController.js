@@ -11,38 +11,41 @@ const loadUserList = async (req, res) => {
             return string.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
         }
 
-        const escapedSearch = escapeRegex(search);
-        const userdata = await User.find({
-            isAdmin: false,
-            $or: [
+        const query = { isAdmin: false };
+        if (search) {
+            const escapedSearch = escapeRegex(search);
+            query.$or = [
                 { firstName: { $regex: new RegExp(escapedSearch, 'i') } },
+                { lastName: { $regex: new RegExp(escapedSearch, 'i') } },
                 { email: { $regex: new RegExp(escapedSearch, 'i') } },
                 { phone: { $regex: new RegExp(escapedSearch, 'i') } }
-            ]
-        })
+            ];
+        }
+
+        const userdata = await User.find(query)
             .limit(limit)
             .skip((page - 1) * limit)
             .exec();
 
-        const count = await User.find({
-            isAdmin: false,
-            $or: [
-                { firstName: { $regex: new RegExp(search, 'i') } },
-                { email: { $regex: new RegExp(search, 'i') } },
-                { phone: { $regex: new RegExp(search, 'i') } }
-            ]
-        }).countDocuments();
+        const count = await User.countDocuments(query);
 
-        res.render('userListing', {
+        const responseData = {
             users: userdata,
             totalUsers: count,
             currentPage: page,
             totalPages: Math.ceil(count / limit),
             search
-        });
+        };
+
+        // If it's an AJAX request, send JSON. Otherwise, render the full page.
+        if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+            return res.json(responseData);
+        }
+
+        res.render('userListing', responseData);
     } catch (error) {
         console.error('Error loading user list:', error);
-        return res.status(500).render('internalServer-error');
+        return res.status(500).render('admin/internalServer-error');
     }
 };
 
@@ -68,5 +71,4 @@ const blockUser = async (req, res) => {
 module.exports = {
     loadUserList,
     blockUser,
-
 }

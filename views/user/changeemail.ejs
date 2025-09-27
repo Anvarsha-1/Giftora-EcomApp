@@ -136,29 +136,32 @@
                 </div>
             </main>
         </div>
-        <!-- Success Toast -->
-        <div id="successToast"
-            class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 flex items-center gap-2">
-            <i class="ri-checkbox-circle-line"></i>
-            <span id="toastMessage">Changes saved successfully!</span>
-        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <script>
             // Toast Function
             window.showToast = function (message, type = 'success') {
-                const toast = document.getElementById('successToast');
-                const toastMessage = document.getElementById('toastMessage');
-                toastMessage.textContent = message;
-                toast.classList.remove('bg-green-500', 'bg-red-500');
-                if (type === 'success') {
-                    toast.classList.add('bg-green-500');
-                } else if (type === 'error') {
-                    toast.classList.add('bg-red-500');
-                }
-                toast.classList.remove('translate-y-full', 'opacity-0');
-                setTimeout(() => {
-                    toast.classList.add('translate-y-full', 'opacity-0');
-                }, 3000);
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: type,
+                    title: message,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    background: type === 'success' ? '#10B981' : '#EF4444',
+                    color: '#fff',
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer);
+                        toast.addEventListener('mouseleave', Swal.resumeTimer);
+                        // Custom styling for the progress bar
+                        const progressBar = toast.querySelector('.swal2-timer-progress-bar');
+                        if (progressBar) {
+                            progressBar.style.backgroundColor = 'rgba(255,255,255,0.5)';
+                        }
+                    }
+                });
             };
 
             function sendEmailOTP() {

@@ -45,9 +45,9 @@ router.get('/auth/google/callback', (req, res, next) => {
 
 
 //USER HOME PAGE 
-router.get('/home',userAuth,authUserController.loadHomePage)
-router.get('/viewProducts/',userAuth,userProductController.loadProductListingPage)
-router.get('/productsDetails/:id',userAuth,userProductController.viewProductDetails)
+router.get('/home',authUserController.loadHomePage)
+router.get('/viewProducts/',userProductController.loadProductListingPage)
+router.get('/productsDetails/:id',userProductController.viewProductDetails)
 
 
 

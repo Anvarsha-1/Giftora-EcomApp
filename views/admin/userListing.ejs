@@ -357,12 +357,12 @@
                                         <td data-label="Status">
                                             <% if (!users[i].isBlocked) { %>
                                                 <!-- User is NOT blocked — show "Block" option -->
-                                                <button class="status-btn unblocked">
+                                                <button class="status-btn unblocked" data-userid="<%= users[i]._id %>">
                                                     <a href="/admin/blockUser?id=<%= users[i]._id %>">Block</a>
                                                 </button>
                                                 <% } else { %>
                                                     <!-- User IS blocked — show "Unblock" option -->
-                                                    <button class="status-btn blocked">
+                                                    <button class="status-btn blocked" data-userid="<%= users[i]._id %>">
                                                         <a href="/admin/blockUser?id=<%= users[i]._id %>">Unblock</a>
                                                     </button>
                                                     <% } %>
@@ -375,35 +375,49 @@
                         </tbody>
                     </table>
                     <div class="pagination" id="pagination">
-                        <% if (totalPages> 1) { %>
+                        <% if (typeof totalPages !== 'undefined' && totalPages > 0) { %>
                             <nav aria-label="Page navigation">
                                 <ul class="pagination">
-                                    <% if (currentPage> 1) { %>
+                                    <% if (currentPage > 1) { %>
                                         <li class="page-item">
-                                            <a class="page-link"
-                                                href="?page=<%= currentPage - 1 %>&search=<%= search %>"
-                                                aria-label="Previous">
+                                            <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>" aria-label="Previous">
                                                 <span aria-hidden="true">«</span>
                                             </a>
                                         </li>
-                                        <% } %>
-                                            <% for(let i=0; i < totalPages; i++) { %>
-                                                <li
-                                                    class="page-item <%= (i === parseInt(currentPage) - 1) ? 'active' : '' %>">
-                                                    <a class="page-link" href="?page=<%= i + 1 %>&search=<%= search %>">
-                                                        <%= i + 1 %>
-                                                    </a>
-                                                </li>
-                                                <% } %>
-                                                    <% if (currentPage < totalPages) { %>
-                                                        <li class="page-item">
-                                                            <a class="page-link"
-                                                                href="?page=<%= currentPage + 1 %>&search=<%= search %>"
-                                                                aria-label="Next">
-                                                                <span aria-hidden="true">»</span>
-                                                            </a>
-                                                        </li>
-                                                        <% } %>
+                                    <% } %>
+
+                                    <%
+                                    const maxPagesToShow = 5;
+                                    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+                                    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+                                    if (endPage - startPage + 1 < maxPagesToShow) {
+                                        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                                    }
+                                    %>
+
+                                    <% if (startPage > 1) { %>
+                                        <li class="page-item"><a class="page-link" href="?page=1&search=<%= search %>">1</a></li>
+                                        <% if (startPage > 2) { %><li class="page-item disabled"><span class="page-link">...</span></li><% } %>
+                                    <% } %>
+
+                                    <% for (let i = startPage; i <= endPage; i++) { %>
+                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                            <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                                        </li>
+                                    <% } %>
+
+                                    <% if (endPage < totalPages) { %>
+                                        <% if (endPage < totalPages - 1) { %><li class="page-item disabled"><span class="page-link">...</span></li><% } %>
+                                        <li class="page-item"><a class="page-link" href="?page=<%= totalPages %>&search=<%= search %>"><%= totalPages %></a></li>
+                                    <% } %>
+
+                                    <% if (currentPage < totalPages) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>" aria-label="Next">
+                                                <span aria-hidden="true">»</span>
+                                            </a>
+                                        </li>
+                                    <% } %>
                                 </ul>
                             </nav>
                             <% } %>
@@ -414,85 +428,167 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        const toggleSidebar = document.querySelector('.toggle-sidebar');
-        const sidebar = document.querySelector('.sidebar');
-        const searchInput = document.getElementById('searchInput');
-        const clearSearchButton = document.getElementById('clearSearch');
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchForm = document.getElementById("searchForm");
+            const searchInput = document.getElementById("searchInput");
 
-        function updateSidebarState() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.add('collapsed'); // Automatically collapse on small screens
-            } else {
-                sidebar.classList.remove('collapsed'); // Expand on larger screens
-            }
-        }
+            // --- Core Function to Fetch and Render Users ---
+            async function fetchAndRenderUsers(page = 1, search = '') {
+                const url = `/admin/users?page=${page}&search=${encodeURIComponent(search)}`;
+                try {
+                    const response = await fetch(url, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    
+                    const data = await response.json();
+                    renderTable(data.users);
+                    renderPagination(data);
+                    
+                    // Update URL in browser history without reloading
+                    const newUrl = `/admin/users?page=${data.currentPage}&search=${encodeURIComponent(data.search)}`;
+                    history.pushState({ path: newUrl }, '', newUrl);
 
-        updateSidebarState();
-        window.addEventListener('resize', updateSidebarState);
-
-        if (toggleSidebar) {
-            toggleSidebar.addEventListener('click', () => {
-                sidebar.classList.toggle('collapsed');
-            });
-        }
-
-        // Handle search form submission
-        const searchForm = document.getElementById("searchForm");
-        searchForm.addEventListener("submit", (e) => {
-            const clearButton = e.submitter && e.submitter.name === "clear";
-            if (clearButton) {
-                e.preventDefault();
-                window.location.href = "/admin/users?page=1";
-            } else {
-                // Reset to page 1 on new search
-                const searchInput = document.getElementById("searchInput").value.trim();
-                if (searchInput) {
-                    e.preventDefault();
-                    window.location.href = `/admin/users?page=1&search=${encodeURIComponent(searchInput)}`;
+                } catch (error) {
+                    console.error("Failed to fetch users:", error);
+                    document.querySelector("tbody").innerHTML = `<tr><td colspan="6" class="text-center text-danger">Failed to load data.</td></tr>`;
                 }
             }
-        });
 
+            // --- Render Table Body ---
+            function renderTable(users) {
+                const tbody = document.querySelector("tbody");
+                tbody.innerHTML = ''; // Clear existing rows
+                if (!users || users.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center">No users found.</td></tr>`;
+                    return;
+                }
+                users.forEach((user, index) => {
+                    const row = `
+                        <tr>
+                            <td data-label="ID">${index + 1}</td>
+                            <td data-label="First Name">${user.firstName}</td>
+                            <td data-label="Last Name">${user.lastName}</td>
+                            <td data-label="Email">${user.email}</td>
+                            <td data-label="Phone Number">${user.phone || 'N/A'}</td>
+                            <td data-label="Status">
+                                <button class="status-btn ${user.isBlocked ? 'blocked' : 'unblocked'}" data-userid="${user._id}">
+                                    <a>${user.isBlocked ? 'Unblock' : 'Block'}</a>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                });
+                // Re-attach event listeners to the new buttons
+                attachBlockUnblockListeners();
+            }
 
+            // --- Render Pagination ---
+            function renderPagination({ currentPage, totalPages, search }) {
+                const paginationContainer = document.getElementById("pagination");
+                paginationContainer.innerHTML = '';
+                if (totalPages <= 0) return; // Only hide if there are no pages at all
 
+                let paginationHtml = `<nav aria-label="Page navigation"><ul class="pagination">`;
+                
+                if (currentPage > 1) {
+                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous"><span aria-hidden="true">«</span></a></li>`;
+                }
 
+                const maxPagesToShow = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+                let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+                if (endPage - startPage + 1 < maxPagesToShow) {
+                    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                }
 
-        document.querySelectorAll(".status-btn a").forEach(link => {
-            link.addEventListener('click', async (e) => {
-                e.preventDefault()
+                if (startPage > 1) {
+                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`;
+                    if (startPage > 2) paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
 
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+                }
 
-                const url = link.getAttribute('href');
-                const action = link.innerHTML.trim().toLowerCase()
+                if (endPage < totalPages) {
+                    if (endPage < totalPages - 1) paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`;
+                }
 
+                if (currentPage < totalPages) {
+                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next"><span aria-hidden="true">»</span></a></li>`;
+                }
+                paginationHtml += `</ul></nav>`;
+                paginationContainer.innerHTML = paginationHtml;
+            }
+
+            // --- Event Handler for Block/Unblock ---
+            function attachBlockUnblockListeners() {
+                document.querySelectorAll(".status-btn a").forEach(link => {
+                    link.addEventListener('click', handleBlockUnblock);
+                });
+            }
+
+            async function handleBlockUnblock(e) {
+                e.preventDefault();
+                const linkElement = e.currentTarget; // Store a reference to the link
+                const button = linkElement.parentElement;
+                const userId = button.dataset.userid;
+                const url = `/admin/blockUser?id=${userId}`;
+                const action = linkElement.textContent.trim().toLowerCase();
+                
                 Swal.fire({
                     title: `Are you sure you want to ${action} this user?`,
-                    icon: 'waring',
+                    icon: 'warning',
                     showCancelButton: true,
-                    confirmButton: 'Yes, do it!',
-                    cancelButtonText: 'cancel'
+                    confirmButtonText: `Yes, ${action} it!`,
+                    cancelButtonText: 'Cancel'
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         try {
-                            const res = await fetch(url);
-                            const data = await res.json();
+                            const response = await fetch(url, { method: 'GET' }); // Assuming GET as per original href
+                            const data = await response.json();
 
-                            if (!res.ok) throw new Error(data.message || "Sever error");
+                            if (!response.ok) throw new Error(data.message || "Server error");
 
-                            Swal.fire('Success', data.message, 'success').then(() => {
-                                location.reload();
-                            })
+                            Swal.fire('Success!', data.message, 'success');
+
+                            // Dynamically update the button
+                            const isNowBlocked = action === 'block';
+                            button.classList.toggle('unblocked', !isNowBlocked);
+                            button.classList.toggle('blocked', isNowBlocked);
+                            linkElement.textContent = isNowBlocked ? 'Unblock' : 'Block';
+
                         } catch (error) {
-                            Swal.fire('Error', err.message || 'Something went wrong', 'error');
+                            Swal.fire('Error!', error.message || 'Something went wrong.', 'error');
                         }
                     }
-                })
-            })
-        })
+                });
+            }
 
+            // --- Event Listeners Setup ---
+            searchForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const isClear = e.submitter && e.submitter.name === "clear";
+                const searchTerm = isClear ? '' : searchInput.value.trim();
+                if (isClear) searchInput.value = '';
+                fetchAndRenderUsers(1, searchTerm);
+            });
 
+            pagination.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (e.target.tagName === 'A' && e.target.dataset.page) {
+                    const page = parseInt(e.target.dataset.page, 10);
+                    const currentSearch = searchInput.value.trim();
+                    fetchAndRenderUsers(page, currentSearch);
+                }
+            });
 
-
+            // Initial attachment of listeners
+            attachBlockUnblockListeners();
+        });
     </script>
 </body>
 

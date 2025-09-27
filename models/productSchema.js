@@ -18,20 +18,24 @@ const productSchema = new mongoose.Schema({
       },
       regularPrice: {
         type: Number,
+        min:0,
         required: true
       },
       salesPrice:{
         type:Number,
+        min:0,
         required:true
       },
       productOffer: {
         type: Number,
+        min:0,
+        max:100,
         default: 0,           
       },
       quantity: {
         type: Number,
         require:true,
-        default:0,
+        min:0,
       },
       bestOffer: {
         type: Number,

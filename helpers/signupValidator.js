@@ -8,12 +8,14 @@ const validateSignupForm = async (formData) => {
 
   if (!firstName || !nameRegex.test(firstName)) {
     errors.firstName = "Name must contain only letters and valid characters.";
-  } else if (firstName.trim().length < 4) {
-    errors.firstName = "First name must be at least 4 characters";
+  } else if (firstName.trim().length < 3 || firstName.length > 15) {
+    errors.firstName = "First name must be at least 3-15 characters";
   }
 
-  if (!lastName || lastName.trim().length < 1) {
-    errors.lastName = "Last name must be at least 1 character";
+  
+
+  if (!lastName || lastName.trim().length < 1 || lastName.trim().length > 15 ) {
+    errors.lastName = "Last name must be at least 1-15 character";
   } else if (!nameRegex.test(lastName)) {
     errors.lastName = "Name must contain only letters and valid characters.";
   }
@@ -33,19 +35,36 @@ const validateSignupForm = async (formData) => {
     }
   }
 
+const emailRegex = /^[A-Za-z0-9]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+  if(!emailRegex.test(email)){
+     errors.email = "Invalid email format";
+  }
+
+
 
   // const existingPhone = await User.findOne({ phone });
   // if (existingPhone) {
   //   errors.phone = "Phone number already registered";
   // }
 
+ 
+
   if (!password || password.length < 8) {
     errors.password = "Password must be at least 8 characters";
+  } else if (!/[a-z]/.test(password)) {
+    errors.password = "Password must contain at least one lowercase letter";
+  } else if (!/[A-Z]/.test(password)) {
+    errors.password = "Password must contain at least one uppercase letter";
+  } else if (!/[0-9]/.test(password)) {
+    errors.password = "Password must contain at least one number";
+  } else if (!/[^A-Za-z0-9]/.test(password)) {
+    errors.password = "Password must contain at least one special character";
+  } else if (password.length > 15) {
+    errors.password = "Password must not exceed 15 characters";
   }
 
-  if (confirmPassword !== password) {
-    errors.confirmPassword = "Passwords do not match";
-  } 
+
   if (referralCode){
     const inviter = await User.findOne({ referralCode: referralCode })
      if(!inviter){

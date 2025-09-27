@@ -48,29 +48,27 @@
                 <h1 class="text-2xl font-semibold mb-2 sm:mb-0">Order Management</h1>
                 <div class="flex flex-wrap sm:flex-nowrap gap-2 items-center w-full sm:w-auto">
                     <form method="GET" action="/admin/orders"
-                        class="flex gap-2 items-center flex-wrap w-full sm:w-auto">
-                        <input type="text" name="search" value="<%= query.search || '' %>"
+                        class="flex gap-2 items-center flex-wrap w-full sm:w-auto" id="filterForm">
+                        <input type="text" name="search" id="searchInput" value="<%= query.search || '' %>"
                             placeholder="Search Order ID, Name, Email"
                             class="border rounded px-3 h-10 focus:outline-none w-40">
-                        <select name="status" class="border rounded px-2 h-10 focus:outline-none">
+                        <select name="status" id="statusFilter" class="border rounded px-2 h-10 focus:outline-none">
                             <option <%=!query.status ? 'selected' : '' %>>All</option>
                             <option <%=query.status==='Pending' ? 'selected' : '' %>>Pending</option>
                             <option <%=query.status==='Processing' ? 'selected' : '' %>>Processing</option>
                             <option <%=query.status==='Shipped' ? 'selected' : '' %>>Shipped</option>
                             <option <%=query.status==='Delivered' ? 'selected' : '' %>>Delivered</option>
                             <option <%=query.status==='Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                            <option <%=query.status==='Return Request' ? 'selected' : '' %>>Return Request
-                            </option>
+                            <option <%=query.status==='Return Request' ? 'selected' : '' %>>Return Request</option>
                             <option <%=query.status==='Returned' ? 'selected' : '' %>>Returned</option>
                         </select>
-                        <select name="sort" class="border rounded px-2 h-10 focus:outline-none">
+                        <select name="sort" id="sortFilter" class="border rounded px-2 h-10 focus:outline-none">
                             <option value="latest" <%=(!query.sort || query.sort==='latest' ) ? 'selected' : ''
                                 %>>Latest</option>
                             <option value="oldest" <%=query.sort==='oldest' ? 'selected' : '' %>>Oldest</option>
                         </select>
-                        <button type="submit"
-                            class="bg-blue-600 text-white px-4 rounded h-10 hover:bg-blue-700">Search</button>
-                        <a href="/admin/orders"
+                        <button type="submit" class="bg-blue-600 text-white px-4 rounded h-10 hover:bg-blue-700">Search</button>
+                        <a href="/admin/orders" id="clearBtn"
                             class="bg-gray-100 px-4 rounded border h-10 flex items-center hover:bg-gray-200">Clear</a>
                     </form>
                     <div class="ml-auto">
@@ -105,7 +103,7 @@
                             <th class="p-1">Change Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="ordersTableBody">
                         <% if (orders && orders.length>0) { orders.forEach(order => { %>
                             <tr class="border-b hover:bg-gray-50">
                                 <td class="p-2 min-w-[120px] max-w-[160px] break-words align-middle">
@@ -159,7 +157,7 @@
                                 </td>
                                 <td class="p-2">
                                     <div class="flex items-center gap-2 justify-center">
-                                        <select id="status-<%= order.orderId %>" class="border px-2 py-1 rounded">
+                                        <select onchange="saveStatus('<%= order.orderId %>', this.value)" id="status-<%= order.orderId %>" class="border px-2 py-1 rounded">
                                             <% const
                                                 statuses=["Pending","Processing","Shipped","Delivered","Returned"]; statuses.forEach(s=>{ %>
                                                 <option value="<%=s%>" <%=order.status===s?'selected':'' %>>
@@ -167,8 +165,6 @@
                                                 </option>
                                                 <% }) %>
                                         </select>
-                                        <button onclick="saveStatus('<%= order.orderId %>')"
-                                            class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition shadow">Save</button>
                                     </div>
                                 </td>
                             </tr>
@@ -181,25 +177,19 @@
                 </table>
             </div>
             <!-- Pagination centered below -->
-            <div class="flex justify-center items-center mt-4">
-    <button
-        class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1"
-        <%= currentPage <= 1 ? 'disabled' : '' %>
-        onclick="window.location.href='?page=<%= currentPage - 1 %><%= searchParamsExceptPage %>'"
-    >
-        &larr;
-    </button>
-
-    <span class="px-2 text-sm">Page <%= currentPage %> of <%= totalPages %></span>
-
-    <button
-        class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1"
-        <%= currentPage >= totalPages ? 'disabled' : '' %>
-        onclick="window.location.href='?page=<%= currentPage + 1 %><%= searchParamsExceptPage %>'"
-    >
-        &rarr;
-    </button>
-</div>
+            <div id="paginationContainer" class="flex justify-center items-center mt-4">
+                <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>" class="px-3 py-1 rounded border border-gray-300 bg-white mx-1">&larr;</a>
+                <% } else { %>
+                    <button class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1" disabled>&larr;</button>
+                <% } %>
+                <span class="px-2 text-sm">Page <%= currentPage %> of <%= totalPages %></span>
+                <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>" class="px-3 py-1 rounded border border-gray-300 bg-white mx-1">&rarr;</a>
+                <% } else { %>
+                    <button class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1" disabled>&rarr;</button>
+                <% } %>
+            </div>
 
         </div>
     </div>
@@ -218,14 +208,6 @@
             }
         }
         window.statusBadgeClass = statusBadgeClass;
-        // Search params for pagination links
-        const urlSearch = new URLSearchParams(window.location.search);
-        let searchParamsExceptPage = '';
-        urlSearch.delete('page');
-        if ([...urlSearch].length > 0) {
-            searchParamsExceptPage = '&' + urlSearch.toString();
-        }
-        window.searchParamsExceptPage = searchParamsExceptPage;
     </script>
     <!-- AJAX for status badge and toast -->
     <script>
@@ -246,26 +228,97 @@
                 icon: 'success', title: 'Order ID copied!'
             });
         }
-        function saveStatus(orderId) {
-            const status = document.getElementById(`status-` + orderId).value;
+
+        function saveStatus(orderId, newStatus) {
             fetch(`/admin/orders/${orderId}/status`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status })
+                body: JSON.stringify({ status: newStatus })
             })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
                         showSwalToast('Status updated!');
-                        setTimeout(() => window.location.reload(), 1000);
+                        // Find the row and update the badge dynamically
+                        const row = document.querySelector(`#status-${orderId}`).closest('tr');
+                        if (row) {
+                            const badge = row.querySelector('.status-badge');
+                            if (badge) {
+                                badge.textContent = newStatus;
+                                badge.className = `status-badge px-2 py-1 rounded text-xs font-semibold ${statusBadgeClass(newStatus)}`;
+                            }
+                        }
                     } else {
                         showSwalToast(data.message || 'Error', 'error');
+                        // Revert the select dropdown if the update fails
+                        const select = document.getElementById(`status-${orderId}`);
+                        if (select) {
+                            const originalStatus = select.closest('tr').querySelector('.status-badge').textContent.trim();
+                            select.value = originalStatus;
+                        }
                     }
                 })
                 .catch(() => {
                     showSwalToast('Update failed', 'error');
                 });
         }
+
+        // --- Dynamic Fetch Logic ---
+
+        async function fetchOrders(page = 1) {
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+
+            const params = new URLSearchParams({ page, search, status, sort, isAjax: true });
+            const url = `/admin/orders?${params.toString()}`;
+
+            try {
+                const response = await fetch(url);
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const newTbody = doc.getElementById('ordersTableBody');
+                const newPagination = doc.getElementById('paginationContainer');
+
+                if (newTbody) document.getElementById('ordersTableBody').innerHTML = newTbody.innerHTML;
+                if (newPagination) document.getElementById('paginationContainer').innerHTML = newPagination.innerHTML;
+
+                // Update URL without reloading
+                history.pushState({ page, search, status, sort }, '', `/admin/orders?${params.toString().replace('&isAjax=true', '')}`);
+            } catch (error) {
+                console.error('Failed to fetch orders:', error);
+                showSwalToast('Could not load order data.', 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Handle form submission for filtering/searching
+            document.getElementById('filterForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                fetchOrders(1);
+            });
+
+            // Handle clear button
+            document.getElementById('clearBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('searchInput').value = '';
+                document.getElementById('statusFilter').value = 'All';
+                document.getElementById('sortFilter').value = 'latest';
+                fetchOrders(1);
+            });
+
+            // Handle pagination clicks
+            document.getElementById('paginationContainer').addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    const url = new URL(e.target.href);
+                    const page = url.searchParams.get('page');
+                    fetchOrders(page);
+                }
+            });
+        });
     </script>
 </body>
 

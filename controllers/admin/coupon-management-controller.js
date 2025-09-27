@@ -12,6 +12,7 @@ const getCouponPage = async(req,res)=>{
         const sortOption = req.query.sort || "newest";
         const page = parseInt(req.query.page) || 1; 
         const limit = 4;
+        console.log(statusFilter, typeFilter, sortOption,searchQuery)
         
         let filter = {
             $or: [{
@@ -21,13 +22,21 @@ const getCouponPage = async(req,res)=>{
             ],
             isDeleted: false
         }
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0)
 
-        if(statusFilter==='Active'){
-            filter.isActive=true
-        }else if(statusFilter==="Inactive"){
-            filter.isActive=false
-        }else if(statusFilter==='Expired'){
-            filter.expiry = {$lt:new Date()}
+      
+        switch(statusFilter.toLowerCase()){
+            case 'active':
+                filter.isActive = true
+                break;
+            case 'inactive':
+                filter.isActive = false;
+                break;
+            case 'expired':
+                filter.expiry = { $lt: todayStart }
+                delete filter.isActive;
+                break;
         }
 
         if (typeFilter !== "all") {
@@ -54,10 +63,10 @@ const getCouponPage = async(req,res)=>{
         console.log(coupons)
         
         
-        const couponIsActive = await Coupon.countDocuments({isActive:true})
-        const TotalCouponCount = await Coupon.countDocuments()
-        const totalPages = Math.ceil(couponIsActive / limit);
-        const couponUserCount = await Coupon.aggregate([{ $group: { _id: null, usedCount: { $sum:"$userCount"}}}])
+        const couponIsActive = await Coupon.countDocuments({isActive:true,isDeleted:false})
+        const TotalCouponCount = await Coupon.countDocuments({isDeleted:false})
+        const totalPages = Math.ceil(TotalCouponCount / limit);
+        const couponUserCount = await Coupon.aggregate([{ $group: { _id: null, usedCount: { $sum:"$usedCount"}}}])
         const totalUsedCount = couponUserCount.length > 0 ? couponUserCount[0].usedCount : 0;
         
         return res.render('coupon-management', {
@@ -100,6 +109,7 @@ const addCoupons = async (req, res) => {
             selectedCategories,
             selectedProducts
         } = req.body;
+        console.log(req.body)
 
         // Basic sanitization and normalization
         const code = (couponCode || '').trim().toUpperCase();
@@ -196,7 +206,7 @@ const addCoupons = async (req, res) => {
         if (error && error.code === 11000) {
             return res.status(409).json({ success: false, message: 'Coupon code must be unique' });
         }
-        console.error('Error while creating coupon:', error);
+        console.error('Error while creating coupon:', error.message);
         return res.status(500).json({ success: false, message: 'Internal server error while creating coupon' });
     }
 }
@@ -314,7 +324,7 @@ const editCoupons = async(req,res)=>{
 
         if (!updated) return res.status(404).json({ success: false, message: 'Coupon not found' });
 
-        return res.json({ success: true, message: 'Coupon updated successfully', data: { id: updated._id } });
+        return res.status(200).json({ success: true, message: 'Coupon updated successfully', data: { id: updated._id } });
       }catch(error){
         if (error && error.code === 11000) {
             return res.status(409).json({ success: false, message: 'Coupon code must be unique' });

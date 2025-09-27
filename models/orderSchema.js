@@ -21,10 +21,13 @@ const orderSchema = new Schema({
     },
     quantity: {
       type: Number,
+      min:0,
       required: true
     },
     price: {
       type: Number,
+      min:0,
+      required:true,
       default: 0
     },
     status: {
@@ -50,10 +53,6 @@ const orderSchema = new Schema({
       type: String
     }
   }],
-  tax: {
-    type: Number,
-    default: 0
-  },
   shippingCharge: {
     type: Number,
     default: 0

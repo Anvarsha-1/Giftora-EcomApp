@@ -1,4 +1,4 @@
-const DocumentPDF = require('pdfkit')
+
 
 const PDFDocument = require('pdfkit');
 
@@ -108,7 +108,7 @@ function BuildPDF(order, dataCallback, endCallback) {
 
     // ===== TOTALS SECTION WITH SHADED BOX =====
     let totalsTop = doc.y;
-    // Calculate tax and shipping
+   
     
   
     
@@ -124,14 +124,6 @@ function BuildPDF(order, dataCallback, endCallback) {
         .font('Helvetica')
         .fillColor('#333')
         .text(`Rs.${subtotal}`, 430, totalsTop + offset);
-    offset += 18;
-    doc
-        .font('Helvetica-Bold')
-        .fillColor('#2E3A59')
-        .text(`Tax (5%):`, 360, totalsTop + offset, { continued: true })
-        .font('Helvetica')
-        .fillColor('#333')
-        .text(`Rs.${order.tax}`, 430, totalsTop + offset);
     offset += 18;
     doc
         .font('Helvetica-Bold')

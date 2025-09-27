@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Account</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="/css/user/signup.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="/css/user/signup.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
@@ -104,25 +104,14 @@
         <p>Enter your details to get started</p>
       </div>
 
-      <form action="/signup" method="POST">
+      <form id="signupForm">
         <% if (message && message.length> 0) { %>
           <div class="error-message" style="text-align: center; margin-bottom: 12px;">
             <%= message %>
           </div>
           <% } %>
 
-          <% if (error) { %>
-            <script>
-              Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: "<%= error %>",
-                confirmButtonColor: '#d33'
-              }).then(()=>{
-                window.location.href="/login"
-              });
-            </script>
-            <% } %>
+
 
 
             <div class="form-row">
@@ -131,7 +120,7 @@
                   class="form-control <%= errors && errors.firstName ? 'error' : '' %>" placeholder="First Name"
                   value="<%= formData && formData.firstName ? formData.firstName : '' %>">
                 <% if (errors && errors.firstName) { %>
-                  <span class="error-message"  >
+                  <span class="error-message">
                     <%= errors.firstName %>
                   </span>
                   <% } else { %>
@@ -152,8 +141,9 @@
             </div>
 
             <div class="form-group">
-              <input type="tel" name="phone" class="form-control <%= errors && errors.phone ? 'error' : '' %>"
-                placeholder="Phone Number" value="<%= formData && formData.phone ? formData.phone : '' %>">
+              <input type="tel" name="phone" id="phone"
+                class="form-control <%= errors && errors.phone ? 'error' : '' %>" placeholder="Phone Number"
+                value="<%= formData && formData.phone ? formData.phone : '' %>">
               <% if (errors && errors.phone) { %>
                 <span class="error-message">
                   <%= errors.phone %>
@@ -164,8 +154,9 @@
             </div>
 
             <div class="form-group">
-              <input type="email" name="email" class="form-control <%= errors && errors.email ? 'error' : '' %>"
-                placeholder="Email Address" value="<%= formData && formData.email ? formData.email : '' %>">
+              <input type="email" name="email" id="email"
+                class="form-control <%= errors && errors.email ? 'error' : '' %>" placeholder="Email Address"
+                value="<%= formData && formData.email ? formData.email : '' %>">
               <% if (errors && errors.email) { %>
                 <span class="error-message">
                   <%= errors.email %>
@@ -178,6 +169,7 @@
             <div class="form-group password-field">
               <input type="password" name="password" id="password"
                 class="form-control <%= errors && errors.password ? 'error' : '' %>" placeholder="Password">
+
               <button type="button" class="eye-button" onclick="togglePassword('password')">
                 <svg class="eye-icon" id="eye-password" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -185,6 +177,7 @@
                   <circle cx="12" cy="12" r="3" />
                 </svg>
               </button>
+
               <% if (errors && errors.password) { %>
                 <span class="error-message">
                   <%= errors.password %>
@@ -192,7 +185,10 @@
                 <% } else { %>
                   <span class="error-message"></span>
                   <% } %>
+
+
             </div>
+
 
             <div class="form-group password-field">
               <input type="password" name="confirmPassword" id="confirmPassword"
@@ -233,7 +229,7 @@
                   <% } %>
             </div>
 
-            <button type="submit" class="btn-primary" href="/login">Create Account</button>
+            <button type="submit" class="btn-primary">Create Account</button>
       </form>
 
       <div class="divider">
@@ -261,6 +257,54 @@
   </div>
 
   <script>
+
+    // password white space preventer
+    const passwordInput = document.getElementById("password")
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key == ' ') {
+        e.preventDefault()
+      }
+    })
+
+    passwordInput.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\s+/g, "");
+    });
+
+    const confirmInput = document.getElementById("confirmPassword")
+    confirmInput.addEventListener('keydown', (e) => {
+      if (e.key == ' ') {
+        e.preventDefault()
+      }
+    })
+
+    confirmInput.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\s+/g, "");
+    });
+
+    const emailInput = document.getElementById("email")
+    emailInput.addEventListener('keydown', (e) => {
+      if (e.key == ' ') {
+        e.preventDefault()
+      }
+    })
+
+    emailInput.addEventListener("input", (e) => {
+      e.target.value = e.target.value.replace(/\s+/g, "");
+    });
+
+
+
+
+
+
+
+    const phoneInput = document.getElementById("phone")
+    phoneInput.addEventListener('keydown', (e) => {
+      if (e.key == ' ') {
+        e.preventDefault()
+      }
+    })
+
     function togglePassword(fieldId) {
       const field = document.getElementById(fieldId);
       const eyeIcon = document.getElementById('eye-' + fieldId);
@@ -313,6 +357,84 @@
         if (!referralField.classList.contains('show')) {
           referralField.classList.add('show');
           referralLink.textContent = 'Hide referral code';
+        }
+      }
+
+      function throttle(func, delay) {
+        let timerFlag = null
+        return (...args) => {
+          if (timerFlag == null) {
+            func(...args)
+            timerFlag = setTimeout(() => {
+              timerFlag = null
+            }, delay)
+          }
+        }
+      }
+      let count = 0
+
+      const throttledHandleSignup = throttle(handleSignup, 3000);
+
+      document.getElementById('signupForm').addEventListener('submit', (event) => {
+        event.preventDefault();
+        throttledHandleSignup(event);
+      });
+
+      async function handleSignup(event) {
+
+        // Clear previous errors
+        document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-control.error').forEach(el => el.classList.remove('error'));
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+
+          count++
+          console.log(count)
+          const response = await fetch('/signup', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+          console.log(` result ${result}` || ` response Json${await response.json}`)
+
+          if (result.success) {
+            // Assuming success leads to OTP verification page
+            window.location.href = '/verify-otp';
+          } else {
+            // Handle validation errors
+            if (result.errors) {
+              Object.keys(result.errors).forEach(key => {
+                const input = document.querySelector(`[name="${key}"]`);
+                if (input) {
+                  input.classList.add('error');
+                  const errorSpan = input.closest('.form-group').querySelector('.error-message');
+                  if (errorSpan) {
+                    errorSpan.textContent = result.errors[key];
+                  }
+                }
+              });
+            }
+            // Handle a general, non-field-specific error message
+            if (result.message) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Signup Failed',
+                text: result.message,
+                confirmButtonColor: '#d33'
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Signup error:', error);
+          Swal.fire({ icon: 'error', title: 'Network Error', text: 'Something went wrong. Please try again.' });
         }
       }
     });

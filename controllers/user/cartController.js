@@ -17,7 +17,6 @@ const loadCart = async (req, res) => {
                 cartItems: [],
                 total: 0,
                 subTotal: 0,
-                tax: 0,
                 totalQuantity: 0,
                 deliveryMessage: "Free delivery on order above ₹1000",
                 shipping: 50
@@ -38,7 +37,6 @@ const loadCart = async (req, res) => {
                 cartItems: [],
                 total: 0,
                 subTotal: 0,
-                tax: 0,
                 totalQuantity: 0,
                 deliveryMessage: "Free delivery on order above ₹1000",
                 shipping: 50
@@ -66,9 +64,9 @@ const loadCart = async (req, res) => {
             };
         });
 
-        const tax = Math.round(subTotal * 0.05);
+ 
         const shipping = subTotal >= 1000 ? 0 : 50;
-        const total = subTotal + tax + shipping;
+        const total = subTotal  + shipping;
         const deliveryMessage = subTotal >= 1000
             ? "Free delivery on order above ₹1000"
             : "₹50 shipping charge for orders below ₹1000";
@@ -80,7 +78,6 @@ const loadCart = async (req, res) => {
             user,
             cartItems,
             subTotal,
-            tax,
             shipping,
             total,
             totalQuantity,
@@ -266,16 +263,15 @@ const updateCartQuantity = async (req, res) => {
 
 
         const subTotal = cart.total;
-        const tax = Math.round(subTotal * 0.05);
         const shipping = subTotal >= 1000 ? 0 : 50;
-        const total = subTotal + tax + shipping;
+        const total = subTotal  + shipping;
 
         await cart.save();
 
         res.json({
             success: true,
             subTotal,
-            tax,
+            
             itemTotal: item.totalPrice,
             itemQuantity: item.quantity,
             stock: product.quantity,
