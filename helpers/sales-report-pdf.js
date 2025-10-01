@@ -96,15 +96,16 @@ function generateSalesReportPDF(orders, summary, res) {
     doc.font(FONT_BOLD).text(formatCurrency(order.netPaidAmount), 460, startY, { width: 70, align: 'right' });
 
     // Products list within the row
-    let productY = startY;
+    // Save the current Y position before drawing the product list
+    const productListStartY = doc.y;
     doc.font(FONT_REGULAR).fontSize(7.5).fillColor('#555');
     order.products.forEach(p => {
-      doc.text(`${p.quantity}x ${p.name}`, 330, productY, { width: 120 });
-      productY += 9;
+      // Let pdfkit handle the Y position automatically for text wrapping
+      doc.text(`${p.quantity}x ${p.name}`, 330, undefined, { width: 120 });
     });
 
     // Set Y position for the next row, ensuring it's below the tallest cell
-    doc.y = Math.max(startY + 20, productY + 5);
+    doc.y = Math.max(startY + 20, doc.y + 5);
 
     // Row separator
     doc.strokeColor('#e0e0e0').lineWidth(0.5).moveTo(40, doc.y).lineTo(PAGE_WIDTH - 40, doc.y).stroke().moveDown(0.5);

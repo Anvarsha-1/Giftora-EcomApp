@@ -7,7 +7,7 @@ const errorHandler = (err, req, res, next) => {
     const statusCode = err.status || 500
     const message = err.message || "Something went wrong"
 
-    if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+    if (req.xhr || (req.headers.accept && req.headers.accept.includes('json'))) {
         return res.status(statusCode).json(
             {
                 success: false,

@@ -45,10 +45,9 @@
               </nav>
             </div>
             <div class="p-6 content-section">
-              <a href="/account/profile" class="text-blue-600 hover:underline text-sm mb-4 inline-block">&larr; Back to
-                profile</a>
-              <% if (order) { %>
-                <% order.reverse().forEach(function(orderItem) { %>
+              <h1 class="text-2xl font-semibold text-gray-800 mb-6">My Orders</h1>
+              <% if (orders && orders.length > 0) { %>
+                <% orders.forEach(function(orderItem) { %>
                   <% const orderId=orderItem.orderId %>
                     <% const status=orderItem.status ? orderItem.status.toLowerCase() : '' ; %>
                       <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
@@ -132,7 +131,7 @@
                                 <% } %>
                               </div>
                             </div>
-                            <%if(order){ %>
+                            <%if(orders){ %>
                               <div class="mt-6 flex flex-wrap gap-3 justify-end">
                                 <a href="/orders/details/?orderId=<%= orderId|| '' %>"
                                   class="inline-block bg-blue-600 border border-blue-800 text-white px-4 py-2 rounded font-bold shadow hover:bg-blue-800 hover:text-white">View
@@ -149,16 +148,41 @@
                               </div>
                       </div>
                       <% }); %>
-                        <% } else { %>
-                          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6 text-center">
-                            <p>No orders found.</p>
+                          <% } else { %>
+                            <div class="text-center py-12 bg-gray-50 rounded-lg">
+                                <i class="ri-dropbox-line text-5xl text-gray-400 mb-4"></i>
+                                <h3 class="text-xl font-semibold text-gray-700">No Orders Yet</h3>
+                                <p class="text-gray-500 mt-2">You haven't placed any orders. Let's change that!</p>
+                                <a href="/products" class="mt-6 inline-block bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                                    Start Shopping
+                                </a>
+                            </div>
+                        <% } %>
+
+                        <!-- Pagination -->
+                        <% if (totalPages > 1) { %>
+                          <div class="mt-8 flex justify-center items-center space-x-2">
+                              <% if (currentPage > 1) { %>
+                                  <a href="?page=<%= currentPage - 1 %>" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+                              <% } %>
+              
+                              <% for(let i = 1; i <= totalPages; i++) { %>
+                                  <% if (i === currentPage) { %>
+                                      <span class="px-4 py-2 bg-blue-600 border border-blue-600 rounded-md text-sm font-medium text-white"><%= i %></span>
+                                  <% } else { %>
+                                      <a href="?page=<%= i %>" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"><%= i %></a>
+                                  <% } %>
+                              <% } %>
+              
+                              <% if (currentPage < totalPages) { %>
+                                  <a href="?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+                              <% } %>
                           </div>
-                          <% } %>
+                      <% } %>
             </div>
           </main>
       </div>
     </div>
-
 </body>
 
 </html>

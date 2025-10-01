@@ -1009,7 +1009,7 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge">-<%=flashSales[i].bestOffer%>%</div>
+                                                <div class="discount-badge"><%=flashSales[i].bestOffer%>%</div>
                                             <% if (user)  { %>
                                                 <button type="button" onclick="addWishlist('<%= flashSales[i]._id %>', this)" class="wishlist-btn"
                                                     style="background-color: var(--white); color: <%= wishlistId.includes(flashSales[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
@@ -1145,7 +1145,7 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge">-<%=products[i].bestOffer%>%</div>
+                                                <div class="discount-badge"><%=products[i].bestOffer%>%</div>
                                             <% if  (typeof wishlistId !== 'undefined' && wishlistId.length)  { %>
                                                 <button type="button" onclick="addWishlist('<%= products[i]._id %>', this)" class="wishlist-btn"
                                                         style="background-color: var(--white); color: <%= wishlistId.includes(products[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
@@ -1235,7 +1235,7 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge">-<%=bestselling[i].bestOffer%>%</div>
+                                                <div class="discount-badge"><%=bestselling[i].bestOffer%>%</div>
                                                 <% if  (typeof wishlistId !== 'undefined' && wishlistId.length)  { %>
                                                     <button type="button"
                                                         onclick="addWishlist('<%= bestselling[i]._id %>', this)"

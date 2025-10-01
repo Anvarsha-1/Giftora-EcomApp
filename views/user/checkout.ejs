@@ -402,7 +402,7 @@
                     <!-- Place Order Button -->
                     <div class="card">
                         <button id="placeOrderBtn" type="button"
-                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors text-lg">Place
+                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors text-lg <%= subTotal === 0 || total === 0 ? 'opacity-50 cursor-not-allowed' : '' %>" <%= subTotal === 0 || total === 0 ? 'disabled' : '' %>>Place
                             Order</button>
                     </div>
                 </div>
@@ -680,10 +680,21 @@
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({ addressId: addressSelected.value })
                                         });
+                                        
+                                        const orderData = await orderRes.json();
 
-                                        const { razorpayOrder, user, userAddress, orderId } = await orderRes.json();
+                                        if (!orderRes.ok || !orderData.success) {
+                                            return Swal.fire({
+                                                icon: 'error',
+                                                title: 'Order Creation Failed',
+                                                text: orderData.message || 'Could not initiate the payment process. Please try again.',
+                                                confirmButtonColor: '#d33'
+                                            });
+                                        }
 
-                                        // 3️⃣ Razorpay checkout options
+                                        const { razorpayOrder, user, userAddress, orderId } = orderData;
+
+                                        // 3️⃣ Razorpay checkout options 
                                         const options = {
                                             key,
                                             amount: razorpayOrder.amount,
@@ -700,42 +711,52 @@
 
                                             // 4️⃣ Payment handler
                                             handler: async function (response) {
-                                                const verifyRes = await fetch('/payment/verify-payment', {
-                                                    method: 'POST',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({
-                                                        razorpay_order_id: response.razorpay_order_id,
-                                                        razorpay_payment_id: response.razorpay_payment_id,
-                                                        razorpay_signature: response.razorpay_signature,
-                                                        orderId //  DB orderId
-                                                    })
-                                                });
-                                                console.log('verify Result', await verifyRes.json)
-
-                                                const verifyResult = await verifyRes.json();
-
-
-                                                if (verifyResult.success) {
-                                                    Swal.fire({
-                                                        icon: 'success',
-                                                        title: 'Payment Successful!',
-                                                        text: 'Your order has been placed successfully.',
-                                                        confirmButtonColor: '#3b82f6'
-                                                    }).then(() => {
-                                                        window.location.href = `/checkout/order-success?orderId=${verifyResult.orderId}`;
+                                                try {
+                                                    const verifyRes = await fetch('/payment/verify-payment', {
+                                                        method: 'POST',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({
+                                                            razorpay_order_id: response.razorpay_order_id,
+                                                            razorpay_payment_id: response.razorpay_payment_id,
+                                                            razorpay_signature: response.razorpay_signature,
+                                                            orderId //  DB orderId
+                                                        })
                                                     });
-                                                } else {
-                                                    Swal.fire({
-                                                        icon: 'error',
-                                                        title: 'Payment Verification Failed',
-                                                        text: 'We could not verify your payment.',
-                                                        confirmButtonColor: '#d33'
-                                                    }).then(() => {
-                                                        window.location.href = `/payment/failure-page/${verifyResult.orderId}`;
-                                                    });
+                                                    
+                                                    const verifyResult = await verifyRes.json();
+
+                                                    if (verifyResult.success) {
+                                                        Swal.fire({
+                                                            icon: 'success',
+                                                            title: 'Payment Successful!',
+                                                            text: 'Your order has been placed successfully.',
+                                                            confirmButtonColor: '#3b82f6'
+                                                        }).then(() => {
+                                                            window.location.href = `/checkout/order-success?orderId=${verifyResult.order.customOrderId}`;
+                                                        });
+                                                    } else {
+                                                        Swal.fire({
+                                                            icon: 'error',
+                                                            title: 'Payment Verification Failed',
+                                                            text: verifyResult.message || 'We could not verify your payment.',
+                                                            confirmButtonColor: '#d33'
+                                                        }).then(() => {
+                                                            window.location.href = `/payment/failure-page/${orderId}`;
+                                                        });
+                                                    }
+                                                } catch (verifyError) {
+                                                     console.error("Payment verification fetch error:", verifyError);
+                                                     Swal.fire({
+                                                         icon: 'error',
+                                                         title: 'Verification Error',
+                                                         text: 'There was a problem verifying your payment. Please contact support.',
+                                                         confirmButtonColor: '#d33'
+                                                     }).then(() => {
+                                                         window.location.href = `/payment/failure-page/${orderId}`;
+                                                     });
                                                 }
                                             },
-
+ 
                                             // 5️⃣ Handle modal close without payment
                                             modal: {
                                                 ondismiss: async function () {
@@ -767,7 +788,7 @@
                                         rzp.open();
 
                                     } catch (err) {
-                                        console.error("Payment init error:", err);
+                                        console.error("Payment init error:", err.message);
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error',

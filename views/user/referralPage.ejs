@@ -254,36 +254,47 @@
                                     </div>
                                 </div>
 
-                                <!-- Reward Available Section -->
-                                <div id="rewardSection" class="reward-card rounded-lg p-6 mb-8 text-white stagger">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <div class="flex items-center gap-3">
-                                            <i class="ri-trophy-line text-3xl bounce"></i>
-                                            <div>
-                                                <h3 class="text-xl font-display">Congratulations!</h3>
-                                                <p class="text-purple-100 font-body">You've earned rewards from
-                                                    referrals</p>
+                                <% if (availableRewards > 0) { %>
+                                    <!-- Reward Available Section -->
+                                    <div id="rewardSection" class="reward-card rounded-lg p-6 mb-8 text-white stagger">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <div class="flex items-center gap-3">
+                                                <i class="ri-trophy-line text-3xl bounce"></i>
+                                                <div>
+                                                    <h3 class="text-xl font-display">Congratulations!</h3>
+                                                    <p class="text-purple-100 font-body">You've earned rewards from referrals</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="text-3xl font-bold">₹<%= availableRewards %></p>
+                                                <p class="text-purple-100 text-sm">Available to use</p>
                                             </div>
                                         </div>
-                                        <div class="text-right">
-                                            <p class="text-3xl font-bold">₹<%= availableRewards %></p>
-                                            <p class="text-purple-100 text-sm">Available to use</p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <p class="text-white font-semibold">Referral Bonus</p>
-                                                <p class="text-purple-100 text-sm font-body">Use on your next purchase
-                                                </p>
+                                        <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <p class="text-white font-semibold">Referral Bonus</p>
+                                                    <p class="text-purple-100 text-sm font-body">Use on your next purchase</p>
+                                                </div>
+                                                <button class="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors" onclick="window.location.href='/coupons'">
+                                                    Apply Now
+                                                </button>
                                             </div>
-                                            <button
-                                                class="bg-white text-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors" onclick="window.location.href='/coupons'">
-                                                Apply Now
-                                            </button>
                                         </div>
                                     </div>
-                                </div>
+                                <% } else { %>
+                                    <!-- Encouragement Section -->
+                                    <div class="bg-gray-100 rounded-lg p-8 mb-8 border border-gray-200 text-center stagger">
+                                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i class="ri-gift-2-line text-blue-600 text-3xl"></i>
+                                        </div>
+                                        <h3 class="text-xl font-display text-gray-900">Start Earning Rewards!</h3>
+                                        <p class="text-gray-600 font-body mt-2 mb-6">Refer your first friend to unlock a reward for yourself and give them a discount!</p>
+                                        <button onclick="copyReferralCode()" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center gap-2 mx-auto">
+                                            <i class="ri-share-forward-line"></i> Share Your Code
+                                        </button>
+                                    </div>
+                                <% } %>
 
                                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                     <!-- Referral Code Section -->

@@ -1,5 +1,5 @@
 const Coupon = require('../../models/couponSchema');
-const userCouponSchema = require('../../models/Referral-Coupon-Schema');
+const UserCoupon = require('../../models/Referral-Coupon-Schema');
 const User = require('../../models/userSchema');
 
 

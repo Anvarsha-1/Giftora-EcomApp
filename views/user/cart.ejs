@@ -175,7 +175,7 @@
                                                     data-quantity="<%= item.quantity || 1 %>">
                                                     <i data-lucide="minus" class="w-4 h-4"></i>
                                                 </button>
-                                            <input type="number" value="<%= item.quantity || 1 %>" min="1" max="<%= item.stock || 0 %>" data-id="<%= item._id %>"
+                                            <input type="number" value="<%= item.quantity || 0 %>" min="0" max="<%= item.stock || 0 %>" data-id="<%= item._id %>"
                                                 class="w-14 text-center border border-gray-300 rounded-md py-1 focus:outline-none qty-input"
                                                 onkeydown="return false" onchange="updateQuantity('<%= item._id %>', this.value)">
                                                 <button
@@ -249,8 +249,8 @@
 
                         <!-- Checkout Button -->
                         <button id="checkoutBtn" onclick="proceedToCheckout()"
-                            class="w-full bg-blue-600 text-white py-3 rounded-md font-medium hover:bg-blue-700 transition-colors btn <%= (cartItems && cartItems.length === 0) ? 'opacity-50 cursor-not-allowed' : '' %>"
-                            <%=(cartItems && cartItems.length===0) ? 'disabled' : '' %>>
+                            class="w-full bg-blue-600 text-white py-3 rounded-md font-medium hover:bg-blue-700 transition-colors btn <%= (cartItems && cartItems.length === 0 || subTotal === 0 || total === 0) ? 'opacity-50 cursor-not-allowed' : '' %>" 
+                            <%= (cartItems && cartItems.length === 0 || subTotal === 0 || total === 0) ? 'disabled' : '' %>>
                             Proceed to Checkout
                         </button>
 
@@ -488,6 +488,19 @@
             
 
             async function proceedToCheckout() {
+                const checkoutBtn = document.getElementById('checkoutBtn');
+                if (checkoutBtn.disabled) {
+                    Swal.fire({
+                        toast:true,
+                        icon: 'warning',
+                        title: 'Your cart is empty or the total is zero.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                    return;
+                }
+
+
                 try {
                     const response = await fetch('/checkout', {
                         method: 'POST',

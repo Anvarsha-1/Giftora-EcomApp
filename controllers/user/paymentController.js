@@ -14,9 +14,10 @@ const razorPayInstance = createRazorpayInstance()
 
 const createOrder = async (req, res) => {
     try {
+        const session = await mongoose.startSession();
         const { addressId } = req.body;
         const userId = req.session.user;
-
+         console.log("hi")
         
         if (!addressId || !mongoose.Types.ObjectId.isValid(addressId)) {
             return res.status(400).json({ success: false, message: "Invalid address selected. Please choose a valid address." });
@@ -25,6 +26,8 @@ const createOrder = async (req, res) => {
         const user = await User.findById(userId);
         const userAddress = await Address.findById(addressId);
         const cart = await Cart.findOne({ userId }).populate("items.productId");
+
+        console.log('addressId',addressId,'User', user,'UserAddress', userAddress)
 
         if (!cart || cart.items.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
@@ -36,6 +39,7 @@ const createOrder = async (req, res) => {
 
         for (const item of cart.items) {
             const product = item.productId;
+            console.log(product.quantity,item.quantity)
             if (!product || product.isBlocked || product.isDeleted) {
                 outOfStockItems.push({
                     name: product?.productName || "Unknown Product",
@@ -104,8 +108,8 @@ const createOrder = async (req, res) => {
         };
         const razorpayOrder = await razorPayInstance.orders.create(options);
 
-        // Create the order with a 'Pending' payment status BEFORE sending to Razorpay
-        const newOrder = await Order.create({
+        session.startTransaction();
+        const [newOrder] = await Order.create([{
             userId,
             couponCode,
             couponApplied,
@@ -124,12 +128,12 @@ const createOrder = async (req, res) => {
             district: userAddress.district,
             pinCode: userAddress.pinCode,
             landmark: userAddress.landmark,
-            status: "Pending", // Initial status
-            paymentStatus: "Pending", // Initial payment status
+            status: "Processing", // Initial status
+            paymentStatus: "Failed", // Initial payment status
             paymentMethod: "ONLINE",
-            razorpayOrderId: razorpayOrder.id
-        });
-
+            razorpayOrderId: razorpayOrder.id,
+        }],{session});
+        await session.commitTransaction();
 
         return res.json({
             success: true,
@@ -174,11 +178,32 @@ const verifyPayment = async (req, res) => {
 
         // --- Start Transaction: Find the existing order and update it ---
         session.startTransaction();
-
-        const order = await Order.findOne({ orderId }).session(session);
+ 
+        const order = await Order.findOne({ orderId }).populate('orderedItems.productId').session(session);
         if (!order) {
             throw new Error("Order not found during verification.");
         }
+
+        // Re-validate stock before processing payment to handle race conditions
+        let outOfStockItems = [];
+        for (const item of order.orderedItems) {
+            const product = item.productId;
+            if (!product || product.isBlocked || product.isDeleted) {
+                outOfStockItems.push({ name: product?.productName || "Unknown", reason: "Product is no longer available." });
+            } else if (product.quantity < item.quantity) {
+                outOfStockItems.push({
+                    name: product.productName,
+                    reason: `Only ${product.quantity} left in stock, but you ordered ${item.quantity}.`
+                });
+            }
+        }
+
+        if (outOfStockItems.length > 0) {
+            // Abort transaction and inform the user about the stock issue
+            await session.abortTransaction();
+            return res.status(409).json({ success: false, message: "An item in your order is out of stock.", item: outOfStockItems });
+        }
+
 
         order.paymentStatus = "Completed";
         order.status = "Processing";
@@ -251,7 +276,7 @@ const verifyPayment = async (req, res) => {
             return res.status(409).json({
                 success: false,
                 message: "Someone else just bought the last item. Your payment was not processed. Please try again."
-            });
+            }); 
         }
         if (error.message.startsWith('Insufficient stock')) {
             console.error("Stock conflict during payment verification:", error.message);
@@ -275,14 +300,18 @@ const paymentFailureHandler = async (req, res) => {
     try {
         session.startTransaction();
         const orderId = req.body.orderId
-        // Find by the custom orderId, not the MongoDB _id
-        const order = await Order.findOne({ orderId });
+        // Find the order and populate the product details to access quantity
+        const order = await Order.findOne({ orderId }).populate('orderedItems.productId').session(session);
 
         if (!order) {
-            return res.status(400).json({ success: false, message: 'Order not found' })
+            return res.status(400).json({ success: false, message: 'Order not found' });
+        }
+        // Only mark as failed if it's still pending. Avoids race conditions.
+        if (order.paymentStatus !== 'Pending') {
+            return res.json({ success: true, message: 'Order status already updated.' });
         }
         order.paymentStatus = 'Failed'
-        await order.save({ session });
+        
 
         for (let item of order.orderedItems) {
             if (item.productId) {
@@ -290,6 +319,7 @@ const paymentFailureHandler = async (req, res) => {
             }
         }
 
+        await order.save({ session });
         await session.commitTransaction();
 
         return res.json({ success: true, message: 'Order marked as failed' })
@@ -298,7 +328,7 @@ const paymentFailureHandler = async (req, res) => {
             await session.abortTransaction();
         }
         console.log("Error happened in payment failure page", error.message)
-        return res.json({ success: false, message: "Something went wrong please try again" })
+        return res.json({ success: false, message: "Something went wrong please try again" });
     } finally {
         session.endSession();
     }

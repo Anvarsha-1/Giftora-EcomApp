@@ -25,6 +25,7 @@ const loadCart = async (req, res) => {
 
         let subTotal = 0;
         let totalQuantity = 0;
+        let cartUpdated = false;
 
         const validItems = cart.items.filter(item => {
             const product = item.productId;
@@ -43,26 +44,46 @@ const loadCart = async (req, res) => {
             });
         }
 
+        // Synchronize cart items with product data before displaying
+        validItems.forEach(item => {
+            const product = item.productId;
+            const currentPrice = Number(product.salesPrice) || 0;
+            const safeQuantity = Math.min(item.quantity, product.quantity || 0);
+
+            if (item.quantity !== safeQuantity || item.price !== currentPrice) {
+                item.quantity = safeQuantity;
+                item.price = currentPrice;
+                item.totalPrice = safeQuantity * currentPrice;
+                cartUpdated = true;
+            }
+        });
+
+        if (cartUpdated) {
+            await cart.save();
+        }
+
         const cartItems = validItems.map(item => {
             const product = item.productId;
-            const price = Number(product.salesPrice) || 0;
-            const safeQuantity = Math.min(item.quantity, product.quantity || 1)
-            const itemTotal = price * safeQuantity;
-
-
-            subTotal += itemTotal;
-            totalQuantity += safeQuantity;
+            subTotal += item.totalPrice;
+            totalQuantity += item.quantity;
 
             return {
                 _id: product._id,
                 name: product.productName || 'Unnamed Product',
                 price: product.salesPrice,
-                quantity: safeQuantity,
+                quantity: item.quantity,
                 stock: product.quantity || 0,
                 image: product.productImage?.[0]?.url || '/images/placeholder.jpg',
-                totalPrice: itemTotal,
+                totalPrice: item.totalPrice,
             };
         });
+
+        console.log(cartItems)
+        const name = cartItems[0]?.name
+        const price = cartItems[0]?.price
+        const quantity = cartItems[0]?.quantity
+        const totalPrice = cartItems[0]?.totalPrice
+
 
  
         const shipping = subTotal >= 1000 ? 0 : 50;
@@ -125,6 +146,13 @@ const addToCart = async (req, res) => {
 
         if (isNaN(qty) || qty <= 0) {
             return res.json({ success: false, message: "Invalid Quantity" })
+        }
+
+        if(qty>product.quantity){
+            return res.json({ success: false, message: "Quantity exceeds stock." })
+        }
+        if (qty > 10) {
+            return res.json({ success: false, message: "Cart item limit reached." })
         }
 
 
@@ -215,7 +243,7 @@ const updateCartQuantity = async (req, res) => {
         const userId = req.session.user
         const { itemId, quantity } = req.body
         const user = await User.findById(req.session.user)
-
+         console.log(quantity)
 
         if (!user) {
             return res.json({ success: false, message: "User not logged in" })
@@ -250,9 +278,11 @@ const updateCartQuantity = async (req, res) => {
             return res.json({ success: false, message: "cart quantity limit reached (10)" })
         }
 
-        if (newQuantity > product.quantity) {
+        if (newQuantity > product.quantity) { 
             return res.json({ success: false, message: `only ${product.quantity} in stock.` })
         }
+
+        
 
         item.quantity = newQuantity
         item.totalPrice = product.salesPrice * quantity;
@@ -381,4 +411,3 @@ module.exports = {
     removeCartItem,
     updateCartCount,
 }
-

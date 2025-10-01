@@ -2,6 +2,7 @@ const User = require('../../models/userSchema')
 const Products = require('../../models/productSchema')
 const category = require('../../models/categorySchema')
 const Wishlist = require('../../models/wishListSchema')
+const mongoose = require('mongoose')
 
 
 const loadProductListingPage = async (req, res) => {
@@ -34,14 +35,14 @@ const loadProductListingPage = async (req, res) => {
         }
       });
     }
-
+     
     const match = {
       isBlocked: false,
       isDeleted: false,
       quantity: { $gt: 0 },
       salesPrice: { $gte: minPrice, $lte: maxPrice }
     };
-    if (selectedCategory) match.category = selectedCategory;
+    if (selectedCategory) match.category = new mongoose.Types.ObjectId(selectedCategory);
 
     aggregation.push({ $match: match });
 

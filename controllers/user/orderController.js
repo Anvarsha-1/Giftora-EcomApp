@@ -59,16 +59,28 @@ const loadOrderDetails = async (req, res) => {
 
 const loadMyOrder = async (req, res) => {
     try {
-        const userId = req.session.user
-        const user = await User.findById(userId)
-        const order = await Order.find({ userId: userId }).populate('orderedItems.productId')
+        const userId = req.session.user;
+        const user = await User.findById(userId);
 
-        if (!order || order.length < 1) {
-            return res.render('orderList', { order: null, user: user || null });
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page - 1) * limit;
+
+        const totalOrders = await Order.countDocuments({ userId: userId });
+        const totalPages = Math.ceil(totalOrders / limit);
+
+        const orders = await Order.find({ userId: userId })
+            .populate('orderedItems.productId')
+            .sort({ createdOn: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        if (!orders || orders.length < 1) {
+            return res.render('orderList', { orders: [], user: user || null, currentPage: 1, totalPages: 1 });
         }
 
-        res.render("orderList", { order, user })
-
+        res.render("orderList", { orders, user, currentPage: page, totalPages });
+        
     } catch (error) {
         console.log("Error happen while loadMyOrder page", error.message)
         return res.status(500).render('error', {
@@ -77,7 +89,6 @@ const loadMyOrder = async (req, res) => {
         })
     }
 }
-
 
 
 const cancelProduct = async (req, res) => {
