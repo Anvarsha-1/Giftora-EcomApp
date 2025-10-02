@@ -208,6 +208,50 @@
             margin-top: 20px;
         }
 
+        /* === Pagination Styles (from Order Management) === */
+        .pagination-area {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .page-btn.active {
+            background: #3b82f6;
+            color: #fff;
+            border-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .page-btn:hover:not(.active):not([disabled]) {
+            transform: translateY(-1px);
+            border-color: #3b82f6;
+        }
+
+        .page-btn[disabled] {
+            cursor: not-allowed;
+        }
+
         @media (max-width: 1000px) {
             .table-container {
                 width: 95%;
@@ -375,52 +419,27 @@
                         </tbody>
                     </table>
                     <div class="pagination" id="pagination">
-                        <% if (typeof totalPages !== 'undefined' && totalPages > 0) { %>
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
+                        <div class="pagination-area">
+                            <div class="pagination-controls">
+                                <% if (typeof totalPages !=='undefined' && totalPages> 0) { %>
                                     <% if (currentPage > 1) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>" aria-label="Previous">
-                                                <span aria-hidden="true">«</span>
-                                            </a>
-                                        </li>
+                                        <a href="?page=<%= currentPage - 1 %>&search=<%= search %>" class="page-btn" data-page="<%= currentPage - 1 %>">Prev</a>
+                                    <% } else { %>
+                                        <button class="page-btn" disabled>Prev</button>
                                     <% } %>
-
-                                    <%
-                                    const maxPagesToShow = 5;
-                                    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-                                    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-                                    if (endPage - startPage + 1 < maxPagesToShow) {
-                                        startPage = Math.max(1, endPage - maxPagesToShow + 1);
-                                    }
-                                    %>
-
-                                    <% if (startPage > 1) { %>
-                                        <li class="page-item"><a class="page-link" href="?page=1&search=<%= search %>">1</a></li>
-                                        <% if (startPage > 2) { %><li class="page-item disabled"><span class="page-link">...</span></li><% } %>
+ 
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <a href="?page=<%= i %>&search=<%= search %>" class="page-btn <%= i === currentPage ? 'active' : '' %>" data-page="<%= i %>"><%= i %></a>
                                     <% } %>
-
-                                    <% for (let i = startPage; i <= endPage; i++) { %>
-                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                            <a class="page-link" href="?page=<%= i %>&search=<%= search %>"><%= i %></a>
-                                        </li>
-                                    <% } %>
-
-                                    <% if (endPage < totalPages) { %>
-                                        <% if (endPage < totalPages - 1) { %><li class="page-item disabled"><span class="page-link">...</span></li><% } %>
-                                        <li class="page-item"><a class="page-link" href="?page=<%= totalPages %>&search=<%= search %>"><%= totalPages %></a></li>
-                                    <% } %>
-
+ 
                                     <% if (currentPage < totalPages) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>" aria-label="Next">
-                                                <span aria-hidden="true">»</span>
-                                            </a>
-                                        </li>
+                                        <a href="?page=<%= currentPage + 1 %>&search=<%= search %>" class="page-btn" data-page="<%= currentPage + 1 %>">Next</a>
+                                    <% } else { %>
+                                        <button class="page-btn" disabled>Next</button>
                                     <% } %>
-                                </ul>
-                            </nav>
-                            <% } %>
+                                <% } %>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -487,40 +506,26 @@
             // --- Render Pagination ---
             function renderPagination({ currentPage, totalPages, search }) {
                 const paginationContainer = document.getElementById("pagination");
-                paginationContainer.innerHTML = '';
-                if (totalPages <= 0) return; // Only hide if there are no pages at all
+                paginationContainer.innerHTML = ''; // Clear existing pagination
+                if (totalPages <= 0) return;
 
-                let paginationHtml = `<nav aria-label="Page navigation"><ul class="pagination">`;
+                let paginationHtml = '';
                 
                 if (currentPage > 1) {
-                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous"><span aria-hidden="true">«</span></a></li>`;
+                    paginationHtml += `<a href="#" class="page-btn" data-page="${currentPage - 1}">Prev</a>`;
+                } else {
+                    paginationHtml += `<button class="page-btn" disabled>Prev</button>`;
                 }
 
-                const maxPagesToShow = 5;
-                let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-                let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-                if (endPage - startPage + 1 < maxPagesToShow) {
-                    startPage = Math.max(1, endPage - maxPagesToShow + 1);
-                }
-
-                if (startPage > 1) {
-                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`;
-                    if (startPage > 2) paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                }
-
-                for (let i = startPage; i <= endPage; i++) {
-                    paginationHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-                }
-
-                if (endPage < totalPages) {
-                    if (endPage < totalPages - 1) paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
-                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`;
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<a href="#" class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</a>`;
                 }
 
                 if (currentPage < totalPages) {
-                    paginationHtml += `<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next"><span aria-hidden="true">»</span></a></li>`;
+                    paginationHtml += `<a href="#" class="page-btn" data-page="${currentPage + 1}">Next</a>`;
+                } else {
+                    paginationHtml += `<button class="page-btn" disabled>Next</button>`;
                 }
-                paginationHtml += `</ul></nav>`;
                 paginationContainer.innerHTML = paginationHtml;
             }
 

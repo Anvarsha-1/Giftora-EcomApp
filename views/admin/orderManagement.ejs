@@ -1,4 +1,4 @@
-<% function statusBadgeClass(status) { switch(status) { case 'Pending' :
+<% function statusBadgeClass(status) { switch (status) { case 'Pending' :
     return 'bg-yellow-100 text-yellow-700 border border-yellow-300' ; case 'Processing' :
     return 'bg-indigo-100 text-indigo-700 border border-indigo-300' ; case 'Shipped' :
     return 'bg-blue-100 text-blue-700 border border-blue-300' ; case 'Delivered' :
@@ -8,6 +8,7 @@
     return 'bg-gray-100 text-gray-700 border border-gray-300' ; default:
     return 'bg-gray-100 text-gray-700 border border-gray-300' ; } } %>
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -30,6 +31,50 @@
             flex: 1;
             padding: 20px;
             background-color: #f5f5f5;
+        }
+ 
+        /* === Pagination Styles (from Sales Report) === */
+        .pagination-area {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .page-btn.active {
+            background: #3b82f6;
+            color: #fff;
+            border-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .page-btn:hover:not(.active):not([disabled]) {
+            transform: translateY(-1px);
+            border-color: #3b82f6;
+        }
+
+        .page-btn[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -177,18 +222,26 @@
                 </table>
             </div>
             <!-- Pagination centered below -->
-            <div id="paginationContainer" class="flex justify-center items-center mt-4">
-                <% if (currentPage > 1) { %>
-                    <a href="?page=<%= currentPage - 1 %>" class="px-3 py-1 rounded border border-gray-300 bg-white mx-1">&larr;</a>
-                <% } else { %>
-                    <button class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1" disabled>&larr;</button>
-                <% } %>
-                <span class="px-2 text-sm">Page <%= currentPage %> of <%= totalPages %></span>
-                <% if (currentPage < totalPages) { %>
-                    <a href="?page=<%= currentPage + 1 %>" class="px-3 py-1 rounded border border-gray-300 bg-white mx-1">&rarr;</a>
-                <% } else { %>
-                    <button class="px-3 py-1 rounded border border-gray-300 bg-white disabled:opacity-40 mx-1" disabled>&rarr;</button>
-                <% } %>
+            <div id="paginationContainer" class="pagination-area">
+                <div class="pagination-controls">
+                    <% if (typeof totalPages !=='undefined' && totalPages> 0) { %>
+                        <% if (currentPage > 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>" class="page-btn">Prev</a>
+                        <% } else { %>
+                            <button class="page-btn" disabled>Prev</button>
+                        <% } %>
+
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <a href="?page=<%= i %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>" class="page-btn <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                        <% } %>
+
+                        <% if (currentPage < totalPages) { %>
+                            <a href="?page=<%= currentPage + 1 %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>" class="page-btn">Next</a>
+                        <% } else { %>
+                            <button class="page-btn" disabled>Next</button>
+                        <% } %>
+                    <% } %>
+                </div>
             </div>
 
         </div>

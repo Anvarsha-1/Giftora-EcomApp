@@ -117,35 +117,36 @@ const loadSalesReport = async (req, res) => {
     }
 
     // Convert orders to front-end friendly salesData
-    const salesData = orders.map((o) => {
-      const customerName = o.userId
-        ? [o.fullName].filter(Boolean).join(' ')
-        : (o.userId.firstName || 'Unknown')
-     
-
-      const products = (o.orderedItems || []).map((oi) => {
-        const unit = Number(oi.price) || Number(oi.productId?.salesPrice) || 0
-        const qty = Number(oi.quantity) || 0
-        return {
-          name: oi.productId?.productName || 'Unknown Product',
-          quantity: qty,
-          price: unit * qty, // total line amount
-        }
-      })
-
-      return {
-        id: o.orderId,
-        date: o.createdOn,
-        customerName,
-        paymentMethod: formatPayment(o.paymentMethod),
-        couponUsed: o.couponApplied ? (o.couponCode || '') : '',
-        totalAmount: Number(o.totalPrice) || 0,
-        discount: Number((o.discountPrice !== undefined) ? o.discountPrice : o.couponDiscount) || 0,
-        netPaidAmount: Number(o.finalAmount) || 0,
-        status: o.status,
-        products,
+    const salesData = orders.flatMap((order) => {
+      if (!order.orderedItems || order.orderedItems.length === 0) {
+        // Return a single entry for orders with no items if they should be shown
+        return [{
+          id: order.orderId,
+          date: order.createdOn,
+          customerName: order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : (order.fullName || 'N/A'),
+          paymentMethod: formatPayment(order.paymentMethod),
+          status: order.status,
+          productName: 'No items in this order',
+          quantity: 0,
+          price: 0,
+          totalAmount: Number(order.totalPrice) || 0,
+          discount: Number((order.discountPrice !== undefined) ? order.discountPrice : order.couponDiscount) || 0,
+          netPaidAmount: Number(order.finalAmount) || 0,
+        }];
       }
-    })
+    
+      // Create a separate row for each product in the order
+      return order.orderedItems.map(item => ({
+        id: order.orderId,
+        date: order.createdOn,
+        customerName: order.userId ? `${order.userId.firstName} ${order.userId.lastName}` : (order.fullName || 'N/A'),
+        paymentMethod: formatPayment(order.paymentMethod),
+        status: item.status || order.status, // Use item status if available
+        productName: item.productId?.productName || 'Unknown Product',
+        quantity: item.quantity || 0,
+        price: (item.price || 0) * (item.quantity || 0), // Total for this line item
+      }));
+    });
 
     // Global summary across ALL matching orders
     const [agg] = await Order.aggregate([

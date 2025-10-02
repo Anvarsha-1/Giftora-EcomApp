@@ -321,3 +321,47 @@
       border-right-color: #2c3e50;
       z-index: 1001;
   }
+
+  /* === Pagination Styles === */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 20px;
+    padding: 10px;
+  }
+
+  .pagination a {
+    background-color: #2c3e50;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+  }
+
+  .pagination a:hover {
+    background-color: #34495e;
+    transform: translateY(-2px);
+  }
+
+  /* This is a very specific selector to force the active style */
+  body .main-wrapper .content-wrapper .pagination a.active {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+    cursor: default;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
+    border-color: #2980b9;
+  }
+
+  .pagination a.disabled {
+    background-color: #95a5a6;
+    color: #ecf0f1;
+    cursor: not-allowed;
+    pointer-events: none;
+    transform: none;
+  }

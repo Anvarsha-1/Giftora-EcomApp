@@ -770,17 +770,14 @@
                         <table class="sales-table">
                             <thead>
                                 <tr>
-                                    <th></th>
                                     <th>Order ID</th>
                                     <th>Order Date</th>
                                     <th>Customer Name</th>
                                     <th>Payment Method</th>
-                                    <th>Coupon Used</th>
-                                    <th>Total Amount</th>
-                                    <th>Discount</th>
-                                    <th>Net Paid Amount</th>
                                     <th>Order Status</th>
-                                    <th>Products</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
                                 </tr>
                             </thead>
                             <tbody id="salesTableBody">
@@ -853,15 +850,6 @@
             return `payment-${method.toLowerCase()}`;
         }
 
-        function toggleRow(orderId) {
-            if (expandedRows.has(orderId)) {
-                expandedRows.delete(orderId);
-            } else {
-                expandedRows.add(orderId);
-            }
-            renderTable();
-        }
-
         function renderTable() {
             const tbody = document.getElementById('salesTableBody');
             tbody.innerHTML = '';
@@ -873,72 +861,28 @@
                 return;
             }
 
-            salesData.forEach(order => {
-                const isExpanded = expandedRows.has(order.id);
-
+            salesData.forEach(item => {
                 // Main row
                 const mainRow = document.createElement('tr');
                 mainRow.innerHTML = `
+                    <td><span class="order-id">${item.id}</span></td>
+                    <td>${formatDate(item.date)}</td>
+                    <td>${item.customerName}</td>
                     <td>
-                        <i class="fas fa-chevron-right expand-icon ${isExpanded ? 'rotated' : ''}" 
-                           onclick="toggleRow('${order.id}')" style="cursor: pointer;"></i>
-                    </td>
-                    <td><span class="order-id">${order.id}</span></td>
-                    <td>${formatDate(order.date)}</td>
-                    <td>${order.customerName}</td>
-                    <td>
-                        <span class="payment-method ${getPaymentClass(order.paymentMethod)}">
-                            ${order.paymentMethod}
+                        <span class="payment-method ${getPaymentClass(item.paymentMethod)}">
+                            ${item.paymentMethod}
                         </span>
                     </td>
                     <td>
-                        ${order.couponUsed ? `<span class="coupon">${order.couponUsed}</span>` : '-'}
-                    </td>
-                    <td class="amount">${formatCurrency(order.totalAmount)}</td>
-                    <td class="discount">${formatCurrency(order.discount)}</td>
-                    <td class="amount">${formatCurrency(order.netPaidAmount)}</td>
-                    <td>
-                        <span class="status-badge ${getStatusClass(order.status)}">
-                            ${order.status}
+                        <span class="status-badge ${getStatusClass(item.status)}">
+                            ${item.status}
                         </span>
                     </td>
-                    <td>${order.products.length} item(s)</td>
+                    <td>${item.productName}</td>
+                    <td>${item.quantity}</td>
+                    <td class="amount">${formatCurrency(item.price)}</td>
                 `;
                 tbody.appendChild(mainRow);
-
-                // Expanded row
-                if (isExpanded) {
-                    const expandedRow = document.createElement('tr');
-                    expandedRow.className = 'expandable-row';
-                    expandedRow.innerHTML = `
-                        <td colspan="11">
-                            <div class="products-list">
-                                <h4 style="margin-bottom: 10px; color: #1e293b;">Order Products:</h4>
-                                <table class="products-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Product Name</th>
-                                            <th>Quantity</th>
-                                            <th>Price</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${order.products.map(product => `
-                                            <tr>
-                                                <td>${product.name}</td>
-                                                <td>${product.quantity}</td>
-                                                <td>${formatCurrency(product.price / product.quantity)}</td>
-                                                <td>${formatCurrency(product.price)}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(expandedRow);
-                }
             });
         }
 

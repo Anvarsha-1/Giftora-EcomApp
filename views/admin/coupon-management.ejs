@@ -6,7 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Manage Coupons</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/admin/admin-Dashboard.css">
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-gray: #f8f9fa;
+            --medium-gray: #bdc3c7;
+            --dark-gray: #7f8c8d;
+            --text-color: #34495e;
+            --border-color: #ecf0f1;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 8px;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,13 +30,9 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-        }
-
-        .main-wrapper {
-            display: flex;
-            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-color);
         }
 
         .content-wrapper {
@@ -30,10 +42,9 @@
         }
 
         .navbar {
-            background: white;
+            background: #ffffff;
             padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             margin-bottom: 20px;
         }
 
@@ -44,13 +55,13 @@
         }
 
         .admin-icon {
-            color: #3b82f6;
-            font-size: 18px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
         }
 
         .admin-text {
-            font-weight: 600;
-            color: #1f2937;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
 
         .search-add-section {
@@ -64,61 +75,65 @@
         .search-container {
             display: flex;
             align-items: center;
-            background: white;
-            border-radius: 10px;
-            padding: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             flex: 1;
             max-width: 500px;
+            position: relative;
         }
 
         .search-input {
             border: none;
             outline: none;
-            padding: 12px 15px;
+            padding: 12px 40px 12px 15px;
             flex: 1;
             font-size: 14px;
-            border-radius: 8px;
+            background: transparent;
         }
 
         .search-btn,
         .clear-btn {
-            background: #3b82f6;
+            background: transparent;
             border: none;
-            padding: 12px 15px;
-            border-radius: 8px;
-            color: white;
+            color: var(--dark-gray);
             cursor: pointer;
-            margin-left: 5px;
-            transition: background-color 0.3s;
+            position: absolute;
+            transition: color 0.2s ease;
         }
 
-        .clear-btn {
-            background: #ef4444;
+        .search-btn {
+            right: 40px;
         }
 
         .search-btn:hover {
-            background: #2563eb;
+            color: var(--secondary-color);
+        }
+
+        .clear-btn {
+            right: 10px;
         }
 
         .clear-btn:hover {
-            background: #dc2626;
+            color: var(--danger-color);
         }
 
         .add-coupon-btn {
-            background: #10b981;
+            background: var(--primary-color);
             color: white;
             border: none;
             padding: 12px 24px;
-            border-radius: 10px;
+            border-radius: var(--border-radius);
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(44, 62, 80, 0.2);
         }
 
         .add-coupon-btn:hover {
-            background: #059669;
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
         }
 
         .stats-section {
@@ -129,10 +144,10 @@
         }
 
         .stat-card {
-            background: white;
+            background: #ffffff;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             text-align: center;
         }
 
@@ -143,46 +158,48 @@
         }
 
         .stat-label {
-            color: #6b7280;
+            color: var(--dark-gray);
             font-size: 14px;
         }
 
         .total-coupons .stat-number {
-            color: #3b82f6;
+            color: var(--primary-color);
         }
 
         .active-coupons .stat-number {
-            color: #10b981;
+            color: var(--success-color);
         }
 
         .used-coupons .stat-number {
-            color: #8b5cf6;
+            color: var(--secondary-color);
         }
 
         .savings-amount .stat-number {
-            color: #f59e0b;
+            color: var(--warning-color);
         }
 
         .coupon-header {
-            background: white;
+            background: #ffffff;
             padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             margin-bottom: 20px;
         }
 
         .filter-section {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             align-items: center;
         }
 
         .dropdown-wrapper {
             position: relative;
+            width: 100%;
         }
 
-        .dropdown-wrapper button {
-            background: #f3f4f6;
+        .dropdown-wrapper>button {
+            background: var(--light-gray);
             border: none;
             padding: 10px 15px;
             border-radius: 8px;
@@ -191,19 +208,21 @@
             align-items: center;
             gap: 10px;
             font-weight: 500;
-            transition: background-color 0.3s;
+            transition: all 0.2s ease;
+            width: 100%;
+            justify-content: space-between;
         }
 
-        .dropdown-wrapper button:hover {
-            background: #e5e7eb;
+        .dropdown-wrapper>button:hover {
+            background: #e9ecef;
         }
 
         .filter-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
-            background: white;
-            border-radius: 8px;
+            background: #ffffff;
+            border-radius: var(--border-radius);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             min-width: 150px;
@@ -218,29 +237,29 @@
             display: block;
             padding: 10px 15px;
             text-decoration: none;
-            color: #374151;
-            transition: background-color 0.3s;
+            color: var(--text-color);
+            transition: background-color 0.2s ease;
         }
 
         .filter-dropdown a:hover {
-            background: #f3f4f6;
+            background: var(--light-gray);
         }
 
         .coupon-table {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             overflow: hidden;
             width: 100%;
             border-collapse: collapse;
         }
 
         .coupon-table th {
-            background: #f8fafc;
+            background: var(--light-gray);
             padding: 15px;
             text-align: left;
             font-weight: 600;
-            color: #374151;
+            color: var(--text-color);
             border-bottom: 1px solid #e5e7eb;
         }
 
@@ -251,7 +270,7 @@
         }
 
         .coupon-table tr:hover {
-            background: #f8fafc;
+            background: var(--light-gray);
         }
 
         .coupon-code {
@@ -272,13 +291,13 @@
         }
 
         .type-percentage {
-            background: #dcfce7;
-            color: #166534;
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
         }
 
         .type-fixed {
-            background: #dbeafe;
-            color: #1d4ed8;
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
         }
 
         .status-label {
@@ -290,87 +309,102 @@
         }
 
         .status-active {
-            background: #dcfce7;
-            color: #166534;
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
         }
 
         .status-inactive {
-            background: #fef2f2;
-            color: #dc2626;
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
         }
 
         .status-expired {
-            background: #f3f4f6;
-            color: #6b7280;
+            background: #ecf0f1;
+            color: var(--dark-gray);
+        }
+        
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
         }
 
         .action-btn {
             border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%; /* Make buttons circular */
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            margin-right: 5px;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px; /* Icon size */
         }
 
         .action-btn.edit {
-            background: #3b82f6;
-            color: white;
+            background: rgba(52, 152, 219, 0.1); /* Lighter background */
+            color: var(--secondary-color);
         }
 
         .action-btn.delete {
-            background: #ef4444;
-            color: white;
+            background: rgba(231, 76, 60, 0.1); /* Lighter background */
+            color: var(--danger-color);
         }
 
-        .action-btn.block {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .action-btn.unblock {
-            background: #10b981;
+        .action-btn.edit:hover {
+            background: var(--secondary-color);
             color: white;
         }
 
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .pagination {
+        /* === New Pagination Styles (from Sales Report) === */
+        #paginationContainer {
             display: flex;
-            justify-content: center;
+            gap: 15px;
             align-items: center;
-            gap: 10px;
-            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+            padding: 10px;
         }
 
-        .pagination a {
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
             padding: 8px 12px;
-            background: white;
+            border: 1px solid #d1d5db;
+            background: #fff;
             border-radius: 6px;
-            text-decoration: none;
-            color: #374151;
+            cursor: pointer;
+            font-size: 14px;
             font-weight: 500;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
+            text-decoration: none;
+            transition: all 0.2s ease;
         }
 
-        .pagination a:hover:not(.disabled) {
+        .page-btn.active {
             background: #3b82f6;
-            color: white;
+            color: #fff;
+            border-color: #3b82f6;
+            font-weight: 600;
         }
 
-        .pagination a.active {
-            background: #3b82f6;
-            color: white;
+        .page-btn:hover:not(.active):not([disabled]) {
+            transform: translateY(-1px);
+            border-color: #3b82f6;
         }
 
-        .pagination a.disabled {
-            opacity: 0.5;
+        .page-btn[disabled] {
+            opacity: 0.6;
             cursor: not-allowed;
         }
 
@@ -546,10 +580,12 @@
                                     </td>
 
                                     <td>
-                                        <a href="/admin/coupons/edit/<%= coupon._id%>">
-                                            <button class="action-btn edit">Edit</button>
-                                        </a>
-                                        <button class="action-btn delete" data-id="<%= coupon._id %>">Delete</button>
+                                        <div class="actions-cell">
+                                            <a href="/admin/coupons/edit/<%= coupon._id%>" title="Edit Coupon">
+                                                <button class="action-btn edit"><i class="fas fa-pencil-alt"></i></button>
+                                            </a>
+                                            <button class="action-btn delete" data-id="<%= coupon._id %>" title="Delete Coupon"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <% }); %>
@@ -589,23 +625,29 @@
                                         <% } %>
                     </tbody>
                 </table>
-                <div id="paginationContainer" class="pagination flex gap-2 mt-4">
-                    <% if (currentPage> 1) { %>
-                        <a href="?page=<%= currentPage - 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
-                            class="px-3 py-1 border rounded">Prev</a>
-                        <% } %>
-
-                            <% for (let i=1; i <=totalPages; i++) { %>
-                                <a href="?page=<%= i %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
-                                    class="px-3 py-1 border rounded <%= i === currentPage ? 'bg-blue-600 text-white' : '' %>">
-                                    <%= i %>
-                                </a>
-                                <% } %>
-
-                                    <% if (currentPage < totalPages) { %>
-                                        <a href="?page=<%= currentPage + 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
-                                            class="px-3 py-1 border rounded">Next</a>
-                                        <% } %>
+                <div id="paginationContainer">
+                    <div class="pagination-controls">
+                        <% if (currentPage > 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>" class="page-btn"
+                                data-url="?page=<%= currentPage - 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">Prev</a>
+                            <% } else { %>
+                            <button class="page-btn" disabled>Prev</button>
+                            <% } %>
+    
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <a href="?page=<%= i %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
+                                        class="page-btn <%= i === currentPage ? 'active' : '' %>" data-url="?page=<%= i %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">
+                                        <%= i %>
+                                    </a>
+                                    <% } %>
+    
+                                        <% if (currentPage < totalPages) { %>
+                                            <a href="?page=<%= currentPage + 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
+                                                class="page-btn" data-url="?page=<%= currentPage + 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">Next</a>
+                                            <% } else { %>
+                                            <button class="page-btn" disabled>Next</button>
+                                            <% } %>
+                    </div>
                 </div>
 
 

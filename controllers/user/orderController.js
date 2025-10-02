@@ -163,12 +163,12 @@ const cancelProduct = async (req, res) => {
 
       if (hadCouponApplied && couponDoc) {
         if (newBalanceSubtotal < Number(couponDoc.minPurchase || 0)) {
-        
-          baseRefund = Math.max(0, itemTotal - Number(order.couponDiscount || 0));
-          couponRevoked = true;
-          newCouponDiscount = 0;
+          // Block partial cancellation if it invalidates the coupon's minimum purchase requirement.
+          return res.json({
+            success: false,
+            message: "Cannot cancel this item as it would invalidate the applied coupon. Please cancel the entire order instead."
+          });
         } else {
-       
           if (couponDoc.discountType === 'flat') {
             const flat = Number(couponDoc.discount) || 0;
           
@@ -350,11 +350,11 @@ const cancelOrder = async (req, res) => {
         order.cancellationReason = reason
 
         await order.save()
-        let refundAmount = order.totalPrice
+        let refundAmount = order.finalAmount; // Use finalAmount to refund the actual amount paid
       if(order.paymentMethod==='ONLINE'){
 
          const wallet  =  await Wallet.updateOne({userId},
-            {$inc:{amount:refundAmount},
+            {$inc:{balance:refundAmount},
             $push:{ transactions:{
                 type:'credit',
                 amount:refundAmount,
@@ -439,30 +439,58 @@ const returnOrder = async (req, res) => {
 
 const returnItemRequest = async (req, res) => {
     try {
-        const { orderId, itemId } = req.params
+        const { orderId, itemId } = req.params;
+        const { reason } = req.body;
 
-        const { reason } = req.body
         if (!orderId || !itemId) {
-            return res.json({ success: false, message: "Invalid request " })
+            return res.json({ success: false, message: "Invalid request" });
         }
 
-        const order = await Order.findOne({ orderId }).populate('orderedItems.productId')
+        const order = await Order.findOne({ orderId }).populate('orderedItems.productId');
         if (!order) {
-            return res.json({ success: false, message: "Order not found" })
-        }
-        const product = order.orderedItems.find((item) => item._id.toString() === itemId.toString())
-        if (!product) {
-            return res.json({ success: false, message: "Product not found" })
+            return res.json({ success: false, message: "Order not found" });
         }
 
-        if (product.status === 'Delivered') {
-            product.status = 'Return Request',
-            product.returnReason = reason
-            product.itemReturnRequestAt = Date.now()
+        const itemToReturn = order.orderedItems.find((item) => item._id.toString() === itemId.toString());
+        if (!itemToReturn) {
+            return res.json({ success: false, message: "Product not found in this order" });
         }
 
-        await order.save()
-        return res.json({ success: true })
+        if (itemToReturn.status !== 'Delivered') {
+            return res.json({ success: false, message: "Only delivered items can be returned." });
+        }
+
+        // --- Coupon Invalidation Logic ---
+        const hadCouponApplied = !!order.couponApplied && !!order.couponCode;
+        if (hadCouponApplied) {
+            const couponDoc = await Coupon.findOne({ code: order.couponCode }).lean();
+            if (couponDoc) {
+                const itemTotal = (Number(itemToReturn.price) || 0) * (Number(itemToReturn.quantity) || 0);
+
+                const activeSubtotal = order.orderedItems.reduce((sum, i) => {
+                    if (i.status === 'Cancelled' || i.status === 'Returned') return sum;
+                    return sum + ((Number(i.price) || 0) * (Number(i.quantity) || 0));
+                }, 0);
+
+                const newBalanceSubtotal = activeSubtotal - itemTotal;
+
+                if (newBalanceSubtotal < Number(couponDoc.minPurchase || 0)) {
+                    // Block partial return if it invalidates the coupon's minimum purchase requirement.
+                    return res.json({
+                        success: false,
+                        message: "Cannot return this item as it would invalidate the applied coupon. Please return the entire order instead."
+                    });
+                }
+            }
+        }
+        // --- End Coupon Logic ---
+
+        itemToReturn.status = 'Return Request';
+        itemToReturn.returnReason = reason;
+        itemToReturn.itemReturnRequestAt = Date.now();
+
+        await order.save();
+        return res.json({ success: true });
 
     } catch (error) {
         console.log("Error while order Item Request", error.message)
