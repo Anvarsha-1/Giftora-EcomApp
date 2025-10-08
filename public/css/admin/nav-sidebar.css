@@ -306,6 +306,10 @@
         margin-left: 250px;
         width: calc(100% - 250px);
     }
+
+    .sidebar .desktop-toggle {
+        display: none; /* Hide the sidebar's own toggle on mobile */
+    }
 }
 
 /* Tooltip for collapsed sidebar */

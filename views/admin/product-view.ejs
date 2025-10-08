@@ -8,7 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -21,7 +21,7 @@
 
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f5f5;
+      background-color: #f8f9fa;
     }
 
     .main-wrapper {
@@ -73,134 +73,31 @@
       color: #2c3e50;
     }
 
-    .search-add-section {
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .search-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      max-width: 300px;
-    }
-
-    .search-input {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      width: 100%;
-    }
-
-    .search-btn,
-    .clear-btn {
-      background-color: #2c3e50;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-      font-size: 0.85rem;
-    }
-
-    .search-btn:hover {
-      background-color: #34495e;
-    }
-
-    .clear-btn {
-      background-color: #7f8c8d;
-    }
-
-    .clear-btn:hover {
-      background-color: #95a5a6;
-    }
-
-    .add-product-btn {
-      background-color: #2c3e50;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-
-    .add-product-btn:hover {
-      background-color: #34495e;
-    }
-
     .product-header {
-      background-color: #2c3e50;
-      color: white;
-      padding: 10px 20px;
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid #dee2e6;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .filter-section {
       display: flex;
-      gap: 10px;
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
 
-    .filter-section button {
-      background-color: #34495e;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      position: relative;
-      font-size: 0.9rem;
-      transition: background-color 0.2s ease;
-    }
-
-    .filter-section button:hover {
-      background-color: #3d566e;
-    }
-
-    .dropdown-wrapper {
-      position: relative;
-    }
-
-    .filter-dropdown {
-      display: none;
-      position: absolute;
-      background-color: #34495e;
-      border-radius: 4px;
-      min-width: 120px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-      top: 100%;
-      left: 0;
-      margin-top: 2px;
-      opacity: 0;
-      transform: translateY(-10px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .filter-dropdown.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .filter-dropdown a {
-      color: white;
-      padding: 6px 10px;
-      text-decoration: none;
-      display: block;
-      font-size: 0.85rem;
-      transition: background-color 0.2s ease;
-    }
-
-    .filter-dropdown a:hover {
-      background-color: #3d566e;
+    .table-container {
+      background-color: #fff;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow-x: auto;
+      border: 1px solid #dee2e6;
     }
 
     .product-table {
@@ -213,13 +110,14 @@
     .product-table th,
     .product-table td {
       padding: 12px;
-      text-align: left;
+      vertical-align: middle;
       border-bottom: 1px solid #e1e8ed;
       font-size: 0.95rem;
+      white-space: nowrap;
     }
 
     .product-table th {
-      background-color: #f5f5f5;
+      background-color: #f8f9fa;
       color: #2c3e50;
     }
 
@@ -227,51 +125,12 @@
       width: 50px;
       height: 50px;
       object-fit: cover;
-      background-color: #ddd;
+      border-radius: 0.25rem;
     }
 
-    .action-btn {
-      background-color: #2c3e50;
-      color: white;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-right: 5px;
-      transition: background-color 0.2s ease;
-      font-size: 0.85rem;
-    }
-
-    .action-btn.edit {
-      background-color: #2c3e50;
-    }
-
-    .action-btn.edit:hover {
-      background-color: #34495e;
-    }
-
-    .action-btn.delete {
-      background-color: #e74c3c;
-    }
-
-    .action-btn.delete:hover {
-      background-color: #c0392b;
-    }
-
-    .action-btn.block {
-      background-color: #f39c12;
-    }
-
-    .action-btn.block:hover {
-      background-color: #e67e22;
-    }
-
-    .action-btn.offer {
-      background-color: #27ae60;
-    }
-
-    .action-btn.offer:hover {
-      background-color: #2ecc71;
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
     }
 
     .status-listed {
@@ -284,144 +143,54 @@
       font-weight: 500;
     }
 
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      margin: 20px;
-    }
-
-    .pagination a {
-      background-color: #2c3e50;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 4px;
-      text-decoration: none;
-      transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    .pagination a:hover:not(.active):not(.disabled) {
-      background-color: #34495e;
-    }
-
-    .pagination a.active {
-      background-color: #557890 !important;
-      color: #ffffff !important;
-      font-weight: bold;
-      box-shadow: 0 2px 4px rgba(189, 188, 188, 0.2);
-    }
-
-    .pagination a.disabled {
-      background-color: #ddd;
-      color: #888;
-      cursor: not-allowed;
-      pointer-events: none;
-    }
-
-    @media (max-width: 576px) {
+    /* Responsive Table / Card View */
+    @media (max-width: 768px) {
       .content-wrapper {
         margin-left: 70px;
         width: calc(100% - 70px);
       }
-
-      .sidebar.collapsed+.content-wrapper {
-        margin-left: 70px;
-        width: calc(100% - 70px);
+      .product-table thead {
+        display: none;
       }
-
-      .product-table th,
+      .product-table, .product-table tbody, .product-table tr {
+        display: block;
+        width: 100%;
+      }
+      .product-table tr {
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      }
       .product-table td {
-        padding: 6px;
-        font-size: 0.8rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #f1f1f1;
+        text-align: right;
+        white-space: normal;
       }
-
-      .product-table td img {
-        width: 40px;
-        height: 40px;
+      .product-table td:last-child {
+        border-bottom: none;
       }
-
-      .search-container {
-        max-width: 100%;
+      .product-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #2c3e50;
+        text-align: left;
+        margin-right: 1rem;
       }
-
-      .search-input {
-        width: 100%;
-        margin-bottom: 10px;
-      }
-
-      .add-product-btn {
-        width: 100%;
-      }
-
-      .filter-section button {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 5px;
-        font-size: 0.8rem;
-      }
-
-      .filter-dropdown {
-        min-width: 100px;
-      }
-
-      .filter-dropdown a {
-        font-size: 0.75rem;
-      }
-
-      .pagination a {
-        font-size: 0.75rem;
-        padding: 3px 6px;
-      }
-
-      .action-btn {
-        padding: 3px 6px;
-        font-size: 0.75rem;
-      }
-
-      .search-add-section {
+      .product-table td:first-child {
         flex-direction: column;
-        align-items: stretch;
+        align-items: flex-start;
       }
-
-      .search-btn,
-      .clear-btn {
+      .product-table td:first-child img {
         width: 100%;
-      }
-    }
-
-    @media (min-width: 577px) and (max-width: 768px) {
-      .content-wrapper {
-        margin-left: 70px;
-        width: calc(100% - 70px);
-      }
-
-      .sidebar.collapsed+.content-wrapper {
-        margin-left: 70px;
-        width: calc(100% - 70px);
-      }
-
-      .product-table th,
-      .product-table td {
-        padding: 8px;
-        font-size: 0.9rem;
-      }
-
-      .search-container {
-        max-width: 200px;
-      }
-
-      .filter-section button {
-        font-size: 0.85rem;
-      }
-
-      .filter-dropdown {
-        min-width: 120px;
-      }
-
-      .filter-dropdown a {
-        font-size: 0.8rem;
-        cursor: pointer;
+        height: auto;
+        max-height: 200px;
+        margin-top: 0.5rem;
       }
     }
   </style>
@@ -438,61 +207,60 @@
           </div>
         </div>
 
-        <div class="search-add-section">
-          <form id="searchForm" class="search-container">
-            <input type="text" class="search-input" id="searchInput" name="search"
-              value="<%= typeof search !== 'undefined' ? search : '' %>" placeholder="Search products..." />
-            <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
-            <button type="button" class="clear-btn" id="clearSearch"><i class="fas fa-times"></i></button>
-          </form>
-          <a href="/admin/addProducts">
-            <button class="add-product-btn">Add Product</button>
-          </a>
-        </div>
-
-        <div class="product-header">
-          <div class="filter-section">
-            <div class="dropdown-wrapper">
-              <button id="categoryBtn">
-                Product Category <i class="fas fa-caret-down"></i>
-              </button>
-              <div class="filter-dropdown" id="categoryDropdown">
-                <a href="#" data-category="all">All Categories</a>
-                <% cat.forEach(category=> { %>
-                  <a href="#" data-category="<%= category.name %>">
-                    <%= category.name %>
-                  </a>
+        <div class="p-3">
+          <div class="product-header mb-3">
+            <form id="searchForm" class="flex-grow-1">
+              <div class="input-group">
+                <input type="text" class="form-control" id="searchInput" name="search" value="<%= typeof search !== 'undefined' ? search : '' %>" placeholder="Search products..." />
+                <button type="submit" class="btn btn-dark"><i class="fas fa-search"></i></button>
+                <button type="button" class="btn btn-outline-secondary" id="clearSearch"><i class="fas fa-times"></i></button>
+              </div>
+            </form>
+            <div class="filter-section">
+              <div class="dropdown">
+                <button class="btn btn-outline-dark dropdown-toggle" type="button" id="categoryBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                  Category
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="categoryBtn" id="categoryDropdown">
+                  <li><a class="dropdown-item" href="#" data-category="all">All Categories</a></li>
+                  <% cat.forEach(category=> { %>
+                    <li><a class="dropdown-item" href="#" data-category="<%= category.name %>"><%= category.name %></a></li>
                   <% }) %>
+                </ul>
+              </div>
+              <div class="dropdown">
+                <button class="btn btn-outline-dark dropdown-toggle" type="button" id="sortBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                  Sort
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortBtn" id="sortDropdown">
+                  <li><a class="dropdown-item" href="#" data-sort="price-high-low">Price High - Low</a></li>
+                  <li><a class="dropdown-item" href="#" data-sort="price-low-high">Price Low - High</a></li>
+                </ul>
               </div>
             </div>
-            <div class="dropdown-wrapper">
-              <button id="sortBtn">
-                Sort <i class="fas fa-caret-down"></i>
-              </button>
-              <div class="filter-dropdown" id="sortDropdown">
-                <a href="#" data-sort="price-high-low">Price High - Low</a>
-                <a href="#" data-sort="price-low-high">Price Low - High</a>
-              </div>
-            </div>
+            <a href="/admin/addProducts" class="btn btn-primary">
+              <i class="fas fa-plus"></i> Add Product
+            </a>
           </div>
-        </div>
-        <table class="product-table">
+
+          <div class="table-container">
+          <table class="table table-hover product-table">
           <thead>
             <tr>
-              <th>Images</th>
-              <th>Product Name</th>
-              <th>Category</th>
-              <th>Price</th>
-              <th>Sales Price</th>
-              <th>Quantity</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th scope="col">Images</th>
+              <th scope="col">Product Name</th>
+              <th scope="col">Category</th>
+              <th scope="col">Price</th>
+              <th scope="col">Sales Price</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody id="productTbody">
             <% data.forEach(function(product) { %>
               <tr data-category="<%= product.category?.name %>">
-                <td>
+                <td data-label="Image">
                   <% const firstImg=product.productImage[0]; %>
                     <% if (firstImg && firstImg.url) { %>
                       <img src="<%= firstImg.url %>" alt="Product Image" style="height: 60px; margin: 5px;" />
@@ -500,67 +268,64 @@
                         No image
                         <% } %>
                 </td>
-                <td>
+                <td data-label="Product Name">
                   <%= product.productName %>
                 </td>
-                <td>
+                <td data-label="Category">
                   <%= product.category?.name %>
                 </td>
-                <td>₹<%= product.regularPrice %>
+                <td data-label="Price">₹<%= product.regularPrice %>
                 </td>
-                <td>₹<%= product.salesPrice || 'N/A' %>
+                <td data-label="Sales Price">₹<%= product.salesPrice || 'N/A' %>
                 </td>
-                <td>
+                <td data-label="Quantity">
                   <%= product.quantity %>
                 </td>
-                <td>
+                <td data-label="Status">
                   <span class="status-label status-<%= product.isBlocked ? 'unlisted' : 'listed' %>">
                     <%= product.isBlocked ? 'Unlisted' : 'Listed' %>
                   </span>
                 </td>
 
-                <td>
-                  <a href="/admin/editProduct/<%= product._id %>">
-                    <button class="action-btn edit">Edit</button>
-                  </a>
-                  <button class="action-btn delete" data-id="<%= product._id %>">Delete</button>
-                  <button class="action-btn block" data-id="<%= product._id %>"
-                    data-status="<%= product.isBlocked ?  'unlisted' : 'listed' %>">
-                    <%= product.isBlocked ? 'Unblock' :'Block' %>
-                  </button>
-
+                <td data-label="Actions">
+                  <div class="action-buttons">
+                    <a href="/admin/editProduct/<%= product._id %>" class="btn btn-sm btn-outline-primary" title="Edit">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <button class="btn btn-sm btn-outline-danger delete" data-id="<%= product._id %>" title="Delete">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary block" data-id="<%= product._id %>" data-status="<%= product.isBlocked ? 'unlisted' : 'listed' %>" title="<%= product.isBlocked ? 'Unblock' : 'Block' %>">
+                      <i class="fas fa-<%= product.isBlocked ? 'check-circle' : 'ban' %>"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
               <% }); %>
           </tbody>
         </table>
-
+        </div>
         <div id="paginationContainer">
           <% if (totalPages && totalPages>= 1) { %>
-            <div class="pagination">
+            <nav class="mt-4">
+            <ul class="pagination justify-content-center">
               <% const page=Number(currentPage) || 1; const total=Number(totalPages) || 1; const searchQuery=typeof
                 search !=='undefined' ? encodeURIComponent(search) : '' ; %>
                 <% if (page> 1) { %>
-                  <a href="?page=<%= page - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>" class="pag-link"
-                    data-url="?page=<%= page - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">Previous</a>
+                  <li class="page-item"><a class="page-link pag-link" href="?page=<%= page - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>" data-url="?page=<%= page - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">Previous</a></li>
                   <% } else { %>
-                    <a class="disabled">Previous</a>
+                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
                     <% } %>
                       <% for (let i=1; i <=total; i++) { %>
-                        <a href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>"
-                          class="<%= i===page ? 'active pag-link' : 'pag-link' %>"
-                          data-url="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>">
-                          <%= i %>
-                        </a>
+                        <li class="page-item <%= i===page ? 'active' : '' %>"><a class="page-link pag-link" href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>" data-url="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %>"><%= i %></a></li>
                         <% } %>
                           <% if (page < total) { %>
-                            <a href="?page=<%= page + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>"
-                              class="pag-link"
-                              data-url="?page=<%= page + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">Next</a>
+                            <li class="page-item"><a class="page-link pag-link" href="?page=<%= page + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>" data-url="?page=<%= page + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %>">Next</a></li>
                             <% } else { %>
-                              <a class="disabled">Next</a>
+                              <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
                               <% } %>
-            </div>
+            </ul>
+            </nav>
             <% } %>
         </div>
       </div>
@@ -569,121 +334,107 @@
   <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    let currentSearch = '<%= typeof search !== "undefined" ? search : "" %>';
-    let currentPage = <%= Number(currentPage) || 1 %>;
-
-    // Function to load products via fetch
-    async function loadProducts(url) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const html = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        // Extract tbody
-        const newTbody = doc.querySelector('#productTbody');
-        if (newTbody) {
-          document.getElementById('productTbody').innerHTML = newTbody.innerHTML;
-        }
-
-        // Extract pagination
-        const newPagination = doc.querySelector('#paginationContainer');
-        if (newPagination) {
-          document.getElementById('paginationContainer').innerHTML = newPagination.innerHTML;
-        }
-
-        // Re-attach event listeners for new elements
-        attachEventListeners();
-
-        // Update URL without reload
-        const urlObj = new URL(window.location);
-        const params = new URLSearchParams(url.split('?')[1] || '');
-        urlObj.search = params.toString();
-        window.history.replaceState({}, '', urlObj);
-
-      } catch (error) {
-        console.error('Error loading products:', error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Failed to load products'
-        });
-      }
-    }
-
-    // Attach event listeners
-    function attachEventListeners() {
-      // Delete buttons
-      document.querySelectorAll(".action-btn.delete").forEach((button) => {
-        button.removeEventListener('click', handleDelete); // Remove previous listener if any
-        button.addEventListener("click", handleDelete);
-      });
-
-      // Block buttons
-      document.querySelectorAll(".action-btn.block").forEach((button) => {
-        button.removeEventListener('click', handleToggleStatus); // Remove previous
-        button.addEventListener("click", handleToggleStatus);
-      });
-
-      // Pagination links
-      document.querySelectorAll(".pag-link").forEach((link) => {
-        link.removeEventListener('click', handlePagination); // Remove previous
-        link.addEventListener("click", handlePagination);
-      });
-
-      // Category and sort (these are client-side, no need to re-attach fully, but update rows)
-      const tableRows = document.querySelectorAll(".product-table tbody tr");
-      // Re-attach category filter if needed, but since it's client-side on current rows, it's fine
-    }
-
-    function handlePagination(e) {
-      e.preventDefault();
-      if (this.classList.contains("disabled")) return;
-
-      const url = this.dataset.url || this.getAttribute('href');
-      if (url) {
-        loadProducts(url.startsWith('http') ? url : window.location.pathname + url);
-      }
-    }
-
-    function handleDelete() {
-      const id = this.dataset.id;
-      deleteProduct(id);
-    }
-
-    function handleToggleStatus() {
-      const id = this.dataset.id;
-      const currentStatus = this.dataset.status;
-      toggleProductStatus(id, currentStatus);
-    }
-
-    // Search form
-    const searchForm = document.getElementById("searchForm");
-    const searchInput = document.getElementById("searchInput");
-    const clearSearch = document.getElementById("clearSearch");
-
-    searchForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const searchTerm = searchInput.value.trim();
-      const url = `/admin/products?page=1${searchTerm ? '&search=' + encodeURIComponent(searchTerm) : ''}`;
-      await loadProducts(url);
-    });
-
-    clearSearch.addEventListener("click", async () => {
-      searchInput.value = '';
-      const url = '/admin/products?page=1';
-      await loadProducts(url);
-    });
-
-    // Sidebar toggle
-    window.addEventListener("sidebarToggle", (e) => {
-      updateLayout(e.detail.collapsed);
-    });
-
     // Initialize
     document.addEventListener("DOMContentLoaded", () => {
+      let currentSearch = '<%= typeof search !== "undefined" ? search : "" %>';
+      let currentPage = <%= Number(currentPage) || 1 %>;
+
+      // Function to load products via fetch
+      async function loadProducts(url) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const html = await response.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          const newTbody = doc.querySelector('#productTbody');
+          if (newTbody) {
+            document.getElementById('productTbody').innerHTML = newTbody.innerHTML;
+          }
+
+          const newPagination = doc.querySelector('#paginationContainer');
+          if (newPagination) {
+            document.getElementById('paginationContainer').innerHTML = newPagination.innerHTML;
+          }
+
+          attachEventListeners();
+
+          const urlObj = new URL(window.location);
+          const params = new URLSearchParams(url.split('?')[1] || '');
+          urlObj.search = params.toString();
+          window.history.replaceState({}, '', urlObj);
+
+        } catch (error) {
+          console.error('Error loading products:', error);
+          Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to load products' });
+        }
+      }
+
+      function attachEventListeners() {
+        document.querySelectorAll(".action-btn.delete, .delete").forEach(button => {
+          button.removeEventListener('click', handleDelete);
+          button.addEventListener("click", handleDelete);
+        });
+
+        document.querySelectorAll(".action-btn.block, .block").forEach(button => {
+          button.removeEventListener('click', handleToggleStatus);
+          button.addEventListener("click", handleToggleStatus);
+        });
+
+        document.querySelectorAll(".pag-link").forEach(link => {
+          link.removeEventListener('click', handlePagination);
+          link.addEventListener("click", handlePagination);
+        });
+      }
+
+      function handlePagination(e) {
+        e.preventDefault();
+        if (this.closest('.page-item.disabled')) return;
+        const url = this.dataset.url || this.getAttribute('href');
+        if (url) {
+          loadProducts(url.startsWith('http') ? url : window.location.pathname + url);
+        }
+      }
+
+      function handleDelete() {
+        const id = this.dataset.id;
+        deleteProduct(id);
+      }
+
+      function handleToggleStatus() {
+        const id = this.dataset.id;
+        const currentStatus = this.dataset.status;
+        toggleProductStatus(id, currentStatus);
+      }
+
+      const searchForm = document.getElementById("searchForm");
+      const searchInput = document.getElementById("searchInput");
+      const clearSearch = document.getElementById("clearSearch");
+
+      if(searchForm) {
+        searchForm.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const searchTerm = searchInput.value.trim();
+          const url = `/admin/products?page=1${searchTerm ? '&search=' + encodeURIComponent(searchTerm) : ''}`;
+          await loadProducts(url);
+        });
+      }
+
+      if(clearSearch) {
+        clearSearch.addEventListener("click", async () => {
+          searchInput.value = '';
+          const url = '/admin/products?page=1';
+          await loadProducts(url);
+        });
+      }
+
+      window.addEventListener("sidebarToggle", (e) => {
+        updateLayout(e.detail.collapsed);
+      });
+
       const currentPath = window.location.pathname;
       const navLinks = document.querySelectorAll(".nav-item");
       navLinks.forEach((link) => {
@@ -697,10 +448,6 @@
       // Initial attach
       attachEventListeners();
 
-      // Initialize layout
-      const isCollapsed = document.body.classList.contains("sidebar-collapsed");
-      updateLayout(isCollapsed);
-
       // Category and sort filter handling (client-side on current data)
       const categoryBtn = document.getElementById("categoryBtn");
       const sortBtn = document.getElementById("sortBtn");
@@ -713,40 +460,15 @@
         tableRows = document.querySelectorAll(".product-table tbody tr");
       }
 
-      function toggleDropdown(dropdown) {
-        const isActive = dropdown.classList.contains("active");
-        document.querySelectorAll(".filter-dropdown").forEach((dd) => {
-          dd.classList.remove("active");
-        });
-        if (!isActive) {
-          dropdown.classList.add("active");
-        }
-      }
-
-      categoryBtn.addEventListener("click", () => toggleDropdown(categoryDropdown));
-      sortBtn.addEventListener("click", () => toggleDropdown(sortDropdown));
-
-      document.addEventListener("click", (event) => {
-        if (!event.target.closest(".dropdown-wrapper")) {
-          categoryDropdown.classList.remove("active");
-          sortDropdown.classList.remove("active");
-        }
-      });
-
       // Category filter
       document.querySelectorAll("#categoryDropdown a").forEach((link) => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
-          const category = link.dataset.category;
-          tableRows.forEach((row) => {
-            if (category === "all" || row.dataset.category === category) {
-              row.style.display = "";
-            } else {
-              row.style.display = "none";
-            }
-          });
-          categoryDropdown.classList.remove("active");
-          updateRows();
+          const categoryValue = link.dataset.category;
+          const currentParams = new URLSearchParams(window.location.search);
+          currentParams.set('page', '1');
+          currentParams.set('category', categoryValue);
+          loadProducts(`/admin/products?${currentParams.toString()}`);
         });
       });
 
@@ -754,37 +476,14 @@
       document.querySelectorAll("#sortDropdown a").forEach((link) => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
-          const sort = link.dataset.sort;
-          const rows = Array.from(tableRows).filter(row => row.style.display !== 'none');
-          rows.sort((a, b) => {
-            const priceA = parseFloat(a.querySelector("td:nth-child(4)").textContent.replace('₹', ''));
-            const priceB = parseFloat(b.querySelector("td:nth-child(4)").textContent.replace('₹', ''));
-            return sort === "price-high-low" ? priceB - priceA : priceA - priceB;
-          });
-          const tbody = document.querySelector(".product-table tbody");
-          rows.forEach((row) => tbody.appendChild(row));
-          sortDropdown.classList.remove("active");
-          updateRows();
+          const sortValue = link.dataset.sort;
+          const currentParams = new URLSearchParams(window.location.search);
+          currentParams.set('page', '1');
+          currentParams.set('sort', sortValue);
+          loadProducts(`/admin/products?${currentParams.toString()}`);
         });
-      });
+      });    
     });
-
-    // Responsive layout
-    function updateLayout(isCollapsed = false) {
-      const contentWrapper = document.querySelector(".content-wrapper");
-      if (window.innerWidth <= 576) {
-        contentWrapper.style.marginLeft = "70px";
-        contentWrapper.style.width = "calc(100% - 70px)";
-      } else if (window.innerWidth <= 768 || isCollapsed) {
-        contentWrapper.style.marginLeft = "70px";
-        contentWrapper.style.width = "calc(100% - 70px)";
-      } else {
-        contentWrapper.style.marginLeft = "250px";
-        contentWrapper.style.width = "calc(100% - 250px)";
-      }
-    }
-    window.addEventListener("resize", () => updateLayout(document.body.classList.contains("sidebar-collapsed")));
-
 
     function toggleProductStatus(id, currentStatus) {
       Swal.fire({
@@ -803,16 +502,19 @@
             method: 'PATCH',
             success: function (response) {
               if (response.success) {
-                const button = document.querySelector(`.action-btn.block[data-id="${id}"]`);
-                const statusCell = button.closest('tr').querySelector('.status-label');
+                const button = $(`.block[data-id="${id}"]`);
+                const statusCell = button.closest('tr').find('.status-label');
                 const isBlocked = response.product.isBlocked;
 
                 const newStatus = isBlocked ? 'unlisted' : 'listed';
+                const newButtonTitle = isBlocked ? 'Unblock' : 'Block';
+                const newIconClass = isBlocked ? 'fa-check-circle' : 'fa-ban';
 
-                button.dataset.status = newStatus;
-                button.textContent = isBlocked ? 'Unblock' : 'Block';
-
-                if (statusCell) {
+                button.data('status', newStatus);
+                button.attr('title', newButtonTitle);
+                button.find('i').removeClass('fa-ban fa-check-circle').addClass(newIconClass);
+                
+                if (statusCell) { // Check if statusCell exists
                   statusCell.className = `status-label status-${newStatus}`;
                   statusCell.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
                 }
@@ -860,7 +562,7 @@
             method: 'DELETE',
             success: function (response) {
               if (response.success) {
-                const row = document.querySelector(`.action-btn.delete[data-id="${id}"]`).closest('tr');
+                const row = document.querySelector(`.delete[data-id="${id}"]`).closest('tr');
                 row.remove();
                 Swal.fire({
                   icon: 'success',

@@ -31,16 +31,6 @@
             background-color: #f5f5f5;
         }
 
-        .content-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            margin-left: 250px;
-            width: calc(100% - 250px);
-            transition: margin-left 0.3s ease, width 0.3s ease;
-        }
-
         .sidebar.collapsed+.content-wrapper {
             margin-left: 70px;
             width: calc(100% - 70px);
@@ -72,140 +62,6 @@
         .admin-text {
             font-weight: 600;
             color: #2c3e50;
-        }
-
-        .search-btn,
-        .clear-btn {
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            font-size: 0.85rem;
-        }
-
-        .search-btn:hover {
-            background-color: #34495e;
-        }
-
-        .clear-btn {
-            background-color: #7f8c8d;
-        }
-
-        .clear-btn:hover {
-            background-color: #95a5a6;
-        }
-
-        .table-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            max-width: 1000px;
-            margin: 20px auto;
-            width: 90%;
-        }
-
-        .table-search {
-            margin-bottom: 15px;
-        }
-
-        .table-search form {
-            display: flex;
-            gap: 10px;
-        }
-
-        .table-search input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-        }
-
-        th,
-        td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #2c3e50;
-            color: white;
-            font-weight: 600;
-        }
-
-        tr {
-            display: table-row;
-        }
-
-        td {
-            word-break: break-word;
-            /* Allow word breaks for long text */
-            max-width: 0;
-            /* Ensure content doesn't overflow */
-        }
-
-        /* Specific styling for email column */
-        td[data-label="Email"] {
-            max-width: 200px;
-            /* Set a reasonable max width for email */
-            word-wrap: break-word;
-            /* Break long words if necessary */
-        }
-
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        .status-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            text-align: center;
-            white-space: nowrap;
-            /* Prevent button text wrapping */
-        }
-
-        .status-btn.blocked {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        .status-btn.unblocked {
-            background-color: #f39c12;
-            color: white;
-        }
-
-        .status-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-
-        .status-btn a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            width: 100%;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
         }
 
         /* === Pagination Styles (from Order Management) === */
@@ -252,93 +108,48 @@
             cursor: not-allowed;
         }
 
-        @media (max-width: 1000px) {
-            .table-container {
-                width: 95%;
-            }
-
-            th,
-            td {
-                font-size: 0.9rem;
-                padding: 10px;
-            }
-
-            .status-btn {
-                font-size: 0.85rem;
-                padding: 6px 10px;
-            }
-
-            td[data-label="Email"] {
-                max-width: 150px;
-                /* Reduce max width on medium screens */
-            }
-        }
-
         @media (max-width: 768px) {
             .content-wrapper {
                 margin-left: 70px;
                 width: calc(100% - 70px);
             }
-
-            .table-container {
-                width: 100%;
-                margin: 10px;
-                padding: 10px;
-            }
-
-            table {
-                display: table;
-                width: 100%;
-            }
-
-            th,
-            td {
-                display: table-cell;
-                width: auto;
-                padding: 8px;
-            }
-
-            td {
-                word-break: break-word;
-                /* Ensure breaking on small screens */
-                max-width: 100px;
-                /* Smaller max width for better fit */
-            }
-
-            td[data-label="Email"] {
-                max-width: 120px;
-                /* Adjusted for small screens */
-            }
-
-            .status-btn {
-                width: auto;
-                padding: 6px 10px;
-                font-size: 0.8rem;
-            }
         }
 
-        @media (max-width: 480px) {
-            td {
-                font-size: 0.8rem;
-                padding: 6px;
+        /* Responsive Card View */
+        @media (max-width: 991.98px) {
+            .table-responsive-cards thead {
+                display: none;
             }
-
-            .table-search input {
-                max-width: 100%;
-            }
-
-            .table-search form {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .table-search button {
+            .table-responsive-cards tbody,
+            .table-responsive-cards tr,
+            .table-responsive-cards td {
+                display: block;
                 width: 100%;
             }
-
-            td[data-label="Email"] {
-                max-width: 100px;
-                /* Further reduce on very small screens */
+            .table-responsive-cards tr {
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: .5rem;
+                background-color: #fff;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            }
+            .table-responsive-cards td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: .75rem 1rem;
+                border-bottom: 1px solid #f1f1f1;
+                text-align: right;
+            }
+            .table-responsive-cards td:last-child {
+                border-bottom: 0;
+            }
+            .table-responsive-cards td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                text-align: left;
+                margin-right: 1rem;
+                color: #495057;
             }
         }
     </style>
@@ -350,95 +161,97 @@
         <%-include('../partials/admin/header.ejs') %>
 
             <!-- User Listing Table -->
-            <div class="content-wrapper">
+            <div class="content-wrapper p-3 p-md-4">
                 <div class="navbar">
                     <div class="navbar-left">
                         <i class="fas fa-user-shield admin-icon"></i>
                         <span class="admin-text">Admin</span>
                     </div>
                 </div>
-                <div class="table-container">
-                    <div class="table-search">
+                <div class="card shadow-sm mt-4">
+                    <div class="card-body">
+                        <h2 class="h4 fw-semibold mb-3">User Listing</h2>
                         <form action="/admin/users" method="GET" id="searchForm">
-                            <input type="text" id="searchInput" name="search" placeholder="Search users..."
-                                value="<%= search %>" class="form-control">
-                            <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
-                            <button type="submit" class="clear-btn" name="clear" value="1"><i
-                                    class="fas fa-times"></i></button>
+                            <div class="input-group mb-3">
+                                <input type="text" id="searchInput" name="search" placeholder="Search users..." value="<%= search %>" class="form-control">
+                                <button type="submit" class="btn btn-dark"><i class="fas fa-search"></i></button>
+                                <button type="submit" class="btn btn-outline-secondary" name="clear" value="1"><i class="fas fa-times"></i></button>
+                            </div>
                         </form>
-                    </div>
-                    <h2 class="mb-4">User Listing</h2>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Email</th>
-                                <th>Phone Number</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% if (users && users.length) { %>
-                                <% for(let i=0; i<users.length; i++) { %>
-                                    <tr>
-                                        <td data-label="ID">
-                                            <%= i + 1 %>
-                                        </td>
-                                        <td data-label="First Name">
-                                            <%= users[i].firstName %>
-                                        </td>
-                                        <td data-label="Last Name">
-                                            <%= users[i].lastName %>
-                                        </td>
-                                        <td data-label="Email">
-                                            <%= users[i].email %>
-                                        </td>
-                                        <td data-label="Phone Number">
-                                            <%= users[i].phone || 'N/A' %>
-                                        </td>
-                                        <td data-label="Status">
-                                            <% if (!users[i].isBlocked) { %>
-                                                <!-- User is NOT blocked — show "Block" option -->
-                                                <button class="status-btn unblocked" data-userid="<%= users[i]._id %>">
-                                                    <a href="/admin/blockUser?id=<%= users[i]._id %>">Block</a>
-                                                </button>
-                                                <% } else { %>
-                                                    <!-- User IS blocked — show "Unblock" option -->
-                                                    <button class="status-btn blocked" data-userid="<%= users[i]._id %>">
-                                                        <a href="/admin/blockUser?id=<%= users[i]._id %>">Unblock</a>
+                        <div class="table-responsive">
+                        <table class="table table-hover align-middle table-responsive-cards">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">First Name</th>
+                                    <th scope="col">Last Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col" class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (users && users.length) { %>
+                                    <% users.forEach((user, i) => { %>
+                                        <tr>
+                                            <td data-label="#">
+                                                <%= (currentPage - 1) * 10 + i + 1 %>
+                                            </td>
+                                            <td data-label="First Name">
+                                                <%= user.firstName %>
+                                            </td>
+                                            <td data-label="Last Name">
+                                                <%= user.lastName %>
+                                            </td>
+                                            <td data-label="Email">
+                                                <%= user.email %>
+                                            </td>
+                                            <td data-label="Phone">
+                                                <%= user.phone || 'N/A' %>
+                                            </td>
+                                            <td data-label="Status" class="text-center">
+                                                <% if (!user.isBlocked) { %>
+                                                    <button class="btn btn-sm btn-outline-danger status-btn" data-userid="<%= user._id %>">
+                                                        Block
                                                     </button>
-                                                    <% } %>
-
-                                                        <% } %>
-                                        </td>
+                                                <% } else { %>
+                                                    <button class="btn btn-sm btn-outline-success status-btn" data-userid="<%= user._id %>">
+                                                        Unblock
+                                                    </button>
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5 text-muted">No users found.</td>
                                     </tr>
-                                    <% } %>
-
-                        </tbody>
-                    </table>
-                    <div class="pagination" id="pagination">
-                        <div class="pagination-area">
-                            <div class="pagination-controls">
+                                <% } %>
+                            </tbody>
+                        </table>
+                        </div>
+                        <div class="d-flex justify-content-center mt-4" id="pagination">
+                            <nav>
+                            <ul class="pagination">
                                 <% if (typeof totalPages !=='undefined' && totalPages> 0) { %>
                                     <% if (currentPage > 1) { %>
-                                        <a href="?page=<%= currentPage - 1 %>&search=<%= search %>" class="page-btn" data-page="<%= currentPage - 1 %>">Prev</a>
+                                        <li class="page-item"><a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>" data-page="<%= currentPage - 1 %>">Prev</a></li>
                                     <% } else { %>
-                                        <button class="page-btn" disabled>Prev</button>
+                                        <li class="page-item disabled"><a class="page-link" href="#">Prev</a></li>
                                     <% } %>
  
                                     <% for (let i = 1; i <= totalPages; i++) { %>
-                                        <a href="?page=<%= i %>&search=<%= search %>" class="page-btn <%= i === currentPage ? 'active' : '' %>" data-page="<%= i %>"><%= i %></a>
+                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>"><a class="page-link" href="?page=<%= i %>&search=<%= search %>" data-page="<%= i %>"><%= i %></a></li>
                                     <% } %>
  
                                     <% if (currentPage < totalPages) { %>
-                                        <a href="?page=<%= currentPage + 1 %>&search=<%= search %>" class="page-btn" data-page="<%= currentPage + 1 %>">Next</a>
+                                        <li class="page-item"><a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>" data-page="<%= currentPage + 1 %>">Next</a></li>
                                     <% } else { %>
-                                        <button class="page-btn" disabled>Next</button>
+                                        <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
                                     <% } %>
                                 <% } %>
-                            </div>
+                            </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -531,7 +344,7 @@
 
             // --- Event Handler for Block/Unblock ---
             function attachBlockUnblockListeners() {
-                document.querySelectorAll(".status-btn a").forEach(link => {
+                document.querySelectorAll(".status-btn").forEach(link => {
                     link.addEventListener('click', handleBlockUnblock);
                 });
             }
@@ -539,7 +352,7 @@
             async function handleBlockUnblock(e) {
                 e.preventDefault();
                 const linkElement = e.currentTarget; // Store a reference to the link
-                const button = linkElement.parentElement;
+                const button = e.currentTarget;
                 const userId = button.dataset.userid;
                 const url = `/admin/blockUser?id=${userId}`;
                 const action = linkElement.textContent.trim().toLowerCase();
@@ -562,8 +375,8 @@
 
                             // Dynamically update the button
                             const isNowBlocked = action === 'block';
-                            button.classList.toggle('unblocked', !isNowBlocked);
-                            button.classList.toggle('blocked', isNowBlocked);
+                            button.classList.toggle('btn-outline-danger', !isNowBlocked);
+                            button.classList.toggle('btn-outline-success', isNowBlocked);
                             linkElement.textContent = isNowBlocked ? 'Unblock' : 'Block';
 
                         } catch (error) {

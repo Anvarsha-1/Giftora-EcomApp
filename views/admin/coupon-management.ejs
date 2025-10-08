@@ -7,6 +7,9 @@
     <title>Admin - Manage Coupons</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/admin/admin-Dashboard.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         :root {
             --primary-color: #2c3e50;
@@ -46,6 +49,7 @@
             padding: 15px 20px;
             box-shadow: var(--shadow);
             margin-bottom: 20px;
+            border-radius: var(--border-radius);
         }
 
         .navbar-left {
@@ -64,22 +68,12 @@
             font-size: 1.1rem;
         }
 
-        .search-add-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 20px;
-        }
-
         .search-container {
             display: flex;
             align-items: center;
             background: #ffffff;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            flex: 1;
-            max-width: 500px;
             position: relative;
         }
 
@@ -136,13 +130,6 @@
             box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
         }
 
-        .stats-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
         .stat-card {
             background: #ffffff;
             padding: 20px;
@@ -184,93 +171,6 @@
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             margin-bottom: 20px;
-        }
-
-        .filter-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            align-items: center;
-        }
-
-        .dropdown-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .dropdown-wrapper>button {
-            background: var(--light-gray);
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            width: 100%;
-            justify-content: space-between;
-        }
-
-        .dropdown-wrapper>button:hover {
-            background: #e9ecef;
-        }
-
-        .filter-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: #ffffff;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            min-width: 150px;
-            display: none;
-        }
-
-        .filter-dropdown.active {
-            display: block;
-        }
-
-        .filter-dropdown a {
-            display: block;
-            padding: 10px 15px;
-            text-decoration: none;
-            color: var(--text-color);
-            transition: background-color 0.2s ease;
-        }
-
-        .filter-dropdown a:hover {
-            background: var(--light-gray);
-        }
-
-        .coupon-table {
-            background: #ffffff;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .coupon-table th {
-            background: var(--light-gray);
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            color: var(--text-color);
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .coupon-table td {
-            padding: 15px;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
-
-        .coupon-table tr:hover {
-            background: var(--light-gray);
         }
 
         .coupon-code {
@@ -322,7 +222,7 @@
             background: #ecf0f1;
             color: var(--dark-gray);
         }
-        
+
         .actions-cell {
             display: flex;
             gap: 8px;
@@ -333,22 +233,22 @@
             border: none;
             width: 36px;
             height: 36px;
-            border-radius: 50%; /* Make buttons circular */
+            border-radius: 50%;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px; /* Icon size */
+            font-size: 14px;
         }
 
         .action-btn.edit {
-            background: rgba(52, 152, 219, 0.1); /* Lighter background */
+            background: rgba(52, 152, 219, 0.1);
             color: var(--secondary-color);
         }
 
         .action-btn.delete {
-            background: rgba(231, 76, 60, 0.1); /* Lighter background */
+            background: rgba(231, 76, 60, 0.1);
             color: var(--danger-color);
         }
 
@@ -362,65 +262,37 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        /* === New Pagination Styles (from Sales Report) === */
-        #paginationContainer {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 30px;
-            padding: 10px;
+        /* Bootstrap Pagination Custom */
+        .page-link {
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
         }
 
-        .pagination-controls {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
+        .page-link:hover {
+            color: white;
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
         }
 
-        .page-btn {
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            background: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s ease;
+        .page-item.active .page-link {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
         }
 
-        .page-btn.active {
-            background: #3b82f6;
-            color: #fff;
-            border-color: #3b82f6;
-            font-weight: 600;
-        }
-
-        .page-btn:hover:not(.active):not([disabled]) {
-            transform: translateY(-1px);
-            border-color: #3b82f6;
-        }
-
-        .page-btn[disabled] {
-            opacity: 0.6;
-            cursor: not-allowed;
+        .no-coupons-placeholder {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 24px;
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
             .content-wrapper {
                 margin-left: 0;
                 padding: 10px;
-            }
-
-            .search-add-section {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .stats-section {
-                grid-template-columns: repeat(2, 1fr);
             }
 
             .coupon-table {
@@ -447,216 +319,249 @@
                     </div>
                 </div>
 
-                <div class="search-add-section">
-                    <form id="searchForm" class="search-container">
-                        <input type="text" class="search-input" id="searchInput" name="search"
-                            value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
-                            placeholder="Search coupons..." />
-                        <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
-                        <button type="button" id="clearSearchBtn" class="clear-btn"><i class="fas fa-times"></i></button>
-                    </form>
-                    <a href="/admin/coupons/add">
-                        <button class="add-coupon-btn">
-                            <i class="fas fa-plus"></i> Add Coupon
-                        </button>
-                    </a>
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-lg-8">
+                        <form id="searchForm" class="search-container">
+                            <input type="text" class="search-input" id="searchInput" name="search"
+                                value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+                                placeholder="Search coupons..." />
+                            <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+                            <button type="button" id="clearSearchBtn" class="clear-btn"><i
+                                    class="fas fa-times"></i></button>
+                        </form>
+                    </div>
+                    <div class="col-12 col-lg-4 text-end">
+                        <a href="/admin/coupons/add">
+                            <button class="add-coupon-btn">
+                                <i class="fas fa-plus"></i> Add Coupon
+                            </button>
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Statistics Section -->
-                <div class="stats-section">
-                    <div class="stat-card total-coupons">
-                        <div class="stat-number">
-                            <%= typeof TotalCouponCount !=='undefined' ? TotalCouponCount: '0' %>
+                <div class="row g-3 mb-4 stats-section">
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card total-coupons h-100">
+                            <div class="stat-number">
+                                <%= typeof TotalCouponCount !=='undefined' ? TotalCouponCount: '0' %>
+                            </div>
+                            <div class="stat-label">Total Coupons</div>
                         </div>
-                        <div class="stat-label">Total Coupons</div>
                     </div>
-                    <div class="stat-card active-coupons">
-                        <div class="stat-number">
-                            <%= typeof couponIsActive !=='undefined' ? couponIsActive : '8' %>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card active-coupons h-100">
+                            <div class="stat-number">
+                                <%= typeof couponIsActive !=='undefined' ? couponIsActive : '8' %>
+                            </div>
+                            <div class="stat-label">Active Coupons</div>
                         </div>
-                        <div class="stat-label">Active Coupons</div>
                     </div>
-                    <div class="stat-card used-coupons">
-                        <div class="stat-number">
-                            <%= typeof totalUsedCount !=='undefined' ? totalUsedCount : '156' %>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card used-coupons h-100">
+                            <div class="stat-number">
+                                <%= typeof totalUsedCount !=='undefined' ? totalUsedCount : '156' %>
+                            </div>
+                            <div class="stat-label">Used This Month</div>
                         </div>
-                        <div class="stat-label">Used This Month</div>
                     </div>
-                    <div class="stat-card savings-amount">
-                        <div class="stat-number">₹<%= typeof totalSavings !=='undefined' ? totalSavings : 0 %>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-card savings-amount h-100">
+                            <div class="stat-number">₹<%= typeof totalSavings !=='undefined' ? totalSavings : 0 %>
+                            </div>
+                            <div class="stat-label">Total Savings</div>
                         </div>
-                        <div class="stat-label">Total Savings</div>
                     </div>
                 </div>
 
                 <div class="coupon-header">
-                    <div class="filter-section">
-                        <div class="dropdown-wrapper">
-                            <button id="statusBtn">
-                                All Status <i class="fas fa-caret-down"></i>
-                            </button>
-                            <div class="filter-dropdown" id="statusDropdown">
-                                <a href="#" data-status="all">All Status</a>
-                                <a href="#" data-status="active">Active</a>
-                                <a href="#" data-status="inactive">Inactive</a>
-                                <a href="#" data-status="expired">Expired</a>
+                    <div class="row g-2 align-items-center filter-section">
+                        <div class="col-12 col-sm-4">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary w-100 text-start"
+                                    type="button" id="statusBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                    All Status
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="statusBtn">
+                                    <li><a class="dropdown-item" href="#" data-status="all">All Status</a></li>
+                                    <li><a class="dropdown-item" href="#" data-status="active">Active</a></li>
+                                    <li><a class="dropdown-item" href="#" data-status="inactive">Inactive</a></li>
+                                    <li><a class="dropdown-item" href="#" data-status="expired">Expired</a></li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="dropdown-wrapper">
-                            <button id="typeBtn">
-                                All Types <i class="fas fa-caret-down"></i>
-                            </button>
-                            <div class="filter-dropdown" id="typeDropdown">
-                                <a href="#" data-type="all">All Types</a>
-                                <a href="#" data-type="percentage">Percentage</a>
-                                <a href="#" data-type="flat">Fixed Amount</a>
+                        <div class="col-12 col-sm-4">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary  w-100 text-start"
+                                    type="button" id="typeBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                    All Types
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="typeBtn">
+                                    <li><a class="dropdown-item" href="#" data-type="all">All Types</a></li>
+                                    <li><a class="dropdown-item" href="#" data-type="percentage">Percentage</a></li>
+                                    <li><a class="dropdown-item" href="#" data-type="flat">Fixed Amount</a></li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="dropdown-wrapper">
-                            <button id="sortBtn">
-                                Sort <i class="fas fa-caret-down"></i>
-                            </button>
-                            <div class="filter-dropdown" id="sortDropdown">
-                                <a href="#" data-sort="newest">Newest First</a>
-                                <a href="#" data-sort="oldest">Oldest First</a>
-                                <a href="#" data-sort="expiry-soon">Expiry Soon</a>
-                                <a href="#" data-sort="most-used">Most Used</a>
+                        <div class="col-12 col-sm-4">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary w-100 text-start"
+                                    type="button" id="sortBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Sort
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="sortBtn">
+                                    <li><a class="dropdown-item" href="#" data-sort="newest">Newest First</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="oldest">Oldest First</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="expiry-soon">Expiry Soon</a></li>
+                                    <li><a class="dropdown-item" href="#" data-sort="most-used">Most Used</a></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <table class="coupon-table">
-                    <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Description</th>
-                            <th>Type</th>
-                            <th>Discount</th>
-                            <th>Min Purchase</th>
-                            <th>Expiry</th>
-                            <th>Used Count</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="couponTableBody">
-                        <% if (typeof coupons !=='undefined' && coupons.length> 0) { %>
-                            <% coupons.forEach(function(coupon) { %>
-                                <tr data-status="<%= coupon.isActive %>" data-type="<%= coupon.discountType %>">
-                                    <td>
-                                        <span class="coupon-code">
-                                            <%= coupon.code %>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <%= coupon.description %>
-                                    </td>
-                                    <td>
-                                        <span class="coupon-type type-<%= coupon.discountType %>">
-                                            <%= coupon.discountType==='percentage' ? 'Percentage' : 'Fixed Amount' %>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <% if (coupon.discountType==='percentage' ) { %>
-                                            <%= coupon.discount %>%
-                                                <% } else { %>
-                                                    ₹<%= coupon.discount %>
-                                                        <% } %>
-                                    </td>
-                                    <td>₹<%= coupon.minPurchase || '0' %>
-                                    </td>
-                                    <td>
-                                        <%= new Date(coupon.expiry).toLocaleDateString() %>
-                                    </td>
-                                    <td>
-                                        <%= coupon.usedCount || 0 %>
-                                    </td>
-                                    <td>
-                                        <span
-                                            class="status-label status-<%= coupon.isActive ? 'active' : 'inactive' %>">
-                                            <%= coupon.isActive ? 'Active' : 'Inactive' %>
-                                        </span>
-                                    </td>
+                <div class="table-responsive">
+                    <table class="coupon-table table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Discount</th>
+                                <th>Min Purchase</th>
+                                <th>Expiry</th>
+                                <th>Used Count</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponTableBody">
+                            <% if (typeof coupons !=='undefined' && coupons.length> 0) { %>
+                                <% coupons.forEach(function(coupon) { %>
+                                    <tr data-status="<%= coupon.isActive %>" data-type="<%= coupon.discountType %>">
+                                        <td>
+                                            <span class="coupon-code badge bg-primary">
+                                                <%= coupon.code %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <%= coupon.description %>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="coupon-type type-<%= coupon.discountType %> badge <%= coupon.discountType==='percentage' ? 'bg-success-subtle text-success' : 'bg-info-subtle text-info' %>">
+                                                <%= coupon.discountType==='percentage' ? 'Percentage' : 'Fixed Amount'
+                                                    %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <% if (coupon.discountType==='percentage' ) { %>
+                                                <%= coupon.discount %>%
+                                                    <% } else { %>
+                                                        ₹<%= coupon.discount %>
+                                                            <% } %>
+                                        </td>
+                                        <td>₹<%= coupon.minPurchase || '0' %>
+                                        </td>
+                                        <td>
+                                            <%= new Date(coupon.expiry).toLocaleDateString() %>
+                                        </td>
+                                        <td>
+                                            <%= coupon.usedCount || 0 %>
+                                        </td>
+                                        <td>
+                                            <span
+                                                class="status-label status-<%= coupon.isActive ? 'active' : 'inactive' %> badge <%= coupon.isActive ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' %>">
+                                                <%= coupon.isActive ? 'Active' : 'Inactive' %>
+                                            </span>
+                                        </td>
 
-                                    <td>
-                                        <div class="actions-cell">
-                                            <a href="/admin/coupons/edit/<%= coupon._id%>" title="Edit Coupon">
-                                                <button class="action-btn edit"><i class="fas fa-pencil-alt"></i></button>
-                                            </a>
-                                            <button class="action-btn delete" data-id="<%= coupon._id %>" title="Delete Coupon"><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <% }); %>
-                                    <% } else { %>
-                                        <!-- Sample Data for demonstration -->
-                                        <tr>
-                                            <td colspan="9" style="text-align: center; padding: 20px;">
-                                                <div style="
-                                                        background-color: white;
-                                                        border-radius: 12px;
-                                                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                                                        padding: 24px;
-                                                        max-width: 400px;
-                                                        margin: 0 auto;
-                                                        text-align: center;">
+                                        <td>
+                                            <div class="actions-cell">
+                                                <a href="/admin/coupons/edit/<%= coupon._id%>" title="Edit Coupon">
+                                                    <button
+                                                        class="action-btn edit btn btn-outline-primary btn-sm rounded-circle"
+                                                        style="width: 36px; height: 36px;"><i
+                                                            class="fas fa-pencil-alt"></i></button>
+                                                </a>
+                                                <button
+                                                    class="action-btn delete btn btn-outline-danger btn-sm rounded-circle"
+                                                    data-id="<%= coupon._id %>" title="Delete Coupon"
+                                                    style="width: 36px; height: 36px;"><i
+                                                        class="fas fa-trash-alt"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="9">
+                                                    <div class="no-coupons-placeholder">
+                                                        <h2 class="text-dark mb-3">No Coupons Found</h2>
+                                                        <p class="text-muted mb-4">
+                                                            Sorry, no coupons were found for your search. Try adjusting
+                                                            your
+                                                            search term or adding a new coupon.
+                                                        </p>
+                                                        <button onclick="window.location.href='/admin/coupons/add'"
+                                                            class="btn btn-success">
+                                                            <i class="fas fa-plus me-2"></i>Add New Coupon
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
 
-                                                    <h2 style="color: #333; font-size: 24px; margin-bottom: 12px;">No
-                                                        Coupons Found</h2>
-                                                    <p style="color: #555; font-size: 16px; margin-bottom: 20px;">
-                                                        Sorry, no coupons were found for your search. Try adjusting your
-                                                        search term or adding a new coupon.
-                                                    </p>
-                                                    <button onclick="window.location.href='/admin/coupons/add'" style="
-                                                            background-color: #28a745;
-                                                            color: white;
-                                                            border: none;
-                                                            padding: 12px 24px;
-                                                            border-radius: 6px;
-                                                            cursor: pointer;
-                                                            font-size: 16px;">
-                                                        Add New Coupon
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <% } %>
-                    </tbody>
-                </table>
-                <div id="paginationContainer">
-                    <div class="pagination-controls">
-                        <% if (currentPage > 1) { %>
-                            <a href="?page=<%= currentPage - 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>" class="page-btn"
-                                data-url="?page=<%= currentPage - 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">Prev</a>
-                            <% } else { %>
-                            <button class="page-btn" disabled>Prev</button>
-                            <% } %>
-    
-                                <% for (let i=1; i <=totalPages; i++) { %>
-                                    <a href="?page=<%= i %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
-                                        class="page-btn <%= i === currentPage ? 'active' : '' %>" data-url="?page=<%= i %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">
-                                        <%= i %>
-                                    </a>
-                                    <% } %>
-    
-                                        <% if (currentPage < totalPages) { %>
-                                            <a href="?page=<%= currentPage + 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
-                                                class="page-btn" data-url="?page=<%= currentPage + 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">Next</a>
-                                            <% } else { %>
-                                            <button class="page-btn" disabled>Next</button>
                                             <% } %>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
 
+                <nav aria-label="Coupon pagination">
+                    <ul class="pagination justify-content-center mt-4" id="paginationContainer">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="?page=<%= currentPage - 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
+                                    data-url="?page=<%= currentPage - 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">Previous</a>
+                            </li>
+                            <% } else { %>
+                                <li class="page-item disabled">
+                                    <span class="page-link">Previous</span>
+                                </li>
+                                <% } %>
 
+                                    <% for (let i=1; i <=totalPages; i++) { %>
+                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                            <a class="page-link"
+                                                href="?page=<%= i %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
+                                                data-url="?page=<%= i %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                        <% } %>
+
+                                            <% if (currentPage < totalPages) { %>
+                                                <li class="page-item">
+                                                    <a class="page-link"
+                                                        href="?page=<%= currentPage + 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>"
+                                                        data-url="?page=<%= currentPage + 1 %>&sort=<%= sortOption || 'newest' %>&search=<%= searchQuery || '' %>">Next</a>
+                                                </li>
+                                                <% } else { %>
+                                                    <li class="page-item disabled">
+                                                        <span class="page-link">Next</span>
+                                                    </li>
+                                                    <% } %>
+                    </ul>
+                </nav>
 
             </div>
     </div>
 
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const paginationContainer = document.getElementById('paginationContainer');
@@ -664,7 +569,7 @@
                 paginationContainer.addEventListener('click', (e) => {
                     if (e.target.tagName === 'A') {
                         e.preventDefault();
-                        const url = new URL(e.target.href);
+                        const url = new URL(e.target.href, window.location.origin);
                         const page = url.searchParams.get('page');
                         if (page) {
                             fetchCoupon({ page: parseInt(page) });
@@ -693,7 +598,7 @@
             await fetchCoupon({ search: searchQuery })
         })
         //status dropdown
-        document.querySelectorAll("#statusDropdown a").forEach(el => {
+        document.querySelectorAll("[data-status]").forEach(el => {
             el.addEventListener('click', async (e) => {
                 e.preventDefault()
                 const status = e.target.dataset.status;
@@ -701,7 +606,7 @@
             })
         })
         //type dropDown
-        document.querySelectorAll('#typeDropdown a').forEach(link => {
+        document.querySelectorAll('[data-type]').forEach(link => {
             link.addEventListener('click', e => {
                 e.preventDefault();
                 const type = e.target.dataset.type;
@@ -709,7 +614,7 @@
             });
         });
         //sorting
-        document.querySelectorAll('#sortDropdown a').forEach(link => {
+        document.querySelectorAll('[data-sort]').forEach(link => {
             link.addEventListener('click', e => {
                 e.preventDefault();
                 const sort = e.target.dataset.sort;
@@ -749,46 +654,20 @@
 
 
     <script>
-        // Dropdown functionality
-        document.querySelectorAll('.dropdown-wrapper button').forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
-                const dropdown = this.nextElementSibling;
-
-                // Close other dropdowns
-                document.querySelectorAll('.filter-dropdown').forEach(d => {
-                    if (d !== dropdown) d.classList.remove('active');
-                });
-
-                dropdown.classList.toggle('active');
-            });
-        });
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function (e) {
-            if (!e.target.closest('.dropdown-wrapper')) {
-                document.querySelectorAll('.filter-dropdown').forEach(d => {
-                    d.classList.remove('active');
-                });
-            }
-        });
-
         // Filter functionality
-        document.querySelectorAll('.filter-dropdown a').forEach(link => {
+        document.querySelectorAll('.dropdown-menu a').forEach(link => {
             link.addEventListener('click', function (e) {
                 e.preventDefault();
-                const filterType = this.closest('.filter-dropdown').id;
+                const filterType = this.closest('.dropdown-menu').parentElement.querySelector('button').id;
                 const filterValue = this.dataset.status || this.dataset.type || this.dataset.sort;
 
                 // Update button text
-                const button = this.closest('.dropdown-wrapper').querySelector('button');
-                button.innerHTML = this.textContent + ' <i class="fas fa-caret-down"></i>';
+                const button = this.closest('.dropdown').querySelector('button');
+                const newText = this.textContent.trim();
+                button.innerHTML = newText + ' <i class="fas fa-caret-down ms-2"></i>';
 
                 // Apply filter
                 filterTable(filterType, filterValue);
-
-                // Close dropdown
-                this.closest('.filter-dropdown').classList.remove('active');
             });
         });
 
@@ -798,9 +677,9 @@
             rows.forEach(row => {
                 let show = true;
 
-                if (filterType === 'statusDropdown' && filterValue !== 'all') {
+                if (filterType === 'statusBtn' && filterValue !== 'all') {
                     show = row.dataset.status === filterValue;
-                } else if (filterType === 'typeDropdown' && filterValue !== 'all') {
+                } else if (filterType === 'typeBtn' && filterValue !== 'all') {
                     show = row.dataset.type === filterValue;
                 }
 
@@ -809,9 +688,9 @@
         }
 
         // Action button handlers
-        document.querySelectorAll('.action-btn.delete').forEach(btn => {
-            btn.addEventListener('click', function (e) {
-                const couponId = this.dataset.id;
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('action-btn') && e.target.classList.contains('delete')) {
+                const couponId = e.target.dataset.id;
                 const row = e.target.closest("tr");
 
                 Swal.fire({
@@ -872,7 +751,7 @@
                             });
                     }
                 });
-            });
+            }
         });
 
         document.querySelectorAll('.action-btn.block, .action-btn.unblock').forEach(btn => {

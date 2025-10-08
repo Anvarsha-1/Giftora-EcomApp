@@ -5,13 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Account - E-commerce Store</title>
-    <link rel="stylesheet" href="/styles/output.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
-    
+
     <style>
         :where([class^="ri-"])::before {
             content: "\f3c2";
@@ -62,6 +61,64 @@
                 transform: translateY(0);
             }
         }
+
+        .profile-avatar {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .quick-action-btn {
+            transition: all 0.2s ease;
+            border-color: transparent;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .quick-action-btn:hover {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+            border-color: #3b82f6;
+            transform: translateX(4px);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 640px) {
+            .breadcrumb-nav {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .quick-action-btn {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 
@@ -71,204 +128,238 @@
         <!-- Mobile Menu Overlay -->
         <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
         <!-- Main Container -->
-        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="flex flex-col md:flex-row gap-8">
+        <div class="max-w-[1440px] mx-auto px-2 sm:px-4 md:px-8 py-6 sm:py-12">
+            <div class="flex flex-col md:flex-row gap-4 md:gap-8">
                 <!-- Sidebar -->
-               <%-include('../partials/user/myaccountSidebar.ejs') %>
+                <div class="md:w-1/4 lg:w-1/5 w-full">
+                    <%-include('../partials/user/myaccountSidebar.ejs') %>
+                </div>
                 <!-- Main Content -->
-                <main
-                    class="flex-1 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
-                    <!-- Breadcrumb -->
-                    <div class="px-6 py-4 border-b border-gray-200">
-                        <nav class="flex items-center space-x-2 text-sm text-gray-500">
-                            <a href="/" class="hover:text-gray-700">Home</a>
-                            <i class="ri-arrow-right-s-line"></i>
-                            <a href="/profile" class="hover:text-gray-700">My Account</a>
-                            <i class="ri-arrow-right-s-line"></i>
-                            <span id="breadcrumb-current" class="text-gray-900">My Profile</span>
-                        </nav>
-                    </div>
-                    <!-- Content Area -->
-                    <div class="p-6">   
-                        <!-- Profile Section -->
-                        <div id="profile-content" class="content-section">
-                            <div class="bg-gray-50 rounded-lg p-6 text-center">
-                                <div class="w-24 h-24 mx-auto mb-4">
-                                    <% if (user.profileImage?.url) { %>
-                                        <img src="<%= user.profileImage?.url %>" alt="Profile Image"
-                                            class="w-24 h-24 rounded-full object-cover border-2 border-primary shadow" />
-                                        <% } else { %>
-                                            <div
-                                                class="w-24 h-24 bg-primary rounded-full flex items-center justify-center">
-                                                <i class="ri-user-line text-white ri-3x"></i>
-                                            </div>
-                                            <% } %>
-                                </div>
-
-                                <h3 class="text-lg font-medium text-gray-900 mb-2">
-                                    <%= user.firstName %>
-                                </h3>
-
-
-
-                            </div>
-
-                            <div class="flex items-center justify-between mb-6">
-                                <h1 class="text-2xl font-semibold text-gray-900">My Profile</h1>
-
-                            </div>
-                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                <div class="lg:col-span-2 space-y-6">
-                                    <div
-                                        class="bg-gray-50 rounded-lg p-8 transition-all duration-300 hover:shadow-md hover:bg-white">
-                                        <div class="flex items-center justify-between mb-6">
-                                            <h3 class="text-lg font-medium text-gray-900">Email Address</h3>
-                                            <button onclick="window.location='/account/profile/update/email'"
-                                                class="text-primary hover:text-secondary flex items-center gap-2 transition-colors duration-200">
-                                                <i class="ri-edit-line"></i>
-                                                <span>Change Email</span>
-                                            </button>
-                                        </div>
-                                        <div class="flex items-center gap-4 mb-2">
-                                            <i class="ri-mail-line text-gray-500"></i>
-                                            <p class="text-gray-900" id="currentEmail">
-                                                <%=user.email %>
-                                            </p>
-                                            <span
-                                                class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">Verified</span>
-                                        </div>
-                                        <p class="text-sm text-gray-500 ml-8">Your email is used for account security
-                                            and notifications</p>
-                                    </div>
-                                    <div
-                                        class="bg-gray-50 rounded-lg p-8 transition-all duration-300 hover:shadow-md hover:bg-white">
-                                        <div class="flex items-center justify-between mb-6">
-                                            <h3 class="text-lg font-medium text-gray-900">Personal Information</h3>
-                                            <button onclick="window.location.href='/account/profile/update/details'"
-                                                class="text-primary hover:text-secondary flex items-center gap-2 transition-colors duration-200">
-                                                <i class="ri-edit-line"></i>
-                                                <span>Edit Details</span>
-                                            </button>
-                                        </div>
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-500 mb-1">First
-                                                    Name</label>
-                                                <p class="text-gray-900">
-                                                    <%=user.firstName%>
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <label class="block text-sm font-medium text-gray-500 mb-1">Last
-                                                    Name</label>
-                                                <p class="text-gray-900">
-                                                    <%=user.lastName %>
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <label
-                                                    class="block text-sm font-medium text-gray-500 mb-1">Phone</label>
-                                                <p class="text-gray-900">
-                                                    <%=user.phone %>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                <main class="flex-1">
+                    <div
+                        class="bg-white rounded-xl shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-2xl">
+                        <!-- Breadcrumb -->
+                        <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+                            <nav class="breadcrumb-nav flex items-center space-x-2 text-sm text-gray-500">
+                                <a href="/" class="hover:text-gray-700 transition-colors">Home</a>
+                                <i class="ri-arrow-right-s-line"></i>
+                                <a href="/profile" class="hover:text-gray-700 transition-colors">My Account</a>
+                                <i class="ri-arrow-right-s-line"></i>
+                                <span id="breadcrumb-current" class="text-gray-900 font-medium">My Profile</span>
+                            </nav>
+                        </div>
+                        <!-- Content Area -->
+                        <div class="p-4 sm:p-6">
+                            <!-- Profile Section -->
+                            <div id="profile-content" class="content-section">
+                                <!-- Profile Header -->
                                 <div
-                                    class="bg-gray-50 rounded-lg p-8 transition-all duration-300 hover:shadow-md hover:bg-white">
-                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Account Statistics</h3>
-                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        <div class="text-center">
-                                            <div class="text-2xl font-bold text-primary"><%= orderCount %></div>
-                                            <div class="text-sm text-gray-600">Total Orders</div>
+                                    class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 sm:p-6 text-center mb-6 card-hover">
+                                    <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 relative">
+                                        <% if (user.profileImage?.url) { %>
+                                            <img src="<%= user.profileImage?.url %>" alt="Profile Image"
+                                                class="profile-avatar w-full h-full rounded-full object-cover border-4 border-white shadow-lg" />
+                                            <% } else { %>
+                                                <div
+                                                    class="profile-avatar w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                                    <i class="ri-user-line text-white text-3xl"></i>
+                                                </div>
+                                                <% } %>
+                                    </div>
+                                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+                                        <%= user.firstName %>
+                                            <%= user.lastName %>
+                                    </h1>
+                                    <p class="text-gray-600 text-sm">Welcome back!</p>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                    <!-- Left Column: Email & Personal Info -->
+                                    <div class="md:col-span-2 space-y-6">
+                                        <!-- Email Section -->
+                                        <div class="bg-white rounded-xl p-6 border border-gray-200 card-hover">
+                                            <div class="flex items-center justify-between mb-4">
+                                                <div class="flex items-center gap-3">
+                                                    <i class="ri-mail-line text-blue-500 text-xl"></i>
+                                                    <h3 class="text-lg font-semibold text-gray-900">Email Address</h3>
+                                                </div>
+                                                <button onclick="window.location='/account/profile/update/email'"
+                                                    class="text-blue-600 hover:text-blue-800 flex items-center gap-2 transition-colors duration-200 text-sm font-medium">
+                                                    <i class="ri-edit-line"></i>
+                                                    <span>Change Email</span>
+                                                </button>
+                                            </div>
+                                            <div class="flex items-center gap-4 mb-2">
+                                                <i class="ri-mail-line text-gray-400"></i>
+                                                <p class="text-gray-900 font-medium" id="currentEmail">
+                                                    <%=user.email %>
+                                                </p>
+                                                <span
+                                                    class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-medium">Verified</span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 mt-2">Your email is used for account
+                                                security and notifications</p>
                                         </div>
-                                        <div class="text-center">
-                                            <div class="text-2xl font-bold text-primary"><%= wishlistCount %></div>
-                                            <div class="text-sm text-gray-600">Wishlist Items</div>
+
+                                        <!-- Personal Information -->
+                                        <div class="bg-white rounded-xl p-6 border border-gray-200 card-hover">
+                                            <div class="flex items-center justify-between mb-4">
+                                                <div class="flex items-center gap-3">
+                                                    <i class="ri-user-line text-green-500 text-xl"></i>
+                                                    <h3 class="text-lg font-semibold text-gray-900">Personal Information
+                                                    </h3>
+                                                </div>
+                                                <button onclick="window.location.href='/account/profile/update/details'"
+                                                    class="text-green-600 hover:text-green-800 flex items-center gap-2 transition-colors duration-200 text-sm font-medium">
+                                                    <i class="ri-edit-line"></i>
+                                                    <span>Edit Details</span>
+                                                </button>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-500 mb-2">First
+                                                        Name</label>
+                                                    <p class="text-gray-900 font-medium">
+                                                        <%=user.firstName%>
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-gray-500 mb-2">Last
+                                                        Name</label>
+                                                    <p class="text-gray-900 font-medium">
+                                                        <%=user.lastName %>
+                                                    </p>
+                                                </div>
+                                                <div class="md:col-span-2">
+                                                    <label
+                                                        class="block text-sm font-medium text-gray-500 mb-2">Phone</label>
+                                                    <p class="text-gray-900 font-medium">
+                                                        <%=user.phone %>
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="text-center">
-                                            <div class="text-2xl font-bold text-primary">₹<%= totalAmount %></div>
-                                            <div class="text-sm text-gray-600">Total Spent</div>
+                                    </div>
+
+                                    <!-- Right Column: Account Statistics -->
+                                    <div class="stats-card rounded-xl p-6 text-white">
+                                        <h3 class="text-lg font-semibold mb-6 flex items-center gap-2">
+                                            <i class="ri-bar-chart-line text-xl"></i>
+                                            Account Statistics
+                                        </h3>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="text-center py-3">
+                                                <div class="text-2xl font-bold mb-1">
+                                                    <%= orderCount %>
+                                                </div>
+                                                <div class="text-xs opacity-90">Total Orders</div>
+                                            </div>
+                                            <div class="text-center py-3">
+                                                <div class="text-2xl font-bold mb-1">
+                                                    <%= wishlistCount %>
+                                                </div>
+                                                <div class="text-xs opacity-90">Wishlist Items</div>
+                                            </div>
+                                            <div class="text-center py-3 col-span-2">
+                                                <div class="text-xl font-bold mb-1">₹<%= totalAmount %>
+                                                </div>
+                                                <div class="text-xs opacity-90">Total Spent</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="space-y-6">
-                                <div
-                                    class="bg-gray-50 rounded-lg p-8 transition-all duration-300 hover:shadow-md hover:bg-white">
-                                    <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+
+                                <!-- Quick Actions -->
+                                <div class="bg-white rounded-xl p-6 border border-gray-200 card-hover">
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                                        <i class="ri-lightning-line text-yellow-500"></i>
+                                        Quick Actions
+                                    </h3>
                                     <div class="space-y-3">
-                                        <button
-                                            class="w-full text-left px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-primary transition-colors duration-200 flex items-center whitespace-nowrap !rounded-button">
-                                            <div class="w-6 h-6 flex items-center justify-center mr-4">
-                                                <i class="ri-box-line text-gray-600"></i>
+                                        <a href="/orders"
+                                            class="quick-action-btn w-full block text-left px-4 py-4 rounded-lg border border-gray-200">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <i class="ri-box-3-line text-blue-600"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="font-medium text-gray-900">View Recent Orders</p>
+                                                    <p class="text-sm text-gray-500">Track your latest purchases</p>
+                                                </div>
                                             </div>
-                                            View Recent Orders
-                                        </button>
-                                        <button
-                                            class="w-full text-left px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-primary transition-colors duration-200 flex items-center whitespace-nowrap !rounded-button">
-                                            <div class="w-6 h-6 flex items-center justify-center mr-4">
-                                                <i class="ri-heart-line text-gray-600"></i>
+                                        </a>
+                                        <a href="/wishlist"
+                                            class="quick-action-btn w-full block text-left px-4 py-4 rounded-lg border border-gray-200">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <i class="ri-heart-3-line text-pink-600"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="font-medium text-gray-900">Manage Wishlist</p>
+                                                    <p class="text-sm text-gray-500">Review saved items</p>
+                                                </div>
                                             </div>
-                                            Manage Wishlist
-                                        </button>
-                                        <button
-                                            class="w-full text-left px-4 py-3 bg-white rounded-lg border border-gray-200 hover:border-primary transition-colors duration-200 flex items-center whitespace-nowrap !rounded-button">
-                                            <div class="w-6 h-6 flex items-center justify-center mr-4">
-                                                <i class="ri-map-pin-line text-gray-600"></i>
+                                        </a>
+                                        <a href="/account/addresses"
+                                            class="quick-action-btn w-full block text-left px-4 py-4 rounded-lg border border-gray-200">
+                                            <div class="flex items-center gap-3">
+                                                <div
+                                                    class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <i class="ri-map-pin-3-line text-green-600"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="font-medium text-gray-900">Update Addresses</p>
+                                                    <p class="text-sm text-gray-500">Manage delivery locations</p>
+                                                </div>
                                             </div>
-                                            Update Addresses
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <!-- Other Content Sections (Hidden by default) -->
-                        <div id="addresses-content" class="content-section hidden">
-                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">Address Book</h1>
-                            <!-- Address Book Content Here -->
-                            <div class="text-gray-600">Address management content will be loaded here...</div>
-                        </div>
-                        <div id="orders-content" class="content-section hidden">
-                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">My Orders</h1>
-                            <!-- My Orders Content Here -->
-                            <div class="text-gray-600">Orders history content will be loaded here...</div>
-                        </div>
-                        <div id="wishlist-content" class="content-section hidden">
-                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">My Wishlist</h1>
-                            <!-- My Wishlist Content Here -->
-                            <div class="text-gray-600">Wishlist items content will be loaded here...</div>
-                        </div>
-                        <div id="wallet-content" class="content-section hidden">
-                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">Wallet</h1>
-                            <!-- Wallet Content Here -->
-                            <div class="text-gray-600">Wallet and payment methods content will be loaded here...</div>
-                        </div>
-                        <div id="coupons-content" class="content-section hidden">
-                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">Coupons</h1>
-                            <!-- Coupons Content Here -->
-                            <div class="text-gray-600">Available coupons and discounts content will be loaded here...
+                            <!-- Other Content Sections (Hidden by default) -->
+                            <div id="addresses-content" class="content-section hidden">
+                                <h1 class="text-2xl font-semibold text-gray-900 mb-6">Address Book</h1>
+                                <!-- Address Book Content Here -->
+                                <div class="text-gray-600">Address management content will be loaded here...</div>
                             </div>
-                        </div>
-                        <div id="support-content" class="content-section hidden">
-                            <h1 class="text-2xl font-semibold text-gray-900 mb-6">Support</h1>
-                            <!-- Support Content Here -->
-                            <div class="text-gray-600">Customer support and help content will be loaded here...</div>
-                        </div>
-                
+                            <div id="orders-content" class="content-section hidden">
+                                <h1 class="text-2xl font-semibold text-gray-900 mb-6">My Orders</h1>
+                                <!-- My Orders Content Here -->
+                                <div class="text-gray-600">Orders history content will be loaded here...</div>
+                            </div>
+                            <div id="wishlist-content" class="content-section hidden">
+                                <h1 class="text-2xl font-semibold text-gray-900 mb-6">My Wishlist</h1>
+                                <!-- My Wishlist Content Here -->
+                                <div class="text-gray-600">Wishlist items content will be loaded here...</div>
+                            </div>
+                            <div id="wallet-content" class="content-section hidden">
+                                <h1 class="text-2xl font-semibold text-gray-900 mb-6">Wallet</h1>
+                                <!-- Wallet Content Here -->
+                                <div class="text-gray-600">Wallet and payment methods content will be loaded here...
+                                </div>
+                            </div>
+                            <div id="coupons-content" class="content-section hidden">
+                                <h1 class="text-2xl font-semibold text-gray-900 mb-6">Coupons</h1>
+                                <!-- Coupons Content Here -->
+                                <div class="text-gray-600">Available coupons and discounts content will be loaded
+                                    here...
+                                </div>
+                            </div>
+                            <div id="support-content" class="content-section hidden">
+                                <h1 class="text-2xl font-semibold text-gray-900 mb-6">Support</h1>
+                                <!-- Support Content Here -->
+                                <div class="text-gray-600">Customer support and help content will be loaded here...
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </main>
             </div>
         </div>
-      
-        
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-      
-
-
-
 </body>
 
 </html>

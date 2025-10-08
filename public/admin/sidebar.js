@@ -30,27 +30,11 @@ window.onload = () => {
       dispatchSidebarEvent(isCollapsed);
     }
 
-    updateLayoutStyles();
-  }
-
-  function updateLayoutStyles() {
-    const isCollapsed = sidebar.classList.contains("collapsed");
-    contentWrapper.style.marginLeft = isCollapsed ? "70px" : "250px";
-    contentWrapper.style.width = isCollapsed
-      ? "calc(100% - 70px)"
-      : "calc(100% - 250px)";
-    if (cropModal && cropModal.style.display === "flex") {
-      cropModal.style.left = isCollapsed ? "70px" : "250px";
-      cropModal.style.width = isCollapsed
-        ? "calc(100% - 70px)"
-        : "calc(100% - 250px)";
-    }
   }
 
   toggleButton.addEventListener("click", () => {
     sidebar.classList.toggle("collapsed");
     sidebar.classList.remove("mobile-open");
-    updateLayoutStyles();
     const isCollapsed = sidebar.classList.contains("collapsed");
     dispatchSidebarEvent(isCollapsed);
   });
@@ -65,6 +49,3 @@ window.onload = () => {
   updateSidebarState();
   window.addEventListener("resize", updateSidebarState);
 };
-
-
-

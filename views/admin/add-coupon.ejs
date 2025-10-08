@@ -5,20 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Coupon</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background-color: #f7fafc;
-            min-height: 100vh;
             font-family: Arial, sans-serif;
-            margin: 0;
-        }
-
-        .container {
-            max-width: 950px;
-            margin: 0 auto;
-            padding: 2rem 5rem;
         }
         
 
@@ -45,7 +38,7 @@
         .card {
             background-color: #ffffff;
             border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             padding: 1.5rem;
             margin-bottom: 1.5rem;
         }
@@ -121,11 +114,6 @@
             display: none;
         }
 
-        .radio-group {
-            display: flex;
-            gap: 1rem;
-        }
-
         .radio-label {
             display: flex;
             align-items: center;
@@ -193,18 +181,6 @@
             padding-right: 2rem;
         }
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-        }
-
-        @media (min-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
         .toggle-button {
             display: flex;
             align-items: center;
@@ -241,18 +217,6 @@
             display: none;
         }
 
-        .checkbox-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.75rem;
-        }
-
-        @media (min-width: 768px) {
-            .checkbox-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
         .checkbox-label {
             display: flex;
             align-items: center;
@@ -283,12 +247,6 @@
         .product-checkboxes {
             max-height: 12rem;
             overflow-y: auto;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
         }
 
         .button {
@@ -442,10 +400,12 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="main-wrapper">
         <%-include('../partials/admin/header.ejs') %>
+        <div class="content-wrapper">
+            <div class="container-fluid p-4">
             <div class="card">
-                <div class="header">
+                <div class="header d-flex align-items-center gap-2">
                     <div class="header-icon">
                         <i class="ri-coupon-3-line"></i>
                     </div>
@@ -454,11 +414,13 @@
                 <p>Create a new discount coupon for your customers</p>
             </div>
 
-            <div class="breadcrumbs">
-                <a href="/admin/dashboard">Dashboard</a> &gt;
-                <a href="/admin/coupons">Coupons</a> &gt;
-                <span>Add New Coupon</span>
-            </div>
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                  <li class="breadcrumb-item"><a href="/admin/coupons">Coupons</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Add New Coupon</li>
+                </ol>
+            </nav>
 
             <div class="card">
                 <form id="couponForm">
@@ -486,23 +448,21 @@
                             <i class="ri-price-tag-3-line"></i>
                             Discount Type *
                         </label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="discountType" value="flat" checked class="sr-only"
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="discountType" value="flat" id="discountTypeFlat" checked
                                     onchange="toggleDiscountType('flat')">
-                                <div id="flatToggle" class="radio-toggle active">
-                                    <div class="radio-dot active"></div>
-                                    <span>₹ Flat Amount (₹)</span>
-                                </div>
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="discountType" value="percentage" class="sr-only"
+                                <label class="form-check-label" for="discountTypeFlat">
+                                    ₹ Flat Amount
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="discountType" value="percentage" id="discountTypePercentage"
                                     onchange="toggleDiscountType('percentage')">
-                                <div id="percentageToggle" class="radio-toggle inactive">
-                                    <div class="radio-dot inactive"></div>
-                                    <span>% Percentage (%)</span>
-                                </div>
-                            </label>
+                                <label class="form-check-label" for="discountTypePercentage">
+                                    % Percentage
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -511,10 +471,10 @@
                             <i class="ri-price-tag-3-line"></i>
                             ₹ Discount Amount *
                         </label>
-                        <div class="input-group">
-                            <span id="discountPrefix" class="input-prefix">₹</span>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="discountPrefix">₹</span>
                             <input type="number" id="discountAmount" placeholder="Enter discount amount"
-                                class="form-input input-with-prefix">
+                                class="form-control">
                         </div>
                         <p id="discountAmountError" class="error-message">Discount amount must be greater than 0.</p>
                     </div>
@@ -524,10 +484,10 @@
                             <i class="ri-price-tag-3-line"></i>
                             Maximum Discount Amount
                         </label>
-                        <div class="input-group">
-                            <span class="input-prefix">₹</span>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">₹</span>
                             <input type="number" id="maxDiscountAmount" placeholder="Enter maximum discount amount"
-                                class="form-input input-with-prefix">
+                                class="form-control">
                         </div>
                         <p id="maxDiscountAmountError" class="error-message">Maximum discount amount must be greater
                             than 0
@@ -545,7 +505,7 @@
                         </p>
                     </div>
 
-                    <div class="grid-2">
+                    <div class="row">
                         <div class="form-group">
                             <label class="form-label">
                                 <i class="ri-calendar-line"></i>
@@ -586,8 +546,8 @@
                             <span>Apply to All Categories</span>
                         </div>
                         <div id="categoryList" class="category-list hidden">
-                            <div class="checkbox-grid">
-                                <% if(category && category.length>1){ %>
+                            <div class="row">
+                                <% if(category && category.length > 0){ %>
                                     <% category.forEach((cat)=>{%>
                                         <label class="checkbox-label">
                                             <input type="checkbox" class="checkbox" value="<%=cat._id %>" data-name="<%=cat.name %>">
@@ -614,12 +574,11 @@
                         </div>
                         <div id="productList" class="product-list hidden">
                             <div class="product-search">
-                                <i class="ri-search-line search-icon"></i>
-                                <input type="text" placeholder="Search products..." class="form-input input-with-prefix"
+                                <input type="text" placeholder="Search products..." class="form-control"
                                     id="productSearch" oninput="filterProducts()">
                             </div>
-                            <div id="productCheckboxes" class="checkbox-grid product-checkboxes">
-                                <% if(product && product.length>1){ %>
+                            <div id="productCheckboxes" class="product-checkboxes mt-2">
+                                <% if(product && product.length > 0){ %>
                                     <% product.forEach((pro)=>{%>
                                         <label class="checkbox-label product-item" data-id="<%= pro._id %>" data-name="<%= pro.productName %>">
                                             <input type="checkbox" class="checkbox" value="<%= pro._id %>">
@@ -639,7 +598,7 @@
                             <i class="ri-list-check"></i>
                             Usage Limits
                         </h3>
-                        <div class="grid-2">
+                        <div class="row">
                             <div class="form-group">
                                 <label class="form-label">
                                     <i class="ri-user-line"></i>
@@ -676,19 +635,22 @@
                         </label>
                     </div>
 
-                    <div class="button-group">
-                        <button type="button" class="button secondary" onclick="goBack()">
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <button type="button" class="btn btn-outline-secondary" onclick="goBack()">
                             <i class="ri-arrow-left-line"></i>
                             Back to List
                         </button>
-                        <button type="submit" class="button primary">
+                        <button type="submit" class="btn btn-primary">
                             <i class="ri-add-line"></i>
                             Create Coupon
                         </button>
                     </div>
                 </form>
             </div>
+            </div>
+        </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         function toggleDiscountType(type) {
@@ -700,28 +662,20 @@
             const maxDiscountAmount = document.getElementById('maxDiscountAmount');
 
             if (type === 'flat') {
-                flatToggle.className = 'radio-toggle active';
-                percentageToggle.className = 'radio-toggle inactive';
                 discountAmountLabel.innerHTML = `
                     <i class="ri-price-tag-3-line"></i>
                     ₹ Discount Amount *
                 `;
                 discountPrefix.innerText = '₹';
-                discountPrefix.className = 'input-prefix';
-                discountAmount.className = 'form-input input-with-prefix';
                 discountAmount.placeholder = 'Enter discount amount';
                 maxDiscountAmount.value = '';
                 maxDiscountAmount.disabled = true;
             } else {
-                flatToggle.className = 'radio-toggle inactive';
-                percentageToggle.className = 'radio-toggle active';
                 discountAmountLabel.innerHTML = `
                     <i class="ri-price-tag-3-line"></i>
                     % Discount Percentage *
                 `;
                 discountPrefix.innerText = '%';
-                discountPrefix.className = 'input-suffix';
-                discountAmount.className = 'form-input input-with-suffix';
                 discountAmount.placeholder = 'Enter discount percentage';
                 maxDiscountAmount.disabled = false;
             }

@@ -8,26 +8,38 @@ const viewProduct = async (req, res) => {
   try {
     const isClear = req.query.clear === "1"
     const search = isClear ? "" : req.query.search?.trim() || "";
+    const categoryFilter = req.query.category || 'all';
+    const sortOption = req.query.sort || 'date-newest';
     const page = parseInt(req.query.page) || 1
     const limit = 4;
 
-    const productData = await Product.find({
-      isDeleted: { $ne: true },
-      $or: [{
-        productName: { $regex: new RegExp(".*" + search + ".*", "i") },
+    let matchQuery = { isDeleted: { $ne: true } };
+    if (search) {
+      matchQuery.productName = { $regex: new RegExp(search, "i") };
+    }
 
-      }]
+    if (categoryFilter !== 'all') {
+      const categoryDoc = await Category.findOne({ name: categoryFilter });
+      if (categoryDoc) {
+        matchQuery.category = categoryDoc._id;
+      }
+    }
 
-    }).limit(limit * 1).skip((page - 1) * limit).sort({ createdAt: -1 }).populate('category').exec();
+    let sortQuery = { createdAt: -1 };
+    if (sortOption === 'price-high-low') {
+      sortQuery = { salesPrice: -1 };
+    } else if (sortOption === 'price-low-high') {
+      sortQuery = { salesPrice: 1 };
+    }
 
+    const productData = await Product.find(matchQuery)
+      .limit(limit)
+      .skip((page - 1) * limit)
+      .sort(sortQuery)
+      .populate('category')
+      .exec();
 
-
-    const count = await Product.find({
-      isDeleted: { $ne: true },
-      $or: [{
-        productName: { $regex: new RegExp(".*" + search + ".*", "i") }
-      }]
-    }).countDocuments();
+    const count = await Product.countDocuments(matchQuery);
 
     const category = await Category.find({ isListed: true, isDeleted: false });
 
@@ -38,6 +50,8 @@ const viewProduct = async (req, res) => {
         totalPages: Math.ceil(count / limit),
         cat: category,
         search,
+        categoryFilter,
+        sortOption
       })
 
     } else {

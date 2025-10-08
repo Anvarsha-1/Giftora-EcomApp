@@ -8,6 +8,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -238,22 +239,22 @@
     <div class="content-wrapper">
       <!-- Top Navbar -->
       <div class="navbar">
+        <button type="button" class="toggle-sidebar mobile-toggle" aria-label="Toggle sidebar">
+          <i class="fas fa-bars"></i>
+        </button>
         <div class="navbar-left">
           <i class="fas fa-user-shield admin-icon"></i>
           <span class="admin-text">Admin</span>
         </div>
-        <button type="button" class="search-toggle-btn" aria-label="Toggle search">
-          <i class="fas fa-search"></i>
-        </button>
       </div>
 
       <!-- Dashboard -->
       <div class="dashboard">
-        <h2>Dashboard</h2>
-        <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Welcome to Giftora Admin Dashboard - Key metrics and analytics overview.</p>
-        <div class="dashboard-grid">
+        <h2 class="text-center">Dashboard</h2>
+        <p class="text-center text-secondary mb-4">Welcome to Giftora Admin Dashboard - Key metrics and analytics overview.</p>
+        <div class="row g-4">
           <!-- Stat Cards -->
-          <div class="dashboard-card card-quarter">
+          <div class="col-md-6 col-xl-3">
             <div class="stat-card">
               <div class="stat-icon icon-users"><i class="fas fa-users"></i></div>
               <div class="stat-info">
@@ -262,7 +263,7 @@
               </div>
             </div>
           </div>
-          <div class="dashboard-card card-quarter">
+          <div class="col-md-6 col-xl-3">
             <div class="stat-card">
               <div class="stat-icon icon-orders"><i class="fas fa-box"></i></div>
               <div class="stat-info">
@@ -271,7 +272,7 @@
               </div>
             </div>
           </div>
-          <div class="dashboard-card card-quarter">
+          <div class="col-md-6 col-xl-3">
             <div class="stat-card">
               <div class="stat-icon icon-sales"><i class="fas fa-rupee-sign"></i></div>
               <div class="stat-info">
@@ -280,7 +281,7 @@
               </div>
             </div>
           </div>
-          <div class="dashboard-card card-quarter">
+          <div class="col-md-6 col-xl-3">
             <div class="stat-card">
               <div class="stat-icon icon-pending"><i class="fas fa-hourglass-half"></i></div>
               <div class="stat-info">
@@ -291,7 +292,8 @@
           </div>
 
           <!-- Sales Chart -->
-          <div class="dashboard-card card-full">
+          <div class="col-12">
+            <div class="dashboard-card">
             <div class="card-header">
               <h3 class="card-title">Sales Overview</h3>
               <select id="filterSelect" class="filter-dropdown">
@@ -303,30 +305,36 @@
             <div class="chart-container">
               <canvas id="salesChart"></canvas>
             </div>
+            </div>
           </div>
 
           <!-- Top Products -->
-          <div class="dashboard-card card-half">
+          <div class="col-lg-6">
+            <div class="dashboard-card">
             <div class="card-header">
               <h3 class="card-title">Top 10 Products</h3>
             </div>
             <div class="chart-container">
               <canvas id="productsChart"></canvas>
             </div>
+            </div>
           </div>
 
           <!-- Top Categories -->
-          <div class="dashboard-card card-half">
+          <div class="col-lg-6">
+            <div class="dashboard-card">
             <div class="card-header">
               <h3 class="card-title">Top 10 Categories</h3>
             </div>
             <div class="chart-container">
               <canvas id="categoriesChart"></canvas>
             </div>
+            </div>
           </div>
 
           <!-- Top Customers -->
-          <div class="dashboard-card card-full">
+          <div class="col-12">
+            <div class="dashboard-card">
             <div class="card-header">
               <h3 class="card-title">Top 10 Customers</h3>
             </div>
@@ -338,13 +346,15 @@
                 </li>
               <% }) %>
             </ul>
+            </div>
           </div>
         </div>
-        <p style="text-align: center; font-style: italic; color: #7f8c8d; margin-top: 20px;">If you'd like further customizations, let us know!</p>
+        <p class="text-center fst-italic text-secondary mt-4">If you'd like further customizations, let us know!</p>
       </div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script>
     const initialData = {
         salesReport: <%- JSON.stringify(salesReport || []) %>,

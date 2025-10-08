@@ -1,12 +1,12 @@
 <% function statusBadgeClass(status) { switch (status) { case 'Pending' :
-    return 'bg-yellow-100 text-yellow-700 border border-yellow-300' ; case 'Processing' :
-    return 'bg-indigo-100 text-indigo-700 border border-indigo-300' ; case 'Shipped' :
-    return 'bg-blue-100 text-blue-700 border border-blue-300' ; case 'Delivered' :
-    return 'bg-green-100 text-green-700 border border-green-300' ; case 'Cancelled' :
-    return 'bg-red-100 text-red-700 border border-red-300' ; case 'Return Request' :
-    return 'bg-orange-100 text-orange-700 border border-orange-300' ; case 'Returned' :
-    return 'bg-gray-100 text-gray-700 border border-gray-300' ; default:
-    return 'bg-gray-100 text-gray-700 border border-gray-300' ; } } %>
+    return 'bg-warning-subtle text-warning-emphasis' ; case 'Processing' :
+    return 'bg-info-subtle text-info-emphasis' ; case 'Shipped' :
+    return 'bg-primary-subtle text-primary-emphasis' ; case 'Delivered' :
+    return 'bg-success-subtle text-success-emphasis' ; case 'Cancelled' :
+    return 'bg-danger-subtle text-danger-emphasis' ; case 'Return Request' :
+    return 'bg-warning-subtle text-warning-emphasis' ; case 'Returned' :
+    return 'bg-secondary-subtle text-secondary-emphasis' ; default:
+    return 'bg-secondary-subtle text-secondary-emphasis' ; } } %>
 <!DOCTYPE html>
 
 <html lang="en">
@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Management</title>
-    <link rel="stylesheet" href="/styles/output.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -25,79 +25,70 @@
         .main-wrapper {
             display: flex;
             min-height: 100vh;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
         }
         .content-wrapper {
             flex: 1;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
         }
  
-        /* === Pagination Styles (from Sales Report) === */
-        .pagination-area {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 30px;
-        }
-
-        .pagination-controls {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .page-btn {
-            padding: 8px 12px;
-            border: 1px solid #d1d5db;
-            background: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .page-btn.active {
-            background: #3b82f6;
-            color: #fff;
-            border-color: #3b82f6;
-            font-weight: 600;
-        }
-
-        .page-btn:hover:not(.active):not([disabled]) {
-            transform: translateY(-1px);
-            border-color: #3b82f6;
-        }
-
-        .page-btn[disabled] {
-            opacity: 0.5;
-            cursor: not-allowed;
+        @media (max-width: 991.98px) {
+            .table-responsive-cards thead {
+                display: none;
+            }
+            .table-responsive-cards tbody,
+            .table-responsive-cards tr,
+            .table-responsive-cards td {
+                display: block;
+                width: 100%;
+            }
+            .table-responsive-cards tr {
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: .5rem;
+                background-color: #fff;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            }
+            .table-responsive-cards td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: .75rem 1rem;
+                border-bottom: 1px solid #f1f1f1;
+                text-align: right;
+            }
+            .table-responsive-cards td:last-child {
+                border-bottom: 0;
+            }
+            .table-responsive-cards td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                text-align: left;
+                margin-right: 1rem;
+                color: #495057;
+            }
         }
     </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body>
     <div class="main-wrapper">
         <!-- Include the admin sidebar -->
         <%- include('../partials/admin/header.ejs') %>
 
         <div class="content-wrapper">
             <!-- Controls/Top Bar -->
-            <div
-                class="bg-white flex flex-col sm:flex-row sm:items-center justify-between px-4 py-4 rounded shadow-sm mb-4 gap-2">
-                <!-- Breadcrumb -->
-               
-                <h1 class="text-2xl font-semibold mb-2 sm:mb-0">Order Management</h1>
-                <div class="flex flex-wrap sm:flex-nowrap gap-2 items-center w-full sm:w-auto">
-                    <form method="GET" action="/admin/orders"
-                        class="flex gap-2 items-center flex-wrap w-full sm:w-auto" id="filterForm">
-                        <input type="text" name="search" id="searchInput" value="<%= query.search || '' %>"
-                            placeholder="Search Order ID, Name, Email"
-                            class="border rounded px-3 h-10 focus:outline-none w-40">
-                        <select name="status" id="statusFilter" class="border rounded px-2 h-10 focus:outline-none">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h1 class="h4 fw-semibold mb-3">Order Management</h1>
+                    <form method="GET" action="/admin/orders" id="filterForm">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-lg-4">
+                                <input type="text" name="search" id="searchInput" value="<%= query.search || '' %>" placeholder="Search Order ID, Name, Email" class="form-control">
+                            </div>
+                            <div class="col-sm-6 col-lg-2">
+                                <select name="status" id="statusFilter" class="form-select">
                             <option <%=!query.status ? 'selected' : '' %>>All</option>
                             <option <%=query.status==='Pending' ? 'selected' : '' %>>Pending</option>
                             <option <%=query.status==='Processing' ? 'selected' : '' %>>Processing</option>
@@ -107,102 +98,82 @@
                             <option <%=query.status==='Return Request' ? 'selected' : '' %>>Return Request</option>
                             <option <%=query.status==='Returned' ? 'selected' : '' %>>Returned</option>
                         </select>
-                        <select name="sort" id="sortFilter" class="border rounded px-2 h-10 focus:outline-none">
-                            <option value="latest" <%=(!query.sort || query.sort==='latest' ) ? 'selected' : ''
-                                %>>Latest</option>
+                            </div>
+                            <div class="col-sm-6 col-lg-2">
+                                <select name="sort" id="sortFilter" class="form-select">
+                            <option value="latest" <%=(!query.sort || query.sort==='latest' ) ? 'selected' : '' %>>Latest</option>
                             <option value="oldest" <%=query.sort==='oldest' ? 'selected' : '' %>>Oldest</option>
                         </select>
-                        <button type="submit" class="bg-blue-600 text-white px-4 rounded h-10 hover:bg-blue-700">Search</button>
-                        <a href="/admin/orders" id="clearBtn"
-                            class="bg-gray-100 px-4 rounded border h-10 flex items-center hover:bg-gray-200">Clear</a>
+                            </div>
+                            <div class="col-sm-6 col-lg-2 d-flex gap-2">
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                                <a href="/admin/orders" id="clearBtn" class="btn btn-outline-secondary w-100">Clear</a>
+                            </div>
+                            <div class="col-sm-6 col-lg-2">
+                                <a href="/admin/returns" class="btn btn-info w-100 d-flex align-items-center justify-content-center gap-2">
+                                    Verify Returns
+                                    <span id="returns-badge" class="badge bg-danger rounded-pill">0</span>
+                                </a>
+                            </div>
+                        </div>
                     </form>
-                    <div class="ml-auto">
-                        <a href="/admin/returns"
-                            class="inline-flex items-center bg-blue-600 text-white px-4 py-2 font-medium rounded hover:bg-blue-800 transition">
-                            Verify Returns
-                            <span id="returns-badge"
-                                class="ml-2 bg-red-600 px-2 py-0.5 rounded-full text-xs font-semibold">0</span>
-                        </a>
-                    </div>
                 </div>
             </div>
             <!-- Orders Table -->
-            <div class="overflow-x-auto">
-                <table
-                    class="table-fixed w-full min-w-[880px] bg-white text-sm rounded shadow border text-center">
-                    <colgroup>
-                        <col class="w-1/6 min-w-[120px] max-w-[150px]" />
-                        <col class="w-1/6 min-w-[110px]" />
-                        <col class="w-1/6 min-w-[140px]" />
-                        <col class="w-1/6 min-w-[100px]" />
-                        <col class="w-1/6 min-w-[90px]" />
-                        <col class="w-1/6 min-w-[135px]" />
-                    </colgroup>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-center table-responsive-cards">
                     <thead>
-                        <tr class="bg-gray-100 text-xs uppercase">
-                            <th class="p-1">Order ID</th>
-                            <th class="p-1">Date</th>
-                            <th class="p-1">User</th>
-                            <th class="p-1">Status</th>
-                            <th class="p-1">Action</th>
-                            <th class="p-1">Change Status</th>
+                        <tr class="table-light">
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>User</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            <th>Change Status</th>
                         </tr>
                     </thead>
                     <tbody id="ordersTableBody">
                         <% if (orders && orders.length>0) { orders.forEach(order => { %>
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="p-2 min-w-[120px] max-w-[160px] break-words align-middle">
-                                    <div class="flex items-center justify-center gap-1">
-                                        <span
-                                            class="font-mono cursor-pointer select-all text-blue-700 whitespace-nowrap"
-                                            onclick="navigator.clipboard.writeText('<%= order.orderId %>'); showSwalCopy()">
+                            <tr>
+                                <td data-label="Order ID">
+                                    <div class="d-flex align-items-center justify-content-end gap-1">
+                                        <span class="font-monospace text-primary" style="cursor: pointer;" onclick="navigator.clipboard.writeText('<%= order.orderId %>'); showSwalCopy()">
                                             #ORD<%= order.orderId ? order.orderId.slice(-6) : '' %>
                                         </span>
-                                        <button type="button"
-                                            onclick="navigator.clipboard.writeText('<%= order.orderId %>'); showSwalCopy()"
-                                            tabindex="-1"
-                                            class="ml-1 text-gray-400 hover:text-blue-600 focus:outline-none p-0.5">
-                                            <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16'
-                                                fill='none' viewBox='0 0 24 24'>
-                                                <path stroke='currentColor' stroke-width='2'
-                                                    d='M9 9V7a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2' />
-                                                <rect width='10' height='14' x='3' y='7' stroke='currentColor'
-                                                    stroke-width='2' rx='2' />
-                                            </svg>
+                                        <button type="button" onclick="navigator.clipboard.writeText('<%= order.orderId %>'); showSwalCopy()" class="btn btn-sm btn-link text-secondary p-0">
+                                            <i class="fas fa-copy"></i>
                                         </button>
                                     </div>
                                 </td>
-                                <td class="p-2">
+                                <td data-label="Date">
                                     <% if (order.createdOn) { %>
                                         <%= new Date(order.createdOn).toLocaleDateString('en-GB') %>
                                             <% } %>
                                 </td>
-                                <td class="p-2">
+                                <td data-label="User">
                                     <% if(order.userId) { %>
-                                        <b class="block text-base">
+                                        <b class="d-block">
                                             <%= order.userId.firstName %>
                                                 <%= order.userId.lastName %>
                                         </b>
-                                        <span class="text-xs text-gray-500">
+                                        <span class="small text-muted">
                                             <%= order.userId.email %>
                                         </span>
                                         <% } else { %>
-                                            <span class="italic text-gray-400">User deleted</span>
+                                            <span class="fst-italic text-muted">User deleted</span>
                                             <% } %>
                                 </td>
-                                <td class="p-2">
-                                    <span
-                                        class="status-badge px-2 py-1 rounded text-xs font-semibold <%= statusBadgeClass(order.status) %>">
+                                <td data-label="Status">
+                                    <span class="status-badge badge rounded-pill <%= statusBadgeClass(order.status) %>">
                                         <%= order.status %>
                                     </span>
                                 </td>
-                                <td class="p-2">
-                                    <a href="/admin/view/orders/<%= order.orderId %>"
-                                        class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 shadow transition">View</a>
+                                <td data-label="Action">
+                                    <a href="/admin/view/orders/<%= order.orderId %>" class="btn btn-sm btn-outline-success">View</a>
                                 </td>
-                                <td class="p-2">
-                                    <div class="flex items-center gap-2 justify-center">
-                                        <select onchange="saveStatus('<%= order.orderId %>', this.value)" id="status-<%= order.orderId %>" class="border px-2 py-1 rounded">
+                                <td data-label="Change Status">
+                                    <div class="d-flex justify-content-end">
+                                        <select onchange="saveStatus('<%= order.orderId %>', this.value)" id="status-<%= order.orderId %>" class="form-select form-select-sm" style="max-width: 140px;">
                                             <% const
                                                 statuses=["Pending","Processing","Shipped","Delivered","Returned"]; statuses.forEach(s=>{ %>
                                                 <option value="<%=s%>" <%=order.status===s?'selected':'' %>>
@@ -215,49 +186,52 @@
                             </tr>
                             <% }) } else { %>
                                 <tr>
-                                    <td colspan="6" class="text-center py-6 text-gray-500">No orders found.</td>
+                                    <td colspan="6" class="text-center py-5 text-muted">No orders found.</td>
                                 </tr>
                                 <% } %>
                     </tbody>
                 </table>
             </div>
             <!-- Pagination centered below -->
-            <div id="paginationContainer" class="pagination-area">
-                <div class="pagination-controls">
+            <div id="paginationContainer" class="d-flex justify-content-center mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
                     <% if (typeof totalPages !=='undefined' && totalPages> 0) { %>
                         <% if (currentPage > 1) { %>
-                            <a href="?page=<%= currentPage - 1 %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>" class="page-btn">Prev</a>
+                            <li class="page-item"><a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>">Prev</a></li>
                         <% } else { %>
-                            <button class="page-btn" disabled>Prev</button>
+                            <li class="page-item disabled"><a class="page-link" href="#">Prev</a></li>
                         <% } %>
 
                         <% for (let i = 1; i <= totalPages; i++) { %>
-                            <a href="?page=<%= i %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>" class="page-btn <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+                            <li class="page-item <%= i === currentPage ? 'active' : '' %>"><a class="page-link" href="?page=<%= i %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>"><%= i %></a></li>
                         <% } %>
 
                         <% if (currentPage < totalPages) { %>
-                            <a href="?page=<%= currentPage + 1 %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>" class="page-btn">Next</a>
+                            <li class="page-item"><a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= query.search || '' %>&status=<%= query.status || 'All' %>&sort=<%= query.sort || 'latest' %>">Next</a></li>
                         <% } else { %>
-                            <button class="page-btn" disabled>Next</button>
+                            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
                         <% } %>
                     <% } %>
-                </div>
+                    </ul>
+                </nav>
             </div>
 
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script>
         // Util for colored badge class based on status
         function statusBadgeClass(status) {
             switch (status) {
-                case 'Pending': return 'bg-yellow-100 text-yellow-700 border border-yellow-300';
-                case 'Processing': return 'bg-indigo-100 text-indigo-700 border border-indigo-300';
-                case 'Shipped': return 'bg-blue-100 text-blue-700 border border-blue-300';
-                case 'Delivered': return 'bg-green-100 text-green-700 border border-green-300';
-                case 'Cancelled': return 'bg-red-100 text-red-700 border border-red-300';
-                case 'Return Request': return 'bg-orange-100 text-orange-700 border border-orange-300';
-                case 'Returned': return 'bg-gray-100 text-gray-700 border border-gray-300';
-                default: return 'bg-gray-100 text-gray-700 border border-gray-300';
+                case 'Pending': return 'bg-warning-subtle text-warning-emphasis';
+                case 'Processing': return 'bg-info-subtle text-info-emphasis';
+                case 'Shipped': return 'bg-primary-subtle text-primary-emphasis';
+                case 'Delivered': return 'bg-success-subtle text-success-emphasis';
+                case 'Cancelled': return 'bg-danger-subtle text-danger-emphasis';
+                case 'Return Request': return 'bg-warning-subtle text-warning-emphasis';
+                case 'Returned': return 'bg-secondary-subtle text-secondary-emphasis';
+                default: return 'bg-secondary-subtle text-secondary-emphasis';
             }
         }
         window.statusBadgeClass = statusBadgeClass;
@@ -298,7 +272,7 @@
                             const badge = row.querySelector('.status-badge');
                             if (badge) {
                                 badge.textContent = newStatus;
-                                badge.className = `status-badge px-2 py-1 rounded text-xs font-semibold ${statusBadgeClass(newStatus)}`;
+                                badge.className = `status-badge badge rounded-pill ${statusBadgeClass(newStatus)}`;
                             }
                         }
                     } else {

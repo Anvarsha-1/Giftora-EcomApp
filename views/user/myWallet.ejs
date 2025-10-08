@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Wallet - E-commerce Store</title>
-    <link rel="stylesheet" href="/styles/output.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
@@ -62,6 +61,71 @@
                 transform: translateY(0);
             }
         }
+
+        /* Custom responsive table styles */
+        @media (max-width: 640px) {
+            .transaction-table {
+                font-size: 0.75rem;
+            }
+
+            .transaction-table th,
+            .transaction-table td {
+                padding: 0.5rem;
+            }
+
+            .transaction-table .description {
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .transaction-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.2s ease;
+        }
+
+        .transaction-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .type-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 600;
+        }
+
+        .credit-badge {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .debit-badge {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
     </style>
 </head>
 
@@ -71,84 +135,96 @@
         <!-- Mobile Menu Overlay -->
         <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
         <!-- Main Container -->
-        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="flex flex-col md:flex-row gap-8">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
+            <div class="flex flex-col md:flex-row gap-6 sm:gap-8">
                 <!-- Sidebar -->
-                <%- include('../partials/user/myaccountSidebar.ejs') %>
-                    <!-- Main Content -->
-                    <main
-                        class="flex-1 bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
+                <div class="md:w-auto w-full">
+                    <%- include('../partials/user/myaccountSidebar.ejs') %>
+                </div>
+                <!-- Main Content -->
+                <main class="flex-1">
+                    <div
+                        class="bg-white rounded-lg shadow-lg border border-gray-200 transition-all duration-300 hover:shadow-xl">
                         <!-- Breadcrumb -->
-                        <div class="px-6 py-4 border-b border-gray-200">
-                            <nav class="flex items-center space-x-2 text-sm text-gray-500">
-                                <a href="/" class="hover:text-gray-700">Home</a>
-                                <i class="ri-arrow-right-s-line"></i>
-                                <a href="/profile" class="hover:text-gray-700">My Account</a>
-                                <i class="ri-arrow-right-s-line"></i>
-                                <span id="breadcrumb-current" class="text-gray-900">My Wallet</span>
+                        <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
+                            <nav class="flex items-center space-x-2 text-sm text-gray-500 overflow-x-auto">
+                                <a href="/" class="hover:text-gray-700 min-w-0 flex-shrink-0">Home</a>
+                                <i class="ri-arrow-right-s-line flex-shrink-0"></i>
+                                <a href="/profile" class="hover:text-gray-700 min-w-0 flex-shrink-0">My Account</a>
+                                <i class="ri-arrow-right-s-line flex-shrink-0"></i>
+                                <span id="breadcrumb-current" class="text-gray-900 min-w-0 flex-shrink-0">My
+                                    Wallet</span>
                             </nav>
                         </div>
                         <!-- Content Area -->
-                        <div class="p-6">
+                        <div class="p-4 sm:p-6">
                             <!-- Wallet Section -->
                             <div id="wallet-content" class="content-section">
-                                <div class="flex items-center justify-between mb-6">
-                                    <h1 class="text-2xl font-semibold text-gray-900">My Wallet</h1>
-                                    <button
-                                        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2">
-                                        <i class="ri-add-line"></i>
-                                        Add Funds
-                                    </button>
-                                </div>
                                 <div
-                                    class="bg-gray-50 rounded-lg p-6 mb-6 transition-all duration-300 hover:shadow-md hover:bg-white">
-                                    <div class="text-3xl font-bold text-green-600">
-                                        Balance: ₹<%= wallet.balance.toLocaleString() %>
+                                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                                    <h1 class="text-xl sm:text-2xl font-semibold text-gray-900">My Wallet</h1>
+                                </div>
+
+                                <!-- Balance Card -->
+                                <div class="balance-card rounded-xl p-6 mb-6 relative">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-white/80 text-sm font-medium mb-1">Available Balance</p>
+                                            <p class="text-3xl sm:text-4xl font-bold text-white">
+                                                ₹<%= wallet.balance.toLocaleString() %>
+                                            </p>
+                                        </div>
+                                        <div
+                                            class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center">
+                                            <i class="ri-wallet-line text-white text-2xl"></i>
+                                        </div>
                                     </div>
+                                    <div class="absolute bottom-0 left-0 right-0 h-1 bg-white/20"></div>
                                 </div>
 
                                 <!-- Transaction History -->
-                                <div
-                                    class="bg-gray-50 rounded-lg p-6 transition-all duration-300 hover:shadow-md hover:bg-white">
-                                    <div class="flex items-center justify-between mb-4">
-                                        <h2 class="text-xl font-semibold text-gray-900">Transaction History</h2>
-                                        <button
-                                            class="text-primary hover:text-secondary flex items-center gap-2 transition-colors duration-200">
-                                            <i class="ri-download-line"></i>
-                                            <span>Download PDF</span>
-                                        </button>
+                                <div class="transaction-card p-4 sm:p-6">
+                                    <div
+                                        class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Recent Transactions
+                                        </h2>
+                                       
                                     </div>
                                     <% if (wallet.transactions && wallet.transactions.length> 0) { %>
                                         <div class="overflow-x-auto">
                                             <table
-                                                class="min-w-full bg-white text-sm rounded-lg shadow border divide-y divide-gray-200">
+                                                class="transaction-table min-w-full text-sm rounded-lg overflow-hidden">
                                                 <thead>
-                                                    <tr class="bg-gray-100 text-xs uppercase font-medium text-gray-600">
-                                                        <th class="px-6 py-3 text-center">Date & Time</th>
-                                                        <th class="px-6 py-3 text-center">Type</th>
-                                                        <th class="px-6 py-3 text-center">Description</th>
-                                                        <th class="px-6 py-3 text-center">Amount</th>
+                                                    <tr class="bg-gray-50 text-xs uppercase font-medium text-gray-600">
+                                                        <th class="px-2 sm:px-4 py-3 text-left sm:text-center">Date &
+                                                            Time</th>
+                                                        <th class="px-2 sm:px-4 py-3 text-left sm:text-center">Type</th>
+                                                        <th class="px-2 sm:px-4 py-3 text-left sm:text-center">
+                                                            Description</th>
+                                                        <th class="px-2 sm:px-4 py-3 text-left sm:text-center">Amount
+                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody class="divide-y divide-gray-200">
                                                     <% wallet.transactions.reverse().forEach(transaction=> { %>
                                                         <tr class="hover:bg-gray-50 transition-colors">
-                                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                            <td
+                                                                class="px-2 sm:px-4 py-3 whitespace-nowrap text-gray-900">
                                                                 <%= new Date(transaction.date).toLocaleString('en-GB', {
                                                                     dateStyle: 'short' , timeStyle: 'short' }) %>
                                                             </td>
-                                                            <td class="px-6 py-4">
+                                                            <td class="px-2 sm:px-4 py-3">
                                                                 <span
-                                                                    class="px-3 py-1 rounded-full text-xs font-semibold <%= transaction.type === 'credit' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' %>">
+                                                                    class="type-badge <%= transaction.type === 'credit' ? 'credit-badge' : 'debit-badge' %>">
                                                                     <%= transaction.type.charAt(0).toUpperCase() +
                                                                         transaction.type.slice(1) %>
                                                                 </span>
                                                             </td>
-                                                            <td class="px-6 py-4">
+                                                            <td class="px-2 sm:px-4 py-3 description text-gray-900">
                                                                 <%= transaction.description %>
                                                             </td>
                                                             <td
-                                                                class="px-6 py-4 whitespace-nowrap <%= transaction.type === 'credit' ? 'text-green-600' : 'text-red-600' %>">
+                                                                class="px-2 sm:px-4 py-3 whitespace-nowrap font-semibold <%= transaction.type === 'credit' ? 'text-green-600' : 'text-red-600' %>">
                                                                 <%= transaction.type==='credit' ? '+' : '-' %>₹<%=
                                                                         Math.abs(transaction.amount).toLocaleString() %>
                                                             </td>
@@ -157,18 +233,28 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <% } else { %>
-                                            <p class="text-gray-500 text-center py-4">No transactions yet</p>
+                                        <% if (wallet.transactions.length> 5) { %>
+                                            <div class="text-center mt-4">
+                                            </div>
                                             <% } %>
+                                                <% } else { %>
+                                                    <div class="text-center py-8">
+                                                        <i
+                                                            class="ri-exchange-dollar-line text-4xl text-gray-400 mb-4 block"></i>
+                                                        <p class="text-gray-500 text-sm">No transactions yet</p>
+                                                        <p class="text-gray-400 text-xs mt-1">Your first transaction
+                                                            will appear here</p>
+                                                    </div>
+                                                    <% } %>
                                 </div>
                             </div>
                         </div>
-                    </main>
+                    </div>
+                </main>
             </div>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
 </body>
 
 </html>

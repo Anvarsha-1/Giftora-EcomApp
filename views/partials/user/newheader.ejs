@@ -9,24 +9,21 @@
     <style>
         * {
             margin: 0;
-            padding: 0;
             box-sizing: border-box;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #f8f9fa;
         }
 
         .main-header {
             background-color: white;
             border-bottom: 1px solid #e0e0e0;
-            padding: 15px 0;
+            padding: 12px 0;
             position: sticky;
-            top:0px;
-            /* Ensure header is a positioned ancestor */
+            top: 0;
             z-index: 1000;
-            /* Increase z-index to stay above other content */
         }
 
         .header-container {
@@ -34,19 +31,27 @@
             margin: 0 auto;
             display: flex;
             align-items: center;
-            justify-content: space-between;
             padding: 0 20px;
         }
 
         .logo img {
-            height: 50px;
+            height: 45px;
             width: auto;
+            display: block;
         }
 
-        .nav-menu {
+        .header-right-group {
             display: flex;
-            list-style: none;
-            gap: 40px;
+            align-items: center;
+            gap: 10px;
+            margin-left: auto; /* Pushes this group to the right */
+        }
+
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-grow: 1;
         }
 
         .nav-link {
@@ -61,10 +66,10 @@
             color: #666;
         }
 
-        .header-right {
+        .header-actions {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .icon-button {
@@ -73,13 +78,13 @@
             cursor: pointer;
             padding: 8px;
             color: #333;
-            font-size: 18px;
+            font-size: 20px;
             position: relative;
         }
 
         .count-badge {
             position: absolute;
-            top: 0;
+            top: 2px;
             right: 0;
             transform: translate(50%, -50%);
             background-color: #ff4444;
@@ -87,14 +92,12 @@
             border-radius: 50%;
             width: 18px;
             height: 18px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.7;
             pointer-events: none;
-            box-sizing: border-box;
             z-index: 1;
         }
 
@@ -111,7 +114,7 @@
             cursor: pointer;
             padding: 8px;
             transition: background-color 0.3s ease;
-            color: #333;
+            color: #555;
             font-size: 18px;
         }
 
@@ -122,23 +125,10 @@
             object-fit: cover;
         }
 
-        .profile-button:hover {
-            background-color: #f5f5f5;
-        }
-
-        .user-name {
-            position: absolute;
-            top: 80%;
-            left: 50%;
-            transform: translateX(-50%);
-            margin-top: 2px;
-            font-size: 10px;
-            color: #333;
-            white-space: nowrap;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-family: 'Arial', sans-serif;
+        .profile-button .fa-user {
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
         }
 
         .dropdown-menu {
@@ -151,18 +141,11 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             min-width: 180px;
             z-index: 1001;
-            /* Higher than header */
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.3s ease;
-            margin-top: 25px;
-        }
-
-        .profile-dropdown.active .dropdown-menu {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
+            margin-top: 10px;
         }
 
         .dropdown-menu.show {
@@ -193,91 +176,112 @@
             margin-right: 8px;
             width: 16px;
             font-size: 12px;
+            text-align: center;
         }
 
-        /* Hamburger Menu Styles */
+        /* Mobile & Tablet Styles */
         .hamburger {
             display: none;
             background: none;
             border: none;
             cursor: pointer;
             font-size: 24px;
-            color: #333;
+            color: #555;
             padding: 8px;
-            z-index: 1002;
-            /* Ensure hamburger is above other elements */
+            z-index: 1002; /* Above overlay */
         }
 
-        .mobile-menu {
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-menu-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .overlay {
             display: none;
             position: fixed;
-            /* Changed to fixed for consistent positioning */
-            top: 81px;
-            /* Adjust based on header height (15px padding + 50px logo + 15px padding + 1px border) */
+            top: 0;
             left: 0;
-            right: 0;
-            background: white;
-            border-bottom: 1px solid #e0e0e0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 1001;
-            /* Higher than header but below hamburger */
-            padding: 20px;
-            flex-direction: column;
-            align-items: flex-start;
-            max-height: calc(100vh - 81px);
-            /* Prevent overflow */
-            overflow-y: auto;
-            /* Allow scrolling if content is long */
-        }
-
-        .mobile-menu.active {
-            display: flex;
-        }
-
-        .mobile-nav-menu {
-            list-style: none;
             width: 100%;
-            margin-bottom: 20px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 998;
         }
 
-        .mobile-nav-menu li {
-            margin-bottom: 10px;
-        }
-
-        .mobile-nav-link {
-            text-decoration: none;
-            color: #333;
-            font-size: 16px;
-            padding: 10px 0;
+        .overlay.active {
             display: block;
-            transition: color 0.3s ease;
-        }
-
-        .mobile-nav-link:hover {
-            color: #666;
-        }
-
-        .mobile-header-right {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
         }
 
         @media (max-width: 768px) {
-
-            .nav-menu,
-            .header-right {
-                display: none;
+            .header-container {
+                justify-content: space-between;
             }
 
             .hamburger {
                 display: block;
             }
 
-            .mobile-menu.active {
-                display: flex;
+            .nav-wrapper {
+                position: fixed;
+                top: 0;
+                right: -300px; /* Start off-screen */
+                width: 300px;
+                height: 100vh;
+                background: white;
+                box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                padding: 80px 30px 30px;
+                gap: 30px;
+                transition: right 0.3s ease-in-out;
+                z-index: 999;
             }
+
+            .nav-wrapper.active {
+                right: 0;
+            }
+
+            .nav-menu-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0;
+                width: 100%;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+            }
+
+            .nav-menu li {
+                width: 100%;
+            }
+
+            .nav-link {
+                display: block;
+                padding: 15px 0;
+                font-size: 16px;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                width: 100%;
+            }
+
         }
     </style>
 </head>
@@ -290,204 +294,106 @@
                 <img src="/images/header/giftora.png" alt="Giftora Logo">
             </a>
 
-            <!-- Hamburger Button -->
-            <button class="hamburger" id="hamburgerToggle">
-                <i class="fas fa-bars"></i>
-            </button>
+            <div class="header-right-group">
+                <!-- Hamburger Button -->
+                <button class="hamburger" id="hamburgerToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
 
-            <!-- Navigation -->
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="/" class="nav-link">Home</a></li>
-                    <li><a href="/viewProducts" class="nav-link">Shop</a></li>
-                    <li><a href="#" class="nav-link">Contact</a></li>
-                    <li><a href="#" class="nav-link">About</a></li>
-                    <% if (!user) { %>
-                        <li><a href="/login" class="nav-link">Sign Up</a></li>
-                        <% } %>
-                </ul>
-            </nav>
-
-            <% if (user) { %>
-                <div class="header-right">
-                    <!-- Wishlist -->
-                    <button onclick="window.location.href='/wishlist'" class="icon-button header-wishlist"
-                        aria-label="Wishlist">
-                        <i class="far fa-heart"></i>
-                        <span id="wishlist-count" class="count-badge">0</span>
-                    </button>
-
-                    <!-- Cart -->
-                    <button onclick="window.location.href='/cart'" class="icon-button cart-icon" aria-label="Cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="count-badge">0</span>
-                    </button>
-
-                    <!-- Profile Dropdown -->
-                    <div class="profile-dropdown" id="profileDropdown1">
-                        <button class="profile-button" id="profileToggle1" aria-label="Profile">
-                            <% if (user.profileImage?.url) { %>
-                                <img src="<%= user.profileImage?.url %>" alt="Profile Image" class="profile-img">
-                                <% } else { %>
-                                    <i class="fas fa-user text-lg"></i>
-                                    <% } %>
-                        </button>
-                        <div class="user-name" id="userName1">
-                            <%= user.firstName %>
-                        </div>
-                        <div class="dropdown-menu" id="dropdownMenu1">
-                            <a href="/account/profile" class="dropdown-item">
-                                <i class="fas fa-user"></i> My Account
-                            </a>
-                            <a href="/orders" class="dropdown-item">
-                                <i class="fas fa-box"></i> My Orders
-                            </a>
-                            <a href="/logout" class="dropdown-item">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <% } %>
-
-                    <!-- Mobile Menu -->
-                    <div class="mobile-menu" id="mobileMenu">
-                        <ul class="mobile-nav-menu">
-                            <li><a href="/" class="mobile-nav-link">Home</a></li>
-                            <li><a href="/viewProducts" class="mobile-nav-link">Shop</a></li>
-                            <li><a href="#" class="mobile-nav-link">Contact</a></li>
-                            <li><a href="#" class="mobile-nav-link">About</a></li>
+            <!-- Navigation & Actions -->
+            <div class="nav-wrapper" id="navWrapper">
+                <div class="nav-menu-wrapper">
+                    <nav>
+                        <ul class="nav-menu">
+                            <li><a href="/" class="nav-link">Home</a></li>
+                            <li><a href="/viewProducts" class="nav-link">Shop</a></li>
+                            <li><a href="#" class="nav-link">Contact</a></li>
+                            <li><a href="#" class="nav-link">About</a></li>
                             <% if (!user) { %>
-                                <li><a href="/login" class="mobile-nav-link">Sign Up</a></li>
+                                <li><a href="/login" class="nav-link">Sign In</a></li>
                                 <% } %>
                         </ul>
-                        <% if (user) { %>
-                            <div class="mobile-header-right">
-                                <!-- Wishlist -->
-                                <button onclick="window.location.href='/wishlist'" class="icon-button header-wishlist"
-                                    aria-label="Wishlist">
-                                    <i class="far fa-heart"></i> Wishlist
-                                    <span id="mobile-wishlist-count" class="count-badge">0</span>
-                                </button>
+                    </nav>
 
-                                <!-- Cart -->
-                                <button onclick="window.location.href='/cart'" class="icon-button cart-icon"
-                                    aria-label="Cart">
-                                    <i class="fas fa-shopping-cart"></i> Cart
-                                    <span id="mobile-cart-count" class="count-badge">0</span>
-                                </button>
+                    <% if (user) { %>
+                        <div class="header-actions">
+                            <button onclick="window.location.href='/wishlist'" class="icon-button" aria-label="Wishlist">
+                                <i class="far fa-heart"></i>
+                                <span id="wishlist-count" class="count-badge">0</span>
+                            </button>
 
-                                <!-- Profile Links -->
-                                <a href="/account/profile" class="mobile-nav-link">
-                                    <i class="fas fa-user"></i> My Account
-                                </a>
-                                <a href="/orders" class="mobile-nav-link">
-                                    <i class="fas fa-box"></i> My Orders
-                                </a>
-                                <a href="/logout" class="mobile-nav-link">
-                                    <i class="fas fa-sign-out-alt"></i> Logout
-                                </a>
-                            </div>
+                            <button onclick="window.location.href='/cart'" class="icon-button" aria-label="Cart">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span id="cart-count" class="count-badge">0</span>
+                            </button>
+
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+
+                <% if (user) { %>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <button class="profile-button" id="profileToggle" aria-label="Profile">
+                            <% if (user.profileImage?.url) { %>
+                                <img src="<%= user.profileImage.url %>" alt="Profile" class="profile-img">
+                            <% } else { %>
+                                <i class="fas fa-user"></i>
                             <% } %>
+                        </button>
+                        <div class="dropdown-menu" id="dropdownMenu">
+                            <a href="/account/profile" class="dropdown-item"><i class="fas fa-user"></i> My Account</a>
+                            <a href="/orders" class="dropdown-item"><i class="fas fa-box"></i> My Orders</a>
+                            <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
                     </div>
+                <% } %>
+            </div>
         </div>
     </header>
+    <div class="overlay" id="overlay"></div>
 
     <script src="/js/updateCartIconCount.js"></script>
     <script>
-        const user = '<% - JSON.stringify(user || null) %>';
-
-        // Hamburger Menu Toggle
-        const hamburger = document.getElementById('hamburgerToggle');
-        const mobileMenu = document.getElementById('mobileMenu');
-
-        if (hamburger && mobileMenu) {
-            hamburger.addEventListener('click', function (e) {
-                e.stopPropagation();
-                mobileMenu.classList.toggle('active');
-            });
-        }
-
-        // Profile Dropdown Toggle
-        function toggleDropdown(toggleId, menuId) {
-            const toggle = document.getElementById(toggleId);
-            const menu = document.getElementById(menuId);
-
-            if (!toggle || !menu) return;
-
-            toggle.addEventListener('click', function (e) {
-                e.stopPropagation();
-                menu.classList.toggle('show');
-
-                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
-                    if (dropdown !== menu) {
-                        dropdown.classList.remove('show');
-                    }
-                });
-            });
-        }
-
-        // Initialize dropdowns only if they exist
-        toggleDropdown('profileToggle1', 'dropdownMenu1');
-
-        // Close dropdowns and mobile menu when clicking outside
-        document.addEventListener('click', function () {
-            document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
-                dropdown.classList.remove('show');
-            });
-            if (mobileMenu) {
-                mobileMenu.classList.remove('active');
-            }
-        });
-
-        // Update user name
-        function updateUserName(userName) {
-            const nameEl = document.getElementById('userName1');
-            if (nameEl) {
-                nameEl.textContent = userName;
-            }
-        }
-
-        // Sync mobile badge counts with desktop
-        function syncBadgeCounts() {
-            const wishlistCount = document.getElementById('wishlist-count');
-            const mobileWishlistCount = document.getElementById('mobile-wishlist-count');
-            const cartCount = document.getElementById('cart-count');
-            const mobileCartCount = document.getElementById('mobile-cart-count');
-
-            if (wishlistCount && mobileWishlistCount) {
-                mobileWishlistCount.textContent = wishlistCount.textContent;
-            }
-            if (cartCount && mobileCartCount) {
-                mobileCartCount.textContent = cartCount.textContent;
-            }
-        }
-
-        // Dynamically adjust mobile menu position
-        function adjustMobileMenuPosition() {
-            if (mobileMenu) {
-                const header = document.querySelector('.main-header');
-                const headerHeight = header.offsetHeight;
-                mobileMenu.style.top = `${headerHeight}px`;
-            }
-        }
-
-        // Run on load and window resize
         document.addEventListener('DOMContentLoaded', () => {
-            syncBadgeCounts();
-            adjustMobileMenuPosition();
-        });
-        window.addEventListener('resize', adjustMobileMenuPosition);
+            const hamburger = document.getElementById('hamburgerToggle');
+            const navWrapper = document.getElementById('navWrapper');
+            const overlay = document.getElementById('overlay');
+            const profileToggle = document.getElementById('profileToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
 
-        // Listen for custom filter event (assuming filter triggers an event)
-        document.addEventListener('filterApplied', () => {
-            adjustMobileMenuPosition();
-            syncBadgeCounts();
-        });
+            function closeAll() {
+                navWrapper.classList.remove('active');
+                overlay.classList.remove('active');
+                if (dropdownMenu) dropdownMenu.classList.remove('show');
+            }
 
-        // Run sync on cart/wishlist updates
-        window.addEventListener('cartUpdated', syncBadgeCounts);
-        window.addEventListener('wishlistUpdated', syncBadgeCounts);
+            if (hamburger && navWrapper && overlay) {
+                hamburger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    navWrapper.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+            }
+
+            if (profileToggle && dropdownMenu) {
+                profileToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdownMenu.classList.toggle('show');
+                });
+            }
+
+            document.addEventListener('click', (e) => {
+                const isClickInsideNav = navWrapper && navWrapper.contains(e.target);
+                const isClickInsideDropdown = dropdownMenu && dropdownMenu.contains(e.target);
+                const isProfileToggle = profileToggle && profileToggle.contains(e.target);
+                const isHamburger = hamburger && hamburger.contains(e.target);
+
+                if (!isClickInsideNav && !isClickInsideDropdown && !isProfileToggle && !isHamburger) {
+                    closeAll();
+                }
+            });
+        });
     </script>
 </body>
 

@@ -5,11 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Listing - Premium Store</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/user/productListing.css">
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
   <style>
     :root {
@@ -29,34 +27,32 @@
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 0px;
-      display: flex;
-      gap: 2rem;
+    /* Mobile-first base styles */
+    * {
+      box-sizing: border-box;
     }
 
-    .sidebar {
-      width: 280px;
-      flex-shrink: 0;
-      background: var(--white);
-      padding: 1.5rem;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow-light);
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      color: var(--dark-gray);
+      margin: 0;
+      padding: 0;
+      background-color: #fafbfc;
     }
 
-    .main-content {
-      flex-grow: 1;
+    .sidebar.active {
+      display: block;
     }
 
     .breadcrumb {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.875rem;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+      font-size: 0.75rem;
       color: var(--medium-gray);
+      flex-wrap: wrap;
     }
 
     .breadcrumb a {
@@ -69,97 +65,40 @@
       color: var(--secondary-color);
     }
 
-    .breadcrumb-separator {
-      color: var(--medium-gray);
-    }
-
-    .filters-section {
-      display: flex;
-      flex-direction: column;
-      gap: 0rem;
-    }
-
-    .filters-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .filters-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--dark-gray);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
     .search-container {
       position: relative;
-      display: flex;
-      align-items: center;
-      border: 2px solid #e9ecef;
-      border-radius: var(--border-radius);
-      overflow: hidden;
-      background: var(--white);
-      z-index: 100 !important;
     }
 
     .search-input {
-      width: 100%;
-      padding: 0.75rem 3.5rem 0.75rem 1rem;
-      border: none;
-      outline: none;
-      font-size: 0.875rem;
-      background: transparent;
-    }
-
-    .search-input:focus {
-      box-shadow: inset 0 0 0 2px var(--secondary-color);
+      padding-right: 70px; /* Make space for buttons */
     }
 
     .search-actions {
       position: absolute;
-      right: 0.5rem;
+      right: 6px;
       top: 50%;
       transform: translateY(-50%);
-      display: flex !important;
-      align-items: center;
-      gap: 0.5rem;
-      z-index: 101 !important;
+      display: flex;
+      gap: 4px;
     }
 
-    .search-btn,
-    .clear-search-btn {
-      background: var(--light-gray);
+    .search-btn, .clear-search-btn {
       border: none;
+      background-color: transparent;
+      cursor: pointer;
+      padding: 6px;
       border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      display: flex !important;
+      display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.875rem;
-      color: var(--dark-gray);
-      cursor: pointer;
-      transition: var(--transition);
+      transition: background-color 0.2s ease;
+    }
+    .search-btn:hover, .clear-search-btn:hover {
+      background-color: #f0f0f0;
     }
 
-    .search-btn:hover,
-    .clear-search-btn:hover {
-      background: var(--secondary-color);
-      color: var(--white);
-      transform: scale(1.1);
-    }
-
-    .clear-search-btn.hidden {
-      display: none !important;
-    }
-
-    .filters-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+    .breadcrumb-separator {
+      color: var(--medium-gray);
     }
 
     .filter-group {
@@ -196,6 +135,7 @@
     .price-range-container {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 0.5rem;
     }
 
@@ -206,6 +146,7 @@
     .filter-actions {
       display: flex;
       gap: 0.5rem;
+      flex-direction: column;
     }
 
     .btn {
@@ -220,12 +161,13 @@
       gap: 0.5rem;
       position: relative;
       overflow: hidden;
+      justify-content: center;
     }
 
-    .btn-primary {
+    .btn-primary, .btn-primary:hover {
       background: var(--primary-color);
       color: var(--white);
-      border: none;
+      border: 1px solid var(--primary-color);
     }
 
     .btn-primary:hover {
@@ -233,10 +175,10 @@
       transform: translateY(-1px);
     }
 
-    .btn-secondary {
+    .btn-secondary, .btn-secondary:hover {
       background: transparent;
       color: var(--accent-color);
-      border: 2px solid var(--accent-color);
+      border: 1px solid var(--accent-color);
       position: relative;
     }
 
@@ -246,92 +188,8 @@
       transform: translateY(-1px);
     }
 
-    .btn-secondary::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .btn-secondary:hover::before {
-      left: 100%;
-    }
-
     .filter-toggle-btn {
-      display: none;
-      width: 100%;
-      padding: 0.75rem;
-      background: var(--secondary-color);
-      color: var(--white);
-      border: none;
-      border-radius: var(--border-radius);
-      font-size: 0.875rem;
       font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .filter-toggle-btn:hover {
-      background: #2980b9;
-    }
-
-    .mobile-filter-panel {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--white);
-      z-index: 1000;
-      padding: 1.5rem;
-      overflow-y: auto;
-      transform: translateX(100%);
-      transition: var(--transition);
-    }
-
-    .mobile-filter-panel.active {
-      transform: translateX(0);
-    }
-
-    .mobile-filter-content {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .price-slider-container {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .price-slider {
-      width: 100%;
-    }
-
-    .price-values {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.875rem;
-      color: var(--dark-gray);
-    }
-
-    .results-section {
-      margin-bottom: 2rem;
-    }
-
-    .results-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
     }
 
     .results-info {
@@ -344,31 +202,18 @@
       color: var(--dark-gray);
     }
 
-    /* Existing .products-grid styles */
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 280px));
-      gap: 2rem;
-      justify-content: center;
-      /* This centers the grid items */
-    }
-
-    /* New rule for single product */
-    .products-grid.single-product {
-      justify-content: flex-start;
-      /* Align to the left */
-    }
-
     .product-card {
       display: flex;
       flex-direction: column;
       height: 100%;
-      max-width: 280px;
       background: var(--white);
       border-radius: var(--border-radius);
       overflow: hidden;
       box-shadow: var(--shadow-light);
-      transition: var(--transition);
+      border: 1px solid #e9ecef;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
     }
 
     .product-card:hover {
@@ -378,8 +223,7 @@
 
     .product-image {
       position: relative;
-      overflow: hidden;
-      height: 280px;
+      aspect-ratio: 1 / 1;
       background: linear-gradient(45deg, #f8f9fa, #e9ecef);
       display: flex;
       align-items: center;
@@ -404,12 +248,12 @@
     .discount-badge {
       position: absolute;
       top: 1rem;
-      left: 1rem;
+      left: 0.5rem;
       background: var(--accent-color);
       color: var(--white);
-      padding: 0.375rem 0.75rem;
+      padding: 0.25rem 0.5rem;
       border-radius: 20px;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
       font-weight: 600;
       z-index: 2;
     }
@@ -421,12 +265,12 @@
     .wishlist-btn {
       position: absolute;
       top: 1rem;
-      right: 2rem;
+      right: 1rem;
       background: var(--white);
       border: none;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -441,17 +285,21 @@
       color: var(--white);
     }
 
+    .wishlist-btn.active i {
+      color: var(--accent-color);
+    }
+
     .product-info {
       display: flex;
       flex-direction: column;
       flex-grow: 1;
-      padding: 1.5rem;
-      min-height: 180px;
+      padding: 1rem;
+      min-height: auto;
     }
 
     .product-brand {
       color: var(--medium-gray);
-      font-size: 0.875rem;
+      font-size: 0.75rem;
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -462,15 +310,19 @@
       font-size: 1rem;
       font-weight: 600;
       color: var(--dark-gray);
-      margin-bottom: 0.75rem;
       line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 0.75rem;
     }
 
     .product-rating {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
     .stars {
@@ -480,29 +332,30 @@
 
     .star {
       color: #ffc107;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
     }
 
     .rating-count {
       color: var(--medium-gray);
-      font-size: 0.875rem;
+      font-size: 0.75rem;
     }
 
     .product-prices {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
       margin-bottom: 1rem;
+      flex-wrap: wrap;
     }
 
     .current-price {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      color: var(--dark-gray);
+      color: var(--primary-color);
     }
 
     .original-price {
-      font-size: 1.125rem;
+      font-size: 1rem;
       color: var(--medium-gray);
       text-decoration: line-through;
     }
@@ -512,17 +365,17 @@
       color: var(--white);
       padding: 0.25rem 0.5rem;
       border-radius: 4px;
-      font-size: 0.75rem;
+      font-size: 0.625rem;
       font-weight: 600;
     }
 
     .add-to-cart {
       margin-top: auto;
       width: 100%;
-      background: var(--primary-color);
+      background: var(--dark-gray);
       color: var(--white);
       border: none;
-      padding: 0.875rem;
+      padding: 0.75rem;
       border-radius: var(--border-radius);
       font-weight: 600;
       cursor: pointer;
@@ -534,7 +387,7 @@
     }
 
     .add-to-cart:hover:not(:disabled) {
-      background: #1a252f;
+      background: var(--primary-color);
       transform: translateY(-1px);
     }
 
@@ -542,32 +395,6 @@
       background: var(--medium-gray);
       color: #adb5bd;
       cursor: not-allowed;
-    }
-
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 2rem;
-    }
-
-    .page-link {
-      padding: 0.5rem 1rem;
-      border: 2px solid #e9ecef;
-      border-radius: var(--border-radius);
-      text-decoration: none;
-      color: var(--dark-gray);
-      font-size: 0.875rem;
-      font-weight: 600;
-      transition: var(--transition);
-    }
-
-    .page-link:hover:not(.disabled) {
-      background: var(--secondary-color);
-      color: var(--white);
-      border-color: var(--secondary-color);
-      transform: translateY(-1px);
     }
 
     .page-link.active {
@@ -583,33 +410,31 @@
     }
 
     .no-results {
-      grid-column: 1 / -1;
       text-align: center;
-      padding: 3rem;
+      padding: 2rem 1rem;
       color: var(--medium-gray);
     }
 
     .no-results i {
-      font-size: 4rem;
+      font-size: 3rem;
       margin-bottom: 1rem;
       opacity: 0.3;
     }
 
     .no-results h3 {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
     }
 
     .no-results p {
-      font-size: 1rem;
+      font-size: 0.875rem;
     }
 
     .loading {
-      grid-column: 1 / -1;
       text-align: center;
-      padding: 3rem;
-      font-size: 1.2rem;
+      padding: 2rem 1rem;
+      font-size: 1rem;
       color: var(--medium-gray);
       background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
       background-size: 200% 100%;
@@ -625,111 +450,44 @@
         background-position: -200% 0;
       }
     }
-
-    @media (max-width: 1024px) {
-      .container {
-        flex-direction: column;
-      }
-
-      .sidebar {
-        width: 100%;
-      }
-
-      .filter-toggle-btn {
-        display: flex;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .products-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 250px));
-      }
-
-      .product-card {
-        max-width: 250px;
-      }
-
-      .product-image {
-        height: 250px;
-      }
-
-      .product-info {
-        min-height: 160px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .products-grid {
-        grid-template-columns: minmax(250px, 250px);
-        justify-content: center;
-      }
-
-      .product-card {
-        max-width: 250px;
-      }
-
-      .product-info {
-        min-height: 140px;
-      }
-
-      .product-name {
-        font-size: 0.875rem;
-      }
-
-      .current-price {
-        font-size: 1.25rem;
-      }
-
-      .original-price {
-        font-size: 1rem;
-      }
-
-      .price-savings {
-        font-size: 0.675rem;
-      }
-
-      .add-to-cart {
-        padding: 0.75rem;
-        font-size: 0.875rem;
-      }
-    }
   </style>
 </head>
 
 <body>
   <%- include('../partials/user/newheader.ejs') %>
 
-    <div class="container">
-      <!-- Sidebar Filters (Desktop) -->
-      <aside class="sidebar">
+    <div class="container-lg mt-4">
+      <div class="row">
+      <!-- Sidebar Filters -->
+      <aside class="col-lg-3 d-none d-lg-block" id="desktopSidebar">
         <nav class="breadcrumb">
           <a href="/home" class="home-breadcrumb" style="color: var(--dark-gray)">Home</a>
           <span class="breadcrumb-separator">/</span>
           <span>Shop</span>
         </nav>
 
-        <div class="filters-section">
-          <div class="filters-header">
-            <h2 class="filters-title">
+        <div class="card shadow-sm">
+          <div class="card-header bg-light">
+            <h2 class="fs-5 mb-0 fw-semibold">
               <i class="fas fa-filter"></i>
               Search & Filter
             </h2>
           </div>
-
+          <div class="card-body">
           <div class="search-container">
-            <input type="text" id="searchInput" class="search-input" placeholder="Search products..."
+            <input type="text" id="searchInput" class="form-control search-input" placeholder="Search products..."
               value="<%= typeof search !== 'undefined' ? search : '' %>">
             <div class="search-actions">
-              <button class="search-btn" id="searchBtn" title="Search">
+              <button class="search-btn text-primary" id="searchBtn" title="Search">
                 <i class="fas fa-search"></i>
               </button>
-              <button class="clear-search-btn hidden" id="clearSearchBtn" title="Clear Search">
+              <button class="clear-search-btn hidden text-danger" id="clearSearchBtn" title="Clear Search">
                 <i class="fas fa-times"></i>
               </button>
             </div>
           </div>
 
-          <div class="filters-grid">
+          <div class="filters-grid mt-3">
             <div class="filter-group">
               <label class="filter-label">
                 <i class="fas fa-list"></i> Category
@@ -771,85 +529,42 @@
             </div>
           </div>
 
-          <div class="filter-actions">
-            <button class="btn btn-secondary" id="clearFiltersBtn" title="Clear All Filters">
-              <i class="fas fa-eraser"></i>
-              Clear Filters
-            </button>
+          <div class="d-grid gap-2 mt-3">
             <button class="btn btn-primary" id="applyFiltersBtn" title="Apply Filters">
               <i class="fas fa-check"></i>
               Apply
             </button>
+            <button class="btn btn-outline-secondary" id="clearFiltersBtn" title="Clear All Filters">
+              <i class="fas fa-eraser"></i>
+              Clear
+            </button>
           </div>
-        </div>
-
-        <!-- Mobile Filter Toggle -->
-        <button class="filter-toggle-btn" id="filterToggleBtn">
-          <span><i class="fas fa-filter"></i> Filters</span>
-          <i class="fas fa-chevron-down toggle-icon"></i>
-        </button>
-
-        <!-- Mobile Filter Panel -->
-        <div class="mobile-filter-panel" id="mobileFilterPanel">
-          <div class="mobile-filter-content">
-            <div class="filter-group">
-              <label class="filter-label">
-                <i class="fas fa-sort"></i> Sort By
-              </label>
-              <select id="sortByMobile" class="filter-select">
-                <option value="createdAt-desc">Newest First</option>
-                <option value="name-asc">Name: A to Z</option>
-                <option value="name-desc">Name: Z to A</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label">
-                <i class="fas fa-dollar-sign"></i> Price Range
-              </label>
-              <div class="price-slider-container">
-                <input type="range" id="minPriceSlider" class="price-slider" min="0" max="1000" value="0">
-                <input type="range" id="maxPriceSlider" class="price-slider" min="0" max="1000" value="1000">
-                <div class="price-values">
-                  <span id="minPriceValue">0</span>
-                  <span id="maxPriceValue">1000</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="filter-actions">
-              <button class="btn btn-secondary" id="clearFiltersMobile" title="Clear Filters">
-                <i class="fas fa-eraser"></i> Clear Filters
-              </button>
-              <button class="btn btn-primary" id="applyFiltersMobile" title="Apply Filters">
-                <i class="fas fa-check"></i> Apply
-              </button>
-            </div>
           </div>
         </div>
       </aside>
 
       <!-- Main Content -->
-      <main class="main-content">
-        <div class="page-header"></div>
+      <main class="col-lg-9">
+        <!-- Mobile Filter Toggle & Results Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFilters" aria-controls="offcanvasFilters">
+            <i class="fas fa-filter"></i> Filters
+          </button>
+          <div class="results-info ms-auto ms-lg-0">
+            Showing <span class="results-count fw-bold" id="resultsCount">
+              <%= typeof totalProduct !=='undefined' ? totalProduct : 0 %>
+            </span> products
+          </div>
+        </div>
 
         <!-- Results Section -->
-        <div class="results-section">
-          <div class="results-header">
-            <div class="results-info">
-              Showing <span class="results-count" id="resultsCount">
-                <%= typeof totalProduct !=='undefined' ? totalProduct : 0 %>
-              </span> products
-            </div>
-          </div>
-
+        <div class="results-section bg-white p-3 p-md-4 rounded-3 shadow-sm">
           <!-- Products Grid -->
-          <div class="products-grid">
+          <div class="row g-3 g-md-4" id="products-grid">
             <% if (products && products.length> 0) { %>
               <% for(let i=0; i < products.length; i++) { %>
-                <div class="product-card" data-id="<%= products[i]._id %>">
+                <div class="col-6 col-md-4">
+                  <div class="product-card h-100" data-id="<%= products[i]._id %>">
                   <div class="product-image">
                     <% if (products[i].productImage) { %>
                       <a href="/productsDetails/<%= products[i]._id %>">
@@ -858,24 +573,23 @@
                       </a>
                       <% } else { %>
                         <div
-                          class="flex items-center justify-center h-full bg-gradient-to-br from-[#f8f9fa] to-[#e9ecef]">
-                          <i class="fas fa-image text-[3rem] text-[#6c757d] opacity-30"></i>
+                          style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
+                          <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                         </div>
                         <% } %>
-                        <div class="discount-badge <%= products[i].status === 'Available' ? '' : 'out-of-stock' %>">
-                          <%= products[i].status==='Available' ? `-${products[i].bestOffer}%` : 'Out of Stock' %>
-                        </div>
-
-
+                          <div class="discount-badge <%= products[i].status === 'Available' ? '' : 'out-of-stock' %>">
+                            <%= products[i].status==='Available' ? `${products[i].bestOffer}%` : 'Out of Stock' %>
+                          </div>
                           <% if (!user) { %>
-                            <button type="button" class="wishlist-btn" style="color: var(--dark-gray)">
+                            <button type="button" class="wishlist-btn" onclick="handleWishlistClick()">
                               <i class="far fa-heart"></i>
                             </button>
                             <% } else { %>
-                              <button type="button" class="wishlist-btn"
-                                style="color: <%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'var(--accent-color)' : 'var(--dark-gray)' %>">
+                              <button type="button"
+                                class="wishlist-btn <%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'active' : '' %>"
+                                onclick="addWishlist('<%= products[i]._id %>', this)">
                                 <i
-                                  class="<%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'fas text-red-500' : 'far' %> fa-heart"></i>
+                                  class="<%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
                               </button>
                               <% } %>
                   </div>
@@ -895,7 +609,7 @@
                       <span class="rating-count">(247 reviews)</span>
                     </div>
                     <div class="product-prices">
-                      <span class="current-price">₹<%= products[i].salesPrice.toLocaleString() %></span>
+                      <span class="current-price">₹<%= products[i].salesPrice.toLocaleString() %></span> 
                       <span class="original-price">₹<%= products[i].regularPrice.toLocaleString() %></span>
                       <span class="price-savings">Save ₹<%= (products[i].regularPrice -
                           products[i].salesPrice).toFixed(0) %></span>
@@ -905,6 +619,7 @@
                       <i class="fas fa-shopping-cart"></i>
                       <span>Add to Cart</span>
                     </button>
+                  </div>
                   </div>
                 </div>
                 <% } %>
@@ -919,35 +634,101 @@
 
           <!-- Pagination -->
           <% if (typeof totalPage !=='undefined' && totalPage>= 1) { %>
-            <div class="pagination" id="pagination">
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center mt-4" id="pagination">
               <% const page=Number(currentPage) || 1; %>
                 <% const total=Number(totalPage) || 1; %>
                   <% const searchQuery=typeof search !=='undefined' && search ? encodeURIComponent(search) : '' ; %>
                     <% if (page> 1) { %>
-                      <a href="?page=<%= page - 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>"
-                        class="page-link">Previous</a>
+                      <li class="page-item">
+                        <a class="page-link" href="?page=<%= page - 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>">Previous</a>
+                      </li>
                       <% } else { %>
-                        <a class="disabled">Previous</a>
+                        <li class="page-item disabled">
+                          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
                         <% } %>
                           <% for (let i=1; i <=total; i++) { %>
-                            <a href="?page=<%= i %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>" <%=i===page
-                              ? 'class="active page-link"' : 'class="page-link"' %>><%= i %></a>
+                            <li class="page-item <%= i === page ? 'active' : '' %>">
+                              <a class="page-link" href="?page=<%= i %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>"><%= i %></a>
+                            </li>
                             <% } %>
                               <% if (page < total) { %>
-                                <a href="?page=<%= page + 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>"
-                                  class="page-link">Next</a>
+                                <li class="page-item">
+                                  <a class="page-link" href="?page=<%= page + 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>">Next</a>
+                                </li>
                                 <% } else { %>
-                                  <a class="disabled">Next</a>
+                                  <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                                  </li>
                                   <% } %>
-            </div>
+              </ul>
+            </nav>
             <% } %>
         </div>
       </main>
+      </div>
     </div>
     <%- include('../partials/user/footer.ejs') %>
 
       <!-- Toast Container -->
       <div id="toastContainer" class="toast-container"></div>
+
+      <!-- Offcanvas Filter for Mobile -->
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFilters" aria-labelledby="offcanvasFiltersLabel">
+        <div class="offcanvas-header border-bottom">
+          <h5 class="offcanvas-title" id="offcanvasFiltersLabel"><i class="fas fa-filter"></i> Filters</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          <div class="d-flex flex-column h-100">
+            <div class="search-container mb-3">
+              <input type="text" id="searchInputMobile" class="form-control search-input" placeholder="Search products..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+              <div class="search-actions">
+                <button class="search-btn" id="searchBtnMobile" title="Search"><i class="fas fa-search"></i></button>
+                <button class="clear-search-btn hidden" id="clearSearchBtnMobile" title="Clear Search"><i class="fas fa-times"></i></button>
+              </div>
+            </div>
+            <div class="filters-grid flex-grow-1">
+              <div class="filter-group">
+                <label class="filter-label"><i class="fas fa-list"></i> Category</label>
+                <select id="categoryFilterMobile" class="filter-select">
+                  <option value="">All Categories</option>
+                  <% cat.forEach((category)=> { %>
+                    <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : '' %>><%= category.name %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="filter-label"><i class="fas fa-dollar-sign"></i> Price Range</label>
+                <div class="price-range-container">
+                  <input type="number" id="minPriceMobile" class="filter-input" placeholder="Min $" min="0" value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>">
+                  <span class="price-separator">-</span>
+                  <input type="number" id="maxPriceMobile" class="filter-input" placeholder="Max $" min="0" value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>">
+                </div>
+              </div>
+              <div class="filter-group">
+                <label class="filter-label"><i class="fas fa-sort"></i> Sort By</label>
+                <select id="sortByMobile" class="filter-select">
+                  <option value="createdAt-desc">Newest First</option>
+                  <option value="name-asc">Name: A to Z</option>
+                  <option value="name-desc">Name: Z to A</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
+              </div>
+            </div>
+            <div class="filter-actions mt-auto">
+              <button class="btn btn-primary" id="applyFiltersMobile" title="Apply Filters"><i class="fas fa-check"></i> Apply</button>
+              <button class="btn btn-secondary" id="clearFiltersMobile" title="Clear Filters">
+                <i class="fas fa-eraser"></i> Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
@@ -957,49 +738,68 @@
         window.wishlistId = <%- JSON.stringify(wishlistId || []) %>;
         window.isLoggedIn = <%- !!user %>;
 
+        const offcanvasFilter = new bootstrap.Offcanvas(document.getElementById('offcanvasFilters'));
 
       </script>
       <script>
+        // Sync mobile and desktop filters
         const searchInput = document.getElementById('searchInput');
+        const searchInputMobile = document.getElementById('searchInputMobile');
         const searchBtn = document.getElementById('searchBtn');
+        const searchBtnMobile = document.getElementById('searchBtnMobile');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const clearSearchBtnMobile = document.getElementById('clearSearchBtnMobile');
         const categoryFilter = document.getElementById('categoryFilter');
+        const categoryFilterMobile = document.getElementById('categoryFilterMobile');
         const minPrice = document.getElementById('minPrice');
         const maxPrice = document.getElementById('maxPrice');
         const sortBy = document.getElementById('sortBy');
+        const sortByMobile = document.getElementById('sortByMobile');
+        const minPriceMobile = document.getElementById('minPriceMobile');
+        const maxPriceMobile = document.getElementById('maxPriceMobile');
         const applyFiltersBtn = document.getElementById('applyFiltersBtn');
         const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-        const sortByMobile = document.getElementById('sortByMobile');
-        const minPriceSlider = document.getElementById('minPriceSlider');
-        const maxPriceSlider = document.getElementById('maxPriceSlider');
-        const minPriceValue = document.getElementById('minPriceValue');
-        const maxPriceValue = document.getElementById('maxPriceValue');
         const applyFiltersMobile = document.getElementById('applyFiltersMobile');
-        const clearFiltersMobile = document.getElementById('clearFiltersMobile');
         const resultsCount = document.getElementById('resultsCount');
+        const clearFiltersMobile = document.getElementById('clearFiltersMobile');
         const productGrid = document.querySelector('.products-grid');
         const pagination = document.getElementById('pagination');
-        const filterToggleBtn = document.getElementById('filterToggleBtn');
-        const mobileFilterPanel = document.getElementById('mobileFilterPanel');
+        const desktopSidebar = document.getElementById('desktopSidebar');
+        const closeMobileFilters = document.getElementById('closeMobileFilters');
 
         let currentPage = parseInt('<%= currentPage || 1 %>');
+
+        // Sync values between mobile and desktop
+        function syncFilters() {
+          searchInputMobile.value = searchInput.value;
+          categoryFilterMobile.value = categoryFilter.value;
+          sortByMobile.value = sortBy.value;
+          minPriceMobile.value = minPrice.value;
+          maxPriceMobile.value = maxPrice.value;
+        }
 
         // Initialize filter inputs with backend values
         minPrice.value = '<%= typeof minPrice !== "undefined" ? minPrice : "" %>';
         maxPrice.value = '<%= typeof maxPrice !== "undefined" ? maxPrice : "" %>';
-        minPriceSlider.value = parseFloat('<%= typeof minPrice !== "undefined" ? minPrice : 0 %>') || 0;
-        maxPriceSlider.value = parseFloat('<%= typeof maxPrice !== "undefined" ? maxPrice : 1000 %>') || 1000;
         sortBy.value = '<%= typeof sort !== "undefined" ? sort : "createdAt-desc" %>';
-        sortByMobile.value = '<%= typeof sort !== "undefined" ? sort : "createdAt-desc" %>';
+        syncFilters();
 
-        // Toggle clear search button visibility
-        function toggleClearSearchBtn() {
+        // Toggle clear search button visibility for both
+        function toggleClearSearchBtns() {
           const hasValue = searchInput.value.trim().length > 0;
           clearSearchBtn.classList.toggle('hidden', !hasValue);
+          clearSearchBtnMobile.classList.toggle('hidden', !hasValue);
         }
 
-        searchInput.addEventListener('input', toggleClearSearchBtn);
-        toggleClearSearchBtn();
+        searchInput.addEventListener('input', () => {
+          searchInputMobile.value = searchInput.value;
+          toggleClearSearchBtns();
+        });
+        searchInputMobile.addEventListener('input', () => {
+          searchInput.value = searchInputMobile.value;
+          toggleClearSearchBtns();
+        });
+        toggleClearSearchBtns();
 
         // Debounce function
         const debounce = (func, delay = 400) => {
@@ -1015,19 +815,16 @@
           return isNaN(num) ? fallback : num;
         };
 
-        // Check login status via AJAX
-
-
         // Fetch products with filters and page
         async function fetchProducts(page = 1) {
           const search = encodeURIComponent(searchInput.value.trim());
-          const category = encodeURIComponent(categoryFilter.value);
-          const sort = encodeURIComponent(sortBy.value || sortByMobile.value || 'createdAt-desc');
+          const category = encodeURIComponent(categoryFilter.value || categoryFilterMobile.value);
+          const sort = encodeURIComponent(sortBy.value || sortByMobile.value);
 
           const params = new URLSearchParams({ search, category, sort, page });
 
-          const minInput = minPrice.value.trim();
-          const maxInput = maxPrice.value.trim();
+          const minInput = minPrice.value.trim() || minPriceMobile.value.trim();
+          const maxInput = maxPrice.value.trim() || maxPriceMobile.value.trim();
 
           const hasMin = minInput !== '';
           const hasMax = maxInput !== '';
@@ -1044,7 +841,7 @@
           }
 
           try {
-            productGrid.innerHTML = '<div class="loading">Loading...</div>';
+            document.getElementById('products-grid').innerHTML = '<div class="loading">Loading...</div>';
             const res = await fetch(`/viewProducts?${params.toString()}`, {
               headers: { Accept: 'application/json' },
               credentials: 'include'
@@ -1058,7 +855,7 @@
             renderPagination(data.page, data.totalPages, params);
           } catch (err) {
             console.error('Error fetching:', err.message);
-            productGrid.innerHTML = `
+            document.getElementById('products-grid').innerHTML = `
           <div class="no-results">
             <i class="fas fa-box-open"></i>
             <h3>Error Loading Products</h3>
@@ -1068,10 +865,9 @@
         }
 
         // Render products
-        // Render products
         function renderProducts(products) {
           if (products.length === 0) {
-            productGrid.innerHTML = `
+            document.getElementById('products-grid').innerHTML = `
       <div class="no-results">
         <i class="fas fa-box-open"></i>
         <h3>No Products Found</h3>
@@ -1080,25 +876,32 @@
             return;
           }
 
-          productGrid.innerHTML = products.map(p => {
+          document.getElementById('products-grid').innerHTML = products.map(p => {
             const inWishlist = Array.isArray(window.wishlistId) && window.wishlistId.includes(p._id);
-            const styleColor = window.isLoggedIn && inWishlist ? 'var(--accent-color)' : 'var(--dark-gray)';
-            const iconClass = window.isLoggedIn && inWishlist ? 'fas text-red-500' : 'far';
+            const wishlistClass = window.isLoggedIn && inWishlist ? 'active' : '';
+            const iconClass = window.isLoggedIn && inWishlist ? 'fas' : 'far';
 
             return `
-      <div class="product-card" data-id="${p._id}">
-        <div class="product-image">
+      <div class="col-6 col-md-4">
+        <div class="product-card h-100" data-id="${p._id}">
+          <div class="product-image">
           <a href="/productsDetails/${p._id}">
             <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
           </a>
           ${p.status === 'Available' ? `
-            <div class="discount-badge">-${p.bestOffer}%</div>
+            <div class="discount-badge">${p.bestOffer}%</div>
           ` : `
             <div class="discount-badge out-of-stock">Out of Stock</div>
           `}
-          <button type="button" class="wishlist-btn" title="Add to Wishlist" style="color: ${styleColor}">
-            <i class="${iconClass} fa-heart"></i>
-          </button>
+          ${window.isLoggedIn ? `
+            <button type="button" class="wishlist-btn ${wishlistClass}" onclick="addWishlist('${p._id}', this)" title="Add to Wishlist">
+              <i class="${iconClass} fa-heart"></i>
+            </button>
+          ` : `
+            <button type="button" class="wishlist-btn" onclick="handleWishlistClick()" title="Add to Wishlist">
+              <i class="far fa-heart"></i>
+            </button>
+          `}
         </div>
         <div class="product-info">
           <div class="product-brand">PREMIUM</div>
@@ -1125,13 +928,11 @@
               <span>Add to Cart</span>
             </button>
           `}
+          </div>
         </div>
       </div>
     `;
           }).join('');
-
-          // Add class 'single-product' if there is only one product
-          productGrid.classList.toggle('single-product', products.length === 1);
 
           attachWishlistListeners();
         }
@@ -1140,29 +941,25 @@
         function attachWishlistListeners() {
           document.querySelectorAll('.wishlist-btn').forEach(btn => {
             btn.removeEventListener('click', handleWishlistClick); // Prevent duplicate listeners
-            btn.addEventListener('click', handleWishlistClick);
+            if (!window.isLoggedIn) {
+              btn.addEventListener('click', handleWishlistClick);
+            }
           });
         }
 
-
         function handleWishlistClick() {
-          if (!window.isLoggedIn) {
-            Swal.fire({
-              icon: 'info',
-              title: 'Login Required',
-              text: 'Please login to add items to your wishlist',
-              showCancelButton: true,
-              confirmButtonText: 'Login',
-              cancelButtonText: 'Cancel'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                window.location.href = '/login';
-              }
-            });
-            return;
-          }
-          const productId = this.closest('.product-card').dataset.id;
-          addWishlist(productId, this);
+          Swal.fire({
+            icon: 'info',
+            title: 'Login Required',
+            text: 'Please login to add items to your wishlist',
+            showCancelButton: true,
+            confirmButtonText: 'Login',
+            cancelButtonText: 'Cancel'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/login';
+            }
+          });
         }
 
         // Render pagination
@@ -1170,93 +967,78 @@
           if (!pagination) return;
           params.delete('page');
           const baseQuery = params.toString();
-          const baseUrl = `/viewProducts${baseQuery ? `?${baseQuery}` : ''}`;
+          const baseUrl = `/viewProducts?${baseQuery}`;
 
           let html = '';
           if (currentPage > 1) {
-            html += `<a href="${encodeURI(`${baseUrl}${baseQuery ? '&' : '?'}page=${currentPage - 1}`)}" class="page-link">Previous</a>`;
+            html += `<li class="page-item"><a class="page-link" href="${encodeURI(`${baseUrl}&page=${currentPage - 1}`)}">Previous</a></li>`;
           } else {
-            html += `<a class="disabled">Previous</a>`;
+            html += `<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>`;
           }
 
           for (let i = 1; i <= totalPages; i++) {
-            html += `<a href="${encodeURI(`${baseUrl}${baseQuery ? '&' : '?'}page=${i}`)}" class="${i === currentPage ? 'active page-link' : 'page-link'}">${i}</a>`;
+            html += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="${encodeURI(`${baseUrl}&page=${i}`)}">${i}</a></li>`;
           }
 
           if (currentPage < totalPages) {
-            html += `<a href="${encodeURI(`${baseUrl}${baseQuery ? '&' : '?'}page=${currentPage + 1}`)}" class="page-link">Next</a>`;
+            html += `<li class="page-item"><a class="page-link" href="${encodeURI(`${baseUrl}&page=${currentPage + 1}`)}">Next</a></li>`;
           } else {
-            html += `<a class="disabled">Next</a>`;
+            html += `<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>`;
           }
 
           pagination.innerHTML = html;
 
           document.querySelectorAll('.page-link').forEach(link => {
             link.addEventListener('click', (e) => {
-              e.preventDefault();
-              try {
-                const url = new URL(link.href);
-                const page = parseInt(url.searchParams.get('page')) || 1;
-                fetchProducts(page);
-              } catch (err) {
-                console.error('Error parsing URL:', err);
+              if (link.parentElement.classList.contains('disabled') || link.parentElement.classList.contains('active')) {
+                e.preventDefault();
+                return;
               }
+              e.preventDefault();
+              const url = new URL(link.href, window.location.origin);
+              const page = parseInt(url.searchParams.get('page')) || 1;
+              fetchProducts(page);
             });
           });
-        }
-
-        // Update mobile slider values
-        function updateSliderValues() {
-          minPriceValue.textContent = minPriceSlider.value;
-          maxPriceValue.textContent = maxPriceSlider.value;
         }
 
         // Reset filters
         function resetPriceFilters() {
           minPrice.value = '';
           maxPrice.value = '';
-          minPriceSlider.value = 0;
-          maxPriceSlider.value = 1000;
-          minPriceValue.textContent = '0';
-          maxPriceValue.textContent = '1000';
           categoryFilter.value = '';
+          categoryFilterMobile.value = '';
           sortBy.value = 'createdAt-desc';
           sortByMobile.value = 'createdAt-desc';
+          searchInput.value = '';
+          minPriceMobile.value = '';
+          maxPriceMobile.value = '';
+          searchInputMobile.value = '';
+          toggleClearSearchBtns();
         }
 
-        // Event listeners
+        // Event listeners for desktop
         searchBtn.addEventListener('click', () => {
           fetchProducts(1);
         });
 
-        clearSearchBtn.addEventListener('click', () => {
-          const params = new URLSearchParams();
-          if (categoryFilter.value) params.set('category', encodeURIComponent(categoryFilter.value));
-          if (minPrice.value) params.set('minPrice', minPrice.value);
-          if (maxPrice.value) params.set('maxPrice', maxPrice.value);
-          if (sortBy.value) params.set('sort', encodeURIComponent(sortBy.value));
-          params.set('clearSearch', '1');
+        searchBtnMobile.addEventListener('click', () => {
+          searchInput.value = searchInputMobile.value;
+          fetchProducts(1);
+        });
 
-          fetch(`/viewProducts?${params.toString()}`, {
-            headers: { Accept: 'application/json' },
-            credentials: 'include'
-          })
-            .then(res => {
-              if (!res.ok) throw new Error('Failed to fetch');
-              return res.json();
-            })
-            .then(data => {
-              window.products = data.products;
-              renderProducts(data.products);
-              resultsCount.textContent = data.total;
-              currentPage = data.page;
-              renderPagination(data.page, data.totalPages, params);
-              searchInput.value = '';
-              toggleClearSearchBtn();
-            })
-            .catch(err => {
-              console.error('Search clear error:', err.message);
-            });
+        clearSearchBtn.addEventListener('click', () => {
+          searchInput.value = '';
+          searchInputMobile.value = '';
+          toggleClearSearchBtns();
+          fetchProducts(1);
+        });
+
+        clearSearchBtnMobile.addEventListener('click', () => {
+          searchInputMobile.value = '';
+          searchInput.value = '';
+          toggleClearSearchBtns();
+          fetchProducts(1);
         });
 
         applyFiltersBtn.addEventListener('click', () => {
@@ -1264,53 +1046,22 @@
         });
 
         clearFiltersBtn.addEventListener('click', () => {
-          const params = new URLSearchParams({ clearFilter: 1 });
-          fetch(`/viewProducts?${params.toString()}`, {
-            headers: { Accept: 'application/json' },
-            credentials: 'include'
-          })
-            .then(res => {
-              if (!res.ok) throw new Error('Failed to fetch');
-              return res.json();
-            })
-            .then(data => {
-              window.products = data.products;
-              renderProducts(data.products);
-              resultsCount.textContent = data.total;
-              currentPage = data.page;
-              renderPagination(data.page, data.totalPages, params);
-              resetPriceFilters();
-              updateSliderValues();
-              searchInput.value = '';
-              toggleClearSearchBtn();
-            });
-        });
-
-        applyFiltersMobile.addEventListener('click', () => {
+          resetPriceFilters();
           fetchProducts(1);
         });
 
+        applyFiltersMobile.addEventListener('click', () => {
+          categoryFilter.value = categoryFilterMobile.value;
+          sortBy.value = sortByMobile.value;
+          minPrice.value = minPriceMobile.value;
+          maxPrice.value = maxPriceMobile.value;
+          fetchProducts(1);
+          offcanvasFilter.hide();
+        });
+
         clearFiltersMobile.addEventListener('click', () => {
-          const params = new URLSearchParams({ clear: 1 });
-          fetch(`/viewProducts?${params.toString()}`, {
-            headers: { Accept: 'application/json' },
-            credentials: 'include'
-          })
-            .then(res => {
-              if (!res.ok) throw new Error('Failed to fetch');
-              return res.json();
-            })
-            .then(data => {
-              window.products = data.products;
-              renderProducts(data.products);
-              resultsCount.textContent = data.total;
-              currentPage = data.page;
-              renderPagination(data.page, data.totalPages, params);
-              resetPriceFilters();
-              updateSliderValues();
-              searchInput.value = '';
-              toggleClearSearchBtn();
-            });
+          resetPriceFilters();
+          fetchProducts(1);
         });
 
         sortBy.addEventListener('change', () => {
@@ -1323,28 +1074,27 @@
           fetchProducts(1);
         });
 
-        minPriceSlider.addEventListener('input', () => {
-          minPrice.value = minPriceSlider.value;
-          updateSliderValues();
+        categoryFilter.addEventListener('change', () => {
+          categoryFilterMobile.value = categoryFilter.value;
+          fetchProducts(1);
         });
 
-        maxPriceSlider.addEventListener('input', () => {
-          maxPrice.value = maxPriceSlider.value;
-          updateSliderValues();
+        categoryFilterMobile.addEventListener('change', () => {
+          categoryFilter.value = categoryFilterMobile.value;
+          fetchProducts(1);
         });
 
         minPrice.addEventListener('input', () => {
-          minPriceSlider.value = minPrice.value || 0;
-          updateSliderValues();
+          minPriceMobile.value = minPrice.value;
         });
 
         maxPrice.addEventListener('input', () => {
-          maxPriceSlider.value = maxPrice.value || 1000;
-          updateSliderValues();
+          maxPriceMobile.value = maxPrice.value;
         });
 
         const debouncedFetch = debounce(() => fetchProducts(1), 300);
         searchInput.addEventListener('input', debouncedFetch);
+        searchInputMobile.addEventListener('input', debouncedFetch);
         minPrice.addEventListener('input', debouncedFetch);
         maxPrice.addEventListener('input', debouncedFetch);
         categoryFilter.addEventListener('change', () => fetchProducts(1));
@@ -1379,15 +1129,15 @@
               const icon = button.querySelector('i.fa-heart');
               if (result.inWishlist) {
                 icon.classList.remove('far');
-                icon.classList.add('fas', 'text-red-500');
-                button.style.color = 'var(--accent-color)';
+                icon.classList.add('fas');
+                button.classList.add('active');
                 if (!window.wishlistId.includes(productId)) {
                   window.wishlistId.push(productId);
                 }
               } else {
-                icon.classList.remove('fas', 'text-red-500');
+                icon.classList.remove('fas');
                 icon.classList.add('far');
-                button.style.color = 'var(--dark-gray)';
+                button.classList.remove('active');
                 window.wishlistId = window.wishlistId.filter(id => id !== productId);
               }
               Toast.fire({
@@ -1480,7 +1230,7 @@
         }
 
         // Handle product image click for redirect
-        productGrid.addEventListener('click', function (e) {
+        document.getElementById('products-grid').addEventListener('click', function (e) {
           const img = e.target.closest('.product-img');
           if (img && img.dataset.id) {
             e.preventDefault();
@@ -1488,7 +1238,6 @@
           }
         });
 
-        updateSliderValues();
         fetchProducts(currentPage);
       </script>
 </body>

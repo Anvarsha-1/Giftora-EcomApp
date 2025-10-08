@@ -171,9 +171,8 @@
                                                     <%= order.status %>
                                                 </span>
                                                 <div class="text-gray-700 text-sm mt-2 space-y-1">
-                                                    <div><span class="font-medium">Subtotal:</span> ₹<%=
-                                                            subTotal?.toFixed(2) || order.totalPrice?.toFixed(2)
-                                                            || '0.00' %>
+                                                    <div><span class="font-medium">Subtotal:</span> ₹<%=order.totalPrice?.toFixed(2) || '0.00' %>
+                                                            <% console.log('subTotal',subTotal,'orderTotal',order.totalPrice) %>
                                                     </div>
                                                     
                                                     <div><span class="font-medium">Shipping:</span> ₹<%=

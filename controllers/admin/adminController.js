@@ -133,8 +133,12 @@ const renderAdminDashboard = async (req, res) => {
 
             //Top 10 product by units sold 
             Order.aggregate([
-                { $match: { status: 'Delivered' } },
                 { $unwind: '$orderedItems' },
+                {
+                    $match: {
+                        'orderedItems.status': { $nin: ['Cancelled', 'Returned'] },
+                    }
+                },
                 {
                     $group: {
                         _id: '$orderedItems.productId',
@@ -146,7 +150,7 @@ const renderAdminDashboard = async (req, res) => {
                 { $limit: 10 },
                 {
                     $lookup: {
-                        from: 'products', // Collection names are typically lowercase and plural
+                        from: 'products', 
                         localField: '_id',
                         foreignField: '_id',
                         as: 'product'
@@ -158,8 +162,12 @@ const renderAdminDashboard = async (req, res) => {
 
             //Top 10 category by unit sold
             Order.aggregate([
-                { $match: { status: 'Delivered' } }, // Consistent status
                 { $unwind: "$orderedItems" }, // Correct field name
+                {
+                    $match: {
+                        'orderedItems.status': { $nin: ['Cancelled', 'Returned'] },
+                    }
+                },
                 { $lookup: { from: "products", localField: "orderedItems.productId", foreignField: "_id", as: "product" } },
                 { $unwind: { path: "$product", preserveNullAndEmptyArrays: true } },
                 {
@@ -182,14 +190,14 @@ const renderAdminDashboard = async (req, res) => {
             Order.countDocuments(),
             // Get total sales from delivered orders
             Order.aggregate([
-                { $match: { status: 'Delivered' } },
+                { $match: { status: { $nin: ['Cancelled', 'Returned'] } } },
                 { $group: { _id: null, totalSales: { $sum: '$finalAmount' } } }
             ]),
             // Get pending orders count
             Order.countDocuments({ status: 'Pending' }),
             // Get Top 10 Customers by total amount spent on delivered orders
             Order.aggregate([
-                { $match: { status: 'Delivered' } },
+                { $match: { status: { $nin: ['Cancelled', 'Returned'] } } },
                 {
                     $group: {
                         _id: '$userId',

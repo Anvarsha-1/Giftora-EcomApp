@@ -1,6 +1,7 @@
 const Order = require('../../models/orderSchema')
 const {generateSalesReportPDF} = require('../../helpers/sales-report-pdf')
 const ExcelJS = require('exceljs');
+const User = require('../../models/userSchema');
 
 const loadSalesReport = async (req, res) => {
   try {
@@ -28,13 +29,23 @@ const loadSalesReport = async (req, res) => {
       match.paymentMethod = map[String(payment).toLowerCase()] || payment
     }
 
-    if (search && search.trim() !== '') {
-      const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const tokens = search.trim().split(/\s+/); // split by spaces
+    if (search && search.trim() !== '') { // Search by customer name/email or order ID
+      const searchRegex = new RegExp(search, 'i');
+      
+      // Find users matching the search query
+      const matchingUsers = await User.find({
+        $or: [
+          { firstName: searchRegex },
+          { lastName: searchRegex },
+          { email: searchRegex }
+        ]
+      }).select('_id');
+      const matchingUserIds = matchingUsers.map(u => u._id);
 
-      match.$and = tokens.map(token => ({
-        fullName: { $regex: new RegExp(escapeRegex(token), 'i') }
-      }));
+      match.$or = [
+        { orderId: searchRegex },
+        { userId: { $in: matchingUserIds } }
+      ];
     }
 
     
@@ -129,6 +140,7 @@ const loadSalesReport = async (req, res) => {
           productName: 'No items in this order',
           quantity: 0,
           price: 0,
+        couponDiscount: Number(order.couponDiscount) || 0,
           totalAmount: Number(order.totalPrice) || 0,
           discount: Number((order.discountPrice !== undefined) ? order.discountPrice : order.couponDiscount) || 0,
           netPaidAmount: Number(order.finalAmount) || 0,
@@ -144,6 +156,7 @@ const loadSalesReport = async (req, res) => {
         status: item.status || order.status, // Use item status if available
         productName: item.productId?.productName || 'Unknown Product',
         quantity: item.quantity || 0,
+        couponDiscount: Number(order.couponDiscount) || 0,
         price: (item.price || 0) * (item.quantity || 0), // Total for this line item
       }));
     });
@@ -245,12 +258,25 @@ const createSalesReportPDF = async (req, res) => {
     }
 
     // Search filter
-    if (search && search.trim() !== '') {
-      const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(escapeRegex(search), 'i');
-      match.$or = [{ 'userId.firstName': regex }, { 'userId.lastName': regex }, { 'userId.email': regex }];
-    }
+    if (search && search.trim() !== '') { // Search by customer name/email or order ID
+      const searchRegex = new RegExp(search, 'i');
+      
+      // Find users matching the search query
+      const matchingUsers = await User.find({
+        $or: [
+          { firstName: searchRegex },
+          { lastName: searchRegex },
+          { email: searchRegex }
+        ]
+      }).select('_id');
+      const matchingUserIds = matchingUsers.map(u => u._id);
 
+      match.$or = [
+        { orderId: searchRegex },
+        { userId: { $in: matchingUserIds } }
+      ];
+    }
+    
     // Date filter presets
     if (dateFilter && dateFilter !== 'all' && dateFilter !== 'custom') {
       const today = new Date();
@@ -378,12 +404,25 @@ const createSalesReportExcel = async (req, res) => {
     }
 
     // Search filter
-    if (search && search.trim() !== '') {
-      const escapeRegex = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(escapeRegex(search), 'i');
-      match.$or = [{ 'userId.firstName': regex }, { 'userId.lastName': regex }, { 'userId.email': regex }];
-    }
+    if (search && search.trim() !== '') { // Search by customer name/email or order ID
+      const searchRegex = new RegExp(search, 'i');
+      
+      // Find users matching the search query
+      const matchingUsers = await User.find({
+        $or: [
+          { firstName: searchRegex },
+          { lastName: searchRegex },
+          { email: searchRegex }
+        ]
+      }).select('_id');
+      const matchingUserIds = matchingUsers.map(u => u._id);
 
+      match.$or = [
+        { orderId: searchRegex },
+        { userId: { $in: matchingUserIds } }
+      ];
+    }
+    
     // Date filter presets
     if (dateFilter && dateFilter !== 'all' && dateFilter !== 'custom') {
       const today = new Date();

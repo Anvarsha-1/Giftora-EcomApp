@@ -263,11 +263,31 @@ const changePassword = async (req, res) => {
             return res.json({ success: false, message: "Incorrect current password" })
         }
 
-        if (newPassword.length < 6) {
-            return res.json({ success: false, message: "new password length must be at least 6 characters" })
-        }
         if (newPassword !== confirmPassword) {
             return res.json({ success: false, message: "new Password and confirm password  does not match" })
+        }
+
+        // --- Strong Password Validation ---
+        const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+        const repeatingCharsRegex = /(.)\1\1/;
+
+        if (newPassword.length < 8) {
+            return res.json({ success: false, message: "Password must be at least 8 characters long." });
+        }
+        if (!/[a-z]/.test(newPassword)) {
+            return res.json({ success: false, message: "Password must contain at least one lowercase letter." });
+        }
+        if (!/[A-Z]/.test(newPassword)) {
+            return res.json({ success: false, message: "Password must contain at least one uppercase letter." });
+        }
+        if (!/\d/.test(newPassword)) {
+            return res.json({ success: false, message: "Password must contain at least one number." });
+        }
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword)) {
+            return res.json({ success: false, message: "Password must contain at least one special character." });
+        }
+        if (repeatingCharsRegex.test(newPassword)) {
+            return res.json({ success: false, message: "Password cannot contain repeating characters (e.g., 'aaa')." });
         }
 
         const hashedPassword = await securePassword(newPassword)

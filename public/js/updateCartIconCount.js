@@ -1,7 +1,7 @@
 async function updateCartCount() {
     try {
        
-        const res = await fetch('/cart/count');
+        const res = await fetch('/cart/count',{headers: { 'Accept': 'application/json' }});
         const data = await res.json();
         if (data.success) {
             console.log(data)
@@ -17,8 +17,11 @@ async function updateCartCount() {
         }
     
     } catch (err) {
+        
         console.error('Cart count update failed:', err);
     }
 }
 
-document.addEventListener('DOMContentLoaded', updateCartCount);
+    document.addEventListener('DOMContentLoaded', updateCartCount);
+
+

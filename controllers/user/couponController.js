@@ -52,21 +52,25 @@ const loadCoupons = async (req, res) => {
             .sort(sort)
             .skip((page - 1) * limit)
             .limit(limit);
-
+        
         let allCoupons = [...commonCoupons];
 
      
         if (user.redeemedUser && user.redeemedUser.length > 0) {
             console.log("Referral user:", user.firstName, user.redeemedUser);
 
-            const userCoupons = await UserCoupon.find({ userId: user._id });
+            const userCoupons = await UserCoupon.find({ userId: user._id }).populate('couponId');
             console.log("Referral coupons found:", userCoupons);
 
             for (const uc of userCoupons) {
-                const referralCoupon = await Coupon.findById(uc.couponId);
-                if (referralCoupon) {
+                const referralCoupon = uc.couponId;
+                if (referralCoupon && !allCoupons.some(c => c._id.equals(referralCoupon._id))) {
+                    // Apply search filter to referral coupons as well
+                    const searchRegex = new RegExp(searchQuery, 'i');
+                    if (searchQuery === "" || searchRegex.test(referralCoupon.code) || searchRegex.test(referralCoupon.description)) {
                     allCoupons.push(referralCoupon);
                     console.log("Added referral coupon:", referralCoupon.code);
+                    }
                 }
             }
         }
@@ -81,6 +85,18 @@ const loadCoupons = async (req, res) => {
         const TotalCouponCount = allCoupons.length;
         console.log(TotalCouponCount)
         const totalPages = Math.ceil(TotalCouponCount / limit);
+
+        if (req.xhr) {
+            return res.json({
+                coupons: allCoupons,
+                pagination: {
+                    currentPage: page,
+                    totalPages: totalPages,
+                    limit: limit,
+                    totalItems: TotalCouponCount
+                }
+            });
+        }
 
         return res.render("coupon-listing-page", {
             coupon: allCoupons,
@@ -105,21 +121,47 @@ const loadCoupons = async (req, res) => {
 
 const showAvailableCoupon = async (req, res) => {
     try {
-        const coupons = await Coupon.find({
+        const userId = new mongoose.Types.ObjectId(req.session.user);
+
+        // 1. Get all active, non-expired "common" coupons
+        const commonCoupons = await Coupon.find({
             isDeleted: false,
             isActive: true,
-            expiry: { $gt: new Date() }
-        })
+            expiry: { $gt: new Date() },
+            couponType: 'common'
+        });
 
-        if (!coupons.length) {
-            return res.json({ success: false, message: "No coupons available" })
+        // 2. Get all personalized coupons (like referral) assigned to this user
+        const userCouponLinks = await UserCoupon.find({ userId: userId, isUsed: false })
+            .populate({
+                path: 'couponId',
+                match: {
+                    isDeleted: false,
+                    isActive: true,
+                    expiry: { $gt: new Date() }
+                }
+            });
+
+        const userSpecificCoupons = userCouponLinks
+            .filter(link => link.couponId) // Filter out any links where the coupon itself might be expired/deleted
+            .map(link => link.couponId);
+
+        // 3. Combine and deduplicate
+        const allCoupons = [...commonCoupons];
+        userSpecificCoupons.forEach(coupon => {
+            if (!allCoupons.some(c => c._id.equals(coupon._id))) {
+                allCoupons.push(coupon);
+            }
+        });
+
+        if (!allCoupons.length) {
+            return res.json({ success: false, message: "No coupons available" });
         }
 
-        const couponsWithFlag = coupons.map(coupon => {
+        const couponsWithFlag = allCoupons.map(coupon => {
             const alreadyUsed = coupon.usedBy.some(
                 u => u.userId.toString() === req.session.user.toString()
             )
-
             return {
                 code: coupon.code,
                 description: coupon.description,
@@ -130,9 +172,9 @@ const showAvailableCoupon = async (req, res) => {
                 expiry: coupon.expiry,
                 alreadyUsed
             }
-        })
+        });
 
-        return res.json({ success: true, data: couponsWithFlag })
+        return res.json({ success: true, data: couponsWithFlag });
     } catch (err) {
         console.error(err)
         return res.status(500).json({ success: false, message: "Server error" })
@@ -307,5 +349,3 @@ module.exports = {
     applyCoupon,
     removeCoupon
 }
-
-

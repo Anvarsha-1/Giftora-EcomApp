@@ -4,12 +4,8 @@ const PAGE_WIDTH = 595.28; // A4 width in points
 const FONT_REGULAR = 'Helvetica'
 const FONT_BOLD = 'Helvetica-Bold'
 
-/**
- * Generates a detailed sales report PDF.
- * @param {Array} orders - The array of formatted order data.
- * @param {Object} summary - The summary statistics for the report.
- * @param {Object} res - The Express response object.
- */
+
+
 function generateSalesReportPDF(orders, summary, res) {
   const doc = new PDFDocument({ 
     size: 'A4',
@@ -26,7 +22,7 @@ function generateSalesReportPDF(orders, summary, res) {
   doc.pipe(res)
 
   // --- Reusable Helper Functions ---
-  const formatCurrency = (amount) => `₹${(amount || 0).toLocaleString('en-IN')}`
+  const formatCurrency = (amount) => `Rs. ${(amount || 0).toLocaleString('en-IN')}`
   const formatDate = (date) => new Date(date).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })
 
   // --- Document Header ---

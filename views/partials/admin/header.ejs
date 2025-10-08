@@ -1,46 +1,40 @@
 <link rel="stylesheet" href="/css/admin/admin-Dashboard.css" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 <!-- Sidebar Navigation -->
-<div class="sidebar w-64 min-h-screen bg-[#16355d] flex flex-col text-white">
-<div class="logo-section flex items-center justify-between px-4 py-4 border-b border-blue-900">
-<img src="/images/header/giftora.png" alt="Giftora Logo" class="logo-img w-32" />
-<button type="button" class="toggle-sidebar text-2xl" aria-label="Toggle sidebar">
+<div class="sidebar">
+<div class="logo-section">
+<img src="/images/header/giftora.png" alt="Giftora Logo" class="logo-img" />
+<button type="button" class="toggle-sidebar desktop-toggle" aria-label="Toggle sidebar">
 <i class="fas fa-bars"></i>
 </button>
 </div>
 
-<nav class="nav-section flex-1 flex flex-col gap-0.5 mt-2">
-<a href="/admin/dashboard" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Dashboard">
+<nav class="nav-section">
+<a href="/admin/dashboard" class="nav-item" data-tooltip="Dashboard">
 <i class="fas fa-chart-line"></i><span>Dashboard</span>
 </a>
-<a href="/admin/products" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Products">
+<a href="/admin/products" class="nav-item" data-tooltip="Products">
 <i class="fas fa-box"></i><span>Products</span>
 </a>
-<a href="/admin/orders" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Order Lists">
+<a href="/admin/orders" class="nav-item" data-tooltip="Order Lists">
 <i class="fas fa-list-alt"></i><span>Order Lists</span>
 </a>
-<a href="/admin/users" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Users">
+<a href="/admin/users" class="nav-item" data-tooltip="Users">
 <i class="fas fa-users"></i><span>Users</span>
 </a>
-<a href="/sales" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Sales">
+<a href="/sales" class="nav-item" data-tooltip="Sales">
 <i class="fas fa-chart-bar"></i><span>Sales</span>
 </a>
-<a href="/admin/coupons" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Coupons">
+<a href="/admin/coupons" class="nav-item" data-tooltip="Coupons">
 <i class="fas fa-ticket-alt"></i><span>Coupons</span>
 </a>
-<a href="/admin/category" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Category">
+<a href="/admin/category" class="nav-item" data-tooltip="Category">
 <i class="fas fa-tags"></i><span>Category</span>
-</a>
-<a href="/admin/banner" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Banner">
-<i class="fas fa-image"></i><span>Banner</span>
-</a>
-<a href="/admin/offer" class="nav-item flex items-center gap-3 px-6 py-3 hover:bg-blue-800 transition" data-tooltip="Offer">
-<i class="fas fa-percent"></i><span>Offer</span>
 </a>
 </nav>
 
-<div class="logout-section border-t border-blue-900 mt-auto">
-<a href="/admin/logout" class="logout-btn flex gap-2 items-center px-6 py-4 hover:bg-blue-800 transition">
+<div class="logout-section">
+<a href="/admin/logout" class="logout-btn">
 <i class="fas fa-sign-out-alt"></i><span>Logout</span>
 </a>
 </div>

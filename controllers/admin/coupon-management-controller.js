@@ -11,7 +11,7 @@ const getCouponPage = async(req,res)=>{
         const typeFilter = req.query.type || "all";
         const sortOption = req.query.sort || "newest";
         const page = parseInt(req.query.page) || 1; 
-        const limit = 2;
+        const limit = 4;
         console.log(statusFilter, typeFilter, sortOption,searchQuery)
         
         let filter = {

@@ -9,114 +9,97 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet" />
     <style>
         .sidebar {
-            width: 100%;
-            max-width: 384px;
-            /* Matches md:w-96 */
             background: white;
             border-radius: 0.5rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             border: 1px solid #e5e7eb;
             height: fit-content;
-            position: sticky;
-            top: 0;
-            left: 0;
-            z-index: 50;
-            /* Below header (z-1000) */
-            transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             border-radius: 0.5rem;
-            transition: all 0.3s ease;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            white-space: nowrap;
         }
 
         .nav-item:hover {
-            transform: scale(1.02);
+            background-color: #f3f4f6; /* gray-100 */
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 60px;
-                /* Compact width for icons only */
-                padding: 6px;
-            }
+        .nav-item.active {
+            background-color: #f3f4f6; /* gray-100 */
+            color: #2563eb; /* primary color */
+            font-weight: 600;
+        }
 
+        /* Mobile & Tablet Styles */
+        @media (max-width: 778px) {
+            .sidebar {
+                /* Horizontal layout on mobile */
+                overflow-x: auto;
+                padding: 0.5rem;
+                /* Hide scrollbar visually */
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+                
+            }
+            .sidebar::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, and Opera */
+            }
+            .sidebar .header-section {
+                display: none; /* Hide "Manage Account" on mobile */
+            }
+            .sidebar nav {
+                display: flex;
+                flex-direction: row;
+                justify-content: center; /* Center the icons */
+                gap: 0.25rem;
+            }
             .nav-item {
+                padding: 0.75rem; /* Make it more square-like */
+                font-size: 1.25rem; /* Make icons bigger */
                 justify-content: center;
-                /* Center icons */
-                padding: 8px;
             }
-
-            .nav-item div {
-                margin: 0;
-                /* Remove margin for icon-only display */
+            .nav-item .icon-wrapper {
+                margin-right: 0; /* No margin needed for icon-only view */
             }
-
             .nav-item span {
-                display: none;
-                /* Hide text labels */
+                display: none; /* Hide text on mobile */
             }
-
-            .sidebar.full {
-                width: 100%;
-                max-width: 320px;
-                /* Full width when expanded */
-                padding: 24px;
-                transform: translateX(0);
-            }
-
-            .sidebar.full .nav-item {
-                justify-content: flex-start;
-                padding: 12px 24px;
-            }
-
-            .sidebar.full .nav-item span {
-                display: inline;
-                /* Show text labels when expanded */
-            }
-
-            .sidebar.full .header-section {
-                display: flex;
-                /* Show header when expanded */
-            }
-
-            .header-section {
-                display: none;
-                /* Hide header in collapsed state */
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 1.5rem;
-            }
-
-            #close-sidebar {
-                display: flex;
-                /* Keep close button visible */
+            .nav-item.active {
+                background-color: #e5e7eb; /* gray-200 */
             }
         }
 
-        @media (min-width: 769px) {
+        /* Desktop Styles */
+        @media (min-width: 768px) {
             .sidebar {
-                transform: translateX(0);
-                /* Always visible */
                 width: 100%;
                 max-width: 384px;
-                padding: 24px;
+                padding: 1.5rem;
+                position: sticky;
+                top: 73px;
+            }
+
+            .sidebar nav {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem; /* space-y-3 */
             }
 
             .nav-item {
                 justify-content: flex-start;
-                padding: 12px 24px;
+                padding: 0.75rem 1.5rem; /* px-6 py-3 */
+                font-size: 1rem; /* text-base */
             }
 
-            .nav-item span {
-                display: inline;
+            .nav-item .icon-wrapper {
+                margin-right: 1rem;
             }
 
             .header-section {
-                display: flex;
-                /* Show header in desktop */
                 align-items: center;
                 justify-content: space-between;
                 margin-bottom: 1.5rem;
@@ -128,66 +111,61 @@
 <body>
     <aside id="sidebar" class="sidebar">
         <div class="header-section">
-            <h2 class="text-xl font-semibold text-gray-900">Manage Account</h2>
-            <button id="close-sidebar"
-                class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
-                <i class="ri-close-line"></i>
-            </button>
+            <h2 class="text-xl font-semibold text-gray-800">Manage Account</h2>
         </div>
-        <nav class="space-y-3">
+        <nav>
             <a href="/account/profile"
-                class="nav-item flex items-center px-6 py-4 text-base font-medium rounded-lg transition-all duration-300 hover:scale-[1.02]">
-                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                class="nav-item">
+                <div class="icon-wrapper">
                     <i class="ri-user-line text-current"></i>
                 </div>
                 <span>My Profile</span>
             </a>
             <a href="/account/addresses"
-                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
-                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                class="nav-item">
+                <div class="icon-wrapper">
                     <i class="ri-map-pin-line text-current"></i>
                 </div>
                 <span>Address Book</span>
             </a>
             <a href="/orders"
-                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
-                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                class="nav-item">
+                <div class="icon-wrapper">
                     <i class="ri-archive-line text-current"></i>
                 </div>
                 <span>My Orders</span>
             </a>
             <a href="/wishlist"
-                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
-                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                class="nav-item">
+                <div class="icon-wrapper">
                     <i class="ri-heart-line text-current"></i>
                 </div>
                 <span>My Wishlist</span>
             </a>
             <a href="/account/wallet"
-                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
-                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                class="nav-item">
+                <div class="icon-wrapper">
                     <i class="ri-wallet-line text-current"></i>
                 </div>
                 <span>Wallet</span>
             </a>
             <a href="/coupons"
-                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
-                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                class="nav-item">
+                <div class="icon-wrapper">
                     <i class="ri-coupon-line text-current"></i>
                 </div>
                 <span>Coupons</span>
             </a>
             <a href="/account/referral"
-                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
-                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                class="nav-item">
+                <div class="icon-wrapper">
                     <i class="ri-gift-line text-current"></i>
-
                 </div>
                 <span>Referral</span>
             </a>
             <a href="/account/change/password"
-                class="nav-item flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-200">
-                <div class="w-6 h-6 flex items-center justify-center mr-4">
+                class="nav-item">
+                <div class="icon-wrapper">
                     <i class="ri-key-line text-current"></i>
                 </div>
                 <span>Password Management</span>
@@ -202,31 +180,10 @@
 
             navLinks.forEach(link => {
                 if (link.getAttribute('href') === currentPath) {
-                    link.classList.add('bg-gray-100', 'text-primary', 'font-semibold');
+                    link.classList.add('active');
                 } else {
                     link.classList.add('text-gray-700');
                 }
-            });
-
-            const sidebar = document.getElementById('sidebar');
-            const closeBtn = document.getElementById('close-sidebar');
-
-            if (closeBtn && sidebar) {
-                closeBtn.addEventListener('click', () => {
-                    sidebar.classList.toggle('full');
-                });
-            }
-
-            // Close sidebar when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!sidebar.contains(e.target) && !closeBtn.contains(e.target)) {
-                    sidebar.classList.remove('full');
-                }
-            });
-
-            // Prevent closing when clicking inside sidebar
-            sidebar.addEventListener('click', (e) => {
-                e.stopPropagation();
             });
         });
     </script>
