@@ -5,8 +5,8 @@ require('dotenv').config()
 
 const createRazorpayInstance = () => {
     return new RazorPay({
-        key_id: process.env.Razorpay_key_id,
-        key_secret: process.env.Razorpay_key_secret,
+        key_id: process.env.RAZORPAY_KEY_ID,
+        key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 }
 
