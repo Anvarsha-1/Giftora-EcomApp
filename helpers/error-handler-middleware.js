@@ -17,7 +17,7 @@ const errorHandler = (err, req, res, next) => {
     }
 
     if (statusCode === 404) {
-        return res.status(404).render('user/page-404', { title: 404, message: message })
+        return res.status(404).render('user/Page-404', { title: 404, message: message })
     } else if (statusCode === 500) {
         return res.status(500).render('user/error', { title: 404, message: message })
     }
