@@ -410,10 +410,10 @@
 
                     <!-- Buttons Section -->
     <div class="flex items-center gap-3 mt-4">
-        <!-- Add to Cart -->
-        <button type="button" data-id="<%= product._id %>"
-            class="add-to-cart flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition-all">
-            <i class="fas fa-shopping-cart"></i>
+        <!-- Add to Cart --> 
+        <button type="button" data-id="<%= product._id %>" 
+            class="add-to-cart-main flex-grow flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all text-lg">
+            <i class="fas fa-shopping-cart mr-2"></i>
             <span>Add to Cart</span>
         </button>
         
@@ -488,12 +488,21 @@
                                         <span class="text-lg font-bold text-gray-900">₹<%= relatedProducts[i].salesPrice.toLocaleString() %></span>
                                         <span class="text-sm text-gray-500 line-through">₹<%= relatedProducts[i].regularPrice.toLocaleString() %></span>
                                     </div>
-                                    <div class="mt-auto">
-                                        <button type="button" data-id="<%= relatedProducts[i]._id %>"
-                                            class="add-to-cart w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-md font-medium hover:bg-blue-600 transition-colors duration-300">
-                                            <i class="fas fa-shopping-cart text-sm"></i>
-                                            <span>Add to Cart</span>
-                                        </button>
+                                    <!-- Add to Cart button that appears on hover -->
+                                    <div class="absolute bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-sm transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                                        <% if (relatedProducts[i].status === 'Available' && relatedProducts[i].quantity > 0) { %>
+                                            <button type="button" data-id="<%= relatedProducts[i]._id %>"
+                                                class="add-to-cart w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors duration-300">
+                                                <i class="fas fa-shopping-cart text-sm"></i>
+                                                <span>Add to Cart</span>
+                                            </button>
+                                        <% } else { %>
+                                            <button type="button"
+                                                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-md font-medium cursor-not-allowed">
+                                                <i class="fas fa-times-circle text-sm"></i>
+                                                <span>Out of Stock</span>
+                                            </button>
+                                        <% } %>
                                     </div>
                                 </div>
                                 <!-- Discount Badge -->
