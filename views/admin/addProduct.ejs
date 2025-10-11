@@ -243,7 +243,7 @@
           dataTransfer.items.add(file);
           fileInput.files = dataTransfer.files;
           validateImages();
-        }, 'image/jpeg');
+        }, 'image/jpeg', 0.95);
         cropModal.style.display = 'none';
         cropper.destroy();
         cropper = null;

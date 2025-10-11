@@ -5,8 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Listing - Premium Store</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
   <style>
@@ -70,7 +73,8 @@
     }
 
     .search-input {
-      padding-right: 70px; /* Make space for buttons */
+      padding-right: 70px;
+      /* Make space for buttons */
     }
 
     .search-actions {
@@ -82,7 +86,8 @@
       gap: 4px;
     }
 
-    .search-btn, .clear-search-btn {
+    .search-btn,
+    .clear-search-btn {
       border: none;
       background-color: transparent;
       cursor: pointer;
@@ -93,7 +98,9 @@
       justify-content: center;
       transition: background-color 0.2s ease;
     }
-    .search-btn:hover, .clear-search-btn:hover {
+
+    .search-btn:hover,
+    .clear-search-btn:hover {
       background-color: #f0f0f0;
     }
 
@@ -164,7 +171,8 @@
       justify-content: center;
     }
 
-    .btn-primary, .btn-primary:hover {
+    .btn-primary,
+    .btn-primary:hover {
       background: var(--primary-color);
       color: var(--white);
       border: 1px solid var(--primary-color);
@@ -175,7 +183,8 @@
       transform: translateY(-1px);
     }
 
-    .btn-secondary, .btn-secondary:hover {
+    .btn-secondary,
+    .btn-secondary:hover {
       background: transparent;
       color: var(--accent-color);
       border: 1px solid var(--accent-color);
@@ -231,8 +240,8 @@
     }
 
     .product-img {
-      width: 100%;
-      height: 100%;
+      width: 300px;
+      height: 300px;
       object-fit: cover;
       object-position: center;
       transition: var(--transition);
@@ -458,215 +467,219 @@
 
     <div class="container-lg mt-4">
       <div class="row">
-      <!-- Sidebar Filters -->
-      <aside class="col-lg-3 d-none d-lg-block" id="desktopSidebar">
-        <nav class="breadcrumb">
-          <a href="/home" class="home-breadcrumb" style="color: var(--dark-gray)">Home</a>
-          <span class="breadcrumb-separator">/</span>
-          <span>Shop</span>
-        </nav>
+        <!-- Sidebar Filters -->
+        <aside class="col-lg-3 d-none d-lg-block" id="desktopSidebar">
+          <nav class="breadcrumb">
+            <a href="/home" class="home-breadcrumb" style="color: var(--dark-gray)">Home</a>
+            <span class="breadcrumb-separator">/</span>
+            <span>Shop</span>
+          </nav>
 
-        <div class="card shadow-sm">
-          <div class="card-header bg-light">
-            <h2 class="fs-5 mb-0 fw-semibold">
-              <i class="fas fa-filter"></i>
-              Search & Filter
-            </h2>
-          </div>
-          <div class="card-body">
-          <div class="search-container">
-            <input type="text" id="searchInput" class="form-control search-input" placeholder="Search products..."
-              value="<%= typeof search !== 'undefined' ? search : '' %>">
-            <div class="search-actions">
-              <button class="search-btn text-primary" id="searchBtn" title="Search">
-                <i class="fas fa-search"></i>
-              </button>
-              <button class="clear-search-btn hidden text-danger" id="clearSearchBtn" title="Clear Search">
-                <i class="fas fa-times"></i>
-              </button>
+          <div class="card shadow-sm">
+            <div class="card-header bg-light">
+              <h2 class="fs-5 mb-0 fw-semibold">
+                <i class="fas fa-filter"></i>
+                Search & Filter
+              </h2>
             </div>
-          </div>
-
-          <div class="filters-grid mt-3">
-            <div class="filter-group">
-              <label class="filter-label">
-                <i class="fas fa-list"></i> Category
-              </label>
-              <select id="categoryFilter" class="filter-select">
-                <option value="">All Categories</option>
-                <% cat.forEach((category)=> { %>
-                  <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : '' %>>
-                    <%= category.name %>
-                  </option>
-                  <% }) %>
-              </select>
-            </div>
-
-            <div class="filter-group">
-              <label class="filter-label">
-                <i class="fas fa-dollar-sign"></i> Price Range
-              </label>
-              <div class="price-range-container">
-                <input type="number" id="minPrice" class="filter-input" placeholder="Min $" min="0"
-                  value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>">
-                <span class="price-separator">-</span>
-                <input type="number" id="maxPrice" class="filter-input" placeholder="Max $" min="0"
-                  value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>">
+            <div class="card-body">
+              <div class="search-container">
+                <input type="text" id="searchInput" class="form-control search-input" placeholder="Search products..."
+                  value="<%= typeof search !== 'undefined' ? search : '' %>">
+                <div class="search-actions">
+                  <button class="search-btn text-primary" id="searchBtn" title="Search">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <button class="clear-search-btn hidden text-danger" id="clearSearchBtn" title="Clear Search">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div class="filter-group">
-              <label class="filter-label">
-                <i class="fas fa-sort"></i> Sort By
-              </label>
-              <select id="sortBy" class="filter-select">
-                <option value="createdAt-desc">Newest First</option>
-                <option value="name-asc">Name: A to Z</option>
-                <option value="name-desc">Name: Z to A</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
-            </div>
-          </div>
+              <div class="filters-grid mt-3">
+                <div class="filter-group">
+                  <label class="filter-label">
+                    <i class="fas fa-list"></i> Category
+                  </label>
+                  <select id="categoryFilter" class="filter-select">
+                    <option value="">All Categories</option>
+                    <% cat.forEach((category)=> { %>
+                      <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : ''
+                        %>>
+                        <%= category.name %>
+                      </option>
+                      <% }) %>
+                  </select>
+                </div>
 
-          <div class="d-grid gap-2 mt-3">
-            <button class="btn btn-primary" id="applyFiltersBtn" title="Apply Filters">
-              <i class="fas fa-check"></i>
-              Apply
-            </button>
-            <button class="btn btn-outline-secondary" id="clearFiltersBtn" title="Clear All Filters">
-              <i class="fas fa-eraser"></i>
-              Clear
-            </button>
-          </div>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="col-lg-9">
-        <!-- Mobile Filter Toggle & Results Header -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFilters" aria-controls="offcanvasFilters">
-            <i class="fas fa-filter"></i> Filters
-          </button>
-          <div class="results-info ms-auto ms-lg-0">
-            Showing <span class="results-count fw-bold" id="resultsCount">
-              <%= typeof totalProduct !=='undefined' ? totalProduct : 0 %>
-            </span> products
-          </div>
-        </div>
-
-        <!-- Results Section -->
-        <div class="results-section bg-white p-3 p-md-4 rounded-3 shadow-sm">
-          <!-- Products Grid -->
-          <div class="row g-3 g-md-4" id="products-grid">
-            <% if (products && products.length> 0) { %>
-              <% for(let i=0; i < products.length; i++) { %>
-                <div class="col-6 col-md-4">
-                  <div class="product-card h-100" data-id="<%= products[i]._id %>">
-                  <div class="product-image">
-                    <% if (products[i].productImage) { %>
-                      <a href="/productsDetails/<%= products[i]._id %>">
-                        <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>"
-                          class="product-img" data-id="<%= products[i]._id %>">
-                      </a>
-                      <% } else { %>
-                        <div
-                          style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
-                          <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
-                        </div>
-                        <% } %>
-                          <div class="discount-badge <%= products[i].status === 'Available' ? '' : 'out-of-stock' %>">
-                            <%= products[i].status==='Available' ? `${products[i].bestOffer}%` : 'Out of Stock' %>
-                          </div>
-                          <% if (!user) { %>
-                            <button type="button" class="wishlist-btn" onclick="handleWishlistClick()">
-                              <i class="far fa-heart"></i>
-                            </button>
-                            <% } else { %>
-                              <button type="button"
-                                class="wishlist-btn <%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'active' : '' %>"
-                                onclick="addWishlist('<%= products[i]._id %>', this)">
-                                <i
-                                  class="<%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
-                              </button>
-                              <% } %>
-                  </div>
-                  <div class="product-info">
-                    <div class="product-brand">PREMIUM</div>
-                    <h3 class="product-name">
-                      <%= products[i].productName %>
-                    </h3>
-                    <div class="product-rating">
-                      <div class="stars">
-                        <i class="fas fa-star star"></i>
-                        <i class="fas fa-star star"></i>
-                        <i class="fas fa-star star"></i>
-                        <i class="fas fa-star star"></i>
-                        <i class="fas fa-star star"></i>
-                      </div>
-                      <span class="rating-count">(247 reviews)</span>
-                    </div>
-                    <div class="product-prices">
-                      <span class="current-price">₹<%= products[i].salesPrice.toLocaleString() %></span> 
-                      <span class="original-price">₹<%= products[i].regularPrice.toLocaleString() %></span>
-                      <span class="price-savings">Save ₹<%= (products[i].regularPrice -
-                          products[i].salesPrice).toFixed(0) %></span>
-                    </div>
-                    <button type="button" class="add-to-cart" data-id="<%= products[i]._id %>" onclick="addToCart(this)"
-                      <%=products[i].status !=='Available' ? 'disabled' : '' %>>
-                      <i class="fas fa-shopping-cart"></i>
-                      <span>Add to Cart</span>
-                    </button>
-                  </div>
+                <div class="filter-group">
+                  <label class="filter-label">
+                    <i class="fas fa-dollar-sign"></i> Price Range
+                  </label>
+                  <div class="price-range-container">
+                    <input type="number" id="minPrice" class="filter-input" placeholder="Min $" min="0"
+                      value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>">
+                    <span class="price-separator">-</span>
+                    <input type="number" id="maxPrice" class="filter-input" placeholder="Max $" min="0"
+                      value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>">
                   </div>
                 </div>
-                <% } %>
-                  <% } else { %>
-                    <div class="no-results">
-                      <i class="fas fa-box-open"></i>
-                      <h3>No Products Found</h3>
-                      <p>Try adjusting your filters or search terms (e.g., gift, candle, romantic)</p>
-                    </div>
-                    <% } %>
+
+                <div class="filter-group">
+                  <label class="filter-label">
+                    <i class="fas fa-sort"></i> Sort By
+                  </label>
+                  <select id="sortBy" class="filter-select">
+                    <option value="createdAt-desc">Newest First</option>
+                    <option value="name-asc">Name: A to Z</option>
+                    <option value="name-desc">Name: Z to A</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 mt-3">
+                <button class="btn btn-primary" id="applyFiltersBtn" title="Apply Filters">
+                  <i class="fas fa-check"></i>
+                  Apply
+                </button>
+                <button class="btn btn-outline-secondary" id="clearFiltersBtn" title="Clear All Filters">
+                  <i class="fas fa-eraser"></i>
+                  Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="col-lg-9">
+          <!-- Mobile Filter Toggle & Results Header -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasFilters" aria-controls="offcanvasFilters">
+              <i class="fas fa-filter"></i> Filters
+            </button>
+            <div class="results-info ms-auto ms-lg-0">
+              Showing <span class="results-count fw-bold" id="resultsCount">
+                <%= typeof totalProduct !=='undefined' ? totalProduct : 0 %>
+              </span> products
+            </div>
           </div>
 
-          <!-- Pagination -->
-          <% if (typeof totalPage !=='undefined' && totalPage>= 1) { %>
-            <nav aria-label="Page navigation">
-              <ul class="pagination justify-content-center mt-4" id="pagination">
-              <% const page=Number(currentPage) || 1; %>
-                <% const total=Number(totalPage) || 1; %>
-                  <% const searchQuery=typeof search !=='undefined' && search ? encodeURIComponent(search) : '' ; %>
-                    <% if (page> 1) { %>
-                      <li class="page-item">
-                        <a class="page-link" href="?page=<%= page - 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>">Previous</a>
-                      </li>
-                      <% } else { %>
-                        <li class="page-item disabled">
-                          <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                        </li>
-                        <% } %>
-                          <% for (let i=1; i <=total; i++) { %>
-                            <li class="page-item <%= i === page ? 'active' : '' %>">
-                              <a class="page-link" href="?page=<%= i %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>"><%= i %></a>
+          <!-- Results Section -->
+          <div class="results-section bg-white p-3 p-md-4 rounded-3 shadow-sm">
+            <!-- Products Grid -->
+            <div class="row g-3 g-md-4" id="products-grid">
+              <% if (products && products.length> 0) { %>
+                <% for(let i=0; i < products.length; i++) { %>
+                  <div class="col-6 col-md-4">
+                    <div class="product-card h-100" data-id="<%= products[i]._id %>">
+                      <div class="product-image">
+                        <% if (products[i].productImage) { %>
+                          <% // 1. Define the base URL. No need for [0] or .url now! const
+                            imageUrl=products[i].productImage; 
+                            const transformedUrl=imageUrl.replace( '/upload/'
+                            , '/upload/w_300,h_300,c_fill,g_auto,q_auto:best,f_auto/' ); 
+                            %>
+                            <a href="/productsDetails/<%= products[i]._id %>">
+                              <img src="<%= transformedUrl %>" alt="<%= products[i].productName %>" class="product-img"
+                                data-id="<%= products[i]._id %>">
+                            </a>
+                            <% } else { %>
+                              <div
+                                style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
+                                <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
+                              </div>
+                              <% } %>
+                                <div
+                                  class="discount-badge <%= products[i].status === 'Available' ? '' : 'out-of-stock' %>">
+                                  <%= products[i].status==='Available' ? `${products[i].bestOffer}%` : 'Out of Stock' %>
+                                </div>
+                                <% if (!user) { %>
+                                  <button type="button" class="wishlist-btn" onclick="handleWishlistClick()">
+                                    <i class="far fa-heart"></i>
+                                  </button>
+                                  <% } else { %>
+                                    <button type="button"
+                                      class="wishlist-btn <%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'active' : '' %>"
+                                      onclick="addWishlist('<%= products[i]._id %>', this)">
+                                      <i
+                                        class="<%= wishlistId && Array.isArray(wishlistId) && wishlistId.includes(products[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
+                                    </button>
+                                    <% } %>
+                      </div>
+                      <div class="product-info">
+
+                        <h3 class="product-name">
+                          <%= products[i].productName %>
+                        </h3>
+
+                        <div class="product-prices">
+                          <span class="current-price">₹<%= products[i].salesPrice.toLocaleString() %></span>
+                          <span class="original-price">₹<%= products[i].regularPrice.toLocaleString() %></span>
+                          <span class="price-savings">Save ₹<%= (products[i].regularPrice -
+                              products[i].salesPrice).toFixed(0) %></span>
+                        </div>
+                        <button type="button" class="add-to-cart" data-id="<%= products[i]._id %>"
+                          onclick="addToCart(this)" <%=products[i].status !=='Available' ? 'disabled' : '' %>>
+                          <i class="fas fa-shopping-cart"></i>
+                          <span>Add to Cart</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <% } %>
+                    <% } else { %>
+                      <div class="no-results">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No Products Found</h3>
+                        <p>Try adjusting your filters or search terms (e.g., gift, candle, romantic)</p>
+                      </div>
+                      <% } %>
+            </div>
+
+            <!-- Pagination -->
+            <% if (typeof totalPage !=='undefined' && totalPage>= 1) { %>
+              <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-4" id="pagination">
+                  <% const page=Number(currentPage) || 1; %>
+                    <% const total=Number(totalPage) || 1; %>
+                      <% const searchQuery=typeof search !=='undefined' && search ? encodeURIComponent(search) : '' ; %>
+                        <% if (page> 1) { %>
+                          <li class="page-item">
+                            <a class="page-link"
+                              href="?page=<%= page - 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>">Previous</a>
+                          </li>
+                          <% } else { %>
+                            <li class="page-item disabled">
+                              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
                             </li>
                             <% } %>
-                              <% if (page < total) { %>
-                                <li class="page-item">
-                                  <a class="page-link" href="?page=<%= page + 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>">Next</a>
+                              <% for (let i=1; i <=total; i++) { %>
+                                <li class="page-item <%= i === page ? 'active' : '' %>">
+                                  <a class="page-link"
+                                    href="?page=<%= i %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>">
+                                    <%= i %>
+                                  </a>
                                 </li>
-                                <% } else { %>
-                                  <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
-                                  </li>
-                                  <% } %>
-              </ul>
-            </nav>
-            <% } %>
-        </div>
-      </main>
+                                <% } %>
+                                  <% if (page < total) { %>
+                                    <li class="page-item">
+                                      <a class="page-link"
+                                        href="?page=<%= page + 1 %><%= searchQuery ? '&amp;search=' + searchQuery : '' %>">Next</a>
+                                    </li>
+                                    <% } else { %>
+                                      <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+                                      </li>
+                                      <% } %>
+                </ul>
+              </nav>
+              <% } %>
+          </div>
+        </main>
       </div>
     </div>
     <%- include('../partials/user/footer.ejs') %>
@@ -675,7 +688,8 @@
       <div id="toastContainer" class="toast-container"></div>
 
       <!-- Offcanvas Filter for Mobile -->
-      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFilters" aria-labelledby="offcanvasFiltersLabel">
+      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasFilters"
+        aria-labelledby="offcanvasFiltersLabel">
         <div class="offcanvas-header border-bottom">
           <h5 class="offcanvas-title" id="offcanvasFiltersLabel"><i class="fas fa-filter"></i> Filters</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -683,10 +697,12 @@
         <div class="offcanvas-body">
           <div class="d-flex flex-column h-100">
             <div class="search-container mb-3">
-              <input type="text" id="searchInputMobile" class="form-control search-input" placeholder="Search products..." value="<%= typeof search !== 'undefined' ? search : '' %>">
+              <input type="text" id="searchInputMobile" class="form-control search-input"
+                placeholder="Search products..." value="<%= typeof search !== 'undefined' ? search : '' %>">
               <div class="search-actions">
                 <button class="search-btn" id="searchBtnMobile" title="Search"><i class="fas fa-search"></i></button>
-                <button class="clear-search-btn hidden" id="clearSearchBtnMobile" title="Clear Search"><i class="fas fa-times"></i></button>
+                <button class="clear-search-btn hidden" id="clearSearchBtnMobile" title="Clear Search"><i
+                    class="fas fa-times"></i></button>
               </div>
             </div>
             <div class="filters-grid flex-grow-1">
@@ -695,16 +711,20 @@
                 <select id="categoryFilterMobile" class="filter-select">
                   <option value="">All Categories</option>
                   <% cat.forEach((category)=> { %>
-                    <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : '' %>><%= category.name %></option>
-                  <% }) %>
+                    <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : '' %>
+                      ><%= category.name %>
+                    </option>
+                    <% }) %>
                 </select>
               </div>
               <div class="filter-group">
                 <label class="filter-label"><i class="fas fa-dollar-sign"></i> Price Range</label>
                 <div class="price-range-container">
-                  <input type="number" id="minPriceMobile" class="filter-input" placeholder="Min $" min="0" value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>">
+                  <input type="number" id="minPriceMobile" class="filter-input" placeholder="Min $" min="0"
+                    value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>">
                   <span class="price-separator">-</span>
-                  <input type="number" id="maxPriceMobile" class="filter-input" placeholder="Max $" min="0" value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>">
+                  <input type="number" id="maxPriceMobile" class="filter-input" placeholder="Max $" min="0"
+                    value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>">
                 </div>
               </div>
               <div class="filter-group">
@@ -719,7 +739,8 @@
               </div>
             </div>
             <div class="filter-actions mt-auto">
-              <button class="btn btn-primary" id="applyFiltersMobile" title="Apply Filters"><i class="fas fa-check"></i> Apply</button>
+              <button class="btn btn-primary" id="applyFiltersMobile" title="Apply Filters"><i class="fas fa-check"></i>
+                Apply</button>
               <button class="btn btn-secondary" id="clearFiltersMobile" title="Clear Filters">
                 <i class="fas fa-eraser"></i> Clear
               </button>
@@ -728,7 +749,9 @@
         </div>
       </div>
 
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
@@ -904,13 +927,12 @@
           `}
         </div>
         <div class="product-info">
-          <div class="product-brand">PREMIUM</div>
           <h3 class="product-name">${p.productName}</h3>
           <div class="product-rating">
             <div class="stars">
-              ${'<i class="fas fa-star star"></i>'.repeat(5)}
+              
             </div>
-            <span class="rating-count">(247 reviews)</span>
+            
           </div>
           <div class="product-prices">
             <span class="current-price">₹${p.salesPrice.toLocaleString()}</span>

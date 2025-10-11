@@ -323,8 +323,8 @@
         cropButton.addEventListener('click', () => {
             if (cropper) {
                 const canvas = cropper.getCroppedCanvas({
-                    width: 300,
-                    height: 300,
+                    width: 800,
+                    height: 800,
                     imageSmoothingQuality: 'high',
                 });
 
@@ -359,7 +359,7 @@
                     }
 
                     validateImages();
-                }, 'image/jpeg');
+                }, 'image/jpeg',0.95);
 
                 cropModal.style.display = 'none';
                 cropper.destroy();
