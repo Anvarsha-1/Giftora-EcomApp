@@ -214,7 +214,7 @@ const renderAdminDashboard = async (req, res) => {
             ])
 
         ])
-        return res.render("admin-dashboard", {
+        return res.render("admin-Dashboard", {
             salesReport: salesData,
             topProducts: topProduct,
             topCategories,

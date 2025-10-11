@@ -466,87 +466,63 @@
 
 
             <section class="mb-16">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
-                <div class="products-grid">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">You Might Also Like</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <% if (relatedProducts && relatedProducts.length> 0) { %>
                         <% for (let i=0; i < relatedProducts.length; i++) { %>
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <% if (relatedProducts[i].productImage && relatedProducts[i].productImage[0]?.url) {
-                                        %>
-                                        <a href="/productsDetails/<%= relatedProducts[i]._id %>">
-                                            <img src="<%= relatedProducts[i].productImage[0]?.url %>"
-                                                alt="<%= relatedProducts[i].productName %>" class="product-img">
+                            <div class="group relative bg-white border rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                <div class="aspect-w-1 aspect-h-1">
+                                    <a href="/productsDetails/<%= relatedProducts[i]._id %>">
+                                        <img src="<%= relatedProducts[i].productImage?.[0]?.url || '/path/to/placeholder.jpg' %>"
+                                            alt="<%= relatedProducts[i].productName %>"
+                                            class="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105">
+                                    </a>
+                                </div>
+                                <div class="p-4 flex flex-col flex-grow">
+                                    <h3 class="text-base font-semibold text-gray-800 truncate mb-2">
+                                        <a href="/productsDetails/<%= relatedProducts[i]._id %>" class="hover:text-blue-600">
+                                            <%= relatedProducts[i].productName %>
                                         </a>
-                                        <% } else { %>
-                                            <div
-                                                style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
-                                                <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
-                                            </div>
-                                            <% } %>
-                                                <% if (relatedProducts[i].salesPrice && relatedProducts[i].regularPrice>
-                                                    relatedProducts[i].salesPrice) { %>
-                                                    <div class="discount-badge">
-                                                        -<%= Math.round(((relatedProducts[i].regularPrice -
-                                                            relatedProducts[i].salesPrice) /
-                                                            relatedProducts[i].regularPrice) * 100) %>%
-                                                    </div>
-                                                    <% } %>
-                                                        <button type="button" onclick="addWishlist('<%= relatedProducts[i]._id %>', this)"
-                                                            class="related-wishlist-btn <%= (wishlistId && wishlistId.includes(relatedProducts[i]._id.toString())) ? 'bg-red-100 border-red-400' : '' %>"
-                                                            title="Add to Wishlist">
-                                                            <% if (wishlistId && wishlistId.includes(relatedProducts[i]._id.toString())) { %>
-                                                                <i class="fas fa-heart text-red-600"></i>
-                                                                <% } else { %>
-                                                                    <i class="far fa-heart text-red-400"></i>
-                                                                    <% } %>
-                                                        </button>
-
-
-
-                                </div>
-                                <div class="product-info">
-                                    <div class="product-brand">PREMIUM</div>
-                                    <h3 class="product-name">
-                                        <%= relatedProducts[i].productName %>
                                     </h3>
-                                    <div class="product-rating">
-                                        <div class="stars">
-                                            <i class="fas fa-star star"></i>
-                                            <i class="fas fa-star star"></i>
-                                            <i class="fas fa-star star"></i>
-                                            <i class="fas fa-star star"></i>
-                                            <i class="fas fa-star star"></i>
-                                        </div>
-                                        <span class="rating-count">(247 reviews)</span>
+                                    <div class="flex items-baseline gap-2 mb-4">
+                                        <span class="text-lg font-bold text-gray-900">₹<%= relatedProducts[i].salesPrice.toLocaleString() %></span>
+                                        <span class="text-sm text-gray-500 line-through">₹<%= relatedProducts[i].regularPrice.toLocaleString() %></span>
                                     </div>
-                                    <div class="product-prices">
-                                        <span class="current-price">₹<%= relatedProducts[i].salesPrice ||
-                                                relatedProducts[i].regularPrice %></span>
-                                        <span class="original-price">₹<%= relatedProducts[i].regularPrice.toFixed(0) %>
-                                                </span>
-                                        <span class="price-savings">Save ₹<%= (relatedProducts[i].regularPrice -
-                                                (relatedProducts[i].salesPrice ||
-                                                relatedProducts[i].regularPrice)).toFixed(0) %>
-                                        </span>
+                                    <div class="mt-auto">
+                                        <button type="button" data-id="<%= relatedProducts[i]._id %>"
+                                            class="add-to-cart w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-md font-medium hover:bg-blue-600 transition-colors duration-300">
+                                            <i class="fas fa-shopping-cart text-sm"></i>
+                                            <span>Add to Cart</span>
+                                        </button>
                                     </div>
-                                    <button type="button" data-id="<%= relatedProducts[i]._id %>"
-                                        class="add-to-cart flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-800 transition-all">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        <span>Add to Cart</span>
-                                    </button>
-
                                 </div>
-                            </div>
-                            <% } %>
-                                <% } else { %>
-                                    <div
-                                        style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
-                                        <i class="fas fa-box-open"
-                                            style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                                        <p style="font-size: 1.2rem;">No products available</p>
+                                <!-- Discount Badge -->
+                                <% if (relatedProducts[i].bestOffer > 0) { %>
+                                    <div class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md">
+                                        <%= relatedProducts[i].bestOffer %>% OFF
                                     </div>
+                                <% } %>
+                                <!-- Wishlist Button -->
+                                <button type="button" onclick="addWishlist('<%= relatedProducts[i]._id %>', this)"
+                                    class="related-wishlist-btn absolute top-3 right-3 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-all duration-300 hover:bg-white hover:scale-110"
+                                    title="Add to Wishlist">
+                                    <% if (wishlistId && wishlistId.includes(relatedProducts[i]._id.toString())) { %>
+                                        <i class="fas fa-heart text-red-500"></i>
+                                    <% } else { %>
+                                        <i class="far fa-heart text-gray-600"></i>
                                     <% } %>
+                                </button>
+                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <div class="col-span-full text-center py-12">
+                            <div class="inline-block bg-gray-100 p-6 rounded-full mb-4">
+                                <i class="fas fa-box-open text-4xl text-gray-400"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-700">No Related Products Found</h3>
+                            <p class="text-gray-500 mt-2">Check back later or explore other categories.</p>
+                        </div>
+                    <% } %>
                 </div>
             </section>
 
