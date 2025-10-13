@@ -15,6 +15,16 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --dark-gray: #343a40;
+            --white: #ffffff;
+            --border-radius: 8px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         :where([class^="ri-"])::before {
             content: "\f3c2";
         }
@@ -49,38 +59,85 @@
         }
 
         .related-wishlist-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 40px;
-    height: 40px;
-    background-color: #fff; /* base background */
-    border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+            /* base background */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+
+
+        /* Hover effect */
+        .related-wishlist-btn:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+        }
+
+        /* Active heart (in wishlist) */
+        .related-wishlist-btn.in-wishlist {
+            background-color: #fee2e2;
+            /* soft red */
+            border-color: #ef4444;
+            /* stronger red border */
+        }
+
+        .related-wishlist-btn.in-wishlist i {
+            color: #ef4444;
+            /* solid red heart */
+            transform: scale(1.2);
+        }
+        /* Custom Cart Button Styles */
+.custom-cart-btn {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    background-color: #000000;
+    border: none;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
+    color: #ffffff;
+    font-size: 1.2rem;
 }
 
-
-
-/* Hover effect */
-.related-wishlist-btn:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
+.custom-cart-btn:hover:not(:disabled) {
+    background-color: #333333;
 }
 
-/* Active heart (in wishlist) */
-.related-wishlist-btn.in-wishlist {
-    background-color: #fee2e2; /* soft red */
-    border-color: #ef4444;      /* stronger red border */
+.custom-cart-btn i:first-child {
+    position: absolute;
 }
 
-.related-wishlist-btn.in-wishlist i {
-    color: #ef4444; /* solid red heart */
-    transform: scale(1.2);
+.custom-cart-btn i:last-child {
+    position: absolute;
+    font-size: 0.8rem;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.custom-cart-btn:disabled {
+    background-color: #f9fafb;
+    color: #d1d5db;
+    cursor: not-allowed;
+}
+
+/* For out of stock */
+.custom-cart-btn:disabled i {
+    color: #d1d5db;
 }
 
 
@@ -216,6 +273,26 @@
             min-height: 200px;
         }
 
+        .add-to-cart {
+            margin-top: auto;
+            width: 100%;
+            background: var(--dark-gray);
+            color: var(--white);
+            border: none;
+            padding: 0.875rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .add-to-cart:hover:not(:disabled) {
+            background: var(--primary-color);
+        }
 
 
         .add-to-cart:hover {
@@ -307,14 +384,97 @@
             font-size: 1rem;
             color: #1f2937;
         }
+
+        /* Related product add to cart icon */
+        .add-to-cart-icon {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        .add-to-cart-icon:hover:not(:disabled) {
+            background: #e5e7eb;
+        }
+
+        .add-to-cart-icon:disabled {
+            background: #f9fafb;
+            color: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        /* Thumbnails responsive */
+        .thumbnails-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+        }
+
+        @media (min-width: 640px) {
+            .thumbnails-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Related products show more button */
+        .show-more-btn {
+            grid-column: 1 / -1;
+            justify-self: center;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .show-more-btn:hover {
+            background: #e5e7eb;
+            border-color: #9ca3af;
+        }
+
+        /* Reviews responsive */
+        @media (max-width: 768px) {
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Ensure full responsiveness for all sections */
+        .main-content {
+            padding: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-content {
+                padding: 2rem;
+            }
+        }
     </style>
 </head>
 
 <body class="bg-gray-50 min-h-screen">
     <%-include('../partials/user/newheader.ejs') %>
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+        <main class="main-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+            <nav class="flex items-center space-x-2 text-sm text-gray-500 mb-4 sm:mb-8">
                 <a href="/home" class="hover:text-primary transition-colors">Home</a>
                 <span>/</span>
                 <a href="/viewProducts" class="hover:text-primary transition-colors">Shop</a>
@@ -322,40 +482,43 @@
                 <span class="text-gray-900">Product Details</span>
             </nav>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12 lg:mb-16">
                 <div class="space-y-4">
                     <!-- Main Image -->
                     <div id="image-Container"
-                        class="zoom cursor-zoom-in w-full max-w-md border overflow-hidden bg-white">
+                        class="zoom cursor-zoom-in w-full max-w-md border overflow-hidden bg-white mx-auto rounded-lg">
                         <img id="mainImage" src="<%= mainImage.url %>" alt=""
                             class="w-full max-h-[440px] object-cover object-center bg-white" />
                     </div>
 
-                    <!-- Thumbnails including Main Image first -->
-                    <div class="grid grid-cols-3 gap-4">
-                        <!-- Main Image as first thumbnail -->
-                        <div class="relative w-[170px] h-[170px] overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
-                            data-image="<%= mainImage.url %>">
-                            <img src="<%= mainImage.url.replace('/upload/', '/upload/w_600,h_600,c_fill,q_auto:best,f_auto/') %>" alt="" class="w-full h-full object-cover p-1" />
-                            <% console.log(mainImage.url.replace('/upload/', '/upload/w_600,h_600,c_fill,q_auto:best,f_auto/')) %>
-                        </div>
-
-                        <!-- Sub Images -->
-                        <% subImage.forEach((img)=> { %>
-                            <div class="relative w-[170px] h-[170px] overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
-                                data-image="<%= img.url %>">
-                                <img src="<%= img.url %>" alt="" class="w-full h-full object-contain p-2" />
-                            </div>
-                            <% }) %>
+            <!-- Thumbnails responsive -->
+            <div class="thumbnails-grid flex flex-wrap gap-2 mt-2 justify-center">
+                <!-- Main Image as first thumbnail - Made bigger like Amazon/Flipkart main view -->
+                <div class="relative w-full max-w-lg aspect-square overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
+                    data-image="<%= mainImage.url %>">
+                    <img src="<%= mainImage.url.replace('/upload/', '/upload/w_800,h_800,c_fill,q_auto:best,f_auto/') %>" alt=""
+                        class="w-full h-full object-cover p-1" />
+                </div>
+            
+                <!-- Sub Images - Made medium size (taller thumbnails for better visibility, like e-commerce selectors) -->
+                <% subImage.forEach((img)=> { %>
+                    <div class="relative flex-1 min-w-[120px] max-w-[120px] max-h-32 overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
+                        data-image="<%= img.url %>">
+                        <img src="<%= img.url.replace('/upload/', '/upload/w_150,h_150,c_fill,q_auto:best,f_auto/') %>" alt=""
+                            class="w-full h-full object-cover p-1" />
                     </div>
+                    <% }) %>
+            </div>
+
                 </div>
 
-                <div class="space-y-6">
+                <div class="space-y-4 sm:space-y-6">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
                             <%= product.productName %>
                         </h1>
-                        <div class="flex items-center space-x-4 mb-4">
+                        <div
+                            class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
                             <div class="flex items-center">
                                 <div class="flex text-yellow-400">
                                     <i class="ri-star-fill"></i>
@@ -372,7 +535,8 @@
                                     In Stock
                                 </span>
                                 <% if (product.quantity> 0) { %>
-                                    <span class="ml-6 text-sm text-gray-600">Only <%= product.quantity %> left!</span>
+                                    <span class="ml-0 sm:ml-6 text-sm text-gray-600">Only <%= product.quantity %>
+                                            left!</span>
                                     <% } %>
                                         <% } else { %>
                                             <span class="text-red-600 text-sm font-medium flex items-center">
@@ -381,10 +545,11 @@
                                             </span>
                                             <% } %>
                         </div>
-                        <div class="flex items-center space-x-4 mb-6">
-                            <span class="text-3xl font-bold text-gray-900">₹<%= product.salesPrice ||
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
+                            <span class="text-2xl sm:text-3xl font-bold text-gray-900">₹<%= product.salesPrice ||
                                     product.regularPrice %></span>
-                            <span class="text-xl text-gray-500 line-through">₹<%= (product.regularPrice).toFixed() %>
+                            <span class="text-lg sm:text-xl text-gray-500 line-through">₹<%=
+                                    (product.regularPrice).toFixed() %>
                             </span>
                             <span class="bg-red-100 text-red-800 text-sm font-medium px-2 py-2 rounded">
                                 Save ₹<%= (product.regularPrice - (product.salesPrice ||
@@ -409,484 +574,386 @@
                     </div>
 
                     <!-- Buttons Section -->
-    <div class="flex items-center gap-3 mt-4">
-        <!-- Add to Cart --> 
-        <button type="button" data-id="<%= product._id %>" 
-            class="add-to-cart-main flex-grow flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all text-lg">
-            <i class="fas fa-shopping-cart mr-2"></i>
-            <span>Add to Cart</span>
-        </button>
-        
-    
-        <!-- Wishlist -->
-        <button type="button" onclick="addWishlist('<%= product._id %>', this)"
-            class="wishlist-btn w-12 h-12 bg-yellow-100 border border-yellow-300 rounded flex items-center justify-center shadow <%= (wishlistId && wishlistId.includes(product._id.toString())) ? 'bg-yellow-200 border-yellow-500' : '' %>">
-        
-            <% if (wishlistId && wishlistId.includes(product._id.toString())) { %>
-                <i class="fas fa-heart text-red-600 text-xl"></i>
-                <% } else { %>
-                    <i class="far fa-heart text-red-400 text-xl"></i>
-                    <% } %>
-        </button>
-
-    </div>
+                    <div class="flex items-center gap-3 mt-4">
+                        <!-- Add to Cart -->
+                        <button type="button" data-id="<%= product._id %>" class="add-to-cart flex-grow text-lg">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Add to Cart</span>
+                        </button>
 
 
+                        <!-- Wishlist -->
+                        <button type="button" onclick="addWishlist('<%= product._id %>', this)"
+                            class="wishlist-btn w-12 h-12 bg-yellow-100 border border-yellow-300 rounded flex items-center justify-center shadow <%= (wishlistId && wishlistId.includes(product._id.toString())) ? 'bg-yellow-200 border-yellow-500' : '' %>">
+
+                            <% if (wishlistId && wishlistId.includes(product._id.toString())) { %>
+                                <i class="fas fa-heart text-red-600 text-xl"></i>
+                                <% } else { %>
+                                    <i class="far fa-heart text-red-400 text-xl"></i>
+                                    <% } %>
+                        </button>
+
+                    </div>
+
+                    <!-- Description replacing Product Features -->
                     <div class="border-t pt-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Product Features</h3>
-                        <ul class="space-y-2 text-gray-700">
-                            <li class="flex items-start">
-                                <div class="w-5 h-5 flex items-center justify-center mt-0.5 mr-3">
-                                    <i class="ri-check-line text-green-600"></i>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Product Description</h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            <%=product.description %>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Reviews Section -->
+            <div class="bg-white rounded-lg shadow-sm border p-4 sm:p-6 lg:p-8 mb-8 sm:mb-12 lg:mb-16">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4 sm:mb-0">Customer Reviews</h3>
+                    <button id="writeReviewBtn"
+                        class="bg-primary text-white px-4 sm:px-6 py-2 rounded-button font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
+                        Write a Review
+                    </button>
+                </div>
+
+                <div class="reviews-grid grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
+                    <div class="text-center">
+                        <div class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">4.6</div>
+                        <div class="flex justify-center text-yellow-400 mb-2">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-half-fill"></i>
+                        </div>
+                        <div class="text-sm text-gray-600">Based on 247 reviews</div>
+                    </div>
+                    <div class="col-span-1 md:col-span-2">
+                        <div class="space-y-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-600 w-8">5★</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 68%"></div>
                                 </div>
-                                Premium quality materials with elegant finish
-                            </li>
-                            <li class="flex items-start">
-                                <div class="w-5 h-5 flex items-center justify-center mt-0.5 mr-3">
-                                    <i class="ri-check-line text-green-600"></i>
+                                <span class="text-sm text-gray-600 w-8">168</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-600 w-8">4★</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 20%"></div>
                                 </div>
-                                Perfect for special occasions and celebrations
-                            </li>
-                            <li class="flex items-start">
-                                <div class="w-5 h-5 flex items-center justify-center mt-0.5 mr-3">
-                                    <i class="ri-check-line text-green-600"></i>
+                                <span class="text-sm text-gray-600 w-8">49</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-600 w-8">3★</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 8%"></div>
                                 </div>
-                                Customizable with personal message card
-                            </li>
-                            <li class="flex items-start">
-                                <div class="w-5 h-5 flex items-center justify-center mt-0.5 mr-3">
-                                    <i class="ri-check-line text-green-600"></i>
+                                <span class="text-sm text-gray-600 w-8">20</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-600 w-8">2★</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 3%"></div>
                                 </div>
-                                Eco-friendly packaging and materials
-                            </li>
+                                <span class="text-sm text-gray-600 w-8">7</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm text-gray-600 w-8">1★</span>
+                                <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-yellow-400 h-2 rounded-full" style="width: 1%"></div>
+                                </div>
+                                <span class="text-sm text-gray-600 w-8">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4 sm:space-y-6">
+                    <div class="bg-gray-50 rounded-lg p-4 sm:p-6">
+                        <div
+                            class="flex flex-col sm:flex-row items-start sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+                            <div
+                                class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
+                                SM
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Sarah Mitchell</h4>
+                                        <div class="flex items-center space-x-2">
+                                            <div class="flex text-yellow-400 text-sm">
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-600">• Verified Purchase</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm text-gray-500 mt-2 sm:mt-0">2 days ago</span>
+                                </div>
+                                <h5 class="font-medium text-gray-900 mb-2">Absolutely Beautiful!</h5>
+                                <p class="text-gray-700 mb-4">
+                                    The quality exceeded my expectations. The box feels premium and the velvet
+                                    interior
+                                    is so soft. Perfect for gifting jewelry to my sister. She was thrilled with the
+                                    presentation!
+                                </p>
+                                <div class="flex items-center space-x-4 text-sm">
+                                    <button
+                                        class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
+                                        <div class="w-4 h-4 flex items-center justify-center">
+                                            <i class="ri-thumb-up-line"></i>
+                                        </div>
+                                        <span>Helpful (12)</span>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-primary transition-colors">Report</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4 sm:p-6">
+                        <div
+                            class="flex flex-col sm:flex-row items-start sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+                            <div
+                                class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
+                                JD
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">James Davidson</h4>
+                                        <div class="flex items-center space-x-2">
+                                            <div class="flex text-yellow-400 text-sm">
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-line"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-600">• Verified Purchase</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm text-gray-500 mt-2 sm:mt-0">1 week ago</span>
+                                </div>
+                                <h5 class="font-medium text-gray-900 mb-2">Great for Corporate Gifts</h5>
+                                <p class="text-gray-700 mb-4">
+                                    Ordered several for our company's client appreciation gifts. The professional
+                                    look
+                                    and feel made a great impression. Only minor issue was delivery took a day
+                                    longer
+                                    than expected.
+                                </p>
+                                <div class="flex items-center space-x-4 text-sm">
+                                    <button
+                                        class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
+                                        <div class="w-4 h-4 flex items-center justify-center">
+                                            <i class="ri-thumb-up-line"></i>
+                                        </div>
+                                        <span>Helpful (8)</span>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-primary transition-colors">Report</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4 sm:p-6">
+                        <div
+                            class="flex flex-col sm:flex-row items-start sm:items-start space-y-4 sm:space-y-0 sm:space-x-4">
+                            <div
+                                class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
+                                ER
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2">
+                                    <div>
+                                        <h4 class="font-medium text-gray-900">Emily Rodriguez</h4>
+                                        <div class="flex items-center space-x-2">
+                                            <div class="flex text-yellow-400 text-sm">
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                                <i class="ri-star-fill"></i>
+                                            </div>
+                                            <span class="text-sm text-gray-600">• Verified Purchase</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm text-gray-500 mt-2 sm:mt-0">2 weeks ago</span>
+                                </div>
+                                <h5 class="font-medium text-gray-900 mb-2">Perfect Wedding Favor Boxes</h5>
+                                <p class="text-gray-700 mb-4">
+                                    Used these for our wedding favors and they were a hit! The elegant design
+                                    matched
+                                    our theme perfectly. Guests kept asking where we got them. Definitely recommend
+                                    for
+                                    special events.
+                                </p>
+                                <div class="flex items-center space-x-4 text-sm">
+                                    <button
+                                        class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
+                                        <div class="w-4 h-4 flex items-center justify-center">
+                                            <i class="ri-thumb-up-line"></i>
+                                        </div>
+                                        <span>Helpful (15)</span>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-primary transition-colors">Report</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Review Modal -->
+            <div id="reviewModal"
+                class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+                <div class="bg-white rounded-lg max-w-md w-full p-4 sm:p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-gray-900">Write a Review</h3>
+                        <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                            <div class="w-6 h-6 flex items-center justify-center">
+                                <i class="ri-close-line"></i>
+                            </div>
+                        </button>
+                    </div>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                            <div class="flex space-x-1" id="starRating">
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="1">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="2">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="3">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="4">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                                <button type="button"
+                                    class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                    data-rating="5">
+                                    <i class="ri-star-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
+                            <input type="text"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Give your review a title">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
+                            <textarea rows="4"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Share your experience with this product"></textarea>
+                        </div>
+                        <div class="flex space-x-3 pt-4">
+                            <button type="button" id="cancelReview"
+                                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition-colors whitespace-nowrap">Cancel</button>
+                            <button type="submit"
+                                class="flex-1 px-4 py-2 bg-primary text-white rounded-button hover:bg-blue-700 transition-colors whitespace-nowrap">Submit
+                                Review</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             <section class="mb-16">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">You Might Also Like</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 related-products-container">
                     <% if (relatedProducts && relatedProducts.length> 0) { %>
                         <% for (let i=0; i < relatedProducts.length; i++) { %>
-                            <div class="group relative bg-white border rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                                <div class="aspect-w-1 aspect-h-1">
+                            <div
+                                class="group relative bg-white border rounded-lg shadow-sm overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 related-product-card">
+                                <div class="w-[300px] h-[300px] mx-auto">
                                     <a href="/productsDetails/<%= relatedProducts[i]._id %>">
                                         <img src="<%= relatedProducts[i].productImage?.[0]?.url || '/path/to/placeholder.jpg' %>"
                                             alt="<%= relatedProducts[i].productName %>"
-                                            class="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105">
+                                            class="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105" style="width: 300px; height: 300px;">
                                     </a>
                                 </div>
-                                <div class="p-4 flex flex-col flex-grow">
-                                    <h3 class="text-base font-semibold text-gray-800 truncate mb-2">
-                                        <a href="/productsDetails/<%= relatedProducts[i]._id %>" class="hover:text-blue-600">
+                                <div class="p-3 sm:p-4 flex flex-col flex-grow">
+                                    <h3 class="text-sm sm:text-base font-semibold text-gray-800 truncate mb-2">
+                                        <a href="/productsDetails/<%= relatedProducts[i]._id %>"
+                                            class="hover:text-blue-600">
                                             <%= relatedProducts[i].productName %>
                                         </a>
                                     </h3>
-                                    <div class="flex items-baseline gap-2 mb-4">
-                                        <span class="text-lg font-bold text-gray-900">₹<%= relatedProducts[i].salesPrice.toLocaleString() %></span>
-                                        <span class="text-sm text-gray-500 line-through">₹<%= relatedProducts[i].regularPrice.toLocaleString() %></span>
-                                    </div>
-                                    <!-- Add to Cart button that appears on hover -->
-                                    <div class="absolute bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-sm transform translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
-                                        <% if (relatedProducts[i].status === 'Available' && relatedProducts[i].quantity > 0) { %>
-                                            <button type="button" data-id="<%= relatedProducts[i]._id %>"
-                                                class="add-to-cart w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors duration-300">
-                                                <i class="fas fa-shopping-cart text-sm"></i>
-                                                <span>Add to Cart</span>
-                                            </button>
-                                        <% } else { %>
-                                            <button type="button"
-                                                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-md font-medium cursor-not-allowed">
-                                                <i class="fas fa-times-circle text-sm"></i>
-                                                <span>Out of Stock</span>
-                                            </button>
+                                    <div class="flex flex-wrap items-center gap-x-2 mb-3 sm:mb-4">
+                                        <span class="text-base sm:text-lg font-bold text-gray-900">₹<%= relatedProducts[i].salesPrice.toLocaleString() %></span>
+                                        <span class="text-xs sm:text-sm text-gray-500 line-through">₹<%= relatedProducts[i].regularPrice.toLocaleString() %></span>
+                                        <% const savedAmount = relatedProducts[i].regularPrice - relatedProducts[i].salesPrice; %>
+                                        <% if (savedAmount > 0) { %>
+                                            <span class="text-xs sm:text-sm font-medium text-green-600">
+                                                You Save ₹<%= savedAmount.toLocaleString() %>
+                                            </span>
                                         <% } %>
                                     </div>
+
+                                    <!-- Add to Cart icon -->
+                                    <% if (relatedProducts[i].status==='Available' && relatedProducts[i].quantity> 0) {
+                                        %>
+                                        <!-- Custom Cart Button for Related Products -->
+                                        <button type="button" data-id="<%= relatedProducts[i]._id %>" class="custom-cart-btn mx-auto mb-2" title="Add to Cart">
+                                            <i class="fas fa-shopping-cart"></i>
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        <% } else { %>
+                                            <button type="button" class="add-to-cart-icon mx-auto mb-2" disabled>
+                                                <i class="fas fa-times-circle"></i>
+                                            </button>
+                                            <% } %>
                                 </div>
                                 <!-- Discount Badge -->
-                                <% if (relatedProducts[i].bestOffer > 0) { %>
-                                    <div class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md">
+                                <% if (relatedProducts[i].bestOffer> 0) { %>
+                                    <div
+                                        class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md">
                                         <%= relatedProducts[i].bestOffer %>% OFF
                                     </div>
-                                <% } %>
-                                <!-- Wishlist Button -->
-                                <button type="button" onclick="addWishlist('<%= relatedProducts[i]._id %>', this)"
-                                    class="related-wishlist-btn absolute top-3 right-3 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-all duration-300 hover:bg-white hover:scale-110"
-                                    title="Add to Wishlist">
-                                    <% if (wishlistId && wishlistId.includes(relatedProducts[i]._id.toString())) { %>
-                                        <i class="fas fa-heart text-red-500"></i>
-                                    <% } else { %>
-                                        <i class="far fa-heart text-gray-600"></i>
                                     <% } %>
-                                </button>
-                            </div>
-                        <% } %>
-                    <% } else { %>
-                        <div class="col-span-full text-center py-12">
-                            <div class="inline-block bg-gray-100 p-6 rounded-full mb-4">
-                                <i class="fas fa-box-open text-4xl text-gray-400"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-700">No Related Products Found</h3>
-                            <p class="text-gray-500 mt-2">Check back later or explore other categories.</p>
-                        </div>
-                    <% } %>
-                </div>
-            </section>
-
-
-            <div class="bg-white rounded-lg shadow-sm border p-8 mb-16">
-                <div class="flex border-b mb-8">
-                    <button class="px-6 py-3 border-b-2 border-primary text-primary font-medium tab-button active"
-                        data-tab="description">Description</button>
-                    <button class="px-6 py-3 text-gray-600 hover:text-primary transition-colors tab-button"
-                        data-tab="specifications">Specifications</button>
-                    <button class="px-6 py-3 text-gray-600 hover:text-primary transition-colors tab-button"
-                        data-tab="reviews">Reviews</button>
-                </div>
-
-                <div id="description" class="tab-content">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Product Description</h3>
-                    <p class="text-gray-700 leading-relaxed mb-4"><%=product.description %>
-                    </p>
-                </div>
-
-                <div id="specifications" class="tab-content hidden">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Specifications</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 class="font-medium text-gray-900 mb-2">Dimensions</h4>
-                            <ul class="text-gray-700 space-y-1">
-                                <li>Small: 6" × 4" × 2"</li>
-                                <li>Medium: 8" × 6" × 3"</li>
-                                <li>Large: 10" × 8" × 4"</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-medium text-gray-900 mb-2">Materials</h4>
-                            <ul class="text-gray-700 space-y-1">
-                                <li>Premium cardboard exterior</li>
-                                <li>Velvet interior lining</li>
-                                <li>Satin ribbon closure</li>
-                                <li>Magnetic closure system</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="reviews" class="tab-content hidden">
-                    <div class="flex items-center justify-between mb-8">
-                        <h3 class="text-xl font-semibold text-gray-900">Customer Reviews</h3>
-                        <button id="writeReviewBtn"
-                            class="bg-primary text-white px-6 py-2 rounded-button font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
-                            Write a Review
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                        <div class="text-center">
-                            <div class="text-4xl font-bold text-gray-900 mb-2">4.6</div>
-                            <div class="flex justify-center text-yellow-400 mb-2">
-                                <i class="ri-star-fill"></i>
-                                <i class="ri-star-fill"></i>
-                                <i class="ri-star-fill"></i>
-                                <i class="ri-star-fill"></i>
-                                <i class="ri-star-half-fill"></i>
-                            </div>
-                            <div class="text-sm text-gray-600">Based on 247 reviews</div>
-                        </div>
-                        <div class="col-span-2">
-                            <div class="space-y-2">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600 w-8">5★</span>
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 68%"></div>
-                                    </div>
-                                    <span class="text-sm text-gray-600 w-8">168</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600 w-8">4★</span>
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 20%"></div>
-                                    </div>
-                                    <span class="text-sm text-gray-600 w-8">49</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600 w-8">3★</span>
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 8%"></div>
-                                    </div>
-                                    <span class="text-sm text-gray-600 w-8">20</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600 w-8">2★</span>
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 3%"></div>
-                                    </div>
-                                    <span class="text-sm text-gray-600 w-8">7</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600 w-8">1★</span>
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-yellow-400 h-2 rounded-full" style="width: 1%"></div>
-                                    </div>
-                                    <span class="text-sm text-gray-600 w-8">3</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-6">
-                        <div class="bg-gray-50 rounded-lg p-6">
-                            <div class="flex items-start space-x-4">
-                                <div
-                                    class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-medium">
-                                    SM
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <div>
-                                            <h4 class="font-medium text-gray-900">Sarah Mitchell</h4>
-                                            <div class="flex items-center space-x-2">
-                                                <div class="flex text-yellow-400 text-sm">
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                </div>
-                                                <span class="text-sm text-gray-600">• Verified Purchase</span>
-                                            </div>
-                                        </div>
-                                        <span class="text-sm text-gray-500">2 days ago</span>
-                                    </div>
-                                    <h5 class="font-medium text-gray-900 mb-2">Absolutely Beautiful!</h5>
-                                    <p class="text-gray-700 mb-4">
-                                        The quality exceeded my expectations. The box feels premium and the velvet
-                                        interior
-                                        is so soft. Perfect for gifting jewelry to my sister. She was thrilled with the
-                                        presentation!
-                                    </p>
-                                    <div class="flex items-center space-x-4 text-sm">
-                                        <button
-                                            class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
-                                            <div class="w-4 h-4 flex items-center justify-center">
-                                                <i class="ri-thumb-up-line"></i>
-                                            </div>
-                                            <span>Helpful (12)</span>
+                                        <!-- Wishlist Button -->
+                                        <button type="button"
+                                            onclick="addWishlist('<%= relatedProducts[i]._id %>', this)"
+                                            class="related-wishlist-btn absolute top-3 right-3 w-9 h-9 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md transition-all duration-300 hover:bg-white hover:scale-110"
+                                            title="Add to Wishlist">
+                                            <% if (wishlistId && wishlistId.includes(relatedProducts[i]._id.toString()))
+                                                { %>
+                                                <i class="fas fa-heart text-red-500"></i>
+                                                <% } else { %>
+                                                    <i class="far fa-heart text-gray-600"></i>
+                                                    <% } %>
                                         </button>
-                                        <button
-                                            class="text-gray-600 hover:text-primary transition-colors">Report</button>
-                                    </div>
-                                </div>
                             </div>
-                        </div>
-
-                        <div class="bg-gray-50 rounded-lg p-6">
-                            <div class="flex items-start space-x-4">
-                                <div
-                                    class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-white font-medium">
-                                    JD
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <div>
-                                            <h4 class="font-medium text-gray-900">James Davidson</h4>
-                                            <div class="flex items-center space-x-2">
-                                                <div class="flex text-yellow-400 text-sm">
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-line"></i>
-                                                </div>
-                                                <span class="text-sm text-gray-600">• Verified Purchase</span>
-                                            </div>
+                            <% } %>
+                                <% } else { %>
+                                    <div class="col-span-full text-center py-12">
+                                        <div class="inline-block bg-gray-100 p-6 rounded-full mb-4">
+                                            <i class="fas fa-box-open text-4xl text-gray-400"></i>
                                         </div>
-                                        <span class="text-sm text-gray-500">1 week ago</span>
+                                        <h3 class="text-xl font-semibold text-gray-700">No Related Products Found</h3>
+                                        <p class="text-gray-500 mt-2">Check back later or explore other categories.</p>
                                     </div>
-                                    <h5 class="font-medium text-gray-900 mb-2">Great for Corporate Gifts</h5>
-                                    <p class="text-gray-700 mb-4">
-                                        Ordered several for our company's client appreciation gifts. The professional
-                                        look
-                                        and feel made a great impression. Only minor issue was delivery took a day
-                                        longer
-                                        than expected.
-                                    </p>
-                                    <div class="flex items-center space-x-4 text-sm">
-                                        <button
-                                            class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
-                                            <div class="w-4 h-4 flex items-center justify-center">
-                                                <i class="ri-thumb-up-line"></i>
-                                            </div>
-                                            <span>Helpful (8)</span>
-                                        </button>
-                                        <button
-                                            class="text-gray-600 hover:text-primary transition-colors">Report</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-gray-50 rounded-lg p-6">
-                            <div class="flex items-start space-x-4">
-                                <div
-                                    class="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-medium">
-                                    ER
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <div>
-                                            <h4 class="font-medium text-gray-900">Emily Rodriguez</h4>
-                                            <div class="flex items-center space-x-2">
-                                                <div class="flex text-yellow-400 text-sm">
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                </div>
-                                                <span class="text-sm text-gray-600">• Verified Purchase</span>
-                                            </div>
-                                        </div>
-                                        <span class="text-sm text-gray-500">2 weeks ago</span>
-                                    </div>
-                                    <h5 class="font-medium text-gray-900 mb-2">Perfect Wedding Favor Boxes</h5>
-                                    <p class="text-gray-700 mb-4">
-                                        Used these for our wedding favors and they were a hit! The elegant design
-                                        matched
-                                        our theme perfectly. Guests kept asking where we got them. Definitely recommend
-                                        for
-                                        special events.
-                                    </p>
-                                    <div class="flex items-center space-x-4 text-sm">
-                                        <button
-                                            class="text-gray-600 hover:text-primary transition-colors flex items-center space-x-1">
-                                            <div class="w-4 h-4 flex items-center justify-center">
-                                                <i class="ri-thumb-up-line"></i>
-                                            </div>
-                                            <span>Helpful (15)</span>
-                                        </button>
-                                        <button
-                                            class="text-gray-600 hover:text-primary transition-colors">Report</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                    <% } %>
                 </div>
-
-                <div id="reviewModal"
-                    class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-                    <div class="bg-white rounded-lg max-w-md w-full p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl font-semibold text-gray-900">Write a Review</h3>
-                            <button id="closeModal" class="text-gray-400 hover:text-gray-600">
-                                <div class="w-6 h-6 flex items-center justify-center">
-                                    <i class="ri-close-line"></i>
-                                </div>
-                            </button>
-                        </div>
-                        <form class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                                <div class="flex space-x-1" id="starRating">
-                                    <button type="button"
-                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                        data-rating="1">
-                                        <i class="ri-star-line"></i>
-                                    </button>
-                                    <button type="button"
-                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                        data-rating="2">
-                                        <i class="ri-star-line"></i>
-                                    </button>
-                                    <button type="button"
-                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                        data-rating="3">
-                                        <i class="ri-star-line"></i>
-                                    </button>
-                                    <button type="button"
-                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                        data-rating="4">
-                                        <i class="ri-star-line"></i>
-                                    </button>
-                                    <button type="button"
-                                        class="star-btn text-2xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                        data-rating="5">
-                                        <i class="ri-star-line"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
-                                <input type="text"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    placeholder="Give your review a title">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
-                                <textarea rows="4"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                                    placeholder="Share your experience with this product"></textarea>
-                            </div>
-                            <div class="flex space-x-3 pt-4">
-                                <button type="button" id="cancelReview"
-                                    class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-button hover:bg-gray-50 transition-colors whitespace-nowrap">Cancel</button>
-                                <button type="submit"
-                                    class="flex-1 px-4 py-2 bg-primary text-white rounded-button hover:bg-blue-700 transition-colors whitespace-nowrap">Submit
-                                    Review</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <section class="bg-white rounded-lg shadow-sm border p-8">
-                <h2 class="text-2xl font-bold text-gray-900 text-center mb-8">Why Choose Us</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <div class="w-8 h-8 flex items-center justify-center">
-                                <i class="ri-truck-line text-green-600 text-2xl"></i>
-                            </div>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Secure Delivery</h3>
-                        <p class="text-gray-600 text-sm">Fast and secure delivery with tracking. Your orders are
-                            protected every step of the way.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <div class="w-8 h-8 flex items-center justify-center">
-                                <i class="ri-shield-check-line text-blue-600 text-2xl"></i>
-                            </div>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Trusted Site</h3>
-                        <p class="text-gray-600 text-sm">SSL encrypted and verified by thousands of satisfied customers
-                            worldwide.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <div class="w-8 h-8 flex items-center justify-center">
-                                <i class="ri-refresh-line text-orange-600 text-2xl"></i>
-                            </div>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Easy Returns</h3>
-                        <p class="text-gray-600 text-sm">30-day return policy with no questions asked. Your satisfaction
-                            is guaranteed.</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <div class="w-8 h-8 flex items-center justify-center">
-                                <i class="ri-secure-payment-line text-purple-600 text-2xl"></i>
-                            </div>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Payment Safety</h3>
-                        <p class="text-gray-600 text-sm">Multiple secure payment options including PayPal, Stripe, and
-                            major credit cards.</p>
-                    </div>
-                </div>
+                <!-- Show More Button -->
+                <button id="showMoreBtn" class="show-more-btn hidden">Show More Products</button>
             </section>
         </main>
         <%-include('../partials/user/footer.ejs') %>
@@ -898,107 +965,210 @@
             <script src="https://cdn.jsdelivr.net/npm/jquery-zoom/jquery.zoom.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-           <script>
-            // Initialize Lucide icons
-            document.addEventListener("DOMContentLoaded", function () {
-                lucide.createIcons();
-            });
-
-            // Quantity Selector
-            document.addEventListener('DOMContentLoaded', function () {
-                const decreaseBtn = document.getElementById('decreaseQty');
-                const increaseBtn = document.getElementById('increaseQty');
-                const quantityDisplay = document.getElementById('quantityDisplay');
-                const addToCartBtns = document.querySelectorAll('.add-to-cart');
-                const maxStock = '<%= product.quantity %>';
-                let quantity = 1;
-
-                // Update button states based on quantity
-                function updateButtonStates() {
-                    decreaseBtn.disabled = quantity <= 1;
-                    increaseBtn.disabled = quantity >= maxStock;
-                }
-
-                updateButtonStates();
-
-                // Decrease quantity
-                decreaseBtn.addEventListener('click', function () {
-                    if (quantity > 1) {
-                        quantity--;
-                        quantityDisplay.textContent = quantity;
-                        updateButtonStates();
-                    }
+            <script>
+                // Initialize Lucide icons
+                document.addEventListener("DOMContentLoaded", function () {
+                    lucide.createIcons();
                 });
 
-                // Increase quantity
-                increaseBtn.addEventListener('click', function () {
-                    if (quantity < maxStock) {
-                        quantity++;
-                        quantityDisplay.textContent = quantity;
-                        updateButtonStates();
-                    } else {
-                        SwalToast.fire({
-                            icon: 'error',
-                            title: 'Reached maximum stock'
-                        });
+                // Quantity Selector
+                document.addEventListener('DOMContentLoaded', function () {
+                    const decreaseBtn = document.getElementById('decreaseQty');
+                    const increaseBtn = document.getElementById('increaseQty');
+                    const quantityDisplay = document.getElementById('quantityDisplay');
+                    const addToCartBtns = document.querySelectorAll('.add-to-cart');
+                    const maxStock = '<%= product.quantity %>';
+                    let quantity = 1;
+
+                    // Update button states based on quantity
+                    function updateButtonStates() {
+                        decreaseBtn.disabled = quantity <= 1;
+                        increaseBtn.disabled = quantity >= maxStock;
                     }
-                });
 
-                const SwalToast = Swal.mixin({
-                    toast: true,
-                    position: 'bottom-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer);
-                        toast.addEventListener('mouseleave', Swal.resumeTimer);
-                    }
-                });
+                    updateButtonStates();
 
-                // Add to Cart
-                addToCartBtns.forEach(btn => {
-                    btn.addEventListener('click', async function () {
-                        const productId = this.getAttribute('data-id');
-                        try {
-                            const response = await fetch('/cart', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ productId, quantity })
-                            });
-                            const data = await response.json();
+                    // Decrease quantity
+                    decreaseBtn.addEventListener('click', function () {
+                        if (quantity > 1) {
+                            quantity--;
+                            quantityDisplay.textContent = quantity;
+                            updateButtonStates();
+                        }
+                    });
 
-                            if (data.success) {
-                                SwalToast.fire({
-                                    icon: 'success',
-                                    title: 'Product added to cart'
-                                });
-                                updateCartCount();
-                            } else {
-                                if (data.message === 'User not logged in') {
-                                    window.location.href = '/login';
-                                } else {
-                                    SwalToast.fire({
-                                        icon: 'error',
-                                        title: data.message || 'Could not add product to cart'
-                                    });
-                                }
-                            }
-                        } catch (err) {
-                            console.error('Error adding to cart:', err);
+                    // Increase quantity
+                    increaseBtn.addEventListener('click', function () {
+                        if (quantity < maxStock) {
+                            quantity++;
+                            quantityDisplay.textContent = quantity;
+                            updateButtonStates();
+                        } else {
                             SwalToast.fire({
                                 icon: 'error',
-                                title: 'Something went wrong'
+                                title: 'Reached maximum stock'
                             });
                         }
                     });
+
+                    const SwalToast = Swal.mixin({
+                        toast: true,
+                        position: 'bottom-end',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer);
+                            toast.addEventListener('mouseleave', Swal.resumeTimer);
+                        }
+                    });
+
+                    // Add to Cart
+                    addToCartBtns.forEach(btn => {
+                        btn.addEventListener('click', async function () {
+                            const productId = this.getAttribute('data-id');
+                            try {
+                                const response = await fetch('/cart', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify({ productId, quantity })
+                                });
+                                const data = await response.json();
+
+                                if (data.success) {
+                                    SwalToast.fire({
+                                        icon: 'success',
+                                        title: 'Product added to cart'
+                                    });
+                                    updateCartCount();
+                                } else {
+                                    if (data.message === 'Unauthorized: Please login') {
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: "Login Required",
+                                            text: "Please login to continue",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Login",
+                                            cancelButtonText: "Cancel",
+                                        }).then((res) => {
+                                            if (res.isConfirmed) {
+                                                window.location.href = "/login";
+                                            }
+                                        });
+                                        return;
+                                    }
+
+                                    Toast.fire({
+                                        icon: 'error',
+                                        title: data.message || 'Failed to add to cart'
+                                    });
+                                }
+                            } catch (err) {
+                                console.error('Error adding to cart:', err);
+                                SwalToast.fire({
+                                    icon: 'error',
+                                    title: 'Something went wrong'
+                                });
+                            }
+                        });
+                    });
+
+                    // Related add to cart icons
+                   document.addEventListener('click', async function (e) {
+                        if (e.target.closest('.custom-cart-btn')) {
+                            const btn = e.target.closest('.custom-cart-btn');
+                            const productId = btn.getAttribute('data-id');
+                            try {
+                                const response = await fetch('/cart', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify({ productId, quantity: 1 })
+                                });
+                                const data = await response.json();
+
+                                if (data.success) {
+                                    SwalToast.fire({
+                                        icon: 'success',
+                                        title: 'Product added to cart'
+                                    });
+                                    updateCartCount();
+                                } else {
+                                    if (data.message === 'Unauthorized: Please login') {
+                                        Swal.fire({
+                                            icon: 'info',
+                                            title: "Login Required",
+                                            text: "Please login to continue",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Login",
+                                            cancelButtonText: "Cancel",
+                                        }).then((res) => {
+                                            if (res.isConfirmed) {
+                                                window.location.href = "/login";
+                                            }
+                                        });
+                                        return;
+                                    }
+
+                                    Toast.fire({
+                                        icon: 'error',
+                                        title: data.message || 'Failed to add to cart'
+                                    });
+                                }
+                            } catch (err) {
+                                console.error('Error adding to cart:', err);
+                                SwalToast.fire({
+                                    icon: 'error',
+                                    title: 'Something went wrong'
+                                });
+                            }
+                        }
+                    });
+
+                    // ✅ Closing brace added here
                 });
 
-                // ✅ Closing brace added here
-            });
-        </script>
+                // Related Products Show More
+                document.addEventListener('DOMContentLoaded', function () {
+                    const cards = document.querySelectorAll('.related-product-card');
+                    const showMoreBtn = document.getElementById('showMoreBtn');
+                    const container = document.querySelector('.related-products-container');
+
+                    function initRelatedProducts() {
+                        if (window.innerWidth >= 1024 && cards.length > 4) {
+                            // Hide cards after 4th
+                            for (let i = 4; i < cards.length; i++) {
+                                cards[i].style.display = 'none';
+                            }
+                            showMoreBtn.classList.remove('hidden');
+                        } else {
+                            // Show all on smaller screens
+                            cards.forEach(card => card.style.display = 'block');
+                            showMoreBtn.classList.add('hidden');
+                        }
+                    }
+
+                    showMoreBtn.addEventListener('click', function () {
+                        cards.forEach(card => {
+                            card.style.display = 'block';
+                            // Append vertically by changing grid to single column temporarily? But keep grid, just show all
+                        });
+                        // For vertical append, change container to flex column on show more, but since user said "come in vertically", change to flex
+                        container.style.display = 'flex';
+                        container.style.flexDirection = 'column';
+                        container.style.alignItems = 'center';
+                        showMoreBtn.style.display = 'none';
+                    });
+
+                    initRelatedProducts();
+                    window.addEventListener('resize', initRelatedProducts);
+                });
+            </script>
 
 
             <script>
@@ -1043,33 +1213,6 @@
                     });
 
                     thumbnails[0].classList.add('ring-2', 'ring-primary');
-                });
-            </script>
-
-            <script id="tabNavigation">
-                document.addEventListener('DOMContentLoaded', function () {
-                    const tabButtons = document.querySelectorAll('.tab-button');
-                    const tabContents = document.querySelectorAll('.tab-content');
-
-                    tabButtons.forEach(button => {
-                        button.addEventListener('click', function () {
-                            const targetTab = this.getAttribute('data-tab');
-
-                            tabButtons.forEach(btn => {
-                                btn.classList.remove('border-primary', 'text-primary', 'active');
-                                btn.classList.add('text-gray-600');
-                            });
-
-                            this.classList.add('border-primary', 'text-primary', 'active');
-                            this.classList.remove('text-gray-600');
-
-                            tabContents.forEach(content => {
-                                content.classList.add('hidden');
-                            });
-
-                            document.getElementById(targetTab).classList.remove('hidden');
-                        });
-                    });
                 });
             </script>
 
@@ -1146,85 +1289,85 @@
                 });
                 window.isLoggedIn = <%- !!user %>
 
-                async function addWishlist(productId, btn) {
-                    try {
-                         if (!window.isLoggedIn) {
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Login Required',
-                                text: 'Please login to add items to your wishlist',
-                                showCancelButton: true,
-                                confirmButtonText: 'Login',
-                                cancelButtonText: 'Cancel'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = '/login';
-                                }
-                            });
-                            return;
-                        }
-                        // Get the icon inside the button
-                        const icon = btn.querySelector('i');
-
-                        const res = await fetch(`/wishlist/add/`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ productId }),
-                        });
-
-                        const result = await res.json();
-
-                        if (result.success) {
-                            if (result.inWishlist) {
-                                // Added to wishlist
-                                icon.classList.remove('far', 'text-red-400');
-                                icon.classList.add('fas', 'text-red-600');
-                                btn.classList.add('bg-red-100', 'border-red-400');
-                            } else {
-                                // Removed from wishlist
-                                icon.classList.remove('fas', 'text-red-600');
-                                icon.classList.add('far', 'text-red-400');
-                                btn.classList.remove('bg-red-100', 'border-red-400');
-                            }
-
-                            Toast.fire({
-                                icon: 'success',
-                                title: result.message || "Wishlist updated"
-                            }).then(() => {
-                                updateCartCount(); // optional
-                            });
-
-                        } else {
-                            if (result.message === "user not found") {
+                    async function addWishlist(productId, btn) {
+                        try {
+                            if (!window.isLoggedIn) {
                                 Swal.fire({
                                     icon: 'info',
-                                    title: "Login Required",
-                                    text: "Please login to continue",
+                                    title: 'Login Required',
+                                    text: 'Please login to add items to your wishlist',
                                     showCancelButton: true,
-                                    confirmButtonText: "Login",
-                                    cancelButtonText: "Cancel",
-                                }).then((res) => {
-                                    if (res.isConfirmed) {
-                                        window.location.href = "/login";
+                                    confirmButtonText: 'Login',
+                                    cancelButtonText: 'Cancel'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '/login';
                                     }
                                 });
                                 return;
                             }
+                            // Get the icon inside the button
+                            const icon = btn.querySelector('i');
 
+                            const res = await fetch(`/wishlist/add/`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ productId }),
+                            });
+
+                            const result = await res.json();
+
+                            if (result.success) {
+                                if (result.inWishlist) {
+                                    // Added to wishlist
+                                    icon.classList.remove('far', 'text-red-400');
+                                    icon.classList.add('fas', 'text-red-600');
+                                    btn.classList.add('bg-red-100', 'border-red-400');
+                                } else {
+                                    // Removed from wishlist
+                                    icon.classList.remove('fas', 'text-red-600');
+                                    icon.classList.add('far', 'text-red-400');
+                                    btn.classList.remove('bg-red-100', 'border-red-400');
+                                }
+
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: result.message || "Wishlist updated"
+                                }).then(() => {
+                                    updateCartCount(); // optional
+                                });
+
+                            } else {
+                                if (result.message === "user not found") {
+                                    Swal.fire({
+                                        icon: 'info',
+                                        title: "Login Required",
+                                        text: "Please login to continue",
+                                        showCancelButton: true,
+                                        confirmButtonText: "Login",
+                                        cancelButtonText: "Cancel",
+                                    }).then((res) => {
+                                        if (res.isConfirmed) {
+                                            window.location.href = "/login";
+                                        }
+                                    });
+                                    return;
+                                }
+
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: result.message || 'Failed to update wishlist'
+                                });
+                            }
+
+                        } catch (err) {
+                            console.error(err);
                             Toast.fire({
                                 icon: 'error',
-                                title: result.message || 'Failed to update wishlist'
+                                title: 'Server error'
                             });
                         }
-
-                    } catch (err) {
-                        console.error(err);
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Server error'
-                        });
                     }
-                }
             </script>
 
 </body>

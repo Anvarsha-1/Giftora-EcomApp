@@ -18,6 +18,9 @@
             flex-direction: column;
             gap: 10px;
         }
+        .card-body{
+            z-index:0;
+        }
 
         .toast {
             display: none;
@@ -104,6 +107,11 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        .qty-input[readonly] {
+            background-color: #f9fafb; /* Lighter background to indicate it's not active */
+            cursor: default;
+        }
+
         a.text-blue-600:hover {
             color: #1d4ed8;
             text-decoration: underline;
@@ -162,7 +170,7 @@
                                                         <button class="btn btn-outline-secondary minus-btn" type="button" data-item-id="<%= item._id %>" data-quantity="<%= item.quantity || 1 %>" <%= (item.quantity <= 1 || !item.quantity) ? 'disabled' : '' %>>
                                                             <i data-lucide="minus" style="width: 16px; height: 16px;"></i>
                                                         </button>
-                                                        <input type="number" value="<%= item.quantity || 0 %>" min="0" max="<%= item.stock || 0 %>" data-id="<%= item._id %>" class="form-control text-center qty-input" onchange="updateQuantity('<%= item._id %>', this.value)">
+                                                        <input type="number" value="<%= item.quantity || 0 %>" min="0" max="<%= item.stock || 0 %>" data-id="<%= item._id %>" class="form-control text-center qty-input" readonly>
                                                         <button class="btn btn-outline-secondary plus-btn" type="button" data-item-id="<%= item._id %>" data-quantity="<%= item.quantity || 1 %>" <%= (item.quantity >= item.stock || !item.stock) ? 'disabled' : '' %>>
                                                             <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
                                                         </button>
@@ -186,7 +194,7 @@
 
                 <!-- Order Summary Section -->
                 <div class="col-lg-4">
-                    <div class="card border-0 shadow-sm sticky-top" style="top: 5.5em;">
+                    <div class="card border-0 shadow-sm sticky-top" style="top: 5.5em; z-index: 0;">
                         <div class="card-body p-4">
                         <h2 class="h5 fw-semibold text-dark mb-4">Order Summary</h2>
 
@@ -195,7 +203,7 @@
                             <div class="d-flex justify-content-between">
                                 <span class="text-muted">Subtotal (<span id="total-items">
                                         <%= totalQuantity || 0 %>
-                                    </span> items)</span>
+                                    </span> )</span>
                                 <span class="fw-medium" id="cart-subtotal">₹<%= (subTotal || 0).toLocaleString() %>
                                         </span>
                             </div>

@@ -3,6 +3,7 @@ const errorHandler = (err, req, res, next) => {
     console.error("error handler", err.stack)
     console.error("Error occurred on:", req.method, req.originalUrl);
     console.error("Error message",err.message)
+  
 
     const statusCode = err.status || 500
     const message = err.message || "Something went wrong"

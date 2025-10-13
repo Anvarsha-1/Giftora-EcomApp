@@ -1218,7 +1218,8 @@
             const response = await fetch('/cart', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept':'application/json'
               },
               credentials: 'include',
               body: JSON.stringify({ productId, quantity: 1 })
@@ -1232,16 +1233,28 @@
                 updateCartCount();
               });
             } else {
-              if (data.message === 'User not logged in') {
-                window.isLoggedIn = false;
-                window.location.href = '/login';
-              } else {
-                CartToast.fire({
-                  icon: 'error',
-                  title: data.message || 'Failed to update cart'
+               if (data.message === 'Unauthorized: Please login') {
+                Swal.fire({
+                  icon: 'info',
+                  title: "Login Required",
+                  text: "Please login to continue",
+                  showCancelButton: true,
+                  confirmButtonText: "Login",
+                  cancelButtonText: "Cancel",
+                }).then((res) => {
+                  if (res.isConfirmed) {
+                    window.location.href = "/login";
+                  }
                 });
+                return;
               }
+
+              Toast.fire({
+                icon: 'error',
+                title: data.message || 'Failed to add to cart'
+              });
             }
+            
           } catch (err) {
             console.error('Cart error:', err);
             CartToast.fire({

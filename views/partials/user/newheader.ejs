@@ -140,7 +140,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             min-width: 180px;
-            z-index: 1001;
+            z-index: 1050; /* Increased z-index to ensure it's above all other content */
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
@@ -227,6 +227,9 @@
             .hamburger {
                 display: block;
             }
+            .dropdown-menu{
+                z-index: 1001;
+            }
 
             .nav-wrapper {
                 position: fixed;
@@ -300,39 +303,32 @@
                     <i class="fas fa-bars"></i>
                 </button>
 
-            <!-- Navigation & Actions -->
-            <div class="nav-wrapper" id="navWrapper">
-                <div class="nav-menu-wrapper">
-                    <nav>
-                        <ul class="nav-menu">
-                            <li><a href="/" class="nav-link">Home</a></li>
-                            <li><a href="/viewProducts" class="nav-link">Shop</a></li>
-                            <li><a href="#" class="nav-link">Contact</a></li>
-                            <li><a href="#" class="nav-link">About</a></li>
-                            <% if (!user) { %>
-                                <li><a href="/login" class="nav-link">Sign In</a></li>
-                                <% } %>
-                        </ul>
-                    </nav>
-
-                    <% if (user) { %>
-                        <div class="header-actions">
-                            <button onclick="window.location.href='/wishlist'" class="icon-button" aria-label="Wishlist">
-                                <i class="far fa-heart"></i>
-                                <span id="wishlist-count" class="count-badge">0</span>
-                            </button>
-
-                            <button onclick="window.location.href='/cart'" class="icon-button" aria-label="Cart">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span id="cart-count" class="count-badge">0</span>
-                            </button>
-
-                        </div>
-                    <% } %>
+                <!-- Navigation & Actions -->
+                <div class="nav-wrapper" id="navWrapper">
+                    <div class="nav-menu-wrapper">
+                        <nav>
+                            <ul class="nav-menu">
+                                <li><a href="/" class="nav-link">Home</a></li>
+                                <li><a href="/viewProducts" class="nav-link">Shop</a></li>
+                                <li><a href="#" class="nav-link">Contact</a></li>
+                                <li><a href="#" class="nav-link">About</a></li>
+                                <% if (!user) { %>
+                                    <li><a href="/login" class="nav-link">Sign In</a></li>
+                                    <% } %>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
-            </div>
 
                 <% if (user) { %>
+                    <button onclick="window.location.href='/wishlist'" class="icon-button" aria-label="Wishlist">
+                        <i class="far fa-heart"></i>
+                        <span id="wishlist-count" class="count-badge">0</span>
+                    </button>
+                    <button onclick="window.location.href='/cart'" class="icon-button" aria-label="Cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span id="cart-count" class="count-badge">0</span>
+                    </button>
                     <div class="profile-dropdown" id="profileDropdown">
                         <button class="profile-button" id="profileToggle" aria-label="Profile">
                             <% if (user.profileImage?.url) { %>

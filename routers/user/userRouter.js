@@ -12,22 +12,39 @@ const upload = require('../../helpers/multer')
 
 //USER AUTHENTICATION
 router.get('/',authUserController.loadPLandingPage);
+
 router.get('/PageNotFound',authUserController.PageNotFound);
+
 router.get("/signup",authUserController.loadSignUp);
+
 router.post("/signup",authUserController.signUp);
+
 router.get("/verify-otp",authUserController.renderVerifyOtp);
+
 router.post("/resent-otp",authUserController.resendOtp)
+
 router.post("/verify-otp",authUserController.verifyOtp)
+
 router.get("/login",authUserController.loadLogin)
+
 router.post('/login',authUserController.login)
+
 router.get('/forgot-password',authUserController.forgotPassword)
+
 router.post('/forgot-password', authUserController.forgotPasswordValidation)
+
 router.get('/otp-forgot-password', authUserController.otpForgotPassword)
+
 router.post('/otp-forgot-password', authUserController.verifyForgotPasswordOtp)
+
 router.get('/reset-password',authUserController.loadResetPassword)
+
 router.post('/reset-password',authUserController.validateResetPassword)
+
 router.get('/logout',authUserController.logout)
+
 router.get("/auth/google",passport.authenticate("google",{scope:['profile','email']}))
+
 router.get('/auth/google/callback', (req, res, next) => {
     passport.authenticate('google', async (err, user, info) => {
         if (err) return next(err);
@@ -46,7 +63,9 @@ router.get('/auth/google/callback', (req, res, next) => {
 
 //USER HOME PAGE 
 router.get('/home',authUserController.loadHomePage)
+
 router.get('/viewProducts/',userProductController.loadProductListingPage)
+
 router.get('/productsDetails/:id',userProductController.viewProductDetails)
 
 

@@ -29,7 +29,7 @@ const loadCart = async (req, res) => {
 
         const validItems = cart.items.filter(item => {
             const product = item.productId;
-            return product 
+            return product
         });
 
         if (validItems.length === 0) {
@@ -85,9 +85,9 @@ const loadCart = async (req, res) => {
         const totalPrice = cartItems[0]?.totalPrice
 
 
- 
+
         const shipping = subTotal >= 1000 ? 0 : 50;
-        const total = subTotal  + shipping;
+        const total = subTotal + shipping;
         const deliveryMessage = subTotal >= 1000
             ? "Free delivery on order above ₹1000"
             : "₹50 shipping charge for orders below ₹1000";
@@ -125,7 +125,7 @@ const addToCart = async (req, res) => {
         const { productId, quantity } = req.body
 
         if (!userId) {
-            return res.status(401).json({ success: false, message: "User not logged in" })
+            return res.json({ success: false, message: "User not logged in" })
         }
         const product = await Product.findById({ _id: productId, isBlocked: false, isDeleted: false })
 
@@ -148,7 +148,7 @@ const addToCart = async (req, res) => {
             return res.json({ success: false, message: "Invalid Quantity" })
         }
 
-        if(qty>product.quantity){
+        if (qty > product.quantity) {
             return res.json({ success: false, message: "Quantity exceeds stock." })
         }
         if (qty > 10) {
@@ -183,20 +183,20 @@ const addToCart = async (req, res) => {
             const itemIndex = cart.items.findIndex(
                 item => item.productId.toString() === productId
             );
+            console.log(itemIndex)
 
             if (itemIndex > -1) {
                 const newQty = cart.items[itemIndex].quantity + qty;
-
-                if (newQty > product.quantity) {
-                    return res.json({ success: false, message: "Quantity exceeds stock." });
-                }
-                if (newQty > 10) {
+                console.log("quantity",newQty,itemIndex)
+                if(newQty>10){
+                    console.log("k")
                     return res.json({ success: false, message: "Cart item limit reached." });
+                } else if (newQty > product.quantity) {
+                    return res.json({ success: false, message: "Quantity exceeds stock." });
+                } else {
+                    cart.items[itemIndex].quantity = newQty;
+                    cart.items[itemIndex].totalPrice = newQty * cart.items[itemIndex].price;
                 }
-
-
-                cart.items[itemIndex].quantity = newQty;
-                cart.items[itemIndex].totalPrice = newQty * cart.items[itemIndex].price;
             } else {
 
                 if (cart.items.length >= 10) {
@@ -243,7 +243,7 @@ const updateCartQuantity = async (req, res) => {
         const userId = req.session.user
         const { itemId, quantity } = req.body
         const user = await User.findById(req.session.user)
-         console.log(quantity)
+        
 
         if (!user) {
             return res.json({ success: false, message: "User not logged in" })
@@ -254,12 +254,15 @@ const updateCartQuantity = async (req, res) => {
         if (isNaN(newQuantity) || newQuantity < 1) {
             return res.json({ success: false, message: "Invalid quantity" })
         }
-
+        if(newQuantity>10){
+            return res.json({success:false ,message:"Cart limit reached(10)."})
+        }
         const cart = await Cart.findOne({ userId })
 
 
         const item = cart.items.find(i => i.productId.toString() === itemId)
 
+        
 
         if (!item) {
             return res.json({ success: false, message: "Item not found in cart" })
@@ -274,15 +277,12 @@ const updateCartQuantity = async (req, res) => {
             return res.status(404).json({ success: false, message: "This product is no longer available" })
         }
 
-        if (newQuantity > 10) {
-            return res.json({ success: false, message: "cart quantity limit reached (10)" })
-        }
 
-        if (newQuantity > product.quantity) { 
+        if (newQuantity > product.quantity) {
             return res.json({ success: false, message: `only ${product.quantity} in stock.` })
         }
 
-        
+
 
         item.quantity = newQuantity
         item.totalPrice = product.salesPrice * quantity;
@@ -294,14 +294,13 @@ const updateCartQuantity = async (req, res) => {
 
         const subTotal = cart.total;
         const shipping = subTotal >= 1000 ? 0 : 50;
-        const total = subTotal  + shipping;
+        const total = subTotal + shipping;
 
         await cart.save();
 
         res.json({
             success: true,
             subTotal,
-            
             itemTotal: item.totalPrice,
             itemQuantity: item.quantity,
             stock: product.quantity,
@@ -352,7 +351,7 @@ const updateCartCount = async (req, res) => {
 
 
         if (!userId) {
-            return res.json({ success: false, wishlistCount: 0, cartCount: 0 });
+            return res.json({wishlistCount: 0, cartCount: 0 });
         }
 
         const cart = await Cart.findOne({ userId }).populate('items.productId');
@@ -362,14 +361,12 @@ const updateCartCount = async (req, res) => {
             return res.json({ success: true, cartCount: 0, wishlistCount: wishlist ? wishlist.products.length : 0 });
         }
 
-
-
         if (cart && Array.isArray(cart.items)) {
             validItems = cart.items.filter(item => {
                 const product = item.productId;
                 return (
-                    product 
-                    
+                    product
+
                 );
             });
         }

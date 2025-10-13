@@ -361,8 +361,8 @@
         }
 
         .product-img {
-            width: 100%;
-            height: 100%;
+            width: 300px;
+            height: 300px;
             object-fit: cover;
             object-position: center;
             transition: transform 0.3s ease;
@@ -1181,10 +1181,30 @@
                             const response = await fetch('/cart', {
                                 method: "POST",
                                 headers: {
-                                    'Content-Type': 'application/json'
+                                    'Content-Type': 'application/json',
+                                    'Accept' : 'application/json'
                                 },
                                 body: JSON.stringify({ productId, quantity: 1 })
                             });
+
+                            // Check if the response is JSON before trying to parse it
+                            const contentType = response.headers.get("content-type");
+                            if (!contentType || !contentType.includes("application/json")) {
+                                // If not JSON, it's likely a redirect to the login page
+                                 Swal.fire({
+                                    icon: 'info',
+                                    title: "Login Required",
+                                    text: "Please login to add items to your cart.",
+                                    showCancelButton: true,
+                                    confirmButtonText: "Login",
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '/login';
+                                    }
+                                });
+                                return;
+                            }
+
                             const data = await response.json();
 
                             if (data.success) {
@@ -1197,15 +1217,26 @@
                                 await updateCartCount();
                                 
                             } else {
-                                if (data.message === "User not logged in") {
-                                    window.location.href = '/login';
-                                } else {
-                                    // ❌ Error toast
-                                    Toast.fire({
-                                        icon: 'error',
-                                        title: data.message || 'Could not add product to cart'
+                                if (data.message === 'Unauthorized: Please login') {
+                                    Swal.fire({
+                                        icon: 'info',
+                                        title: "Login Required",
+                                        text: "Please login to continue",
+                                        showCancelButton: true,
+                                        confirmButtonText: "Login",
+                                        cancelButtonText: "Cancel",
+                                    }).then((res) => {
+                                        if (res.isConfirmed) {
+                                            window.location.href = "/login";
+                                        }
                                     });
+                                    return;
                                 }
+
+                                Toast.fire({
+                                    icon: 'error',
+                                    title: data.message || 'Failed to add to cart'
+                                });
                             }
                         } catch (err) {
                             console.error(err);
@@ -1236,12 +1267,14 @@
                         const res = await fetch(`/wishlist/add/`, {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
                             },
                             body: JSON.stringify({ productId }),
                         });
 
                         const result = await res.json();
+                        console.log(result)
 
                         if (result.success) {
                                 const icon = button.querySelector("i.fa-heart");
