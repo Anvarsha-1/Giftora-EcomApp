@@ -14,7 +14,8 @@ const loadProductListingPage = async (req, res) => {
     const clearFilter = req.query.clearFilter === '1';
     const clearSearch = req.query.clearSearch === '1';
 
-    const search = clearSearch ? "" : req.query.search || "";
+    const search = clearSearch ? "" : decodeURIComponent(req.query.search || "").trim();
+    console.log(search)
     const selectedCategory = clearFilter ? "" : req.query?.category || '';
     const minPrice = clearFilter ? 0 : parseFloat(req.query?.minPrice) || 0;
     const maxPrice = clearFilter ? Number.MAX_VALUE : parseFloat(req.query?.maxPrice) || Number.MAX_VALUE;
@@ -30,7 +31,7 @@ const loadProductListingPage = async (req, res) => {
     if (search) {
       aggregation.push({
         $search: {
-          index: 'productSearchIndex',
+          index: 'default',
           text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } }
         }
       });
@@ -69,7 +70,7 @@ const loadProductListingPage = async (req, res) => {
     if (search) {
       countPipeline.push({
         $search: {
-          index: 'productSearchIndex',
+          index: 'default',
           text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } }
         }
       });
