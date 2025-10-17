@@ -237,7 +237,7 @@ const getDashboardData = async (req, res) => {
     const filter = req.query.filter || 'monthly';
     try {
         const salesReport = await getSalesReportData(filter);
-        res.json({ salesReport });
+        res.json({ salesReport });  
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error' });

@@ -17,12 +17,24 @@ passport.use(new GoogleStrategy({
       const profileImage = profile.photos?.[0]?.value || 'https://via.placeholder.com/150';
 
       // Check if user already exists by Google ID or email
-      let existingUser = await User.findOne({
-        $or: [{ email }, { googleId: profile.id }]
-      });
+      let user = await User.findOne({ email });
 
-      if (existingUser) {
-        return done(null, existingUser); // login existing user
+      if (user) {
+        // User exists
+        if (user.isBlocked) {
+          // User is blocked, prevent login
+          return done(null, false, { message: 'This account has been blocked.' });
+        }
+        if (!user.googleId) {
+          // This is an existing local account, link it with Google ID
+          user.googleId = profile.id;
+          // Optionally update profile image if they don't have one
+          if (!user.profileImage || !user.profileImage.url) {
+            user.profileImage = { public_id: "", url: profileImage };
+          }
+          await user.save();
+        }
+        return done(null, user); // Login existing user
       }
 
       // Create new user
@@ -39,7 +51,7 @@ passport.use(new GoogleStrategy({
       });
 
       await newUser.save();
-      done(null, newUser);
+      return done(null, newUser);
 
     } catch (err) {
       done(err);

@@ -49,7 +49,7 @@ router.get('/auth/google/callback', (req, res, next) => {
     passport.authenticate('google', async (err, user, info) => {
         if (err) return next(err);
         if (!user) {          
-            return res.redirect(`/signup?error=${encodeURIComponent(info.message)}`);
+            return res.redirect(`/login?error=${encodeURIComponent(info.message)}`);
         }
         req.logIn(user, (err) => {
             if (err) return next(err);
