@@ -373,10 +373,7 @@ const login = async (req, res) => {
         .json({ success: false, message: "User not Found" });
     }
 
-    if (findUser.googleId) {
-      return res
-        .json({ success: false, message: "Please login thought google authentication" })
-    }
+    
 
 
     if (findUser.isAdmin) {
