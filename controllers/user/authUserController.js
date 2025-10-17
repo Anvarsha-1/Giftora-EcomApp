@@ -580,7 +580,7 @@ const validateResetPassword = async (req, res) => {
   }
 }
 
-const loadHomePage = async (req, res) => {
+const loadHomePage = async (req, res, next) => {
   try {
     const categories = await category.find({ isListed: true });
     
@@ -636,7 +636,7 @@ const loadHomePage = async (req, res) => {
 
   } catch (error) {
     console.log("error loading home page", error.message);
-    next(error);
+    return next(error);
   }
 };
 
