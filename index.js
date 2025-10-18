@@ -27,7 +27,6 @@ const passport = require("./config/passport");
 app.disable('x-powered-by');
 
 
-
 DB();
 
 if (!process.env.SECRET_KEY) {
@@ -38,7 +37,7 @@ if (!process.env.SECRET_KEY) {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.set('trust proxy', 1);
+
 
 app.use(
   session({
@@ -46,9 +45,9 @@ app.use(
     resave: false,        
     saveUninitialized: false,
     cookie: { 
-      secure: true, 
+      secure: false, 
       httpOnly: true, 
-      sameSite: 'none',
+      sameSite: 'Strict',
       maxAge: 24 * 60 * 60 * 1000 
     }, 
   })
