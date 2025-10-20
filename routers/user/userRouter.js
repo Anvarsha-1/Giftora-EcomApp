@@ -57,7 +57,7 @@ router.get(
         console.log("Google user logged in:", req.user);
 
         // Optional: your custom session
-        req.session.userId = req.user._id;
+        req.session.user = req.user._id;
 
         req.session.save(() => res.redirect("/home"));
     }
