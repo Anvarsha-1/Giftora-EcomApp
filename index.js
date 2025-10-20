@@ -21,8 +21,28 @@ const adminSales = require('./routers/admin/adminSalesReportRouter')
 const errorHandler = require('./helpers/error-handler-middleware')
 
 
-const flash = require('express-flash');
+
+app.use(
+  session({
+    secret: process.env.SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      sameSite: 'Strict',
+      maxAge: 24 * 60 * 60 * 1000
+    },
+  })
+);
+
 const passport = require("./config/passport");
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+const flash = require('express-flash');
+
 
 app.disable('x-powered-by');
 
@@ -39,24 +59,11 @@ app.use(express.urlencoded({ extended: true }));
 
 
 
-app.use(
-  session({
-    secret: process.env.SECRET_KEY,
-    resave: false,        
-    saveUninitialized: false,
-    cookie: { 
-      secure: false, 
-      httpOnly: true, 
-      sameSite: 'Strict',
-      maxAge: 24 * 60 * 60 * 1000 
-    }, 
-  })
-);
+
 
 app.use(flash());
 
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 
 app.use((req, res, next) => {

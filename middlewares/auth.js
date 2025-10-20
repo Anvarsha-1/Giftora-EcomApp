@@ -37,27 +37,35 @@ const adminAuth = async (req, res, next) => {
   try {
 
     const isApiRequest = req.headers.accept?.includes('application/json');
-
+     console.log('Helloo',req.session.admin)
     if (!req.session.admin) {
+      console.log("No session")
       if (isApiRequest) {
         return res.status(401).json({ success: false, message: 'Unauthorized: Admin login required' });
       }
       return res.redirect("/admin/login");
     }
+    console.log("AUTH ADMIN",req.session.admin)
 
     const adminData = await User.findById(req.session.admin);
+    console.log("adminData",adminData)
     if (!adminData || adminData.isBlocked || !adminData.isAdmin) {
-      req.session.destroy(err => {
-        if (err) console.log("Error destroying session:", err);
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Error destroying admin session:", err);
+        }
         res.clearCookie("connect.sid");
-
         if (isApiRequest) {
-          return res.status(403).json({ success: false, message: 'Access denied: Invalid or blocked admin' });
+          return res.status(403).json({
+            success: false,
+            message: "Access denied: Invalid or blocked admin",
+          });
         }
         return res.redirect("/admin/login");
       });
-      return;
+      return; 
     }
+
 
     req.admin = adminData;
     next();

@@ -45,24 +45,32 @@ router.get('/logout',authUserController.logout)
 
 router.get("/auth/google",passport.authenticate("google",{scope:['profile','email']}))
 
-router.get('/auth/google/callback', (req, res, next) => {
-    passport.authenticate('google', async (err, user, info) => {
-        if (err) return next(err);
-        if (!user) {
-            req.flash('error', info.message || 'Google authentication failed. Please try again.');
-            return res.redirect(`/login?error=${encodeURIComponent(info.message)}`);
-        }
-        req.logIn(user, (err) => {
-            if (err) {
-                console.error("Error during req.logIn after Google auth:", err);
-                req.flash('error', 'Could not log you in after Google authentication.');
-                return res.redirect('/login');
+router.get("/google/callback", (req, res, next) => {
+    passport.authenticate(
+        "google",
+        { failureRedirect: "/login" },
+        async (err, user, info) => {
+            if (err) return next(err);
+            if (!user) {
+                const message = info?.message || "Google authentication failed.";
+                return res.redirect(`/login?error=${encodeURIComponent(message)}`);
             }
-            req.session.user = user._id;
-            return res.redirect("/home");
-        });
-    })(req, res, next);
+
+            req.logIn(user, (err) => {
+                if (err) {
+                    console.error("Error during req.logIn:", err);
+                    return res.redirect("/login");
+                }
+
+                req.session.userId = user._id;
+
+                req.session.save(() => res.redirect("/home"));
+            });
+        }
+    )(req, res, next);
 });
+
+
 
 
 

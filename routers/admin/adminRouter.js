@@ -17,7 +17,7 @@ router.get("/logout", adminController.logout);
 
 
 //DASHBOARD MANAGEMENT
-router.get("/dashboard", adminAuth, adminController.renderAdminDashboard);
+router.get("/dashboard",adminAuth, adminController.renderAdminDashboard);
 router.get('/dashboard/data',adminAuth,adminController.getDashboardData)
 
 //USER MANAGEMENT

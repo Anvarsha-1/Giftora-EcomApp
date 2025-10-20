@@ -25,6 +25,10 @@ const validateLogin = async (loginData) => {
     } else {
         const admin = await User.findOne({ email, isAdmin: true });
         if (admin) {
+            console.log("admin",admin)
+            if(!admin.password){
+                errors.password = 'This account uses Google sign-in. Please use Signin account'
+            }
             const isMatch = await bcrypt.compare(password, admin.password);
             if (!isMatch) {
                 errors.password = 'Invalid Password';

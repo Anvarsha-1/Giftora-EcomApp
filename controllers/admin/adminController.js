@@ -38,25 +38,30 @@ const adminLogin = async (req, res) => {
 const adminVerify = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const errors = await validateLogin(req.body);
         console.log("Email:", email, "Password:", password);
-
+        const errors = await validateLogin(req.body);
+        
         if (Object.keys(errors).length > 0) {
             console.log("Validation errors:", errors);
-            return res.render("admin/admin-login", {
+            return res.render("admin-login", {
                 errors,
                 formData: req.body,
                 message: "Please correct the errors below",
             });
         }
-
+       console.log('Admin signing in...')
         const adminUser = await User.findOne({ email })
+        console.log(adminUser.firstName)
         req.session.admin = adminUser._id;
-        return res.redirect('/admin/dashboard');
+        console.log(req.session.admin)
+        req.session.save(err => {
+            if (err) console.error('Session save error:', err);
+            res.redirect('/admin/dashboard');
+        });
 
     } catch (error) {
         console.error('Server error:', error);
-        return res.render('admin/admin-login', {
+        return res.render('admin-login', {
             errors: {},
             formData: req.body,
             message: 'An unexpected error occurred. Please try again.',
@@ -126,6 +131,7 @@ async function getSalesReportData(filter) {
 
 const renderAdminDashboard = async (req, res) => {
     try {
+        console.log('loading dashboard...')
         const filter = req.query.filter || 'monthly'
         
         const [salesData, topProduct, topCategories, totalUsers, totalOrders, totalSalesData, pendingOrdersCount, topCustomers] = await  Promise.all([
