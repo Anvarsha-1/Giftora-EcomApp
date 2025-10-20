@@ -17,7 +17,9 @@ passport.use(new GoogleStrategy({
       const profileImage = profile.photos?.[0]?.value || 'https://via.placeholder.com/150';
 
       // Check if user already exists by Google ID or email
-      let user = await User.findOne({ email });
+      let user = await User.findOne({
+        $or: [{ email }, { googleId: profile.id }]
+      });
 
       if (user) {
         // User exists
