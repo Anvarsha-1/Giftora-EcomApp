@@ -43,32 +43,26 @@ router.post('/reset-password',authUserController.validateResetPassword)
 
 router.get('/logout',authUserController.logout)
 
-router.get("/auth/google",passport.authenticate("google",{scope:['profile','email']}))
+// 1️⃣ Trigger Google login
+router.get(
+    "/auth/google",
+    passport.authenticate("google", { scope: ['profile', 'email'] })
+);
 
-router.get("/google/callback", (req, res, next) => {
-    passport.authenticate(
-        "google",
-        { failureRedirect: "/login" },
-        async (err, user, info) => {
-            if (err) return next(err);
-            if (!user) {
-                const message = info?.message || "Google authentication failed.";
-                return res.redirect(`/login?error=${encodeURIComponent(message)}`);
-            }
+// 2️⃣ Callback route (must match Google Cloud console)
+router.get(
+    "/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/login" }),
+    (req, res) => {
+        console.log("Google user logged in:", req.user);
 
-            req.logIn(user, (err) => {
-                if (err) {
-                    console.error("Error during req.logIn:", err);
-                    return res.redirect("/login");
-                }
+        // Optional: your custom session
+        req.session.userId = req.user._id;
 
-                req.session.userId = user._id;
+        req.session.save(() => res.redirect("/home"));
+    }
+);
 
-                req.session.save(() => res.redirect("/home"));
-            });
-        }
-    )(req, res, next);
-});
 
 
 
