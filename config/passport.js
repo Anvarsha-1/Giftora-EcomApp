@@ -52,7 +52,7 @@ passport.use(new GoogleStrategy({
         phone: 'registered by google',
       });
 
-      await newUser.save();
+      await newUser.save();  
       return done(null, newUser);
 
     } catch (err) {
