@@ -21,6 +21,8 @@ const adminSales = require('./routers/admin/adminSalesReportRouter')
 const errorHandler = require('./helpers/error-handler-middleware')
 
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 
 app.use(
   session({
@@ -28,9 +30,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: true,
+      secure: isProduction, // Use secure cookies in production
       httpOnly: true,
-      sameSite: 'none',
+      sameSite: isProduction ? 'none' : 'lax', // 'lax' is a safe default for development
       maxAge: 24 * 60 * 60 * 1000
     },
   })
