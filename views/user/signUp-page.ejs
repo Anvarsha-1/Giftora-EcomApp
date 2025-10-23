@@ -219,7 +219,7 @@
               <input type="text" name="referralCode" id="referralCodeInput"
                 class="form-control <%= errors && errors.referralCode ? 'error' : '' %>"
                 placeholder="Enter referral code"
-                value="<%= formData && formData.referralCode ? formData.referralCode : '' %>">
+                value="<%= referralCode ? referralCode : formData.referralCode || "" %>">
               <% if (errors && errors.referralCode) { %>
                 <span class="error-message">
                   <%= errors.referralCode %>

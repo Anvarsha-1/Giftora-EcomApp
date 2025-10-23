@@ -23,6 +23,7 @@ const errorHandler = require('./helpers/error-handler-middleware')
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+DB();
 
 app.use(
   session({
@@ -45,11 +46,8 @@ app.use(passport.session());
 
 const flash = require('express-flash');
 
-
 app.disable('x-powered-by');
 
-
-DB();
 
 if (!process.env.SECRET_KEY) {
   console.error('SECRET_KEY environment variable is required');
@@ -60,12 +58,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-
-
-
 app.use(flash());
-
-
 
 
 app.use((req, res, next) => {
@@ -80,8 +73,6 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(__dirname, "public")))
 
 
-
-
 app.set("view engine", "ejs");
 app.set('views', [
   path.join(__dirname, 'views'),
@@ -91,11 +82,7 @@ app.set('views', [
 ]);
 
 
-
-
-
-// Routes
-
+                   // Routes
 //User
 app.use('/account',userAccount);
 app.use('/cart', userCart);

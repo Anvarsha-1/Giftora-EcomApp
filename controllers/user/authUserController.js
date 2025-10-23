@@ -77,12 +77,14 @@ const loadSignUp = async (req, res) => {
   try {
 
     const error = req.query.error || null
-
+    const referralCode = req.query.refCD
+    console.log("referral code",referralCode)
     return res.render("user/signUp-page", {
       formData: {},
       errors: {},
       message: "",
       error,
+      referralCode,
     });
   } catch (error) {
     console.log("Sign Up page not found");
