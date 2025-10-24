@@ -579,10 +579,8 @@
                       <div class="product-image">
                         <% if (products[i].productImage) { %>
                           <% // 1. Define the base URL. No need for [0] or .url now! const
-                            imageUrl=products[i].productImage; 
-                            const transformedUrl=imageUrl.replace( '/upload/'
-                            , '/upload/w_300,h_300,c_fill,g_auto,q_auto:best,f_auto/' ); 
-                            %>
+                            imageUrl=products[i].productImage; const transformedUrl=imageUrl.replace( '/upload/'
+                            , '/upload/w_300,h_300,c_fill,g_auto,q_auto:best,f_auto/' ); %>
                             <a href="/productsDetails/<%= products[i]._id %>">
                               <img src="<%= transformedUrl %>" alt="<%= products[i].productName %>" class="product-img"
                                 data-id="<%= products[i]._id %>">
@@ -1219,7 +1217,7 @@
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Accept':'application/json'
+                'Accept': 'application/json'
               },
               credentials: 'include',
               body: JSON.stringify({ productId, quantity: 1 })
@@ -1233,7 +1231,7 @@
                 updateCartCount();
               });
             } else {
-               if (data.message === 'Unauthorized: Please login') {
+              if (data.message === 'Unauthorized: Please login') {
                 Swal.fire({
                   icon: 'info',
                   title: "Login Required",
@@ -1254,7 +1252,7 @@
                 title: data.message || 'Failed to add to cart'
               });
             }
-            
+
           } catch (err) {
             console.error('Cart error:', err);
             CartToast.fire({

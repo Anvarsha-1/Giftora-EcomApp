@@ -46,7 +46,7 @@
             </div>
             <div class="p-6 content-section">
               <h1 class="text-2xl font-semibold text-gray-800 mb-6">My Orders</h1>
-              <% if (orders && orders.length > 0) { %>
+              <% if (orders && orders.length> 0) { %>
                 <% orders.forEach(function(orderItem) { %>
                   <% const orderId=orderItem.orderId %>
                     <% const status=orderItem.status ? orderItem.status.toLowerCase() : '' ; %>
@@ -68,18 +68,19 @@
                                     <%= orderItem.orderId %>
                                   </span></div>
                                 <div class="text-sm text-gray-500">Order Date: <span class="text-gray-700">
-                                    <%= new Date(orderItem.createdOn).toLocaleString("en-US", { dateStyle: "medium" , timeStyle: "short" }) %>
+                                    <%= new Date(orderItem.createdOn).toLocaleString("en-US", { dateStyle: "medium" ,
+                                      timeStyle: "short" }) %>
                                   </span></div>
                                 <div class="text-sm text-gray-500">Payment: <span class="text-gray-700">
                                     <%= orderItem.paymentMethod %>
                                   </span></div>
-                                    
+
                                 <div class="text-sm text-gray-500">Shipping Address: <span class="text-gray-700">
-                                   <%=orderItem.address %>, <%= orderItem.city %>, <%=orderItem.district %>
-                                                                , <%= orderItem.state %> - <%= orderItem.pinCode %>
+                                    <%=orderItem.address %>, <%= orderItem.city %>, <%=orderItem.district %>
+                                          , <%= orderItem.state %> - <%= orderItem.pinCode %>
                                   </span></div>
-                                 
-                                  
+
+
                               </div>
                               <div class="flex flex-col items-end text-right gap-2 mt-2 md:mt-0">
                                 <span class="inline-block px-3 py-1 rounded-full text-xs font-medium
@@ -91,44 +92,51 @@
                             'bg-gray-100 text-gray-700' %>">
                                   <%= orderItem.status %>
                                 </span>
-                                <div class="text-lg font-semibold text-gray-800"><%=  orderItem?.totalPrice.toLocaleString("en-IN", { style: "currency", currency: "INR" }) %>
+                                <div class="text-lg font-semibold text-gray-800">
+                                  <%= orderItem?.totalPrice.toLocaleString("en-IN", { style: "currency" ,
+                                    currency: "INR" }) %>
                                 </div>
                               </div>
                             </div>
                             <div class="border-t border-gray-100 pt-4">
                               <div class="space-y-4">
                                 <% if (orderItem.orderedItems && Array.isArray(orderItem.orderedItems)) { %>
-                                    <% orderItem.orderedItems.forEach(function(item) { %>
-                                        <div class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
-                                            <div class="flex items-center gap-3">
-                                                <img src="<%= item.productId?.productImage?.[0]?.url %>"
-                                                    alt="<%= item.productId?.productName %>"
-                                                    class="w-10 h-10 object-cover rounded border border-gray-200">
-                                                <div>
-                                                    <div class="font-medium text-gray-800">
-                                                        <%= item.productId?.productName %>
-                                                    </div>
-                                                    <div class="text-xs text-gray-500">Qty: <%= item.quantity %></div>
-                                                    <div class="text-xs text-gray-500">Price: ₹<%= item.price %></div>
-                                                </div>
-                                            </div>
-                                            <div class="flex flex-col items-end gap-2">
-                                                <div class="text-gray-700 font-semibold">₹<%= (item.price * item.quantity).toFixed(2) %></div>
-                                                <span class="text-xs font-medium
+                                  <% orderItem.orderedItems.forEach(function(item) { %>
+                                    <div
+                                      class="flex items-center justify-between bg-gray-50 rounded-md p-3 border border-gray-100">
+                                      <div class="flex items-center gap-3">
+                                        <img src="<%= item.productId?.productImage?.[0]?.url %>"
+                                          alt="<%= item.productId?.productName %>"
+                                          class="w-10 h-10 object-cover rounded border border-gray-200">
+                                        <div>
+                                          <div class="font-medium text-gray-800">
+                                            <%= item.productId?.productName %>
+                                          </div>
+                                          <div class="text-xs text-gray-500">Qty: <%= item.quantity %>
+                                          </div>
+                                          <div class="text-xs text-gray-500">Price: ₹<%= item.price %>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <div class="flex flex-col items-end gap-2">
+                                        <div class="text-gray-700 font-semibold">₹<%= (item.price *
+                                            item.quantity).toFixed(2) %>
+                                        </div>
+                                        <span class="text-xs font-medium
                                                     <%= item.status === 'Pending' ? 'text-red-700' :
                                                         item.status === 'Shipped' ? 'text-yellow-700' :
                                                         item.status === 'Delivered' ? 'text-green-700' :
                                                         item.status === 'Cancelled' ? 'text-red-500' :
                                                         item.status === 'Returned' ? 'text-yellow-500' :
                                                         'text-gray-600' %>">
-                                                    <%= item.status %>
-                                                </span>
-                                            </div>
-                                        </div>
+                                          <%= item.status %>
+                                        </span>
+                                      </div>
+                                    </div>
                                     <% }); %>
-                                <% } else { %>
-                                    <div>No items found for this order.</div>
-                                <% } %>
+                                      <% } else { %>
+                                        <div>No items found for this order.</div>
+                                        <% } %>
                               </div>
                             </div>
                             <%if(orders){ %>
@@ -148,37 +156,46 @@
                               </div>
                       </div>
                       <% }); %>
-                          <% } else { %>
-                            <div class="text-center py-12 bg-gray-50 rounded-lg">
-                                <i class="ri-dropbox-line text-5xl text-gray-400 mb-4"></i>
-                                <h3 class="text-xl font-semibold text-gray-700">No Orders Yet</h3>
-                                <p class="text-gray-500 mt-2">You haven't placed any orders. Let's change that!</p>
-                                <a href="/products" class="mt-6 inline-block bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                                    Start Shopping
-                                </a>
-                            </div>
-                        <% } %>
-
-                        <!-- Pagination -->
-                        <% if (totalPages > 1) { %>
-                          <div class="mt-8 flex justify-center items-center space-x-2">
-                              <% if (currentPage > 1) { %>
-                                  <a href="?page=<%= currentPage - 1 %>" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
-                              <% } %>
-              
-                              <% for(let i = 1; i <= totalPages; i++) { %>
-                                  <% if (i === currentPage) { %>
-                                      <span class="px-4 py-2 bg-blue-600 border border-blue-600 rounded-md text-sm font-medium text-white"><%= i %></span>
-                                  <% } else { %>
-                                      <a href="?page=<%= i %>" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"><%= i %></a>
-                                  <% } %>
-                              <% } %>
-              
-                              <% if (currentPage < totalPages) { %>
-                                  <a href="?page=<%= currentPage + 1 %>" class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
-                              <% } %>
+                        <% } else { %>
+                          <div class="text-center py-12 bg-gray-50 rounded-lg">
+                            <i class="ri-dropbox-line text-5xl text-gray-400 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-700">No Orders Yet</h3>
+                            <p class="text-gray-500 mt-2">You haven't placed any orders. Let's change that!</p>
+                            <a href="/products"
+                              class="mt-6 inline-block bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                              Start Shopping
+                            </a>
                           </div>
-                      <% } %>
+                          <% } %>
+
+                            <!-- Pagination -->
+                            <% if (totalPages> 1) { %>
+                              <div class="mt-8 flex justify-center items-center space-x-2">
+                                <% if (currentPage> 1) { %>
+                                  <a href="?page=<%= currentPage - 1 %>"
+                                    class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Previous</a>
+                                  <% } %>
+
+                                    <% for(let i=1; i <=totalPages; i++) { %>
+                                      <% if (i===currentPage) { %>
+                                        <span
+                                          class="px-4 py-2 bg-blue-600 border border-blue-600 rounded-md text-sm font-medium text-white">
+                                          <%= i %>
+                                        </span>
+                                        <% } else { %>
+                                          <a href="?page=<%= i %>"
+                                            class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                            <%= i %>
+                                          </a>
+                                          <% } %>
+                                            <% } %>
+
+                                              <% if (currentPage < totalPages) { %>
+                                                <a href="?page=<%= currentPage + 1 %>"
+                                                  class="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Next</a>
+                                                <% } %>
+                              </div>
+                              <% } %>
             </div>
           </main>
       </div>

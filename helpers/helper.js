@@ -1,7 +1,6 @@
-require("dotenv").config()
-const nodemailer = require("nodemailer");
-const bcrypt = require("bcrypt")
-
+require('dotenv').config();
+const nodemailer = require('nodemailer');
+const bcrypt = require('bcrypt');
 
 function generateOtp() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -10,7 +9,7 @@ function generateOtp() {
 async function sendVerificationEmail(email, otp) {
   try {
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       port: 587,
       secure: false,
       requireTLS: true,
@@ -19,13 +18,13 @@ async function sendVerificationEmail(email, otp) {
         pass: process.env.NODEMAILER_PASSWORD,
       },
       tls: {
-        rejectUnauthorized: false, 
+        rejectUnauthorized: false,
       },
     });
     const info = await transporter.sendMail({
       from: process.env.NODEMAILER_EMAIL,
       to: email,
-      subject: "Verify Your Account – Giftora",
+      subject: 'Verify Your Account – Giftora',
       text: `Your OTP is ${otp}`,
       html: `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9fafb; padding: 30px;">
@@ -71,24 +70,23 @@ async function sendVerificationEmail(email, otp) {
 
     return info.accepted.length > 0;
   } catch (error) {
-    console.error("Error sending email",error);
+    console.error('Error sending email', error);
     return false;
   }
 }
 
-
 const securePassword = async (password) => {
   try {
     const passwordHash = await bcrypt.hash(password, 10);
-    return passwordHash; 
+    return passwordHash;
   } catch (error) {
-    console.error("Error hashing password:", error.message);
-    throw error; 
+    console.error('Error hashing password:', error.message);
+    throw error;
   }
 };
 
-module.exports={
-    generateOtp,
-    sendVerificationEmail,
-    securePassword
-}
+module.exports = {
+  generateOtp,
+  sendVerificationEmail,
+  securePassword,
+};

@@ -9,7 +9,8 @@
   "scripts": {
     "start": "nodemon ",
     "dev": "nodemon index.js",
-    "lint:ejs": "node_modules/.bin/ejs-lint views/**/*.ejs"
+    "lint": "eslint . --ext .js,.mjs,.cjs",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.11",
@@ -26,7 +27,6 @@
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
     "fastest-levenshtein": "^1.0.16",
-    "flash": "^1.1.0",
     "jquery": "^3.7.1",
     "jquery-zoom": "^1.7.21",
     "mongodb": "^6.20.0",
@@ -40,13 +40,17 @@
     "pdfkit": "^0.17.1",
     "razorpay": "^2.9.6",
     "session": "^0.1.0",
-    "sharp": "^0.34.2",
     "validator": "^13.15.15"
   },
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
     "autoprefixer": "^10.4.21",
-    "ejs-lint": "^2.0.1",
+    "eslint": "^9.38.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "globals": "^16.4.0",
     "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17"
   }
 }

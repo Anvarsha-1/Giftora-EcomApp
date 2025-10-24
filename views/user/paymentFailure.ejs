@@ -212,7 +212,9 @@
         </p>
 
         <div class="order-number">
-            <strong>Order ID:</strong> <%=   orderId %><% console.log('Payment Id at frontend',orderId) %>
+            <strong>Order ID:</strong>
+            <%= orderId %>
+                <% console.log('Payment Id at frontend',orderId) %>
         </div>
 
         <p class="message">
@@ -221,18 +223,18 @@
 
         <div class="button-group">
             <a class="btn btn-primary" onclick="retryPayment('<%= orderId %>')">Retry Payment</a>
-            <a  class="btn btn-secondary" onclick="window.location.href='/cart'">View Cart
+            <a class="btn btn-secondary" onclick="window.location.href='/cart'">View Cart
                 Details</a>
         </div>
     </div>
 </body>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-  function retryPayment(orderId){
-    window.location.href=`/payment/retry-payment/${orderId}`
-   }
-         
+    function retryPayment(orderId) {
+        window.location.href = `/payment/retry-payment/${orderId}`
+    }
+
 </script>
 
 

@@ -94,15 +94,15 @@
                                                 </button>
                                                 <% } %>
                                                     <% } %>
-                                                    <% const cancellable=['Pending', 'Shipped' , 'Processing' ]; %>
-                                                        <% if (cancellable.includes(order.status)) { %>
-                                                            <button id="cancelAllOrders"
-                                                                class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
-                                                                data-order-id="<%= order.orderId %>">
-                                                                Cancel All Orders
-                                                            </button>
-                                                            <% } %>
+                                                        <% const cancellable=['Pending', 'Shipped' , 'Processing' ]; %>
+                                                            <% if (cancellable.includes(order.status)) { %>
+                                                                <button id="cancelAllOrders"
+                                                                    class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium"
+                                                                    data-order-id="<%= order.orderId %>">
+                                                                    Cancel All Orders
+                                                                </button>
                                                                 <% } %>
+                                                                    <% } %>
                         </div>
                     </div>
 
@@ -171,10 +171,12 @@
                                                     <%= order.status %>
                                                 </span>
                                                 <div class="text-gray-700 text-sm mt-2 space-y-1">
-                                                    <div><span class="font-medium">Subtotal:</span> ₹<%=order.totalPrice?.toFixed(2) || '0.00' %>
-                                                            <% console.log('subTotal',subTotal,'orderTotal',order.totalPrice) %>
+                                                    <div><span class="font-medium">Subtotal:</span> ₹
+                                                        <%=order.totalPrice?.toFixed(2) || '0.00' %>
+                                                            <% console.log('subTotal',subTotal,'orderTotal',order.totalPrice)
+                                                                %>
                                                     </div>
-                                                    
+
                                                     <div><span class="font-medium">Shipping:</span> ₹<%=
                                                             order.shippingCharge?.toFixed(2) || '0.00' %>
                                                     </div>
@@ -185,7 +187,7 @@
                                                         <% } %>
                                                             <div class="text-lg font-bold text-blue-700 mt-2">Final
                                                                 Amount:
-                                                                ₹<%=  order.finalAmount?.toFixed(2) || '0.00' %>
+                                                                ₹<%= order.finalAmount?.toFixed(2) || '0.00' %>
                                                             </div>
                                                 </div>
                                             </div>
@@ -296,11 +298,16 @@
                                                                                                 ||
                                                                                                 item.status==='Processing'
                                                                                                 ) { %>
-                                                                                            <button class="cancel-item-btn px-4 py-2 bg-red-600 text-white rounded-lg shadow-sm 
+                                                                                                <button
+                                                                                                    class="cancel-item-btn px-4 py-2 bg-red-600 text-white rounded-lg shadow-sm 
                                                                                                      hover:bg-red-600 hover:shadow-md transition-all duration-200 ease-in-out 
-                                                                                                     text-sm font-semibold" data-order-id="<%= order.orderId %>" data-item-id="<%= item._id %>">
-                                                                                                <i class="fas fa-times mr-1"></i> Cancel
-                                                                                            </button>
+                                                                                                     text-sm font-semibold"
+                                                                                                    data-order-id="<%= order.orderId %>"
+                                                                                                    data-item-id="<%= item._id %>">
+                                                                                                    <i
+                                                                                                        class="fas fa-times mr-1"></i>
+                                                                                                    Cancel
+                                                                                                </button>
 
                                                                                                 <% } %>
                                                                                                     <% } %>

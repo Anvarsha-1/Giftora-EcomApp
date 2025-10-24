@@ -1,9 +1,8 @@
-const User = require('../../models/userSchema')
-const Products = require('../../models/productSchema')
-const category = require('../../models/categorySchema')
-const Wishlist = require('../../models/wishListSchema')
-const mongoose = require('mongoose')
-
+const User = require('../../models/userSchema');
+const Products = require('../../models/productSchema');
+const category = require('../../models/categorySchema');
+const Wishlist = require('../../models/wishListSchema');
+const mongoose = require('mongoose');
 
 const loadProductListingPage = async (req, res) => {
   try {
@@ -14,16 +13,27 @@ const loadProductListingPage = async (req, res) => {
     const clearFilter = req.query.clearFilter === '1';
     const clearSearch = req.query.clearSearch === '1';
 
-    const search = clearSearch ? "" : decodeURIComponent(req.query.search || "").trim();
-    console.log(search)
-    const selectedCategory = clearFilter ? "" : req.query?.category || '';
-    const minPrice = clearFilter ? 0 : parseFloat(req.query?.minPrice) || 0;
-    const maxPrice = clearFilter ? Number.MAX_VALUE : parseFloat(req.query?.maxPrice) || Number.MAX_VALUE;
-    const sortOption = clearFilter ? 'createdAt-desc' : req.query.sort || 'createdAt-desc';
+    const search = clearSearch
+      ? ''
+      : decodeURIComponent(req.query.search || '').trim();
 
-    const userData = req.session?.user ? await User.findById(req.session?.user) : undefined;
+    const selectedCategory = clearFilter ? '' : req.query?.category || '';
+    const minPrice = clearFilter ? 0 : parseFloat(req.query?.minPrice) || 0;
+    const maxPrice = clearFilter
+      ? Number.MAX_VALUE
+      : parseFloat(req.query?.maxPrice) || Number.MAX_VALUE;
+    const sortOption = clearFilter
+      ? 'createdAt-desc'
+      : req.query.sort || 'createdAt-desc';
+
+    const userData = req.session?.user
+      ? await User.findById(req.session?.user)
+      : undefined;
     const userId = req.session.user;
-    const categories = await category.find({ isListed: true, isDeleted: false });
+    const categories = await category.find({
+      isListed: true,
+      isDeleted: false,
+    });
     const wishlist = await Wishlist.findOne({ userId });
 
     let aggregation = [];
@@ -32,38 +42,46 @@ const loadProductListingPage = async (req, res) => {
       aggregation.push({
         $search: {
           index: 'default',
-          text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } }
-        }
+          text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } },
+        },
       });
     }
-     
+
     const match = {
       isBlocked: false,
       isDeleted: false,
       quantity: { $gt: 0 },
-      salesPrice: { $gte: minPrice, $lte: maxPrice }
+      salesPrice: { $gte: minPrice, $lte: maxPrice },
     };
-    if (selectedCategory) match.category = new mongoose.Types.ObjectId(selectedCategory);
+    if (selectedCategory)
+      match.category = new mongoose.Types.ObjectId(selectedCategory);
 
     aggregation.push({ $match: match });
 
     let sortObj = { createdAt: -1 };
     switch (sortOption) {
-      case 'name-asc': sortObj = { productName: 1 }; break;
-      case 'name-desc': sortObj = { productName: -1 }; break;
-      case 'price-asc': sortObj = { salesPrice: 1 }; break;
-      case 'price-desc': sortObj = { salesPrice: -1 }; break;
+      case 'name-asc':
+        sortObj = { productName: 1 };
+        break;
+      case 'name-desc':
+        sortObj = { productName: -1 };
+        break;
+      case 'price-asc':
+        sortObj = { salesPrice: 1 };
+        break;
+      case 'price-desc':
+        sortObj = { salesPrice: -1 };
+        break;
     }
 
     aggregation.push({ $sort: sortObj });
     aggregation.push({ $skip: skip });
     aggregation.push({ $limit: limit });
-    
-  
+
     let productData = await Products.aggregate(aggregation);
-    productData = productData.map(pro => ({
+    productData = productData.map((pro) => ({
       ...pro,
-      productImage: pro.productImage?.[0]?.url || null
+      productImage: pro.productImage?.[0]?.url || null,
     }));
 
     let countPipeline = [];
@@ -71,29 +89,28 @@ const loadProductListingPage = async (req, res) => {
       countPipeline.push({
         $search: {
           index: 'default',
-          text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } }
-        }
+          text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } },
+        },
       });
     }
     countPipeline.push({ $match: match });
-    countPipeline.push({ $count: "total" });
+    countPipeline.push({ $count: 'total' });
 
     const totalResult = await Products.aggregate(countPipeline);
     const total = totalResult[0]?.total || 0;
- 
 
     if (req.xhr || req.headers.accept.indexOf('json') > -1) {
       return res.json({
         products: productData,
         page,
         total,
-        totalPages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / limit),
       });
     }
 
     res.render('user/productListingPage', {
       user: userData || null,
-      firstName: userData?.firstName || "",
+      firstName: userData?.firstName || '',
       products: productData,
       cat: categories,
       currentPage: page,
@@ -104,19 +121,18 @@ const loadProductListingPage = async (req, res) => {
       minPrice: req.query.minPrice || '',
       maxPrice: req.query.maxPrice || '',
       sort: sortOption,
-      wishlistId: wishlist ? wishlist.products.map(item => item.productId.toString()) : []
+      wishlistId: wishlist
+        ? wishlist.products.map((item) => item.productId.toString())
+        : [],
     });
-
   } catch (error) {
-    console.error("Error in loadProductListingPage:", error.message);
+    console.error('Error in loadProductListingPage:', error.message);
     res.status(500).render('user/error', {
       title: 500,
-      message: "something went wrong. please try again"
+      message: 'something went wrong. please try again',
     });
   }
 };
-
-
 
 const viewProductDetails = async (req, res) => {
   try {
@@ -127,10 +143,9 @@ const viewProductDetails = async (req, res) => {
     const id = req.params.id;
 
     const productData = await Products.findById(id);
-    if (!productData) return res.status(404).json("product not found");
+    if (!productData) return res.status(404).json('product not found');
 
     const userId = req.session.user;
-
 
     let wishlistIds = [];
 
@@ -138,17 +153,16 @@ const viewProductDetails = async (req, res) => {
       const wishlistDoc = await Wishlist.findOne({ userId });
 
       if (wishlistDoc) {
-        wishlistIds = wishlistDoc.products.map(item =>
-          item.productId.toString()
+        wishlistIds = wishlistDoc.products.map((item) =>
+          item.productId.toString(),
         );
-
       }
     }
 
     if (productData.isBlocked || productData.isDeleted) {
-      return res.status(404).render("error", {
-        title: "404",
-        message: "product not available",
+      return res.status(404).render('error', {
+        title: '404',
+        message: 'product not available',
       });
     }
 
@@ -163,11 +177,9 @@ const viewProductDetails = async (req, res) => {
 
     const [mainImage, ...subImage] = productData.productImage;
 
-
-console.log(productData)
-    return res.render("user/productDetails", {
+    return res.render('user/productDetails', {
       user: userData,
-      firstName: userData?.firstName || "",
+      firstName: userData?.firstName || '',
       product: productData,
       relatedProducts,
       mainImage,
@@ -175,19 +187,15 @@ console.log(productData)
       wishlistId: wishlistIds,
     });
   } catch (error) {
-    console.log("Error while loading product Details", error.message);
-    return res.status(404).render("user/error", {
-      title: "404",
-      message: "Page not found",
+    console.error('Error while loading product Details', error.message);
+    return res.status(404).render('user/error', {
+      title: '404',
+      message: 'Page not found',
     });
   }
 };
 
-
-
-
-
 module.exports = {
   loadProductListingPage,
   viewProductDetails,
-}
+};

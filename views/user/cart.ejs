@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart - Your Store</title>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <style>
         .toast-container {
@@ -18,8 +19,9 @@
             flex-direction: column;
             gap: 10px;
         }
-        .card-body{
-            z-index:0;
+
+        .card-body {
+            z-index: 0;
         }
 
         .toast {
@@ -71,12 +73,13 @@
                 opacity: 0;
             }
         }
+
         @media (min-width: 1024px) {
-    .lg\:grid {
-        margin-left: 50px;
-        margin-right: 50px;
-    }
-}
+            .lg\:grid {
+                margin-left: 50px;
+                margin-right: 50px;
+            }
+        }
 
         .cart-item {
             transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -108,7 +111,8 @@
         }
 
         .qty-input[readonly] {
-            background-color: #f9fafb; /* Lighter background to indicate it's not active */
+            background-color: #f9fafb;
+            /* Lighter background to indicate it's not active */
             cursor: default;
         }
 
@@ -130,65 +134,95 @@
                 <div class="col-lg-8">
                     <div class="card border-0 shadow-sm">
                         <div class="card-body p-4">
-                        <h1 class="h4 fw-semibold text-dark mb-4">Shopping Cart</h1>
+                            <h1 class="h4 fw-semibold text-dark mb-4">Shopping Cart</h1>
 
-                        <!-- Cart Items Container -->
-                        <div id="cartItemsContainer">
-                            <!-- Empty Cart Message (conditionally hidden) -->
-                            <div id="emptyCartMessage" class="text-center py-5 <%= (cartItems && cartItems.length > 0) ? 'd-none' : '' %>">
-                                <div class="mb-3">
-                                    <i data-lucide="shopping-cart" class="text-secondary opacity-50" style="width: 64px; height: 64px;"></i>
+                            <!-- Cart Items Container -->
+                            <div id="cartItemsContainer">
+                                <!-- Empty Cart Message (conditionally hidden) -->
+                                <div id="emptyCartMessage"
+                                    class="text-center py-5 <%= (cartItems && cartItems.length > 0) ? 'd-none' : '' %>">
+                                    <div class="mb-3">
+                                        <i data-lucide="shopping-cart" class="text-secondary opacity-50"
+                                            style="width: 64px; height: 64px;"></i>
+                                    </div>
+                                    <h3 class="h5 fw-medium text-dark mb-2">Your cart is empty</h3>
+                                    <p class="text-muted mb-4">Let's find something for you!</p>
+                                    <a href="/" class="btn btn-primary d-inline-flex align-items-center gap-2">
+                                        <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                                        Continue Shopping
+                                    </a>
                                 </div>
-                                <h3 class="h5 fw-medium text-dark mb-2">Your cart is empty</h3>
-                                <p class="text-muted mb-4">Let's find something for you!</p>
-                                <a href="/"
-                                    class="btn btn-primary d-inline-flex align-items-center gap-2">
-                                    <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
-                                    Continue Shopping
-                                </a>
-                            </div>
 
-                            <% if (cartItems && cartItems.length > 0) { %>
-                                <div class="list-group list-group-flush">
-                                    <% cartItems.reverse().forEach(item => { %>
-                                        <div class="list-group-item cart-item px-0 py-3" data-item-id="<%= item._id %>">
-                                            <div class="row align-items-center g-3">
-                                                <div class="col-12 col-md-5 d-flex align-items-center gap-3">
-                                                    <img src="<%= item.image || '/images/placeholder.jpg' %>" alt="<%= item.name || 'Unnamed Product' %>" class="rounded-3" style="width: 64px; height: 64px; object-fit: cover;">
-                                                    <div class="flex-grow-1">
-                                                        <h3 class="h6 fw-medium text-dark mb-1"><%= item.name || 'Unnamed Product' %></h3>
-                                                        <p class="small text-muted mb-1">₹<%= (item.price || 0).toLocaleString() %> per item</p>
-                                                        <% if (item.stock === 0) { %>
-                                                            <p class="small text-danger fw-medium">Out of stock</p>
-                                                        <% } else { %>
-                                                            <p class="small text-muted"><%= item.stock %> in stock</p>
-                                                        <% } %>
+                                <% if (cartItems && cartItems.length> 0) { %>
+                                    <div class="list-group list-group-flush">
+                                        <% cartItems.reverse().forEach(item=> { %>
+                                            <div class="list-group-item cart-item px-0 py-3"
+                                                data-item-id="<%= item._id %>">
+                                                <div class="row align-items-center g-3">
+                                                    <div class="col-12 col-md-5 d-flex align-items-center gap-3">
+                                                        <img src="<%= item.image || '/images/placeholder.jpg' %>"
+                                                            alt="<%= item.name || 'Unnamed Product' %>"
+                                                            class="rounded-3"
+                                                            style="width: 64px; height: 64px; object-fit: cover;">
+                                                        <div class="flex-grow-1">
+                                                            <h3 class="h6 fw-medium text-dark mb-1">
+                                                                <%= item.name || 'Unnamed Product' %>
+                                                            </h3>
+                                                            <p class="small text-muted mb-1">₹<%= (item.price ||
+                                                                    0).toLocaleString() %> per item</p>
+                                                            <% if (item.stock===0) { %>
+                                                                <p class="small text-danger fw-medium">Out of stock</p>
+                                                                <% } else { %>
+                                                                    <p class="small text-muted">
+                                                                        <%= item.stock %> in stock
+                                                                    </p>
+                                                                    <% } %>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-6 col-md-3">
-                                                    <div class="input-group input-group-sm" style="max-width: 120px;">
-                                                        <button class="btn btn-outline-secondary minus-btn" type="button" data-item-id="<%= item._id %>" data-quantity="<%= item.quantity || 1 %>" <%= (item.quantity <= 1 || !item.quantity) ? 'disabled' : '' %>>
-                                                            <i data-lucide="minus" style="width: 16px; height: 16px;"></i>
-                                                        </button>
-                                                        <input type="number" value="<%= item.quantity || 0 %>" min="0" max="<%= item.stock || 0 %>" data-id="<%= item._id %>" class="form-control text-center qty-input" readonly>
-                                                        <button class="btn btn-outline-secondary plus-btn" type="button" data-item-id="<%= item._id %>" data-quantity="<%= item.quantity || 1 %>" <%= (item.quantity >= item.stock || !item.stock) ? 'disabled' : '' %>>
-                                                            <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+                                                    <div class="col-6 col-md-3">
+                                                        <div class="input-group input-group-sm"
+                                                            style="max-width: 120px;">
+                                                            <button class="btn btn-outline-secondary minus-btn"
+                                                                type="button" data-item-id="<%= item._id %>"
+                                                                data-quantity="<%= item.quantity || 1 %>"
+                                                                <%=(item.quantity <=1 || !item.quantity) ? 'disabled'
+                                                                : '' %>>
+                                                                <i data-lucide="minus"
+                                                                    style="width: 16px; height: 16px;"></i>
+                                                            </button>
+                                                            <input type="number" value="<%= item.quantity || 0 %>"
+                                                                min="0" max="<%= item.stock || 0 %>"
+                                                                data-id="<%= item._id %>"
+                                                                class="form-control text-center qty-input" readonly>
+                                                            <button class="btn btn-outline-secondary plus-btn"
+                                                                type="button" data-item-id="<%= item._id %>"
+                                                                data-quantity="<%= item.quantity || 1 %>"
+                                                                <%=(item.quantity>= item.stock || !item.stock) ?
+                                                                'disabled' : '' %>>
+                                                                <i data-lucide="plus"
+                                                                    style="width: 16px; height: 16px;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div
+                                                        class="col-6 col-md-4 d-flex justify-content-end align-items-center gap-3">
+                                                        <p class="h5 fw-semibold text-dark mb-0 item-total"
+                                                            data-id="<%= item._id %>">₹<%= (item.totalPrice ||
+                                                                0).toLocaleString() %>
+                                                        </p>
+                                                        <button type="button" onclick="removeItem('<%= item._id %>')"
+                                                            class="btn btn-sm btn-outline-danger">
+                                                            <i data-lucide="trash-2"
+                                                                style="width: 16px; height: 16px;"></i>
                                                         </button>
                                                     </div>
-                                                </div>
-                                                <div class="col-6 col-md-4 d-flex justify-content-end align-items-center gap-3">
-                                                    <p class="h5 fw-semibold text-dark mb-0 item-total" data-id="<%= item._id %>">₹<%= (item.totalPrice || 0).toLocaleString() %></p>
-                                                    <button type="button" onclick="removeItem('<%= item._id %>')" class="btn btn-sm btn-outline-danger">
-                                                        <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
-                                                    </button>
                                                 </div>
                                             </div>
-                                        </div>
-                                    <% }); %>
-                                </div>
-                            <% } %>
+                                            <% }); %>
+                                    </div>
+                                    <% } %>
+                            </div>
                         </div>
-                    </div>
                     </div>
                 </div>
 
@@ -196,60 +230,61 @@
                 <div class="col-lg-4">
                     <div class="card border-0 shadow-sm sticky-top" style="top: 5.5em; z-index: 0;">
                         <div class="card-body p-4">
-                        <h2 class="h5 fw-semibold text-dark mb-4">Order Summary</h2>
+                            <h2 class="h5 fw-semibold text-dark mb-4">Order Summary</h2>
 
-                        <!-- Pricing Details -->
-                        <div class="vstack gap-2 mb-4">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Subtotal (<span id="total-items">
-                                        <%= totalQuantity || 0 %>
-                                    </span> )</span>
-                                <span class="fw-medium" id="cart-subtotal">₹<%= (subTotal || 0).toLocaleString() %>
-                                        </span>
-                            </div>
-                           
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Shipping</span>
-                                <span class="fw-medium" id="cart-shipping">
-                                    <%= (shipping || 0)===0 ? 'FREE' : `₹${(shipping || 0)}` %>
-                                </span>
-                            </div>
-                            <div class="border-top pt-2">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="h6 fw-semibold text-dark mb-0">Total</span>
-                                    <span class="h5 fw-bold text-dark mb-0" id="cart-total">₹<%= (total ||
-                                            0).toLocaleString() %></span>
+                            <!-- Pricing Details -->
+                            <div class="vstack gap-2 mb-4">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Subtotal (<span id="total-items">
+                                            <%= totalQuantity || 0 %>
+                                        </span> )</span>
+                                    <span class="fw-medium" id="cart-subtotal">₹<%= (subTotal || 0).toLocaleString() %>
+                                    </span>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Shipping</span>
+                                    <span class="fw-medium" id="cart-shipping">
+                                        <%= (shipping || 0)===0 ? 'FREE' : `₹${(shipping || 0)}` %>
+                                    </span>
+                                </div>
+                                <div class="border-top pt-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="h6 fw-semibold text-dark mb-0">Total</span>
+                                        <span class="h5 fw-bold text-dark mb-0" id="cart-total">₹<%= (total ||
+                                                0).toLocaleString() %></span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Free Delivery Notice -->
-                        <div class="alert alert-success d-flex align-items-center gap-2 small" role="alert">
-                            <i data-lucide="truck" style="width: 16px; height: 16px;"></i>
-                            <div>
-                                <%= deliveryMessage || 'Congrats free delivery on order above ₹1000' %>
+                            <!-- Free Delivery Notice -->
+                            <div class="alert alert-success d-flex align-items-center gap-2 small" role="alert">
+                                <i data-lucide="truck" style="width: 16px; height: 16px;"></i>
+                                <div>
+                                    <%= deliveryMessage || 'Congrats free delivery on order above ₹1000' %>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Coupon Section -->
-                        
+                            <!-- Coupon Section -->
 
-                        <!-- Checkout Button -->
-                        <div class="d-grid">
-                            <button id="checkoutBtn" onclick="proceedToCheckout()"
-                                class="btn btn-primary btn-lg <%= (cartItems && cartItems.length === 0 || subTotal === 0 || total === 0) ? 'disabled' : '' %>" 
-                                <%= (cartItems && cartItems.length === 0 || subTotal === 0 || total === 0) ? 'disabled' : '' %>>
-                                Proceed to Checkout
-                            </button>
-                        </div>
 
-                        <!-- Continue Shopping Link -->
-                        <div class="mt-3 text-center">
-                            <a href="/" class="text-primary text-decoration-none small">
-                                <i data-lucide="arrow-left" style="width: 16px; height: 16px;" class="me-1"></i>
-                                Continue Shopping
-                            </a>
-                        </div>
+                            <!-- Checkout Button -->
+                            <div class="d-grid">
+                                <button id="checkoutBtn" onclick="proceedToCheckout()"
+                                    class="btn btn-primary btn-lg <%= (cartItems && cartItems.length === 0 || subTotal === 0 || total === 0) ? 'disabled' : '' %>"
+                                    <%=(cartItems && cartItems.length===0 || subTotal===0 || total===0) ? 'disabled'
+                                    : '' %>>
+                                    Proceed to Checkout
+                                </button>
+                            </div>
+
+                            <!-- Continue Shopping Link -->
+                            <div class="mt-3 text-center">
+                                <a href="/" class="text-primary text-decoration-none small">
+                                    <i data-lucide="arrow-left" style="width: 16px; height: 16px;" class="me-1"></i>
+                                    Continue Shopping
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -259,7 +294,9 @@
             <%- include('../partials/user/footer.ejs') %>
         </footer>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <!-- Toast Container -->
         <div id="toastContainer" class="toast-container"></div>
@@ -312,84 +349,84 @@
             }
 
             async function updateQuantity(itemId, newQuantity) {
-                    try {
-                        const response = await fetch('/cart', {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ itemId, quantity: parseInt(newQuantity) })
+                try {
+                    const response = await fetch('/cart', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itemId, quantity: parseInt(newQuantity) })
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        // ✅ Success Toast
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Quantity Updated',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            timerProgressBar: true
                         });
 
-                        const result = await response.json();
-                        if (result.success) {
-                            // ✅ Success Toast
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'success',
-                                title: 'Quantity Updated',
-                                showConfirmButton: false,
-                                timer: 2000,
-                                timerProgressBar: true
-                            });
+                        const qtyInput = document.querySelector(`input[data-id="${itemId}"]`);
+                        if (qtyInput) qtyInput.value = result.itemQuantity;
 
-                            const qtyInput = document.querySelector(`input[data-id="${itemId}"]`);
-                            if (qtyInput) qtyInput.value = result.itemQuantity;
-
-                            const itemTotalEl = document.querySelector(`.item-total[data-id="${itemId}"]`);
-                            if (itemTotalEl) {
-                                const itemTotal = result.itemTotal || (result.price * result.itemQuantity);
-                                itemTotalEl.textContent = ` ₹${itemTotal.toLocaleString()}`;
-                            }
-
-                            const subtotalEl = document.getElementById('cart-subtotal');
-                            if (subtotalEl) subtotalEl.textContent = `₹${result.subTotal.toLocaleString()}`;
-
-                           
-                            const shippingEl = document.getElementById('cart-shipping');
-                            if (shippingEl) {
-                                shippingEl.textContent = result.shipping === 0 ? 'FREE' : `₹${result.shipping}`;
-                            }
-
-                            const totalEl = document.getElementById('cart-total');
-                            if (totalEl) totalEl.textContent = `₹${result.total.toLocaleString()}`;
-
-                            const totalQtyEl = document.getElementById('total-items');
-                            if (totalQtyEl) totalQtyEl.textContent = `${result.totalQuantity} items`;
-
-                            const itemRow = document.querySelector(`div[data-item-id="${itemId}"]`);
-                            if (itemRow) {
-                                const minusBtn = itemRow.querySelector('.minus-btn');
-                                const plusBtn = itemRow.querySelector('.plus-btn');
-                                if (minusBtn) minusBtn.setAttribute('data-quantity', result.itemQuantity);
-                                if (plusBtn) plusBtn.setAttribute('data-quantity', result.itemQuantity);
-
-                                updateButtonStates(itemId, result.itemQuantity, result.stock);
-                            }
-                        } else {
-                            // ❌ Error Toast
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'error',
-                                title: result.message || 'Failed to update quantity',
-                                showConfirmButton: false,
-                                timer: 2000,
-                                timerProgressBar: true
-                            });
+                        const itemTotalEl = document.querySelector(`.item-total[data-id="${itemId}"]`);
+                        if (itemTotalEl) {
+                            const itemTotal = result.itemTotal || (result.price * result.itemQuantity);
+                            itemTotalEl.textContent = ` ₹${itemTotal.toLocaleString()}`;
                         }
-                    } catch (error) {
-                        console.error('Update Quantity Error:', error);
+
+                        const subtotalEl = document.getElementById('cart-subtotal');
+                        if (subtotalEl) subtotalEl.textContent = `₹${result.subTotal.toLocaleString()}`;
+
+
+                        const shippingEl = document.getElementById('cart-shipping');
+                        if (shippingEl) {
+                            shippingEl.textContent = result.shipping === 0 ? 'FREE' : `₹${result.shipping}`;
+                        }
+
+                        const totalEl = document.getElementById('cart-total');
+                        if (totalEl) totalEl.textContent = `₹${result.total.toLocaleString()}`;
+
+                        const totalQtyEl = document.getElementById('total-items');
+                        if (totalQtyEl) totalQtyEl.textContent = `${result.totalQuantity} items`;
+
+                        const itemRow = document.querySelector(`div[data-item-id="${itemId}"]`);
+                        if (itemRow) {
+                            const minusBtn = itemRow.querySelector('.minus-btn');
+                            const plusBtn = itemRow.querySelector('.plus-btn');
+                            if (minusBtn) minusBtn.setAttribute('data-quantity', result.itemQuantity);
+                            if (plusBtn) plusBtn.setAttribute('data-quantity', result.itemQuantity);
+
+                            updateButtonStates(itemId, result.itemQuantity, result.stock);
+                        }
+                    } else {
+                        // ❌ Error Toast
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
                             icon: 'error',
-                            title: 'Failed to update quantity',
+                            title: result.message || 'Failed to update quantity',
                             showConfirmButton: false,
                             timer: 2000,
                             timerProgressBar: true
                         });
                     }
+                } catch (error) {
+                    console.error('Update Quantity Error:', error);
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: 'Failed to update quantity',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
                 }
+            }
 
 
             function updateButtonStates(itemId, quantity, stock) {
@@ -474,13 +511,13 @@
                 });
             }
 
-            
+
 
             async function proceedToCheckout() {
                 const checkoutBtn = document.getElementById('checkoutBtn');
                 if (checkoutBtn.disabled) {
                     Swal.fire({
-                        toast:true,
+                        toast: true,
                         icon: 'warning',
                         title: 'Your cart is empty or the total is zero.',
                         timer: 1500,

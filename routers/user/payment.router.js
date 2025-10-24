@@ -1,21 +1,29 @@
-const express = require('express')
-const router = express.Router()
-const {userAuth} = require('../../middlewares/auth')
+const express = require('express');
+const router = express.Router();
+const { userAuth } = require('../../middlewares/auth');
 
-const paymentController = require('../../controllers/user/paymentController')
+const paymentController = require('../../controllers/user/paymentController');
 
-router.post('/create-order', userAuth, paymentController.createOrder)
+router.post('/create-order', userAuth, paymentController.createOrder);
 
-router.post('/verify-payment', userAuth, paymentController.verifyPayment)
+router.post('/verify-payment', userAuth, paymentController.verifyPayment);
 
-router.get('/get-key', userAuth, paymentController.getApiKey)
+router.get('/get-key', userAuth, paymentController.getApiKey);
 
-router.post('/failure',userAuth,paymentController.paymentFailureHandler)
+router.post('/failure', userAuth, paymentController.paymentFailureHandler);
 
-router.get('/failure-page/:orderId',userAuth,paymentController.loadPaymentFailurePage)
+router.get(
+  '/failure-page/:orderId',
+  userAuth,
+  paymentController.loadPaymentFailurePage,
+);
 
-router.get('/retry-payment/:orderId', userAuth, paymentController.loadRetryPayment)
+router.get(
+  '/retry-payment/:orderId',
+  userAuth,
+  paymentController.loadRetryPayment,
+);
 
-router.patch('/retry-order',userAuth,paymentController.retryPayment)
+router.patch('/retry-order', userAuth, paymentController.retryPayment);
 
-module.exports=router
+module.exports = router;

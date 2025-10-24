@@ -310,7 +310,7 @@
 
 
 
-                            <button  id="ApplyButtonId"  onclick="applyCoupon()"
+                            <button id="ApplyButtonId" onclick="applyCoupon()"
                                 class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium">
                                 Apply
                             </button>
@@ -367,7 +367,7 @@
                                         <span class="text-green-600 font-medium">FREE</span>
                                         <% } else { %>
                                             <span class="text-gray-700 font-medium">₹<%= shipping.toLocaleString() %>
-                                                    </span>
+                                            </span>
                                             <% } %>
                                 </div>
 
@@ -384,7 +384,7 @@
                                     style="display:flex">
                                     <span>Coupon Discount</span>
                                     <span id="coupon-discount-amount">- ₹<%= discount ? discount.toLocaleString() : 0 %>
-                                            </span>
+                                    </span>
                                 </div>
 
 
@@ -402,7 +402,8 @@
                     <!-- Place Order Button -->
                     <div class="card">
                         <button id="placeOrderBtn" type="button"
-                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors text-lg <%= subTotal === 0 || total === 0 ? 'opacity-50 cursor-not-allowed' : '' %>" <%= subTotal === 0 || total === 0 ? 'disabled' : '' %>>Place
+                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-medium hover:bg-blue-700 transition-colors text-lg <%= subTotal === 0 || total === 0 ? 'opacity-50 cursor-not-allowed' : '' %>"
+                            <%=subTotal===0 || total===0 ? 'disabled' : '' %>>Place
                             Order</button>
                     </div>
                 </div>
@@ -512,8 +513,8 @@
                         const couponCode = document.getElementById('couponCode').value.trim();
                         if (!couponCode) {
                             Swal.fire({
-                                toast:true,
-                                position:'top-end',
+                                toast: true,
+                                position: 'top-end',
                                 icon: 'warning',
                                 title: 'No Coupon Code',
                                 timer: 1000,
@@ -543,13 +544,13 @@
                                     const totalElement = document.getElementById('total-price');
                                     totalElement.setAttribute('data-total-price', result.newTotal);
                                     totalElement.textContent = `₹${result.newTotal}`;
-                                    
+
                                     const couponDiscountRow = document.getElementById("coupon-discount-row");
                                     const couponDiscountAmount = document.getElementById("coupon-discount-amount");
                                     const removeButton = document.getElementById('removeBtn')
                                     const DiscountInput = document.getElementById('couponCode')
 
-                                    removeButton.style.display='flex' // if success show remove button
+                                    removeButton.style.display = 'flex' // if success show remove button
                                     DiscountInput.disabled = false; // if error remove disable input
 
 
@@ -578,14 +579,14 @@
                             const couponDiscountRow = document.getElementById("coupon-discount-row");
                             const couponDiscountAmount = document.getElementById("coupon-discount-amount");
 
-                           DiscountInput.disabled = true;
+                            DiscountInput.disabled = true;
 
                             if (couponDiscountRow) {   // ✅ prevent null error
                                 if (discount > 0) {
                                     couponDiscountRow.style.display = "flex";
                                     couponDiscountAmount.textContent = `- ₹${discount.toLocaleString()}`;
-                                    appliedButton.style.display='none' //if success remove apply button
-                                    removeButton.style.display ='flex' //if success show remove button 
+                                    appliedButton.style.display = 'none' //if success remove apply button
+                                    removeButton.style.display = 'flex' //if success show remove button 
                                 } else {
                                     couponDiscountAmount.textContent = 0
                                 }
@@ -625,8 +626,8 @@
 
                             if (!addressSelected) {
                                 return Swal.fire({
-                                    toast:true,
-                                    position:'top-end',
+                                    toast: true,
+                                    position: 'top-end',
                                     icon: 'warning',
                                     title: 'Select Address',
                                     timer: 1500,
@@ -635,8 +636,8 @@
                             }
                             if (!paymentMethod) {
                                 return Swal.fire({
-                                    toast:true,
-                                    position:'top-end',
+                                    toast: true,
+                                    position: 'top-end',
                                     icon: 'warning',
                                     timer: 1500,
                                     title: 'Select Payment Method',
@@ -645,7 +646,7 @@
                             }
 
                             const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-                           
+
 
                             const confirmation = await Swal.fire({
                                 title: 'Confirm Your Order',
@@ -680,7 +681,7 @@
                                             headers: { 'Content-Type': 'application/json' },
                                             body: JSON.stringify({ addressId: addressSelected.value })
                                         });
-                                        
+
                                         const orderData = await orderRes.json();
 
                                         if (!orderRes.ok || !orderData.success) {
@@ -722,7 +723,7 @@
                                                             orderId //  DB orderId
                                                         })
                                                     });
-                                                    
+
                                                     const verifyResult = await verifyRes.json();
 
                                                     if (verifyResult.success) {
@@ -745,18 +746,18 @@
                                                         });
                                                     }
                                                 } catch (verifyError) {
-                                                     console.error("Payment verification fetch error:", verifyError);
-                                                     Swal.fire({
-                                                         icon: 'error',
-                                                         title: 'Verification Error',
-                                                         text: 'There was a problem verifying your payment. Please contact support.',
-                                                         confirmButtonColor: '#d33'
-                                                     }).then(() => {
-                                                         window.location.href = `/payment/failure-page/${orderId}`;
-                                                     });
+                                                    console.error("Payment verification fetch error:", verifyError);
+                                                    Swal.fire({
+                                                        icon: 'error',
+                                                        title: 'Verification Error',
+                                                        text: 'There was a problem verifying your payment. Please contact support.',
+                                                        confirmButtonColor: '#d33'
+                                                    }).then(() => {
+                                                        window.location.href = `/payment/failure-page/${orderId}`;
+                                                    });
                                                 }
                                             },
- 
+
                                             // 5️⃣ Handle modal close without payment
                                             modal: {
                                                 ondismiss: async function () {
@@ -845,40 +846,40 @@
                     }
                 }); // <-- Add this closing brace for DOMContentLoaded
 
-               async function removeCoupon() {
+                async function removeCoupon() {
                     const input = document.getElementById("couponCode");
-                               fetch("/coupons/remove", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                            })
-                                .then(res => res.json())
-                                .then(data => {
-                                    const DiscountInput = document.getElementById('couponCode')
-                                    input.value = "";
-                                    document.getElementById("couponError").style.display = "none";
-                                    document.getElementById('ApplyButtonId').style.display = 'flex';
-                                    document.getElementById('removeBtn').style.display = 'none';
-                                    DiscountInput.disabled = false;
-                                    updateOrderSummary(data.summary); // update the summary
-                                    Swal.fire({
-                                        toast:true,
-                                        icon: 'success',
-                                        position:'top-end',
-                                        title: 'Removed!',
-                                        timer: 1000,
-                                        showConfirmButton: false
-                                    });
-                                })
-                                .catch(err => {
-                                    console.error(err);
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Oops!',
-                                        text: 'Something went wrong. Please try again.',
-                                    });
-                                });
-                        
-                    
+                    fetch("/coupons/remove", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            const DiscountInput = document.getElementById('couponCode')
+                            input.value = "";
+                            document.getElementById("couponError").style.display = "none";
+                            document.getElementById('ApplyButtonId').style.display = 'flex';
+                            document.getElementById('removeBtn').style.display = 'none';
+                            DiscountInput.disabled = false;
+                            updateOrderSummary(data.summary); // update the summary
+                            Swal.fire({
+                                toast: true,
+                                icon: 'success',
+                                position: 'top-end',
+                                title: 'Removed!',
+                                timer: 1000,
+                                showConfirmButton: false
+                            });
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops!',
+                                text: 'Something went wrong. Please try again.',
+                            });
+                        });
+
+
                 }
 
                 function updateOrderSummary(summary) {

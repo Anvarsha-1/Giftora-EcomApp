@@ -11,7 +11,8 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <style>
         * {
             font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -24,7 +25,7 @@
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(10px); 
+                transform: translateY(10px);
             }
 
             to {
@@ -165,118 +166,145 @@
 </head>
 <%- include('../partials/user/newheader.ejs') %>
 
-<body class="bg-gray-50 min-h-screen">
-    <div class="container-fluid mt-4">
-        <div class="row g-4">
-            <div class="col-md-4 col-lg-3">
-                <%- include('../partials/user/myaccountSidebar.ejs') %>
-            </div>
-            <main class="col-md-8 col-lg-9">
-                <div class="bg-white rounded-lg shadow-sm border p-3 p-md-4 h-100">
-                    <div class="border-bottom pb-3 mb-4">
-                        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                                <li class="breadcrumb-item"><a href="/account/profile">My Account</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">My Coupons</li>
-                            </ol>
-                        </nav>
-                        <h1 class="h4 fw-semibold text-dark">My Coupons</h1>
-                    </div>
+    <body class="bg-gray-50 min-h-screen">
+        <div class="container-fluid mt-4">
+            <div class="row g-4">
+                <div class="col-md-4 col-lg-3">
+                    <%- include('../partials/user/myaccountSidebar.ejs') %>
+                </div>
+                <main class="col-md-8 col-lg-9">
+                    <div class="bg-white rounded-lg shadow-sm border p-3 p-md-4 h-100">
+                        <div class="border-bottom pb-3 mb-4">
+                            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                                    <li class="breadcrumb-item"><a href="/account/profile">My Account</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">My Coupons</li>
+                                </ol>
+                            </nav>
+                            <h1 class="h4 fw-semibold text-dark">My Coupons</h1>
+                        </div>
 
-                    <div class="content-section">
-                        <div class="mb-4">
-                            <p class="text-muted mb-4">Manage and track your available coupons and discount codes</p>
-                            <div class="row g-3 mb-4">
-                                <div class="col-6 col-md-3">
-                                    <div class="card bg-primary-subtle border-0 stagger h-100">
-                                        <div class="card-body d-flex align-items-center gap-3">
-                                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                <i class="ri-coupon-line fs-5"></i>
-                                            </div>
-                                            <div>
-                                                <p class="fs-4 fw-semibold text-dark mb-0"><%= TotalCouponCount %></p>
-                                                <p class="small text-muted mb-0">Total Coupons</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="card bg-success-subtle border-0 stagger h-100">
-                                        <div class="card-body d-flex align-items-center gap-3">
-                                            <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                <i class="ri-check-line fs-5"></i>
-                                            </div>
-                                            <div>
-                                                <p class="fs-4 fw-semibold text-dark mb-0"><%= couponIsActive %></p>
-                                                <p class="small text-muted mb-0">Active</p>
+                        <div class="content-section">
+                            <div class="mb-4">
+                                <p class="text-muted mb-4">Manage and track your available coupons and discount codes
+                                </p>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-6 col-md-3">
+                                        <div class="card bg-primary-subtle border-0 stagger h-100">
+                                            <div class="card-body d-flex align-items-center gap-3">
+                                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                    style="width: 40px; height: 40px;">
+                                                    <i class="ri-coupon-line fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="fs-4 fw-semibold text-dark mb-0">
+                                                        <%= TotalCouponCount %>
+                                                    </p>
+                                                    <p class="small text-muted mb-0">Total Coupons</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="card bg-warning-subtle border-0 stagger h-100">
-                                        <div class="card-body d-flex align-items-center gap-3">
-                                            <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                <i class="ri-time-line fs-5"></i>
-                                            </div>
-                                            <div>
-                                                <p class="fs-4 fw-semibold text-dark mb-0"><%= TotalCouponCount %></p>
-                                                <p class="small text-muted mb-0">Used</p>
+                                    <div class="col-6 col-md-3">
+                                        <div class="card bg-success-subtle border-0 stagger h-100">
+                                            <div class="card-body d-flex align-items-center gap-3">
+                                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                    style="width: 40px; height: 40px;">
+                                                    <i class="ri-check-line fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="fs-4 fw-semibold text-dark mb-0">
+                                                        <%= couponIsActive %>
+                                                    </p>
+                                                    <p class="small text-muted mb-0">Active</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="card bg-danger-subtle border-0 stagger h-100">
-                                        <div class="card-body d-flex align-items-center gap-3">
-                                            <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                                                <i class="ri-close-line fs-5"></i>
+                                    <div class="col-6 col-md-3">
+                                        <div class="card bg-warning-subtle border-0 stagger h-100">
+                                            <div class="card-body d-flex align-items-center gap-3">
+                                                <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                    style="width: 40px; height: 40px;">
+                                                    <i class="ri-time-line fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="fs-4 fw-semibold text-dark mb-0">
+                                                        <%= TotalCouponCount %>
+                                                    </p>
+                                                    <p class="small text-muted mb-0">Used</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p class="fs-4 fw-semibold text-dark mb-0"><%= expiredCount %></p>
-                                                <p class="small text-muted mb-0">Expired</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <div class="card bg-danger-subtle border-0 stagger h-100">
+                                            <div class="card-body d-flex align-items-center gap-3">
+                                                <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                    style="width: 40px; height: 40px;">
+                                                    <i class="ri-close-line fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="fs-4 fw-semibold text-dark mb-0">
+                                                        <%= expiredCount %>
+                                                    </p>
+                                                    <p class="small text-muted mb-0">Expired</p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="bg-light rounded-3 p-3 mb-4 stagger">
-                            <form action="/coupons" method="GET" class="row g-2 align-items-center">
-                                <div class="col-lg-4">
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white"><i class="ri-search-line"></i></span>
-                                        <input type="text" name="search" id="searchInput" placeholder="Search coupons..." value="<%= searchQuery || '' %>" class="form-control">
+                            <div class="bg-light rounded-3 p-3 mb-4 stagger">
+                                <form action="/coupons" method="GET" class="row g-2 align-items-center">
+                                    <div class="col-lg-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white"><i
+                                                    class="ri-search-line"></i></span>
+                                            <input type="text" name="search" id="searchInput"
+                                                placeholder="Search coupons..." value="<%= searchQuery || '' %>"
+                                                class="form-control">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <button type="submit" name="show" value="all" class="btn btn-sm <%= !show || show === 'all' ? 'btn-primary' : 'btn-outline-secondary' %>">All</button>
-                                        <button type="submit" name="show" value="active" class="btn btn-sm <%= show === 'active' ? 'btn-primary' : 'btn-outline-secondary' %>">Active</button>
-                                        <button type="submit" name="show" value="expired" class="btn btn-sm <%= show === 'expired' ? 'btn-primary' : 'btn-outline-secondary' %>">Expired</button>
-                                        <button type="submit" name="show" value="flat" class="btn btn-sm <%= show === 'flat' ? 'btn-primary' : 'btn-outline-secondary' %>">Flat</button>
-                                        <button type="submit" name="show" value="percentage" class="btn btn-sm <%= show === 'percentage' ? 'btn-primary' : 'btn-outline-secondary' %>">Percentage</button>
-                                        <button type="submit" name="clear" value="1" class="btn btn-sm btn-outline-danger">Clear</button>
+                                    <div class="col-lg-6">
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <button type="submit" name="show" value="all"
+                                                class="btn btn-sm <%= !show || show === 'all' ? 'btn-primary' : 'btn-outline-secondary' %>">All</button>
+                                            <button type="submit" name="show" value="active"
+                                                class="btn btn-sm <%= show === 'active' ? 'btn-primary' : 'btn-outline-secondary' %>">Active</button>
+                                            <button type="submit" name="show" value="expired"
+                                                class="btn btn-sm <%= show === 'expired' ? 'btn-primary' : 'btn-outline-secondary' %>">Expired</button>
+                                            <button type="submit" name="show" value="flat"
+                                                class="btn btn-sm <%= show === 'flat' ? 'btn-primary' : 'btn-outline-secondary' %>">Flat</button>
+                                            <button type="submit" name="show" value="percentage"
+                                                class="btn btn-sm <%= show === 'percentage' ? 'btn-primary' : 'btn-outline-secondary' %>">Percentage</button>
+                                            <button type="submit" name="clear" value="1"
+                                                class="btn btn-sm btn-outline-danger">Clear</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-2">
-                                    <select name="sort" id="sortSelect" class="form-select">
-                                        <option value="newest" <%=sort==='newest' ? 'selected' : '' %>>Newest</option>
-                                        <option value="oldest" <%=sort==='oldest' ? 'selected' : '' %>>Oldest</option>
-                                        <option value="expiry-soon" <%=sort==='expiry-soon' ? 'selected' : '' %>>Expiring Soon</option>
-                                        <option value="most-used" <%=sort==='most-used' ? 'selected' : '' %>>Most Used</option>
-                                    </select>
-                                </div>
-                            </form>
-                        </div>
+                                    <div class="col-lg-2">
+                                        <select name="sort" id="sortSelect" class="form-select">
+                                            <option value="newest" <%=sort==='newest' ? 'selected' : '' %>>Newest
+                                            </option>
+                                            <option value="oldest" <%=sort==='oldest' ? 'selected' : '' %>>Oldest
+                                            </option>
+                                            <option value="expiry-soon" <%=sort==='expiry-soon' ? 'selected' : '' %>
+                                                >Expiring Soon</option>
+                                            <option value="most-used" <%=sort==='most-used' ? 'selected' : '' %>>Most
+                                                Used</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
 
-                        <div id="couponsContainer" class="row g-3">
+                            <div id="couponsContainer" class="row g-3">
                                 <% if (coupon.length===0) { %>
                                     <div class="col-12">
                                         <div id="emptyState" class="text-center py-5">
-                                            <div class="mx-auto mb-4" style="width: 80px; height: 80px; background-color: #f1f1f1; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                            <div class="mx-auto mb-4"
+                                                style="width: 80px; height: 80px; background-color: #f1f1f1; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                                                 <i class="ri-coupon-line fs-1 text-secondary"></i>
                                             </div>
                                             <h3 class="h5 fw-semibold text-dark mb-2">No Coupons Found</h3>
@@ -289,144 +317,186 @@
                                                 <% const daysUntilExpiry=Math.ceil((new Date(coupon.expiry) - new
                                                     Date()) / (1000 * 60 * 60 * 24)); %>
                                                     <div class="col-md-6">
-                                                        <div class="card h-100 coupon-card <%= isExpired ? 'coupon-expired' : (coupon.isActive ? 'coupon-active' : 'coupon-inactive') %>">
+                                                        <div
+                                                            class="card h-100 coupon-card <%= isExpired ? 'coupon-expired' : (coupon.isActive ? 'coupon-active' : 'coupon-inactive') %>">
                                                             <div class="card-body d-flex flex-column">
                                                                 <div class="d-flex align-items-start gap-3 mb-3">
-                                                                    <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style="width: 50px; height: 50px;">
+                                                                    <div class="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                                                                        style="width: 50px; height: 50px;">
                                                                         <i class="ri-coupon-3-line fs-4"></i>
                                                                     </div>
                                                                     <div class="flex-grow-1">
-                                                                        <h3 class="h5 fw-bold text-dark font-monospace mb-1"><%= coupon.code %></h3>
-                                                                        <p class="small text-muted mb-2"><%= coupon.description %></p>
+                                                                        <h3
+                                                                            class="h5 fw-bold text-dark font-monospace mb-1">
+                                                                            <%= coupon.code %>
+                                                                        </h3>
+                                                                        <p class="small text-muted mb-2">
+                                                                            <%= coupon.description %>
+                                                                        </p>
                                                                     </div>
-                                                                    <span class="badge <%= isExpired ? 'bg-danger-subtle text-danger-emphasis' : (coupon.isActive ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-secondary-emphasis') %>">
-                                                                        <%= isExpired ? 'Expired' : (coupon.isActive ? 'Active' : 'Inactive') %>
+                                                                    <span
+                                                                        class="badge <%= isExpired ? 'bg-danger-subtle text-danger-emphasis' : (coupon.isActive ? 'bg-success-subtle text-success-emphasis' : 'bg-secondary-subtle text-secondary-emphasis') %>">
+                                                                        <%= isExpired ? 'Expired' : (coupon.isActive
+                                                                            ? 'Active' : 'Inactive' ) %>
                                                                     </span>
                                                                 </div>
-                                                                
+
                                                                 <div class="row g-2 small text-muted mb-3">
-                                                                    <div class="col-6 d-flex align-items-center gap-2"><i class="ri-price-tag-3-line text-primary"></i> <%= coupon.discountType === 'percentage' ? `${coupon.discount}% Off` : `₹${coupon.discount} Off` %></div>
-                                                                    <div class="col-6 d-flex align-items-center gap-2"><i class="ri-shopping-cart-line text-success"></i> Min. ₹<%= coupon.minPurchase %></div>
-                                                                    <div class="col-6 d-flex align-items-center gap-2"><i class="ri-time-line text-warning"></i> <%= daysUntilExpiry > 0 ? `${daysUntilExpiry} days left` : 'Expired' %></div>
-                                                                    <div class="col-6 d-flex align-items-center gap-2"><i class="ri-refresh-line text-info"></i> Used <%= coupon.usedCount %>x</div>
+                                                                    <div class="col-6 d-flex align-items-center gap-2">
+                                                                        <i class="ri-price-tag-3-line text-primary"></i>
+                                                                        <%= coupon.discountType==='percentage' ?
+                                                                            `${coupon.discount}% Off` :
+                                                                            `₹${coupon.discount} Off` %>
+                                                                    </div>
+                                                                    <div class="col-6 d-flex align-items-center gap-2">
+                                                                        <i
+                                                                            class="ri-shopping-cart-line text-success"></i>
+                                                                        Min. ₹<%= coupon.minPurchase %>
+                                                                    </div>
+                                                                    <div class="col-6 d-flex align-items-center gap-2">
+                                                                        <i class="ri-time-line text-warning"></i>
+                                                                        <%= daysUntilExpiry> 0 ? `${daysUntilExpiry}
+                                                                            days left` : 'Expired' %>
+                                                                    </div>
+                                                                    <div class="col-6 d-flex align-items-center gap-2">
+                                                                        <i class="ri-refresh-line text-info"></i> Used
+                                                                        <%= coupon.usedCount %>x</div>
                                                                 </div>
 
                                                                 <div class="mt-auto">
                                                                     <% if (coupon.isActive && !isExpired) { %>
-                                                                        <button onclick="copyCouponCode('<%= coupon.code %>')" class="btn btn-primary w-100">
+                                                                        <button
+                                                                            onclick="copyCouponCode('<%= coupon.code %>')"
+                                                                            class="btn btn-primary w-100">
                                                                             <i class="ri-file-copy-line"></i> Copy Code
                                                                         </button>
-                                                                    <% } else { %>
-                                                                        <button disabled class="btn btn-secondary w-100">
-                                                                            <i class="ri-<%= isExpired ? 'close-line' : 'check-line' %>"></i> <%= isExpired ? 'Expired' : 'Used' %>
-                                                                        </button>
-                                                                    <% } %>
-                                                                    <p class="text-center small text-muted mt-2 mb-0">Expires: <%= new Date(coupon.expiry).toLocaleDateString() %></p>
+                                                                        <% } else { %>
+                                                                            <button disabled
+                                                                                class="btn btn-secondary w-100">
+                                                                                <i
+                                                                                    class="ri-<%= isExpired ? 'close-line' : 'check-line' %>"></i>
+                                                                                <%= isExpired ? 'Expired' : 'Used' %>
+                                                                            </button>
+                                                                            <% } %>
+                                                                                <p
+                                                                                    class="text-center small text-muted mt-2 mb-0">
+                                                                                    Expires: <%= new
+                                                                                        Date(coupon.expiry).toLocaleDateString()
+                                                                                        %>
+                                                                                </p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                        <% }) %>
-                                                            <% } %>
+                                                    <% }) %>
+                                                        <% } %>
                             </div>
 
                             <% if (totalPages> 1) { %>
                                 <nav class="d-flex justify-content-center mt-4">
                                     <ul class="pagination">
                                         <li class="page-item <%= parseInt(page || 1) === 1 ? 'disabled' : '' %>">
-                                            <a class="page-link" href="?page=<%= parseInt(page || 1) - 1 %>&search=<%= searchQuery || '' %>&show=<%=show || 'all' %>&sort=<%= sort || 'newest' %>">Previous</a>
+                                            <a class="page-link"
+                                                href="?page=<%= parseInt(page || 1) - 1 %>&search=<%= searchQuery || '' %>&show=<%=show || 'all' %>&sort=<%= sort || 'newest' %>">Previous</a>
                                         </li>
-                                        <% for (let i = 1; i <= totalPages; i++) { %>
+                                        <% for (let i=1; i <=totalPages; i++) { %>
                                             <li class="page-item <%= parseInt(page || 1) === i ? 'active' : '' %>">
-                                                <a class="page-link" href="?page=<%= i %>&search=<%= searchQuery || '' %>&show=<%= show || 'all' %>&sort=<%= sort || 'newest' %>"><%= i %></a>
+                                                <a class="page-link"
+                                                    href="?page=<%= i %>&search=<%= searchQuery || '' %>&show=<%= show || 'all' %>&sort=<%= sort || 'newest' %>">
+                                                    <%= i %>
+                                                </a>
                                             </li>
-                                        <% } %>
-                                        <li class="page-item <%= parseInt(page || 1) >= totalPages ? 'disabled' : '' %>">
-                                            <a class="page-link" href="?page=<%= parseInt(page || 1) + 1 %>&search=<%= searchQuery || '' %>&show=<%=show || 'all' %>&sort=<%= sort || 'newest' %>">Next</a>
-                                        </li>
+                                            <% } %>
+                                                <li
+                                                    class="page-item <%= parseInt(page || 1) >= totalPages ? 'disabled' : '' %>">
+                                                    <a class="page-link"
+                                                        href="?page=<%= parseInt(page || 1) + 1 %>&search=<%= searchQuery || '' %>&show=<%=show || 'all' %>&sort=<%= sort || 'newest' %>">Next</a>
+                                                </li>
                                     </ul>
                                 </nav>
                                 <% } %>
                         </div>
                     </div>
                 </main>
+            </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script>
-        function copyCouponCode(code) {
-            navigator.clipboard.writeText(code).then(function () {
-                showToast(`Coupon code "${code}" copied!`, 'success');
-            }).catch(function () {
-                const textArea = document.createElement('textarea');
-                textArea.value = code;
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                try {
-                    document.execCommand('copy');
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+        <script>
+            function copyCouponCode(code) {
+                navigator.clipboard.writeText(code).then(function () {
                     showToast(`Coupon code "${code}" copied!`, 'success');
-                } catch (err) {
-                    showToast('Failed to copy code', 'error');
-                }
-                document.body.removeChild(textArea);
-            });
-        }
+                }).catch(function () {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = code;
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        showToast(`Coupon code "${code}" copied!`, 'success');
+                    } catch (err) {
+                        showToast('Failed to copy code', 'error');
+                    }
+                    document.body.removeChild(textArea);
+                });
+            }
 
-        function showToast(title, message, type = 'success') {
-            const toastContainer = document.createElement('div');
-            toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
-            document.body.appendChild(toastContainer);
+            function showToast(title, message, type = 'success') {
+                const toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
 
-            const toastEl = document.createElement('div');
-            toastEl.className = `toast align-items-center text-bg-${type} border-0`;
-            toastEl.setAttribute('role', 'alert');
-            toastEl.setAttribute('aria-live', 'assertive');
-            toastEl.setAttribute('aria-atomic', 'true');
+                const toastEl = document.createElement('div');
+                toastEl.className = `toast align-items-center text-bg-${type} border-0`;
+                toastEl.setAttribute('role', 'alert');
+                toastEl.setAttribute('aria-live', 'assertive');
+                toastEl.setAttribute('aria-atomic', 'true');
 
-            toastEl.innerHTML = `
+                toastEl.innerHTML = `
                 <div class="d-flex">
                     <div class="toast-body">${message}</div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             `;
-            toastContainer.appendChild(toastEl);
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('form');
-            const couponsContainer = document.getElementById('couponsContainer');
-            const paginationContainer = document.querySelector('.pagination');
-            const searchInput = document.getElementById('searchInput');
-            const sortSelect = document.getElementById('sortSelect');
-            const filterButtons = form.querySelectorAll('button[type="submit"]');
-
-            async function fetchCoupons(url) {
-                try {
-                    const response = await fetch(url, {
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    });
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const data = await response.json();
-                    renderCoupons(data.coupons);
-                    renderPagination(data.pagination);
-                    history.pushState({}, '', url);
-                } catch (error) {
-                    console.error('Fetch error:', error);
-                    couponsContainer.innerHTML = '<div class="col-12 text-center py-5"><p class="text-danger">Failed to load coupons. Please try again.</p></div>';
-                }
+                toastContainer.appendChild(toastEl);
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
             }
 
-            function renderCoupons(coupons) {
-                if (coupons.length === 0) {
-                    couponsContainer.innerHTML = `
+            document.addEventListener('DOMContentLoaded', function () {
+                const form = document.querySelector('form');
+                const couponsContainer = document.getElementById('couponsContainer');
+                const paginationContainer = document.querySelector('.pagination');
+                const searchInput = document.getElementById('searchInput');
+                const sortSelect = document.getElementById('sortSelect');
+                const filterButtons = form.querySelectorAll('button[type="submit"]');
+
+                async function fetchCoupons(url) {
+                    try {
+                        const response = await fetch(url, {
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        const data = await response.json();
+                        renderCoupons(data.coupons);
+                        renderPagination(data.pagination);
+                        history.pushState({}, '', url);
+                    } catch (error) {
+                        console.error('Fetch error:', error);
+                        couponsContainer.innerHTML = '<div class="col-12 text-center py-5"><p class="text-danger">Failed to load coupons. Please try again.</p></div>';
+                    }
+                }
+
+                function renderCoupons(coupons) {
+                    if (coupons.length === 0) {
+                        couponsContainer.innerHTML = `
                         <div class="col-12">
                             <div id="emptyState" class="text-center py-5">
                                 <div class="mx-auto mb-4" style="width: 80px; height: 80px; background-color: #f1f1f1; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
@@ -436,13 +506,13 @@
                                 <p class="text-muted">Try adjusting your search or filter criteria.</p>
                             </div>
                         </div>`;
-                    return;
-                }
+                        return;
+                    }
 
-                couponsContainer.innerHTML = coupons.map(coupon => {
-                    const isExpired = new Date(coupon.expiry) < new Date();
-                    const daysUntilExpiry = Math.ceil((new Date(coupon.expiry) - new Date()) / (1000 * 60 * 60 * 24));
-                    return `
+                    couponsContainer.innerHTML = coupons.map(coupon => {
+                        const isExpired = new Date(coupon.expiry) < new Date();
+                        const daysUntilExpiry = Math.ceil((new Date(coupon.expiry) - new Date()) / (1000 * 60 * 60 * 24));
+                        return `
                         <div class="col-md-6">
                             <div class="card h-100 coupon-card ${isExpired ? 'coupon-expired' : (coupon.isActive ? 'coupon-active' : 'coupon-inactive')}">
                                 <div class="card-body d-flex flex-column">
@@ -479,70 +549,70 @@
                                 </div>
                             </div>
                         </div>`;
-                }).join('');
-            }
-
-            function renderPagination(pagination) {
-                if (!paginationContainer || pagination.totalPages <= 1) {
-                    if(paginationContainer) paginationContainer.innerHTML = '';
-                    return;
+                    }).join('');
                 }
 
-                let paginationHTML = '';
-                paginationHTML += `<li class="page-item ${pagination.currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${pagination.currentPage - 1}">Previous</a></li>`;
-                for (let i = 1; i <= pagination.totalPages; i++) {
-                    paginationHTML += `<li class="page-item ${pagination.currentPage === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
-                }
-                paginationHTML += `<li class="page-item ${pagination.currentPage >= pagination.totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${pagination.currentPage + 1}">Next</a></li>`;
-                paginationContainer.innerHTML = paginationHTML;
-            }
-
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formData = new FormData(form);
-                const params = new URLSearchParams(formData);
-                fetchCoupons(`/coupons?${params.toString()}`);
-            });
-
-            filterButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(form);
-
-                    // If clear button, we only need that parameter
-                    if (button.name === 'clear') {
-                        searchInput.value = '';
-                        fetchCoupons(`/coupons?clear=1`);
+                function renderPagination(pagination) {
+                    if (!paginationContainer || pagination.totalPages <= 1) {
+                        if (paginationContainer) paginationContainer.innerHTML = '';
                         return;
                     }
 
-                    formData.set(button.name, button.value);
+                    let paginationHTML = '';
+                    paginationHTML += `<li class="page-item ${pagination.currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${pagination.currentPage - 1}">Previous</a></li>`;
+                    for (let i = 1; i <= pagination.totalPages; i++) {
+                        paginationHTML += `<li class="page-item ${pagination.currentPage === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+                    }
+                    paginationHTML += `<li class="page-item ${pagination.currentPage >= pagination.totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${pagination.currentPage + 1}">Next</a></li>`;
+                    paginationContainer.innerHTML = paginationHTML;
+                }
+
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
                     const params = new URLSearchParams(formData);
                     fetchCoupons(`/coupons?${params.toString()}`);
                 });
+
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const formData = new FormData(form);
+
+                        // If clear button, we only need that parameter
+                        if (button.name === 'clear') {
+                            searchInput.value = '';
+                            fetchCoupons(`/coupons?clear=1`);
+                            return;
+                        }
+
+                        formData.set(button.name, button.value);
+                        const params = new URLSearchParams(formData);
+                        fetchCoupons(`/coupons?${params.toString()}`);
+                    });
+                });
+
+                sortSelect.addEventListener('change', function () {
+                    form.dispatchEvent(new Event('submit', { cancelable: true }));
+                });
+
+                document.body.addEventListener('click', function (e) {
+                    if (e.target.matches('.page-link')) {
+                        e.preventDefault();
+                        if (e.target.parentElement.classList.contains('disabled')) return;
+                        const page = e.target.dataset.page;
+                        const currentParams = new URLSearchParams(window.location.search);
+                        currentParams.set('page', page);
+                        fetchCoupons(`/coupons?${currentParams.toString()}`);
+                    }
+                });
+
+                // Handle search, filter, and sort changes
+                searchInput.addEventListener('input', () => form.dispatchEvent(new Event('submit', { cancelable: true })));
+                sortSelect.addEventListener('change', () => form.dispatchEvent(new Event('submit', { cancelable: true })));
+
             });
-
-            sortSelect.addEventListener('change', function() {
-                form.dispatchEvent(new Event('submit', { cancelable: true }));
-            });
-
-            document.body.addEventListener('click', function(e) {
-                if (e.target.matches('.page-link')) {
-                    e.preventDefault();
-                    if (e.target.parentElement.classList.contains('disabled')) return;
-                    const page = e.target.dataset.page;
-                    const currentParams = new URLSearchParams(window.location.search);
-                    currentParams.set('page', page);
-                    fetchCoupons(`/coupons?${currentParams.toString()}`);
-                }
-            });
-
-            // Handle search, filter, and sort changes
-            searchInput.addEventListener('input', () => form.dispatchEvent(new Event('submit', { cancelable: true })));
-            sortSelect.addEventListener('change', () => form.dispatchEvent(new Event('submit', { cancelable: true })));
-
-        });
-    </script>
-</body>
+        </script>
+    </body>
 
 </html>

@@ -311,71 +311,71 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <% if (showSwal!==undefined&& message) { %>
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'error',
-            text: <%- JSON.stringify(message) %>,
-            confirmButtonText: 'Go Back',
-            confirmButtonColor: '#2563eb',
-        }).then(() => {
-            window.history.back()
-        });
-    </script>
-    <% } %>
-
-    <script>
-
-
-
-
-        function refreshPage() {
-            const button = document.querySelector('.btn-primary');
-            const spinner = button.querySelector('.loading-spinner');
-            const text = button.querySelector('span');
-
-            // Show loading state
-            spinner.style.display = 'inline-block';
-            text.textContent = 'Refreshing...';
-            button.disabled = true;
-
-            // Simulate a small delay then refresh
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        }
-
-        // Auto-retry functionality (optional)
-        let retryCount = 0;
-        const maxRetries = 3;
-
-        function autoRetry() {
-            if (retryCount < maxRetries) {
-                retryCount++;
-                setTimeout(() => {
-                    window.location.reload();
-                }, 10000); // Retry after 10 seconds
-            }
-        }
-
-      
-
-        // Add some interactive feedback
-        document.addEventListener('DOMContentLoaded', function () {
-            // Add hover effects to buttons
-            const buttons = document.querySelectorAll('.btn');
-            buttons.forEach(button => {
-                button.addEventListener('mouseenter', function () {
-                    this.style.transform = 'translateY(-2px)';
-                });
-                button.addEventListener('mouseleave', function () {
-                    if (!this.disabled) {
-                        this.style.transform = 'translateY(0)';
-                    }
-                });
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'error',
+                text: <%- JSON.stringify(message) %>,
+                confirmButtonText: 'Go Back',
+                confirmButtonColor: '#2563eb',
+            }).then(() => {
+                window.history.back()
             });
-        });
-    </script>
+        </script>
+        <% } %>
+
+            <script>
+
+
+
+
+                function refreshPage() {
+                    const button = document.querySelector('.btn-primary');
+                    const spinner = button.querySelector('.loading-spinner');
+                    const text = button.querySelector('span');
+
+                    // Show loading state
+                    spinner.style.display = 'inline-block';
+                    text.textContent = 'Refreshing...';
+                    button.disabled = true;
+
+                    // Simulate a small delay then refresh
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+
+                // Auto-retry functionality (optional)
+                let retryCount = 0;
+                const maxRetries = 3;
+
+                function autoRetry() {
+                    if (retryCount < maxRetries) {
+                        retryCount++;
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 10000); // Retry after 10 seconds
+                    }
+                }
+
+
+
+                // Add some interactive feedback
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Add hover effects to buttons
+                    const buttons = document.querySelectorAll('.btn');
+                    buttons.forEach(button => {
+                        button.addEventListener('mouseenter', function () {
+                            this.style.transform = 'translateY(-2px)';
+                        });
+                        button.addEventListener('mouseleave', function () {
+                            if (!this.disabled) {
+                                this.style.transform = 'translateY(0)';
+                            }
+                        });
+                    });
+                });
+            </script>
 </body>
 
 </html>

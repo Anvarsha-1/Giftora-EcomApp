@@ -39,7 +39,8 @@
             margin: 0 !important;
         }
 
-        .main-wrapper, .content-wrapper {
+        .main-wrapper,
+        .content-wrapper {
             margin-left: 0 !important;
         }
 
@@ -225,6 +226,7 @@
             padding-bottom: 1rem;
             border-bottom: 2px solid #e9ecef;
         }
+
         .section-header-flex {
             display: flex;
             justify-content: space-between;
@@ -632,6 +634,7 @@
             .hero-content {
                 gap: 3rem;
             }
+
             .main-headline {
                 font-size: 3rem;
             }
@@ -650,19 +653,23 @@
                 flex-direction: column;
                 gap: 1rem;
             }
+
             .timer-display {
                 flex-wrap: wrap;
             }
+
             .hero-section {
                 padding: 1rem;
                 min-height: auto;
                 padding-top: 2rem;
                 padding-bottom: 2rem;
             }
+
             .main-headline {
                 font-size: 2.25rem;
                 margin-bottom: 1rem;
             }
+
             .subheading {
                 font-size: 1.125rem;
                 margin-bottom: 1.5rem;
@@ -687,6 +694,7 @@
                 height: 250px;
                 max-height: none;
             }
+
             .products-grid {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 1rem;
@@ -844,18 +852,22 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge"><%=flashSales[i].bestOffer%>%</div>
-                                            <% if (user) { %>
-                                                <button type="button" onclick="addWishlist('<%= flashSales[i]._id %>', this)"
-                                                    class="wishlist-btn <%= wishlistId.includes(flashSales[i]._id.toString()) ? 'active' : '' %>">
-                                                    <i class="<%= wishlistId.includes(flashSales[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
-                                                </button>
-                                                <% } else { %>
-                                                    <button type="button" onclick="handleWishlistClick()"
-                                                        class="wishlist-btn">
-                                                        <i class="far fa-heart"></i>
+                                                <div class="discount-badge">
+                                                    <%=flashSales[i].bestOffer%>%
+                                                </div>
+                                                <% if (user) { %>
+                                                    <button type="button"
+                                                        onclick="addWishlist('<%= flashSales[i]._id %>', this)"
+                                                        class="wishlist-btn <%= wishlistId.includes(flashSales[i]._id.toString()) ? 'active' : '' %>">
+                                                        <i
+                                                            class="<%= wishlistId.includes(flashSales[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
                                                     </button>
-                                                    <% } %>
+                                                    <% } else { %>
+                                                        <button type="button" onclick="handleWishlistClick()"
+                                                            class="wishlist-btn">
+                                                            <i class="far fa-heart"></i>
+                                                        </button>
+                                                        <% } %>
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-name">
@@ -963,18 +975,22 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge"><%=products[i].bestOffer%>%</div>
-                                            <% if (user) { %>
-                                                <button type="button" onclick="addWishlist('<%= products[i]._id %>', this)"
-                                                    class="wishlist-btn <%= wishlistId.includes(products[i]._id.toString()) ? 'active' : '' %>">
-                                                    <i class="<%= wishlistId.includes(products[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
-                                                </button>
-                                                <% } else { %>
-                                                    <button type="button" onclick="handleWishlistClick()"
-                                                        class="wishlist-btn">
-                                                        <i class="far fa-heart"></i>
+                                                <div class="discount-badge">
+                                                    <%=products[i].bestOffer%>%
+                                                </div>
+                                                <% if (user) { %>
+                                                    <button type="button"
+                                                        onclick="addWishlist('<%= products[i]._id %>', this)"
+                                                        class="wishlist-btn <%= wishlistId.includes(products[i]._id.toString()) ? 'active' : '' %>">
+                                                        <i
+                                                            class="<%= wishlistId.includes(products[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
                                                     </button>
-                                                    <% } %>
+                                                    <% } else { %>
+                                                        <button type="button" onclick="handleWishlistClick()"
+                                                            class="wishlist-btn">
+                                                            <i class="far fa-heart"></i>
+                                                        </button>
+                                                        <% } %>
                                 </div>
                                 <div class="product-info">
                                     <h3 class="product-name">
@@ -1032,12 +1048,15 @@
                                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
                                             </div>
                                             <% } %>
-                                                <div class="discount-badge"><%=bestselling[i].bestOffer%>%</div>
+                                                <div class="discount-badge">
+                                                    <%=bestselling[i].bestOffer%>%
+                                                </div>
                                                 <% if (user) { %>
                                                     <button type="button"
                                                         onclick="addWishlist('<%= bestselling[i]._id %>', this)"
                                                         class="wishlist-btn <%= wishlistId.includes(bestselling[i]._id.toString()) ? 'active' : '' %>">
-                                                        <i class="<%= wishlistId.includes(bestselling[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
+                                                        <i
+                                                            class="<%= wishlistId.includes(bestselling[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
                                                     </button>
                                                     <% } else { %>
                                                         <button type="button" onclick="handleWishlistClick()"
@@ -1082,29 +1101,29 @@
 
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
             <script>
-                  window.isLoggedIn = <%- !!user %>;
+                window.isLoggedIn = <% - !!user %>;
 
 
 
-                 function handleWishlistClick() {
-                        if (!window.isLoggedIn) {
-                            Swal.fire({
-                                icon: 'info',
-                                title: 'Login Required',
-                                text: 'Please login to add items to your wishlist',
-                                showCancelButton: true,
-                                confirmButtonText: 'Login',
-                                cancelButtonText: 'Cancel'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = '/login';
-                                }
-                            });
-                            return;
-                        }
-
-                       
+                function handleWishlistClick() {
+                    if (!window.isLoggedIn) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Login Required',
+                            text: 'Please login to add items to your wishlist',
+                            showCancelButton: true,
+                            confirmButtonText: 'Login',
+                            cancelButtonText: 'Cancel'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/login';
+                            }
+                        });
+                        return;
                     }
+
+
+                }
 
 
                 // Category filter function
@@ -1118,8 +1137,8 @@
                     event.target.closest('.category-card').style.transform = 'translateY(-4px)';
                     event.target.closest('.category-card').style.boxShadow = 'var(--shadow-heavy)';
 
-                   
-                }                
+
+                }
 
                 // Image loading simulation
                 document.querySelectorAll('.product-img').forEach(img => {
@@ -1175,80 +1194,80 @@
                 }
 
                 async function addToCart(button) {
-                        const productId = button.getAttribute('data-id');
+                    const productId = button.getAttribute('data-id');
 
-                        try {
-                            const response = await fetch('/cart', {
-                                method: "POST",
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept' : 'application/json'
-                                },
-                                body: JSON.stringify({ productId, quantity: 1 })
+                    try {
+                        const response = await fetch('/cart', {
+                            method: "POST",
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ productId, quantity: 1 })
+                        });
+
+                        // Check if the response is JSON before trying to parse it
+                        const contentType = response.headers.get("content-type");
+                        if (!contentType || !contentType.includes("application/json")) {
+                            // If not JSON, it's likely a redirect to the login page
+                            Swal.fire({
+                                icon: 'info',
+                                title: "Login Required",
+                                text: "Please login to add items to your cart.",
+                                showCancelButton: true,
+                                confirmButtonText: "Login",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/login';
+                                }
                             });
+                            return;
+                        }
 
-                            // Check if the response is JSON before trying to parse it
-                            const contentType = response.headers.get("content-type");
-                            if (!contentType || !contentType.includes("application/json")) {
-                                // If not JSON, it's likely a redirect to the login page
-                                 Swal.fire({
+                        const data = await response.json();
+
+                        if (data.success) {
+
+                            // ✅ Success toast
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Product added to cart'
+                            });
+                            await updateCartCount();
+
+                        } else {
+                            if (data.message === 'Unauthorized: Please login') {
+                                Swal.fire({
                                     icon: 'info',
                                     title: "Login Required",
-                                    text: "Please login to add items to your cart.",
+                                    text: "Please login to continue",
                                     showCancelButton: true,
                                     confirmButtonText: "Login",
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        window.location.href = '/login';
+                                    cancelButtonText: "Cancel",
+                                }).then((res) => {
+                                    if (res.isConfirmed) {
+                                        window.location.href = "/login";
                                     }
                                 });
                                 return;
                             }
 
-                            const data = await response.json();
-
-                            if (data.success) {
-                                
-                                // ✅ Success toast
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: 'Product added to cart'
-                                });
-                                await updateCartCount();
-                                
-                            } else {
-                                if (data.message === 'Unauthorized: Please login') {
-                                    Swal.fire({
-                                        icon: 'info',
-                                        title: "Login Required",
-                                        text: "Please login to continue",
-                                        showCancelButton: true,
-                                        confirmButtonText: "Login",
-                                        cancelButtonText: "Cancel",
-                                    }).then((res) => {
-                                        if (res.isConfirmed) {
-                                            window.location.href = "/login";
-                                        }
-                                    });
-                                    return;
-                                }
-
-                                Toast.fire({
-                                    icon: 'error',
-                                    title: data.message || 'Failed to add to cart'
-                                });
-                            }
-                        } catch (err) {
-                            console.error(err);
-                            // ❌ Error toast
                             Toast.fire({
                                 icon: 'error',
-                                title: 'Something went wrong'
+                                title: data.message || 'Failed to add to cart'
                             });
                         }
+                    } catch (err) {
+                        console.error(err);
+                        // ❌ Error toast
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Something went wrong'
+                        });
                     }
+                }
 
-              
+
 
                 const Toast = Swal.mixin({
                     toast: true,
@@ -1277,23 +1296,23 @@
                         console.log(result)
 
                         if (result.success) {
-                                const icon = button.querySelector("i.fa-heart");
+                            const icon = button.querySelector("i.fa-heart");
 
-                                if (result.inWishlist) {
-                                    icon.classList.remove("far");
-                                    icon.classList.add("fas");
-                                    button.classList.add("active");
-                                } else {
-                                    icon.classList.remove("fas");
-                                    icon.classList.add("far");
-                                    button.classList.remove("active");
-                                }
-                                updateCartCount().then(()=>{
-                                     Toast.fire({
-                                        icon: 'success',
-                                        title: result.message || "Wishlist updated"
-                                    });
+                            if (result.inWishlist) {
+                                icon.classList.remove("far");
+                                icon.classList.add("fas");
+                                button.classList.add("active");
+                            } else {
+                                icon.classList.remove("fas");
+                                icon.classList.add("far");
+                                button.classList.remove("active");
+                            }
+                            updateCartCount().then(() => {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: result.message || "Wishlist updated"
                                 });
+                            });
                         } else {
                             if (result.message === "user not found") {
                                 Swal.fire({

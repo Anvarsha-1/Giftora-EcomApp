@@ -96,49 +96,50 @@
             /* solid red heart */
             transform: scale(1.2);
         }
+
         /* Custom Cart Button Styles */
-.custom-cart-btn {
-    position: relative;
-    width: 48px;
-    height: 48px;
-    background-color: #000000;
-    border: none;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    color: #ffffff;
-    font-size: 1.2rem;
-}
+        .custom-cart-btn {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            background-color: #000000;
+            border: none;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            color: #ffffff;
+            font-size: 1.2rem;
+        }
 
-.custom-cart-btn:hover:not(:disabled) {
-    background-color: #333333;
-}
+        .custom-cart-btn:hover:not(:disabled) {
+            background-color: #333333;
+        }
 
-.custom-cart-btn i:first-child {
-    position: absolute;
-}
+        .custom-cart-btn i:first-child {
+            position: absolute;
+        }
 
-.custom-cart-btn i:last-child {
-    position: absolute;
-    font-size: 0.8rem;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+        .custom-cart-btn i:last-child {
+            position: absolute;
+            font-size: 0.8rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
 
-.custom-cart-btn:disabled {
-    background-color: #f9fafb;
-    color: #d1d5db;
-    cursor: not-allowed;
-}
+        .custom-cart-btn:disabled {
+            background-color: #f9fafb;
+            color: #d1d5db;
+            cursor: not-allowed;
+        }
 
-/* For out of stock */
-.custom-cart-btn:disabled i {
-    color: #d1d5db;
-}
+        /* For out of stock */
+        .custom-cart-btn:disabled i {
+            color: #d1d5db;
+        }
 
 
         .product-info {
@@ -491,24 +492,24 @@
                             class="w-full max-h-[440px] object-cover object-center bg-white" />
                     </div>
 
-            <!-- Thumbnails responsive -->
-            <div class="thumbnails-grid flex flex-wrap gap-2 mt-2 justify-center">
-                <!-- Main Image as first thumbnail - Made bigger like Amazon/Flipkart main view -->
-                <div class="relative w-full max-w-lg aspect-square overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
-                    data-image="<%= mainImage.url %>">
-                    <img src="<%= mainImage.url.replace('/upload/', '/upload/w_800,h_800,c_fill,q_auto:best,f_auto/') %>" alt=""
-                        class="w-full h-full object-cover p-1" />
-                </div>
-            
-                <!-- Sub Images - Made medium size (taller thumbnails for better visibility, like e-commerce selectors) -->
-                <% subImage.forEach((img)=> { %>
-                    <div class="relative flex-1 min-w-[120px] max-w-[120px] max-h-32 overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
-                        data-image="<%= img.url %>">
-                        <img src="<%= img.url.replace('/upload/', '/upload/w_150,h_150,c_fill,q_auto:best,f_auto/') %>" alt=""
-                            class="w-full h-full object-cover p-1" />
+                    <!-- Thumbnails responsive -->
+                    <div class="thumbnails-grid flex flex-wrap gap-2 mt-2 justify-center">
+                        <!-- Main Image as first thumbnail - Made bigger like Amazon/Flipkart main view -->
+                        <div class="relative w-full max-w-lg aspect-square overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
+                            data-image="<%= mainImage.url %>">
+                            <img src="<%= mainImage.url.replace('/upload/', '/upload/w_800,h_800,c_fill,q_auto:best,f_auto/') %>"
+                                alt="" class="w-full h-full object-cover p-1" />
+                        </div>
+
+                        <!-- Sub Images - Made medium size (taller thumbnails for better visibility, like e-commerce selectors) -->
+                        <% subImage.forEach((img)=> { %>
+                            <div class="relative flex-1 min-w-[120px] max-w-[120px] max-h-32 overflow-hidden rounded-lg bg-white border cursor-pointer thumbnail"
+                                data-image="<%= img.url %>">
+                                <img src="<%= img.url.replace('/upload/', '/upload/w_150,h_150,c_fill,q_auto:best,f_auto/') %>"
+                                    alt="" class="w-full h-full object-cover p-1" />
+                            </div>
+                            <% }) %>
                     </div>
-                    <% }) %>
-            </div>
 
                 </div>
 
@@ -886,7 +887,8 @@
                                     <a href="/productsDetails/<%= relatedProducts[i]._id %>">
                                         <img src="<%= relatedProducts[i].productImage?.[0]?.url || '/path/to/placeholder.jpg' %>"
                                             alt="<%= relatedProducts[i].productName %>"
-                                            class="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105" style="width: 300px; height: 300px;">
+                                            class="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                                            style="width: 300px; height: 300px;">
                                     </a>
                                 </div>
                                 <div class="p-3 sm:p-4 flex flex-col flex-grow">
@@ -897,21 +899,25 @@
                                         </a>
                                     </h3>
                                     <div class="flex flex-wrap items-center gap-x-2 mb-3 sm:mb-4">
-                                        <span class="text-base sm:text-lg font-bold text-gray-900">₹<%= relatedProducts[i].salesPrice.toLocaleString() %></span>
-                                        <span class="text-xs sm:text-sm text-gray-500 line-through">₹<%= relatedProducts[i].regularPrice.toLocaleString() %></span>
-                                        <% const savedAmount = relatedProducts[i].regularPrice - relatedProducts[i].salesPrice; %>
-                                        <% if (savedAmount > 0) { %>
-                                            <span class="text-xs sm:text-sm font-medium text-green-600">
-                                                You Save ₹<%= savedAmount.toLocaleString() %>
-                                            </span>
-                                        <% } %>
+                                        <span class="text-base sm:text-lg font-bold text-gray-900">₹<%=
+                                                relatedProducts[i].salesPrice.toLocaleString() %></span>
+                                        <span class="text-xs sm:text-sm text-gray-500 line-through">₹<%=
+                                                relatedProducts[i].regularPrice.toLocaleString() %></span>
+                                        <% const savedAmount=relatedProducts[i].regularPrice -
+                                            relatedProducts[i].salesPrice; %>
+                                            <% if (savedAmount> 0) { %>
+                                                <span class="text-xs sm:text-sm font-medium text-green-600">
+                                                    You Save ₹<%= savedAmount.toLocaleString() %>
+                                                </span>
+                                                <% } %>
                                     </div>
 
                                     <!-- Add to Cart icon -->
                                     <% if (relatedProducts[i].status==='Available' && relatedProducts[i].quantity> 0) {
                                         %>
                                         <!-- Custom Cart Button for Related Products -->
-                                        <button type="button" data-id="<%= relatedProducts[i]._id %>" class="custom-cart-btn mx-auto mb-2" title="Add to Cart">
+                                        <button type="button" data-id="<%= relatedProducts[i]._id %>"
+                                            class="custom-cart-btn mx-auto mb-2" title="Add to Cart">
                                             <i class="fas fa-shopping-cart"></i>
                                             <i class="fas fa-plus"></i>
                                         </button>
@@ -1077,7 +1083,7 @@
                     });
 
                     // Related add to cart icons
-                   document.addEventListener('click', async function (e) {
+                    document.addEventListener('click', async function (e) {
                         if (e.target.closest('.custom-cart-btn')) {
                             const btn = e.target.closest('.custom-cart-btn');
                             const productId = btn.getAttribute('data-id');
@@ -1287,7 +1293,7 @@
                         toast.addEventListener('mouseleave', Swal.resumeTimer)
                     }
                 });
-                window.isLoggedIn = <%- !!user %>
+                window.isLoggedIn = <% - !!user %>
 
                     async function addWishlist(productId, btn) {
                         try {

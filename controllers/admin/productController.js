@@ -1,21 +1,21 @@
-const Product = require("../../models/productSchema");
-const Category = require("../../models/categorySchema");
+const Product = require('../../models/productSchema');
+const Category = require('../../models/categorySchema');
 const cloudinary = require('cloudinary').v2;
-const extractImageData = require('../../helpers/imageprocess')
-const deleteUploadedImages = require('../../helpers/deleteImage')
+const extractImageData = require('../../helpers/imageprocess');
+const deleteUploadedImages = require('../../helpers/deleteImage');
 
-const viewProduct = async (req, res) => {
+const viewProduct = async (req, res, next) => {
   try {
-    const isClear = req.query.clear === "1"
-    const search = isClear ? "" : req.query.search?.trim() || "";
+    const isClear = req.query.clear === '1';
+    const search = isClear ? '' : req.query.search?.trim() || '';
     const categoryFilter = req.query.category || 'all';
     const sortOption = req.query.sort || 'date-newest';
-    const page = parseInt(req.query.page) || 1
+    const page = parseInt(req.query.page) || 1;
     const limit = 4;
 
     let matchQuery = { isDeleted: { $ne: true } };
     if (search) {
-      matchQuery.productName = { $regex: new RegExp(search, "i") };
+      matchQuery.productName = { $regex: new RegExp(search, 'i') };
     }
 
     if (categoryFilter !== 'all') {
@@ -44,47 +44,37 @@ const viewProduct = async (req, res) => {
     const category = await Category.find({ isListed: true, isDeleted: false });
 
     if (category) {
-      res.render("product-view", {
+      res.render('product-view', {
         data: productData,
         currentPage: page,
         totalPages: Math.ceil(count / limit),
         cat: category,
         search,
         categoryFilter,
-        sortOption
-      })
-
+        sortOption,
+      });
     } else {
-      res.render('admin-404-page')
+      res.render('admin-404-page');
     }
-
   } catch (error) {
-    console.log("Error loading products page:", error);
-    res.status(500).redirect("/pageNotFound");
+    console.error('Error loading products page:', error.message);
+    next(error);
   }
 };
 
-
-const loadAddProductPage = async (req, res) => {
+const loadAddProductPage = async (req, res, next) => {
   try {
     const category = await Category.find({ isListed: true, isDeleted: false });
-    return res.render("addProduct", {
+    return res.render('addProduct', {
       cat: category,
-      message: "",
+      message: '',
       error: null,
     });
   } catch (error) {
-    console.log("Error loading Add products page:", error);
-    return res.status(500).json({
-      success: false,
-      error: 'Failed to load add product page'
-    });
+    console.error('Error loading Add products page:', error.message);
+    next(error);
   }
 };
-
-
-
-
 
 const addProduct = async (req, res) => {
   try {
@@ -98,58 +88,66 @@ const addProduct = async (req, res) => {
       offerPercentage,
     } = req.body;
 
-    console.log("Product name in add product", productName)
-
-    if (!productName || !description || !category || !quantity || !regularPrice || !offerPercentage) {
+    if (
+      !productName ||
+      !description ||
+      !category ||
+      !quantity ||
+      !regularPrice ||
+      !offerPercentage
+    ) {
       if (req.files && req.files.length > 0) {
-      await deleteUploadedImages(req.files);
-      return res.status(400).json({
-        success: false,
-        error: 'All fields are required',
-        formData: req.body,
-        cat: await Category.find({ isListed: true, isDeleted: false }),
-      });
-    }
+        await deleteUploadedImages(req.files);
+        return res.status(400).json({
+          success: false,
+          error: 'All fields are required',
+          formData: req.body,
+          cat: await Category.find({ isListed: true, isDeleted: false }),
+        });
+      }
     }
 
-    const validNameRegex = /^[a-zA-Z0-9 _-]+$/
+    const validNameRegex = /^[a-zA-Z0-9 _-]+$/;
 
     if (!validNameRegex.test(productName)) {
       return res.status(400).json({
         success: false,
-        error: "Product Name only contain alphabets",
-        message: "Product only contain alphabets",
-        formData: req.body,
-        cat: await Category.find({ isListed: true, isDeleted: false }),
-      })
-    }
-
-
-    if (isNaN(quantity) || quantity < 0 || isNaN(regularPrice) || regularPrice < 0 || isNaN(offerPercentage) || offerPercentage < 0) {
-      if (req.files && req.files.length > 0) {
-      await deleteUploadedImages(req.files);
-      return res.status(400).json({
-        success: false,
-        error: 'Quantity, regular price, and offerPercentage must be non-negative numbers',
+        error: 'Product Name only contain alphabets',
+        message: 'Product only contain alphabets',
         formData: req.body,
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
     }
+
+    if (
+      isNaN(quantity) ||
+      quantity < 0 ||
+      isNaN(regularPrice) ||
+      regularPrice < 0 ||
+      isNaN(offerPercentage) ||
+      offerPercentage < 0
+    ) {
+      if (req.files && req.files.length > 0) {
+        await deleteUploadedImages(req.files);
+        return res.status(400).json({
+          success: false,
+          error:
+            'Quantity, regular price, and offerPercentage must be non-negative numbers',
+          formData: req.body,
+          cat: await Category.find({ isListed: true, isDeleted: false }),
+        });
+      }
     }
 
-
     const normalizedProductName = productName.trim().toLowerCase();
-    console.log('Checking productName:', normalizedProductName);
-
 
     const productExists = await Product.findOne({
-      productName: { $regex: new RegExp('^' + normalizedProductName + '$', 'i') },
+      productName: {
+        $regex: new RegExp('^' + normalizedProductName + '$', 'i'),
+      },
     });
 
-    console.log('Duplicate product found:', productExists);
-
     if (productExists) {
-      console.log('Duplicate product found:', productExists);
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
@@ -158,7 +156,6 @@ const addProduct = async (req, res) => {
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
     }
-
 
     if (!req.files || req.files.length !== 3) {
       await deleteUploadedImages(req.files);
@@ -169,7 +166,6 @@ const addProduct = async (req, res) => {
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
     }
-
 
     const categoryDoc = await Category.findById(category);
     if (!categoryDoc) {
@@ -182,50 +178,42 @@ const addProduct = async (req, res) => {
       });
     }
 
-
-    if (status === "Available" && quantity <= 0) {
+    if (status === 'Available' && quantity <= 0) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
-        error: "Quantity must be greater than 0 when status is Available",
+        error: 'Quantity must be greater than 0 when status is Available',
         formData: req.body,
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
     }
 
-    if (status !== "Available" && quantity > 0) {
+    if (status !== 'Available' && quantity > 0) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
-        error: "Quantity must be 0 when product is not Available",
+        error: 'Quantity must be 0 when product is not Available',
         formData: req.body,
         cat: await Category.find({ isListed: true, isDeleted: false }),
       });
     }
 
-
-    console.log("Files received:");
-    console.log(req.files.map(file => ({
-      path: file.path,
-      size: file.size,
-      type: file.mimetype
-    })));
-
-   
-
-
+    console.log(
+      req.files.map((file) => ({
+        path: file.path,
+        size: file.size,
+        type: file.mimetype,
+      })),
+    );
 
     const images = extractImageData(req.files);
 
-   
     const productOffer = offerPercentage || 0;
     const categoryOffer = categoryDoc?.categoryOffer || 0;
 
-
     const appliedOffer = Math.max(productOffer, categoryOffer);
 
-    const finalPrice = regularPrice - (regularPrice * appliedOffer / 100);
-     
+    const finalPrice = regularPrice - (regularPrice * appliedOffer) / 100;
 
     const newProduct = new Product({
       productName: productName.trim(),
@@ -237,11 +225,10 @@ const addProduct = async (req, res) => {
       productImage: images,
       status: status || 'Available',
       productOffer: offerPercentage || 0,
-      bestOffer: appliedOffer
+      bestOffer: appliedOffer,
     });
 
     await newProduct.save();
-    console.log('Product saved:', newProduct);
     return res.status(200).json({
       success: true,
       message: 'Product added successfully',
@@ -260,35 +247,32 @@ const addProduct = async (req, res) => {
 
 const getEditProduct = async (req, res) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
     const product = await Product.findOne({ _id: id });
     const category = await Category.find({
       isDeleted: { $ne: true },
       isListed: true,
     });
     if (!product) {
-      console.log("Product not found");
       return res.status(404).json({
         success: false,
-        error: 'Product not found'
+        error: 'Product not found',
       });
     }
     return res.render('admin/editProduct', {
       cat: category,
       formData: product,
-      message: "",
+      message: '',
       error: null,
     });
   } catch (error) {
-    console.log("Error message:", error.message);
+    ('Error message:', error.message);
     return res.status(500).json({
       success: false,
-      error: 'Failed to load edit product page'
+      error: 'Failed to load edit product page',
     });
   }
 };
-
-
 
 const uploadEditProduct = async (req, res) => {
   try {
@@ -305,67 +289,83 @@ const uploadEditProduct = async (req, res) => {
       offerPercentage,
     } = req.body;
 
-
     const product = await Product.findById(productId);
     if (!product) {
       await deleteUploadedImages(req.files);
       return res.status(404).json({
         success: false,
-        error: "Product not found",
+        error: 'Product not found',
         formData: req.body,
         cat: await Category.find({ isBlocked: true, isDeleted: false }),
       });
     }
 
-
-    if (!productName.trim() || !description.trim() || !category || !quantity.trim() || !regularPrice.trim() || !offerPercentage.trim()) {
+    if (
+      !productName.trim() ||
+      !description.trim() ||
+      !category ||
+      !quantity.trim() ||
+      !regularPrice.trim() ||
+      !offerPercentage.trim()
+    ) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
-        error: "All fields are required",
+        error: 'All fields are required',
         formData: req.body,
         cat: await Category.find({ isBlocked: true, isDeleted: false }),
       });
     }
 
-    if (isNaN(quantity) || quantity < 0 || isNaN(regularPrice) || regularPrice < 0 || isNaN(offerPercentage) || offerPercentage < 0) {
+    if (
+      isNaN(quantity) ||
+      quantity < 0 ||
+      isNaN(regularPrice) ||
+      regularPrice < 0 ||
+      isNaN(offerPercentage) ||
+      offerPercentage < 0
+    ) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
-        error: "Quantity, regular price, and offerPercentage  must be non-negative numbers",
+        error:
+          'Quantity, regular price, and offerPercentage  must be non-negative numbers',
         formData: req.body,
         cat: await Category.find({ isBlocked: true, isDeleted: false }),
       });
     }
-    const categoryDoc = await Category.find({ isListed: true, isDeleted: false })
+    const categoryDoc = await Category.find({
+      isListed: true,
+      isDeleted: false,
+    });
 
-    const validNameRegex = /^[a-zA-Z0-9 _-]+$/
+    const validNameRegex = /^[a-zA-Z0-9 _-]+$/;
 
     if (!validNameRegex.test(productName)) {
       return res.status(400).json({
         success: false,
-        error: "Product only contain alphabets",
-        message: "Product only contain alphabets",
+        error: 'Product only contain alphabets',
+        message: 'Product only contain alphabets',
         formData: req.body,
         cat: categoryDoc,
-      })
+      });
     }
 
-
-    const existing = Array.isArray(existingImages) ? existingImages : (existingImages ? [existingImages] : []);
+    const existing = Array.isArray(existingImages)
+      ? existingImages
+      : existingImages
+        ? [existingImages]
+        : [];
     const formattedExisting = existing
-      .filter(public_id => public_id && !removedImages.includes(public_id))
-      .map(public_id => ({
+      .filter((public_id) => public_id && !removedImages.includes(public_id))
+      .map((public_id) => ({
         public_id,
         url: `https://res.cloudinary.com/${process.env.CLOUD_NAME}/image/upload/${public_id}`,
       }));
 
-
     const newImages = extractImageData(req.files);
 
-
     const finalImages = [...formattedExisting, ...newImages];
-
 
     if (finalImages.length !== 3) {
       await deleteUploadedImages(req.files);
@@ -377,17 +377,15 @@ const uploadEditProduct = async (req, res) => {
       });
     }
 
-
-    if (status !== "Available" && quantity > 0) {
+    if (status !== 'Available' && quantity > 0) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
-        success: false
-        , error: "Quantity must be 0 ",
+        success: false,
+        error: 'Quantity must be 0 ',
         formData: req.body,
-        cat: categoryDoc
-      })
+        cat: categoryDoc,
+      });
     }
-
 
     if (Array.isArray(removedImages) && removedImages.length > 0) {
       for (const public_id of removedImages) {
@@ -395,26 +393,23 @@ const uploadEditProduct = async (req, res) => {
           try {
             await cloudinary.uploader.destroy(public_id);
           } catch (err) {
-            console.error(`Failed to delete Cloudinary image ${public_id}:`, err.message);
+            console.error(
+              `Failed to delete Cloudinary image ${public_id}:`,
+              err.message,
+            );
           }
         }
       }
     }
-   
 
-    const categoryDetails = await Category.findById(category)
+    const categoryDetails = await Category.findById(category);
 
-    const catOffer = categoryDetails?.categoryOffer || 0
-    const proOffer = offerPercentage || 0
+    const catOffer = categoryDetails?.categoryOffer || 0;
+    const proOffer = offerPercentage || 0;
 
-    
+    const appliedOffer = Math.max(catOffer, proOffer);
 
-   
-    const appliedOffer = Math.max(catOffer, proOffer)
-
-    const finalAmount = regularPrice  - (appliedOffer*regularPrice) / 100
-
-  
+    const finalAmount = regularPrice - (appliedOffer * regularPrice) / 100;
 
     product.productName = productName;
 
@@ -428,26 +423,25 @@ const uploadEditProduct = async (req, res) => {
 
     product.salesPrice = finalAmount;
 
-    product.status = status || "Available";
+    product.status = status || 'Available';
 
     product.productOffer = offerPercentage;
 
-    product.bestOffer = appliedOffer
+    product.bestOffer = appliedOffer;
 
     product.productImage = finalImages;
 
     await product.save();
 
-    return res.status(200).json({ success: true, message: "Product updated successfully" });
-
+    return res
+      .status(200)
+      .json({ success: true, message: 'Product updated successfully' });
   } catch (error) {
-
-    console.error("Error in uploadEditProduct:", error.message);
+    console.error('Error in uploadEditProduct:', error.message);
 
     await deleteUploadedImages(req.files);
 
     return res.status(500).json({
-
       success: false,
 
       error: `An error occurred: ${error.message}`,
@@ -455,61 +449,69 @@ const uploadEditProduct = async (req, res) => {
       formData: req.body || {},
 
       cat: await Category.find({ isListed: true, isDeleted: false }),
-
     });
-
   }
-
 };
 
-
-
 const deleteProduct = async (req, res) => {
-  const { id } = req.params
+  const { id } = req.params;
   try {
-    if (!id) return res.status(404).json({ success: false, error: "Product id required" })
+    if (!id)
+      return res
+        .status(404)
+        .json({ success: false, error: 'Product id required' });
 
-    const product = await Product.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+    const product = await Product.findByIdAndUpdate(
+      id,
+      { isDeleted: true },
+      { new: true },
+    );
 
-    if (!product) return res.status(404).json({ success: false, error: "Product not found" })
+    if (!product)
+      return res
+        .status(404)
+        .json({ success: false, error: 'Product not found' });
 
-    res.status(200).json({ success: true, message: "Product delete successfully" })
-
+    res
+      .status(200)
+      .json({ success: true, message: 'Product delete successfully' });
   } catch (error) {
-    console.error("Error deleting product:", error.message);
+    console.error('Error deleting product:', error.message);
 
-    res.status(500).json({ success: false, message: "Server error" });
-
+    res.status(500).json({ success: false, message: 'Server error' });
   }
-
-}
+};
 
 const blockProduct = async (req, res) => {
-
   const { id } = req.params;
 
   try {
-    console.log(id)
-
-    if (!id) return res.status(400).json({ success: false, error: "Product id required" });
+    if (!id)
+      return res
+        .status(400)
+        .json({ success: false, error: 'Product id required' });
 
     const product = await Product.findById(id);
 
-    if (!product) return res.status(404).json('Product not found')
+    if (!product) return res.status(404).json('Product not found');
 
-    product.isBlocked = !product.isBlocked
+    product.isBlocked = !product.isBlocked;
 
     await product.save();
 
-    res.status(200).json({ success: true, message: `Product ${product.isBlocked ? 'Blocked' : 'unblocked'} successfully `, product })
-
+    res.status(200).json({
+      success: true,
+      message: `Product ${product.isBlocked ? 'Blocked' : 'unblocked'} successfully `,
+      product,
+    });
   } catch (error) {
-    console.log("Error while block product", error.message);
+    console.log('Error while block product', error.message);
 
-    return res.status(500).json({ success: false, error: "Internal server error" })
+    return res
+      .status(500)
+      .json({ success: false, error: 'Internal server error' });
   }
-}
-
+};
 
 module.exports = {
   viewProduct,

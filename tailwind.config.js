@@ -12,7 +12,7 @@ module.exports = {
     'fa-heart',
 
     // Background colors used in the HTML
-  
+
     'bg-primary-dark',
     'bg-gray-50',
     'bg-gray-100',
@@ -120,7 +120,7 @@ module.exports = {
 
     // Cursor
     'cursor-pointer',
-    
+
     'sr-only', // For hidden inputs
 
     // Display

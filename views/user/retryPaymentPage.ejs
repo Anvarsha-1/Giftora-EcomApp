@@ -557,24 +557,24 @@
                 </div>
 
 
-                        <% if(order.shippingCharge) { %>
+                <% if(order.shippingCharge) { %>
+                    <div class="summary-row">
+                        <span class="summary-label">Shipping</span>
+                        <span class="summary-value">₹<%= order.shippingCharge %></span>
+                    </div>
+                    <% } %>
+
+                        <% if(order.discountPrice> 0) { %>
                             <div class="summary-row">
-                                <span class="summary-label">Shipping</span>
-                                <span class="summary-value">₹<%= order.shippingCharge %></span>
+                                <span class="summary-label">Discount</span>
+                                <span class="summary-value">- ₹<%= order.discountPrice %></span>
                             </div>
                             <% } %>
 
-                                <% if(order.discountPrice> 0) { %>
-                                    <div class="summary-row">
-                                        <span class="summary-label">Discount</span>
-                                        <span class="summary-value">- ₹<%= order.discountPrice %></span>
-                                    </div>
-                                    <% } %>
-
-                                        <div class="summary-row total-row">
-                                            <span class="summary-label">Total Amount</span>
-                                            <span class="summary-value">₹<%= order.finalAmount %></span>
-                                        </div>
+                                <div class="summary-row total-row">
+                                    <span class="summary-label">Total Amount</span>
+                                    <span class="summary-value">₹<%= order.finalAmount %></span>
+                                </div>
             </div>
 
 
@@ -621,8 +621,8 @@
 
     <script>
 
-        function goBackToOrders(){
-            window.location.href='/orders'
+        function goBackToOrders() {
+            window.location.href = '/orders'
         }
         async function retryPayment(orderId) {
             try {
