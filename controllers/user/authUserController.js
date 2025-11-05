@@ -137,6 +137,8 @@ const signUp = async (req, res) => {
         errors: {},
         error,
       });
+    }else {
+      console.log("Error while sending otp",otp)
     }
 
     req.session.userOtp = otp;

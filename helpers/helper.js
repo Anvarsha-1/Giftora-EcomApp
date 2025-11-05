@@ -7,11 +7,12 @@ function generateOtp() {
 }
 
 async function sendVerificationEmail(email, otp) {
+  console.log("sendVerificationEmail",email)
   try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       port: 587,
-      secure: false,
+      secure: true,
       requireTLS: true,
       auth: {
         user: process.env.NODEMAILER_EMAIL,
