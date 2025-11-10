@@ -34,9 +34,7 @@ const loadWishlist = async (req, res) => {
           return null;
         } else if (
           product.isBlocked ||
-          product.isDeleted ||
-          product.quantity < 1 ||
-          !product.status === 'Available'
+          product.isDeleted 
         ) {
           return null;
         }

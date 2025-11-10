@@ -501,15 +501,18 @@
                   <label class="filter-label">
                     <i class="fas fa-list"></i> Category
                   </label>
-                  <select id="categoryFilter" class="filter-select">
-                    <option value="">All Categories</option>
-                    <% cat.forEach((category)=> { %>
-                      <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : ''
-                        %>>
-                        <%= category.name %>
-                      </option>
-                      <% }) %>
-                  </select>
+                  <div id="categoryFilter" class="filter-checkbox-group">
+                    <% const selectedCategories = Array.isArray(categoryFilter) ? categoryFilter : [categoryFilter]; %>
+                    <% cat.forEach((category) => { %>
+                      <div class="form-check">
+                        <input class="form-check-input category-checkbox" type="checkbox" value="<%= category._id %>" id="cat-<%= category._id %>"
+                          <%= selectedCategories.includes(category._id.toString()) ? 'checked' : '' %>>
+                        <label class="form-check-label" for="cat-<%= category._id %>">
+                          <%= category.name %>
+                        </label>
+                      </div>
+                    <% }) %>
+                  </div>
                 </div>
 
                 <div class="filter-group">
@@ -529,13 +532,14 @@
                   <label class="filter-label">
                     <i class="fas fa-sort"></i> Sort By
                   </label>
-                  <select id="sortBy" class="filter-select">
-                    <option value="createdAt-desc">Newest First</option>
-                    <option value="name-asc">Name: A to Z</option>
-                    <option value="name-desc">Name: Z to A</option>
-                    <option value="price-asc">Price: Low to High</option>
-                    <option value="price-desc">Price: High to Low</option>
-                  </select>
+                 <select id="sortBy" class="filter-select" name="sort">
+  <option value="createdAt-desc" <%= sort === 'createdAt-desc' ? 'selected' : '' %>>Newest First</option>
+  <option value="name-asc" <%= sort === 'name-asc' ? 'selected' : '' %>>Name: A to Z</option>
+  <option value="name-desc" <%= sort === 'name-desc' ? 'selected' : '' %>>Name: Z to A</option>
+  <option value="price-asc" <%= sort === 'price-asc' ? 'selected' : '' %>>Price: Low to High</option>
+  <option value="price-desc" <%= sort === 'price-desc' ? 'selected' : '' %>>Price: High to Low</option>
+</select>
+
                 </div>
               </div>
 
@@ -577,15 +581,14 @@
                   <div class="col-6 col-md-4">
                     <div class="product-card h-100" data-id="<%= products[i]._id %>">
                       <div class="product-image">
-                        <% if (products[i].productImage) { %>
-                          <% // 1. Define the base URL. No need for [0] or .url now! const
-                            imageUrl=products[i].productImage; const transformedUrl=imageUrl.replace( '/upload/'
-                            , '/upload/w_300,h_300,c_fill,g_auto,q_auto:best,f_auto/' ); %>
-                            <a href="/productsDetails/<%= products[i]._id %>">
-                              <img src="<%= transformedUrl %>" alt="<%= products[i].productName %>" class="product-img"
-                                data-id="<%= products[i]._id %>">
-                            </a>
-                            <% } else { %>
+                        <% if (products[i].productImage) { const imageUrl=products[i].productImage; const
+                          transformedUrl=imageUrl.replace( '/upload/' , '/upload/dpr_auto,w_300,h_300,c_fill,g_auto,q_auto:best,f_auto/' ); %>
+                          <a href="/productsDetails/<%= products[i]._id %>">
+                            <img src="<%= transformedUrl %>" alt="<%= products[i].productName %>" class="product-img"
+                              data-id="<%= products[i]._id %>">
+                          </a>
+                          <% } else { %>
+
                               <div
                                 style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
                                 <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
@@ -706,33 +709,36 @@
             <div class="filters-grid flex-grow-1">
               <div class="filter-group">
                 <label class="filter-label"><i class="fas fa-list"></i> Category</label>
-                <select id="categoryFilterMobile" class="filter-select">
-                  <option value="">All Categories</option>
-                  <% cat.forEach((category)=> { %>
-                    <option value="<%= category._id %>" <%=category._id.toString()===categoryFilter ? 'selected' : '' %>
-                      ><%= category.name %>
-                    </option>
-                    <% }) %>
-                </select>
+                <div id="categoryFilterMobile" class="filter-checkbox-group">
+                  <% cat.forEach((category) => { %>
+                    <div class="form-check">
+                      <input class="form-check-input category-checkbox-mobile" type="checkbox" value="<%= category._id %>" id="cat-mobile-<%= category._id %>"
+                        <%= selectedCategories.includes(category._id.toString()) ? 'checked' : '' %>>
+                      <label class="form-check-label" for="cat-mobile-<%= category._id %>">
+                        <%= category.name %>
+                      </label>
+                    </div>
+                  <% }) %>
+                </div>
               </div>
               <div class="filter-group">
                 <label class="filter-label"><i class="fas fa-dollar-sign"></i> Price Range</label>
                 <div class="price-range-container">
-                  <input type="number" id="minPriceMobile" class="filter-input" placeholder="Min $" min="0"
+                  <input type="number" id="minPriceMobile" class="filter-input" placeholder="Min ₹" min="0"
                     value="<%= typeof minPrice !== 'undefined' ? minPrice : '' %>">
                   <span class="price-separator">-</span>
-                  <input type="number" id="maxPriceMobile" class="filter-input" placeholder="Max $" min="0"
+                  <input type="number" id="maxPriceMobile" class="filter-input" placeholder="Max ₹" min="0"
                     value="<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>">
                 </div>
               </div>
               <div class="filter-group">
                 <label class="filter-label"><i class="fas fa-sort"></i> Sort By</label>
-                <select id="sortByMobile" class="filter-select">
-                  <option value="createdAt-desc">Newest First</option>
-                  <option value="name-asc">Name: A to Z</option>
-                  <option value="name-desc">Name: Z to A</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
+                <select id="sortByMobile" class="filter-select" name="sort">
+                  <option value="createdAt-desc" <%= sort === 'createdAt-desc' ? 'selected' : '' %>>Newest First</option>
+                  <option value="name-asc" <%= sort === 'name-asc' ? 'selected' : '' %>>Name: A to Z</option>
+                  <option value="name-desc" <%= sort === 'name-desc' ? 'selected' : '' %>>Name: Z to A</option>
+                  <option value="price-asc" <%= sort === 'price-asc' ? 'selected' : '' %>>Price: Low to High</option>
+                  <option value="price-desc" <%= sort === 'price-desc' ? 'selected' : '' %>>Price: High to Low</option>
                 </select>
               </div>
             </div>
@@ -770,8 +776,6 @@
         const searchBtnMobile = document.getElementById('searchBtnMobile');
         const clearSearchBtn = document.getElementById('clearSearchBtn');
         const clearSearchBtnMobile = document.getElementById('clearSearchBtnMobile');
-        const categoryFilter = document.getElementById('categoryFilter');
-        const categoryFilterMobile = document.getElementById('categoryFilterMobile');
         const minPrice = document.getElementById('minPrice');
         const maxPrice = document.getElementById('maxPrice');
         const sortBy = document.getElementById('sortBy');
@@ -793,8 +797,14 @@
         // Sync values between mobile and desktop
         function syncFilters() {
           searchInputMobile.value = searchInput.value;
-          categoryFilterMobile.value = categoryFilter.value;
           sortByMobile.value = sortBy.value;
+          // Sync checkboxes
+          const desktopChecks = document.querySelectorAll('.category-checkbox');
+          const mobileChecks = document.querySelectorAll('.category-checkbox-mobile');
+          desktopChecks.forEach((check, index) => {
+            mobileChecks[index].checked = check.checked;
+          });
+
           minPriceMobile.value = minPrice.value;
           maxPriceMobile.value = maxPrice.value;
         }
@@ -822,7 +832,7 @@
         });
         toggleClearSearchBtns();
 
-        // Debounce function
+        // Debounce function (ensured 400ms delay for search stability)
         const debounce = (func, delay = 400) => {
           let timeout;
           return (...args) => {
@@ -836,13 +846,20 @@
           return isNaN(num) ? fallback : num;
         };
 
-        // Fetch products with filters and page
+        // Fetch products with filters and page (enhanced for robust search handling)
         async function fetchProducts(page = 1) {
-          const search = encodeURIComponent(searchInput.value.trim());
-          const category = encodeURIComponent(categoryFilter.value || categoryFilterMobile.value);
+          // Extract and encode search query matching backend 'q' param
+          const q = encodeURIComponent(searchInput.value.trim());
           const sort = encodeURIComponent(sortBy.value || sortByMobile.value);
+          
+          // Get selected categories from checkboxes
+          const selectedCategories = Array.from(document.querySelectorAll('.category-checkbox:checked')).map(cb => cb.value);
 
-          const params = new URLSearchParams({ search, category, sort, page });
+          // Create URLSearchParams
+          const params = new URLSearchParams({ q, sort, page });
+          selectedCategories.forEach(cat => {
+            params.append('category', encodeURIComponent(cat));
+          });
 
           const minInput = minPrice.value.trim() || minPriceMobile.value.trim();
           const maxInput = maxPrice.value.trim() || maxPriceMobile.value.trim();
@@ -885,7 +902,7 @@
           }
         }
 
-        // Render products
+        // Render products (updated to match EJS exactly, including image transformation and no empty rating)
         function renderProducts(products) {
           if (products.length === 0) {
             document.getElementById('products-grid').innerHTML = `
@@ -902,52 +919,62 @@
             const wishlistClass = window.isLoggedIn && inWishlist ? 'active' : '';
             const iconClass = window.isLoggedIn && inWishlist ? 'fas' : 'far';
 
+            // Handle image transformation to match EJS (Cloudinary resize)
+            let imageHtml = '';
+            if (p.productImage) {
+              let imgSrc = p.productImage;
+              if (imgSrc.includes('/upload/')) {
+                imgSrc = imgSrc.replace('/upload/', '/upload/w_300,h_300,c_fill,g_auto,q_auto:best,f_auto/');
+              }
+              imageHtml = `
+                <a href="/productsDetails/${p._id}">
+                  <img src="${imgSrc}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
+                </a>`;
+            } else {
+              imageHtml = `
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
+                  <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
+                </div>`;
+            }
+
             return `
       <div class="col-6 col-md-4">
         <div class="product-card h-100" data-id="${p._id}">
           <div class="product-image">
-          <a href="/productsDetails/${p._id}">
-            <img src="${p.productImage || '/img/placeholder.png'}" alt="${p.productName}" class="product-img" data-id="${p._id}" />
-          </a>
-          ${p.status === 'Available' ? `
-            <div class="discount-badge">${p.bestOffer}%</div>
-          ` : `
-            <div class="discount-badge out-of-stock">Out of Stock</div>
-          `}
-          ${window.isLoggedIn ? `
-            <button type="button" class="wishlist-btn ${wishlistClass}" onclick="addWishlist('${p._id}', this)" title="Add to Wishlist">
-              <i class="${iconClass} fa-heart"></i>
-            </button>
-          ` : `
-            <button type="button" class="wishlist-btn" onclick="handleWishlistClick()" title="Add to Wishlist">
-              <i class="far fa-heart"></i>
-            </button>
-          `}
-        </div>
-        <div class="product-info">
-          <h3 class="product-name">${p.productName}</h3>
-          <div class="product-rating">
-            <div class="stars">
-              
+            ${imageHtml}
+            ${p.status === 'Available' ? `
+              <div class="discount-badge">${p.bestOffer}%</div>
+            ` : `
+              <div class="discount-badge out-of-stock">Out of Stock</div>
+            `}
+            ${window.isLoggedIn ? `
+              <button type="button" class="wishlist-btn ${wishlistClass}" onclick="addWishlist('${p._id}', this)" title="Add to Wishlist">
+                <i class="${iconClass} fa-heart"></i>
+              </button>
+            ` : `
+              <button type="button" class="wishlist-btn" onclick="handleWishlistClick()" title="Add to Wishlist">
+                <i class="far fa-heart"></i>
+              </button>
+            `}
+          </div>
+          <div class="product-info">
+            <h3 class="product-name">${p.productName}</h3>
+            <div class="product-prices">
+              <span class="current-price">₹${p.salesPrice.toLocaleString()}</span>
+              <span class="original-price">₹${p.regularPrice.toLocaleString()}</span>
+              <span class="price-savings">Save ₹${(p.regularPrice - p.salesPrice).toFixed(0)}</span>
             </div>
-            
-          </div>
-          <div class="product-prices">
-            <span class="current-price">₹${p.salesPrice.toLocaleString()}</span>
-            <span class="original-price">₹${p.regularPrice.toLocaleString()}</span>
-            <span class="price-savings">Save ₹${(p.regularPrice - p.salesPrice).toFixed(0)}</span>
-          </div>
-          ${p.status === 'Available' ? `
-            <button type="button" data-id="${p._id}" onclick="addToCart(this)" class="add-to-cart">
-              <i class="fas fa-shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          ` : `
-            <button class="add-to-cart" disabled>
-              <i class="fas fa-shopping-cart"></i>
-              <span>Add to Cart</span>
-            </button>
-          `}
+            ${p.status === 'Available' ? `
+              <button type="button" data-id="${p._id}" onclick="addToCart(this)" class="add-to-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Add to Cart</span>
+              </button>
+            ` : `
+              <button class="add-to-cart" disabled>
+                <i class="fas fa-shopping-cart"></i>
+                <span>Add to Cart</span>
+              </button>
+            `}
           </div>
         </div>
       </div>
@@ -1026,8 +1053,6 @@
         function resetPriceFilters() {
           minPrice.value = '';
           maxPrice.value = '';
-          categoryFilter.value = '';
-          categoryFilterMobile.value = '';
           sortBy.value = 'createdAt-desc';
           sortByMobile.value = 'createdAt-desc';
           searchInput.value = '';
@@ -1035,6 +1060,10 @@
           maxPriceMobile.value = '';
           searchInputMobile.value = '';
           toggleClearSearchBtns();
+          // Uncheck all category checkboxes
+          document.querySelectorAll('.category-checkbox, .category-checkbox-mobile').forEach(cb => {
+            cb.checked = false;
+          });
         }
 
         // Event listeners for desktop
@@ -1071,8 +1100,13 @@
         });
 
         applyFiltersMobile.addEventListener('click', () => {
-          categoryFilter.value = categoryFilterMobile.value;
           sortBy.value = sortByMobile.value;
+          // Sync mobile checkboxes to desktop before fetching
+          const mobileChecks = document.querySelectorAll('.category-checkbox-mobile');
+          const desktopChecks = document.querySelectorAll('.category-checkbox');
+          mobileChecks.forEach((check, index) => {
+            desktopChecks[index].checked = check.checked;
+          });
           minPrice.value = minPriceMobile.value;
           maxPrice.value = maxPriceMobile.value;
           fetchProducts(1);
@@ -1094,16 +1128,6 @@
           fetchProducts(1);
         });
 
-        categoryFilter.addEventListener('change', () => {
-          categoryFilterMobile.value = categoryFilter.value;
-          fetchProducts(1);
-        });
-
-        categoryFilterMobile.addEventListener('change', () => {
-          categoryFilter.value = categoryFilterMobile.value;
-          fetchProducts(1);
-        });
-
         minPrice.addEventListener('input', () => {
           minPriceMobile.value = minPrice.value;
         });
@@ -1112,12 +1136,22 @@
           maxPriceMobile.value = maxPrice.value;
         });
 
-        const debouncedFetch = debounce(() => fetchProducts(1), 300);
+        // Enhanced debounced fetch for search inputs (400ms delay for optimal UX and backend load)
+        const debouncedFetch = debounce(() => fetchProducts(1), 400);
         searchInput.addEventListener('input', debouncedFetch);
         searchInputMobile.addEventListener('input', debouncedFetch);
-        minPrice.addEventListener('input', debouncedFetch);
-        maxPrice.addEventListener('input', debouncedFetch);
-        categoryFilter.addEventListener('change', () => fetchProducts(1));
+
+        // Debounced input for price filters (separate debounce for non-search filters)
+        const debouncedPriceFetch = debounce(() => fetchProducts(1), 400);
+        minPrice.addEventListener('input', debouncedPriceFetch);
+        maxPrice.addEventListener('input', debouncedPriceFetch);
+        
+        // Immediate fetch on category change for all checkboxes
+        document.querySelectorAll('.category-checkbox, .category-checkbox-mobile').forEach(checkbox => {
+          checkbox.addEventListener('change', () => {
+            fetchProducts(1);
+          });
+        });
 
         // Wishlist and cart scripts
         const Toast = Swal.mixin({

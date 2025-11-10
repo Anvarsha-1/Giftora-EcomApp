@@ -33,35 +33,39 @@ router.post('/otp-forgot-password', authUserController.verifyForgotPasswordOtp);
 
 router.get('/reset-password', authUserController.loadResetPassword);
 
-router.post('/reset-password', authUserController.validateResetPassword);
+router.patch('/reset-password', authUserController.validateResetPassword);
 
 router.get('/logout', authUserController.logout);
 
-// 1️⃣ Trigger Google login
+
 router.get(
   '/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] }),
 );
 
-// 2️⃣ Callback route (must match Google Cloud console)
+
 router.get(
   '/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
     console.log('Google user logged in:', req.user);
 
-    // Optional: your custom session
+  
     req.session.user = req.user._id;
 
     req.session.save(() => res.redirect('/home'));
   },
 );
 
-//USER HOME PAGE
-router.get('/home', authUserController.loadHomePage);
 
+router.get('/home', authUserController.loadHomePage);
+router.get('/api/search',authUserController.liveSearch)
 router.get('/viewProducts/', userProductController.loadProductListingPage);
 
 router.get('/productsDetails/:id', userProductController.viewProductDetails);
+
+router.get('/contact',authUserController.loadContactPage)
+
+router.get('/about',authUserController.loadAboutPage)
 
 module.exports = router;

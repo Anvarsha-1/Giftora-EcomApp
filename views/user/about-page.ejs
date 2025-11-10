@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Giftora | Premium Gift Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #fafbfc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            margin: 5rem 0;
+            background: white;
+            padding: 4rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        h2 {
+            color: #1a472a;
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #27a745, #20c997);
+            border-radius: 2px;
+        }
+
+        h3 {
+            color: #2d5a3d;
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        p {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+            letter-spacing: 0.3px;
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .story-text h3 {
+            margin-top: 0;
+        }
+
+        .story-image {
+            width: 100%;
+            height: 350px;
+            background: linear-gradient(135deg, #27a745 0%, #20c997 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: white;
+            box-shadow: 0 12px 35px rgba(39, 167, 69, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .mission-values {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .value-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2.5rem 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+            border-left: 5px solid #27a745;
+            position: relative;
+        }
+
+        .value-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(39, 167, 69, 0.15);
+            background: linear-gradient(135deg, #ffffff 0%, #f1f3f5 100%);
+        }
+
+        .value-card .icon {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .value-card h4 {
+            color: #1a472a;
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .value-card p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3rem;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid #27a745;
+        }
+
+        .team-member:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(39, 167, 69, 0.2);
+        }
+
+        .member-photo {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #27a745 0%, #20c997 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: white;
+        }
+
+        .member-info {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .member-info h4 {
+            color: #1a472a;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .member-info p {
+            font-size: 0.9rem;
+            color: #27a745;
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(26, 71, 42, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, #27a745, #20c997);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0 2rem 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #27a745, #20c997);
+        }
+
+        .timeline-item {
+            margin-bottom: 2.5rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 5px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border: 3px solid #27a745;
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px #f8f9fa;
+        }
+
+        .timeline-item h4 {
+            color: #1a472a;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .timeline-item p {
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #1a472a 0%, #2d5a3d 100%);
+            color: white;
+            padding: 4rem 3rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .cta-section h2 {
+            color: white;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section h2::after {
+            background: linear-gradient(90deg, #27a745, #20c997);
+        }
+
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #27a745, #20c997);
+            color: white;
+            padding: 1.1rem 2.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 6px 20px rgba(39, 167, 69, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(39, 167, 69, 0.4);
+        }
+
+       
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .story-grid,
+            .mission-values {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 2rem 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+   
+    <%-include('../partials/user/newheader.ejs') %>
+    <div class="container">
+        <!-- Our Story Section -->
+        <section>
+            <h2>Our Story</h2>
+            <div class="story-grid">
+                <div class="story-text">
+                    <h3>From Passion to Purpose</h3>
+                    <p>Giftora was founded with a singular vision: to revolutionize the way people give and receive
+                        gifts. In a world where gift-giving has become routine, we believed there was an opportunity to
+                        create something truly special—a platform that understands the emotional significance behind
+                        every present.</p>
+                    <p>What began as a small initiative has evolved into a trusted destination for thoughtful gifting.
+                        Our founder recognized that the perfect gift isn't just about the product—it's about
+                        understanding the recipient, the occasion, and the feelings we want to convey.</p>
+                    <p>Today, Giftora serves thousands of customers across multiple countries, helping them celebrate
+                        life's precious moments with gifts that truly matter. We've partnered with premium artisans,
+                        designers, and brands to bring you a carefully curated collection that reflects quality,
+                        innovation, and authenticity.</p>
+                </div>
+                <div class="story-image">🎁</div>
+            </div>
+        </section>
+
+        <!-- Mission & Values Section -->
+        <section>
+            <h2>Our Mission & Core Values</h2>
+            <div class="mission-values">
+                <div class="value-card">
+                    <div class="icon">✨</div>
+                    <h4>Excellence</h4>
+                    <p>We maintain the highest standards in product selection, customer service, and delivery to ensure
+                        every interaction exceeds expectations.</p>
+                </div>
+                <div class="value-card">
+                    <div class="icon">🤝</div>
+                    <h4>Integrity</h4>
+                    <p>We operate with transparency, honesty, and ethical practices in all our business relationships
+                        and partnerships.</p>
+                </div>
+                <div class="value-card">
+                    <div class="icon">🌟</div>
+                    <h4>Customer Centricity</h4>
+                    <p>Your satisfaction is our priority. We listen, adapt, and continuously improve based on your
+                        feedback and needs.</p>
+                </div>
+                <div class="value-card">
+                    <div class="icon">🌱</div>
+                    <h4>Sustainability</h4>
+                    <p>We are committed to eco-friendly practices and support brands that prioritize environmental and
+                        social responsibility.</p>
+                </div>
+                <div class="value-card">
+                    <div class="icon">💡</div>
+                    <h4>Innovation</h4>
+                    <p>We continuously explore new ways to enhance your gifting experience through technology and
+                        creative solutions.</p>
+                </div>
+                <div class="value-card">
+                    <div class="icon">❤️</div>
+                    <h4>Compassion</h4>
+                    <p>We believe in the power of meaningful connections and strive to make every gift a reflection of
+                        genuine care.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section>
+            <h2>Giftora by Numbers</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">25K+</div>
+                    <div class="stat-label">Satisfied Customers Worldwide</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">8K+</div>
+                    <div class="stat-label">Premium Gift Products</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">300+</div>
+                    <div class="stat-label">Global Brand Partners</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">120+</div>
+                    <div class="stat-label">Countries Served</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section>
+            <h2>Our Milestone Journey</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>2018 - The Vision Begins</h4>
+                    <p>Giftora is founded with a commitment to curate the finest selection of gifts. We start with a
+                        handpicked collection of 500 premium items.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2019 - Digital Transformation</h4>
+                    <p>We launch our e-commerce platform, bringing Giftora's exclusive collection to customers across
+                        Asia and beyond.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2020 - Quality Assurance</h4>
+                    <p>We establish rigorous quality standards and introduce our signature packaging experience that
+                        delights recipients worldwide.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2021 - Sustainable Growth</h4>
+                    <p>Giftora achieves 100% recyclable packaging and partners with 200+ ethical brands aligned with our
+                        values.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2022 - Global Expansion</h4>
+                    <p>We expand our shipping network to reach 100+ countries and exceed 20,000 satisfied customers
+                        globally.</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>2024 - Innovation & Excellence</h4>
+                    <p>Giftora continues to lead with personalized gifting solutions, premium curations, and an enhanced
+                        customer experience.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section>
+            <h2>Meet the Giftora Team</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-photo">👩‍💼</div>
+                    <div class="member-info">
+                        <h4>Priya Sharma</h4>
+                        <p>Founder & CEO</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">👨‍💼</div>
+                    <div class="member-info">
+                        <h4>Rajesh Kumar</h4>
+                        <p>Chief Operations Officer</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">👩‍🎨</div>
+                    <div class="member-info">
+                        <h4>Anjali Verma</h4>
+                        <p>Head of Curation</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">👨‍💻</div>
+                    <div class="member-info">
+                        <h4>Arjun Patel</h4>
+                        <p>Technology Director</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">👩‍🔬</div>
+                    <div class="member-info">
+                        <h4>Neha Singh</h4>
+                        <p>Quality Assurance Lead</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">👨‍🎓</div>
+                    <div class="member-info">
+                        <h4>Vikram Desai</h4>
+                        <p>Customer Experience Manager</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <h2>Discover the Giftora Experience</h2>
+            <p>Explore our curated collection of premium gifts and find the perfect present for every occasion. At
+                Giftora, we don't just sell gifts—we create meaningful moments.</p>
+            <button class="btn"onclick="window.location.href='/viewProducts'" >Browse Our Collection</button>
+        </section>
+    </div>
+
+   <%-include('../partials/user/footer.ejs') %>
+</body>
+
+</html>

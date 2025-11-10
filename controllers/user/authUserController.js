@@ -48,7 +48,7 @@ const loadPLandingPage = async (req, res) => {
     const newProductData = productData.slice(0, 4);
     const bestsellingData = productData.slice(4, 8);
     const flashSalesData = productData.slice(8, 12);
-
+    const isHomePage = true
     return res.render('user/Home-page', {
       user: null,
       firstName: null,
@@ -56,6 +56,7 @@ const loadPLandingPage = async (req, res) => {
       bestselling: bestsellingData,
       flashSales: flashSalesData,
       newProductData: newProductData,
+      isHomePage
     });
   } catch (error) {
     console.log('Home page not found', error.message);
@@ -137,8 +138,8 @@ const signUp = async (req, res) => {
         errors: {},
         error,
       });
-    }else {
-      console.log("Error while sending otp",otp)
+    } else {
+      console.log("Error while sending otp", otp)
     }
 
     req.session.userOtp = otp;
@@ -250,12 +251,12 @@ const verifyOtp = async (req, res) => {
       transactions:
         initialBalance > 0
           ? [
-              {
-                type: 'credit',
-                amount: initialBalance,
-                description: 'Welcome bonus ',
-              },
-            ]
+            {
+              type: 'credit',
+              amount: initialBalance,
+              description: 'Welcome bonus ',
+            },
+          ]
           : [],
     });
     await wallet.save();
@@ -576,6 +577,7 @@ const loadHomePage = async (req, res, next) => {
       ? wishlist.products.map((item) => item.productId.toString())
       : [];
 
+    const isHomePage = true
     if (userId) {
       const userData = await User.findById(userId);
 
@@ -586,8 +588,11 @@ const loadHomePage = async (req, res, next) => {
         bestselling: bestsellingData,
         flashSales: flashSalesData,
         wishlistId,
+        isHomePage
       });
     }
+
+    
 
     return res.render('user/Home-page', {
       user: null,
@@ -595,6 +600,7 @@ const loadHomePage = async (req, res, next) => {
       bestselling: bestsellingData,
       flashSales: flashSalesData,
       wishlistId: [],
+      isHomePage
     });
   } catch (error) {
     console.log('error loading home page', error.message);
@@ -612,6 +618,81 @@ const logout = async (req, res) => {
     res.render('user/error-page');
   }
 };
+
+const loadContactPage = async (req, res, next) => {
+  try {
+    const user = req.session.user
+    return res.render('contact-page', {
+      user
+    })
+  } catch (error) {
+    console.error("Server error while loading contact", error.message)
+    return next(error)
+  }
+}
+
+const loadAboutPage = async (req, res, next) => {
+  try {
+    const user = req.session.user
+    
+    return res.render('about-page', {
+      user
+    })
+  } catch (error) {
+    console.error("Error while loading about page", error.message)
+    next(error)
+  }
+}
+
+const liveSearch = async (req, res, next) => {
+  try {
+    const query = (req.query.q || '').trim();
+
+    if (!query) {
+      return res.json({ results: [] });
+    }
+
+    const regex = new RegExp(query, 'i');
+
+    const results = await product.aggregate([
+      {
+        $lookup: {
+          from: 'categories', 
+          localField: 'category',
+          foreignField: '_id',
+          as: 'categoryDetails'
+        }
+      },
+      { $unwind: '$categoryDetails' },
+      {
+        $match: {
+          'isBlocked': false,
+          'isDeleted': false,
+          'quantity': { $gt: 0 },
+          '$or': [
+            { 'productName': regex },
+            { 'categoryDetails.name': regex }
+          ]
+        }
+      },
+      { $limit: 10 }, 
+      {
+        $project: {
+          _id: 1,
+          name: '$productName',
+          category: '$categoryDetails.name',
+          image: { $arrayElemAt: ['$productImage.url', 0] } 
+        }
+      }
+    ]);
+
+    return res.json({ results });
+  } catch (error) {
+    console.error('Live search API error:', error.message);
+    next(error);
+  }
+}
+
 
 module.exports = {
   loadSignUp,
@@ -631,4 +712,7 @@ module.exports = {
   loadResetPassword,
   validateResetPassword,
   loadHomePage,
+  loadContactPage,
+  loadAboutPage,
+  liveSearch
 };

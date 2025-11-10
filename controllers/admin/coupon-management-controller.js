@@ -116,10 +116,6 @@ const addCoupons = async (req, res) => {
       totalUsageLimit,
       maxDiscount: bodyMaxDiscount,
       activeStatus,
-      applicableCategories,
-      applicableProducts,
-      selectedCategories,
-      selectedProducts,
     } = req.body;
 
     // Basic sanitization and normalization
@@ -229,43 +225,8 @@ const addCoupons = async (req, res) => {
       });
     }
 
-    // Resolve applicability
-    let categoryIds = [];
-    let productIds = [];
+    
 
-    if (applicableCategories === 'all') {
-      // keep empty to mean all categories (interpretation on apply side)
-      categoryIds = [];
-    } else if (Array.isArray(selectedCategories) && selectedCategories.length) {
-      // validate category ids exist and are listed
-      const validCats = await Category.find({
-        _id: { $in: selectedCategories },
-        isListed: true,
-        isDeleted: false,
-      }).select('_id');
-      categoryIds = validCats.map((c) => c._id);
-      if (categoryIds.length === 0) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'No valid categories selected' });
-      }
-    }
-
-    if (applicableProducts === 'all') {
-      productIds = [];
-    } else if (Array.isArray(selectedProducts) && selectedProducts.length) {
-      const validPros = await Product.find({
-        _id: { $in: selectedProducts },
-        isBlocked: false,
-        isDeleted: false,
-      }).select('_id');
-      productIds = validPros.map((p) => p._id);
-      if (productIds.length === 0) {
-        return res
-          .status(400)
-          .json({ success: false, message: 'No valid products selected' });
-      }
-    }
 
     const coupon = new Coupon({
       code,
@@ -279,8 +240,6 @@ const addCoupons = async (req, res) => {
       usageLimit,
       userUsageLimit,
       isActive,
-      applicableCategories: categoryIds,
-      applicableProducts: productIds,
     });
 
     await coupon.save();
@@ -340,8 +299,6 @@ const editCoupons = async (req, res) => {
       userUsageLimit,
       usageLimit: bodyUsageLimit,
       isActive,
-      applicableCategories,
-      applicableProducts,
     } = req.body;
 
     // Normalize & sanitize
@@ -447,33 +404,7 @@ const editCoupons = async (req, res) => {
     }
 
     // Applicability handling (empty arrays mean apply to all)
-    let categoryIds = [];
-    let productIds = [];
-
-    if (Array.isArray(applicableCategories) && applicableCategories.length) {
-      const validCats = await Category.find({
-        _id: { $in: applicableCategories },
-        isListed: true,
-        isDeleted: false,
-      }).select('_id');
-      categoryIds = validCats.map((c) => c._id);
-      if (categoryIds.length === 0)
-        return res
-          .status(400)
-          .json({ success: false, message: 'No valid categories selected' });
-    }
-    if (Array.isArray(applicableProducts) && applicableProducts.length) {
-      const validPros = await Product.find({
-        _id: { $in: applicableProducts },
-        isBlocked: false,
-        isDeleted: false,
-      }).select('_id');
-      productIds = validPros.map((p) => p._id);
-      if (productIds.length === 0)
-        return res
-          .status(400)
-          .json({ success: false, message: 'No valid products selected' });
-    }
+    
 
     const updated = await Coupon.findByIdAndUpdate(
       id,
@@ -489,8 +420,6 @@ const editCoupons = async (req, res) => {
         usageLimit,
         userUsageLimit: userLimitNum,
         isActive: active,
-        applicableCategories: categoryIds,
-        applicableProducts: productIds,
       },
       { new: true },
     );

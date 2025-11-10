@@ -550,7 +550,7 @@
 
             try {
                 const response = await fetch(`/account/edit/addresses/${addressId}`, {
-                    method: "PUT",
+                    method: "PATCH",
                     headers: {
                         'Content-Type': 'application/json'
                     },

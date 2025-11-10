@@ -44,7 +44,8 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-left: auto; /* Pushes this group to the right */
+            margin-left: auto;
+            /* Pushes this group to the right */
         }
 
         .nav-wrapper {
@@ -140,7 +141,8 @@
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             min-width: 180px;
-            z-index: 1050; /* Increased z-index to ensure it's above all other content */
+            z-index: 1050;
+            /* Increased z-index to ensure it's above all other content */
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
@@ -188,7 +190,8 @@
             font-size: 24px;
             color: #555;
             padding: 8px;
-            z-index: 1002; /* Above overlay */
+            z-index: 1002;
+            /* Above overlay */
         }
 
         .nav-menu {
@@ -219,6 +222,121 @@
             display: block;
         }
 
+        /* ... (Your existing CSS up to .nav-menu-wrapper) ... */
+
+        .nav-menu-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            /* Increased gap to accommodate search bar */
+        }
+
+        /* --- Search Bar Styles --- */
+        .search-bar-container {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            max-width: 400px;
+            /* Control max width on desktop */
+            margin-right: 20px;
+            /* Spacing between search and nav links */
+            position: relative;
+            /* This is crucial for positioning the dropdown */
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-form:focus-within {
+            border-color: #666;
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            border: none;
+            padding: 8px 15px;
+            font-size: 14px;
+            outline: none;
+            background-color: transparent;
+        }
+
+        .search-icon-button,
+        .clear-icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #777;
+            font-size: 16px;
+            padding: 8px 10px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease;
+        }
+
+        .search-icon-button {
+            padding-left: 15px;
+            /* Adjust spacing */
+        }
+
+        .clear-icon-button {
+            display: none;
+            /* Hidden by default, shown by JS when input has text */
+        }
+
+        .search-icon-button:hover,
+        .clear-icon-button:hover {
+            color: #333;
+        }
+
+        /* ... (Your existing CSS down to @media (max-width: 768px)) ... */
+
+        @media (max-width: 768px) {
+            /* ... (Existing media queries) ... */
+
+            .nav-menu-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0;
+                width: 100%;
+            }
+
+            /* Mobile Search Bar adjustments */
+            .search-bar-container {
+                order: -1;
+                /* Place search bar at the top of the mobile menu */
+                max-width: 100%;
+                margin: 0;
+                padding-bottom: 20px;
+                width: 100%;
+                border-bottom: 1px solid #eee;
+            }
+
+            .search-form {
+                background-color: #f8f8f8;
+                /* A slight change for mobile menu contrast */
+            }
+            
+            .nav-wrapper:not(.has-search) .nav-menu-wrapper {
+                justify-content: flex-end; /* Align nav to the right when no search */
+                width: 100%;
+            }
+
+
+        }
+
+
         @media (max-width: 768px) {
             .header-container {
                 justify-content: space-between;
@@ -227,18 +345,20 @@
             .hamburger {
                 display: block;
             }
-            .dropdown-menu{
+
+            .dropdown-menu {
                 z-index: 1001;
             }
 
             .nav-wrapper {
                 position: fixed;
                 top: 0;
-                right: -300px; /* Start off-screen */
+                right: -300px;
+                /* Start off-screen */
                 width: 300px;
                 height: 100vh;
                 background: white;
-                box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+                box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
                 flex-direction: column;
                 justify-content: flex-start;
                 align-items: flex-start;
@@ -292,58 +412,69 @@
 <body>
     <header class="main-header">
         <div class="header-container">
-            <!-- Logo -->
             <a href="/home" class="logo">
                 <img src="/images/header/giftora.png" alt="Giftora Logo">
             </a>
 
             <div class="header-right-group">
-                <!-- Hamburger Button -->
-                <button class="hamburger" id="hamburgerToggle">
+                <button class="hamburger" id="hamburgerToggle" aria-label="Toggle Menu">
                     <i class="fas fa-bars"></i>
                 </button>
 
-                <!-- Navigation & Actions -->
-                <div class="nav-wrapper" id="navWrapper">
+                <div class="nav-wrapper <%= showSearch ? 'has-search' : '' %>" id="navWrapper">
                     <div class="nav-menu-wrapper">
+                        <% if(showSearch){ %>
+                            <div class="search-bar-container">
+                                  <div class="search-form">
+                                      <input type="text" name="q" placeholder="Search for gifts..." class="search-input"
+                                          id="searchInput">
+                                      <button type="button" class="clear-icon-button" id="clearSearch"
+                                          aria-label="Clear Search">
+                                          <i class="fas fa-times"></i>
+                                      </button>
+                                  </div>
+                                  <%- include('./searchModal.ejs') %>
+                            </div>
+                        <% } %>
                         <nav>
                             <ul class="nav-menu">
-                                <li><a href="/" class="nav-link">Home</a></li>
+                                <li><a href="/home" class="nav-link">Home</a></li>
                                 <li><a href="/viewProducts" class="nav-link">Shop</a></li>
-                                <li><a href="#" class="nav-link">Contact</a></li>
-                                <li><a href="#" class="nav-link">About</a></li>
+                                <li><a href="/contact" class="nav-link">Contact</a></li>
+                                <li><a href="/about" class="nav-link">About</a></li>
                                 <% if (!user) { %>
                                     <li><a href="/login" class="nav-link">Sign In</a></li>
-                                    <% } %>
+                                <% } %>
                             </ul>
                         </nav>
                     </div>
                 </div>
 
-                <% if (user) { %>
-                    <button onclick="window.location.href='/wishlist'" class="icon-button" aria-label="Wishlist">
-                        <i class="far fa-heart"></i>
-                        <span id="wishlist-count" class="count-badge">0</span>
-                    </button>
-                    <button onclick="window.location.href='/cart'" class="icon-button" aria-label="Cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span id="cart-count" class="count-badge">0</span>
-                    </button>
-                    <div class="profile-dropdown" id="profileDropdown">
-                        <button class="profile-button" id="profileToggle" aria-label="Profile">
-                            <% if (user.profileImage?.url) { %>
-                                <img src="<%= user.profileImage.url %>" alt="Profile" class="profile-img">
-                            <% } else { %>
-                                <i class="fas fa-user"></i>
-                            <% } %>
+                    <% if (user) { %>
+                        <button onclick="window.location.href='/wishlist'" class="icon-button" aria-label="Wishlist">
+                            <i class="far fa-heart"></i>
+                            <span id="wishlist-count" class="count-badge">0</span>
                         </button>
-                        <div class="dropdown-menu" id="dropdownMenu">
-                            <a href="/account/profile" class="dropdown-item"><i class="fas fa-user"></i> My Account</a>
-                            <a href="/orders" class="dropdown-item"><i class="fas fa-box"></i> My Orders</a>
-                            <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        <button onclick="window.location.href='/cart'" class="icon-button" aria-label="Cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span id="cart-count" class="count-badge">0</span>
+                        </button>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <button class="profile-button" id="profileToggle" aria-label="Profile">
+                                <% if (user.profileImage?.url) { %>
+                                    <img src="<%= user.profileImage.url %>" alt="Profile" class="profile-img">
+                                    <% } else { %>
+                                        <i class="fas fa-user"></i>
+                                        <% } %>
+                            </button>
+                            <div class="dropdown-menu" id="dropdownMenu">
+                                <a href="/account/profile" class="dropdown-item"><i class="fas fa-user"></i> My
+                                    Account</a>
+                                <a href="/orders" class="dropdown-item"><i class="fas fa-box"></i> My Orders</a>
+                                <a href="/logout" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </div>
                         </div>
-                    </div>
-                <% } %>
+                        <% } %>
             </div>
         </div>
     </header>
@@ -357,6 +488,11 @@
             const overlay = document.getElementById('overlay');
             const profileToggle = document.getElementById('profileToggle');
             const dropdownMenu = document.getElementById('dropdownMenu');
+
+            // New Search Bar elements
+            const searchInput = document.getElementById('searchInput');
+            const clearSearchButton = document.getElementById('clearSearch');
+
 
             function closeAll() {
                 navWrapper.classList.remove('active');
@@ -389,6 +525,126 @@
                     closeAll();
                 }
             });
+
+
+            // --- Debounced Live Search Logic ---
+
+            const debounce = (func, delay) => {
+                let timeoutId;
+                return (...args) => {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        func.apply(this, args);
+                    }, delay);
+                };
+            };
+
+            // --- Modal Elements ---
+            const searchModalOverlay = document.getElementById('searchModalOverlay');
+            const searchInputModal = document.getElementById('searchInputModal');
+            const searchResultsList = document.getElementById('searchResultsList');
+            const searchModalFooter = document.getElementById('searchModalFooter');
+            const seeAllResultsLink = document.getElementById('seeAllResultsLink');
+            const searchModalCloseBtn = document.getElementById('searchModalCloseBtn');
+
+            const openModal = () => {
+                if (searchModalOverlay) {
+                    searchModalOverlay.classList.add('active');
+                    // When opening, focus the modal's input for a better UX
+                    if (searchInputModal) searchInputModal.focus();
+                }
+            };
+
+            const closeModal = () => {
+                if (searchModalOverlay) searchModalOverlay.classList.remove('active');
+            };
+
+            if (searchModalOverlay) {
+                searchModalOverlay.addEventListener('click', (e) => {
+                    if (e.target === searchModalOverlay) closeModal();
+                });
+            }
+            if (searchModalCloseBtn) {
+                searchModalCloseBtn.addEventListener('click', closeModal);
+            }
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && searchModalOverlay && searchModalOverlay.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+            const renderResults = (results, query) => {
+                if (!searchResultsList || !searchModalFooter) return;
+
+                if (results.length === 0) {
+                    searchResultsList.innerHTML = '<li style="padding: 15px; color: #888;">No products found.</li>';
+                    searchModalFooter.style.display = 'none';
+                    return;
+                }
+
+                searchResultsList.innerHTML = results.map(item => `
+                <li class="search-result-item">
+                    <a href="/productsDetails/${item._id}">
+                        <img src="${item.image || '/images/placeholder.png'}" alt="${item.name}" class="search-result-img">
+                        <div class="search-result-info">
+                            <div class="search-result-name">${item.name}</div>
+                            <div class="search-result-price">${item.category ? item.category : ''}</div>
+                        </div>
+                    </a>
+                </li>
+            `).join('');
+
+                seeAllResultsLink.href = `/viewProducts?q=${encodeURIComponent(query)}`;
+                searchModalFooter.style.display = 'block';
+            };
+
+            const fetchSearchResults = async (query) => {
+                if (!query) {
+                    closeModal(); // Close modal if search is cleared
+                    return;
+                }
+
+                openModal(); // Open modal as soon as there is a query
+                if (searchInputModal) searchInputModal.value = query; // Sync input fields
+
+                try {
+                    const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    const data = await response.json();
+                    renderResults(data.results, query);
+                } catch (error) {
+                    console.error('Live search fetch error:', error);
+                    if (searchResultsList) searchResultsList.innerHTML = '<li style="padding: 15px; color: #888;">Could not fetch results.</li>';
+                }
+            };
+
+            const debouncedSearch = debounce(fetchSearchResults, 500);
+
+            searchInput.addEventListener('input', (event) => {
+                debouncedSearch(event.target.value.trim());
+            });
+
+            // --- Clear Button Logic ---
+            function toggleClearButton() {
+                if (clearSearchButton) {
+                    clearSearchButton.style.display = searchInput.value ? 'flex' : 'none';
+                }
+            }
+
+            // Show/hide clear button on input
+            searchInput.addEventListener('input', toggleClearButton);
+
+            // Handle click on the clear button
+            if (clearSearchButton) {
+                clearSearchButton.addEventListener('click', () => {
+                    searchInput.value = ''; // Clear the input field
+                    toggleClearButton(); // Hide the clear button
+                    debouncedSearch(''); // Trigger search with empty query to close modal
+                });
+            }
+
         });
     </script>
 </body>

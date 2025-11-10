@@ -12,19 +12,29 @@ const loadProductListingPage = async (req, res) => {
 
     const clearFilter = req.query.clearFilter === '1';
     const clearSearch = req.query.clearSearch === '1';
+    console.log("clearSearch", clearSearch);
 
     const search = clearSearch
       ? ''
-      : decodeURIComponent(req.query.search || '').trim();
+      : decodeURIComponent(req.query.q || '').trim();
+    console.log('Search Query:', search);  
 
-    const selectedCategory = clearFilter ? '' : req.query?.category || '';
+    
+    let selectedCategory = clearFilter ? [] : req.query?.category || [];
+    if (selectedCategory && !Array.isArray(selectedCategory)) {
+      selectedCategory = [selectedCategory];
+    }
+    
+    selectedCategory = selectedCategory.filter(cat => cat);
+
     const minPrice = clearFilter ? 0 : parseFloat(req.query?.minPrice) || 0;
     const maxPrice = clearFilter
       ? Number.MAX_VALUE
       : parseFloat(req.query?.maxPrice) || Number.MAX_VALUE;
-    const sortOption = clearFilter
+    const sortOption = (clearFilter
       ? 'createdAt-desc'
-      : req.query.sort || 'createdAt-desc';
+      : req.query.sort || 'createdAt-desc'
+    ).toLowerCase();
 
     const userData = req.session?.user
       ? await User.findById(req.session?.user)
@@ -34,6 +44,7 @@ const loadProductListingPage = async (req, res) => {
       isListed: true,
       isDeleted: false,
     });
+    
     const wishlist = await Wishlist.findOne({ userId });
 
     let aggregation = [];
@@ -45,36 +56,57 @@ const loadProductListingPage = async (req, res) => {
           text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } },
         },
       });
+     
     }
 
     const match = {
       isBlocked: false,
       isDeleted: false,
-      quantity: { $gt: 0 },
       salesPrice: { $gte: minPrice, $lte: maxPrice },
     };
-    if (selectedCategory)
-      match.category = new mongoose.Types.ObjectId(selectedCategory);
+    if (selectedCategory.length > 0) {
+      match.category = {
+        $in: selectedCategory.map(id => new mongoose.Types.ObjectId(id))
+      };
+    }
 
     aggregation.push({ $match: match });
 
     let sortObj = { createdAt: -1 };
+
+    
     switch (sortOption) {
       case 'name-asc':
-        sortObj = { productName: 1 };
+        aggregation.push({
+          $addFields: { lowerName: { $toLower: "$productName" } }
+        });
+        sortObj = { lowerName: 1 };
         break;
+
       case 'name-desc':
-        sortObj = { productName: -1 };
+        aggregation.push({
+          $addFields: { lowerName: { $toLower: "$productName" } }
+        });
+        sortObj = { lowerName: -1 };
         break;
+
       case 'price-asc':
         sortObj = { salesPrice: 1 };
         break;
+
       case 'price-desc':
         sortObj = { salesPrice: -1 };
         break;
+
+      default:
+        sortObj = { createdAt: -1 };
+        break;
     }
 
-    aggregation.push({ $sort: sortObj });
+
+    if (!search || (sortOption !== 'createdAt-desc')) {
+      aggregation.push({ $sort: sortObj });
+    }
     aggregation.push({ $skip: skip });
     aggregation.push({ $limit: limit });
 
@@ -107,6 +139,7 @@ const loadProductListingPage = async (req, res) => {
         totalPages: Math.ceil(total / limit),
       });
     }
+    const isHomePage =false
 
     res.render('user/productListingPage', {
       user: userData || null,
@@ -124,6 +157,7 @@ const loadProductListingPage = async (req, res) => {
       wishlistId: wishlist
         ? wishlist.products.map((item) => item.productId.toString())
         : [],
+      isHomePage,
     });
   } catch (error) {
     console.error('Error in loadProductListingPage:', error.message);
@@ -145,6 +179,12 @@ const viewProductDetails = async (req, res) => {
     const productData = await Products.findById(id);
     if (!productData) return res.status(404).json('product not found');
 
+    // Automatically update status if quantity is 0
+    if (productData.quantity <= 0 && productData.status === 'Available') {
+      productData.status = 'Out Of Stock';
+      await productData.save();
+    }
+
     const userId = req.session.user;
 
     let wishlistIds = [];
@@ -160,8 +200,8 @@ const viewProductDetails = async (req, res) => {
     }
 
     if (productData.isBlocked || productData.isDeleted) {
-      return res.status(404).render('error', {
-        title: '404',
+      return res.status(403).render('error', {
+        title: '403',
         message: 'product not available',
       });
     }

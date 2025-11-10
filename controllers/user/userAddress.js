@@ -34,7 +34,7 @@ const loadAddAddresses = async (req, res, next) => {
   }
 };
 
-const UpdateAddresses = async (req, res) => {
+const addAddresses = async (req, res) => {
   try {
     const {
       fullName,
@@ -236,7 +236,7 @@ const setDefaultAddress = async (req, res) => {
 module.exports = {
   loadAddressDetails,
   loadAddAddresses,
-  UpdateAddresses,
+  addAddresses,
   loadEditAddress,
   editAddress,
   deleteAddress,

@@ -303,20 +303,20 @@
                         </h2>
 
                         <div class="flex space-x-2 mb-2 relative">
-                            <input type="text" id="couponCode" placeholder="Enter coupon code"
+                            <input type="text" id="couponCode" placeholder="Enter coupon code" value="<%= couponCode || "" %> " 
                                 class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-8">
 
 
 
 
-
-                            <button id="ApplyButtonId" onclick="applyCoupon()"
+                                
+                            <button id="ApplyButtonId" onclick="applyCoupon()" style="<%= couponCode ? 'display:none' : 'display:flex' %>"
                                 class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium">
                                 Apply
                             </button>
 
 
-                            <button id="removeBtn" onclick="removeCoupon()" style="display: none; "
+                            <button id="removeBtn" onclick="removeCoupon()" style="<%= couponCode ? 'display:flex;' : 'display:none;' %>"
                                 class="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors text-sm font-medium">
                                 Remove
                             </button>
@@ -762,7 +762,7 @@
                                             modal: {
                                                 ondismiss: async function () {
                                                     await fetch('/payment/failure', {
-                                                        method: 'POST',
+                                                        method: 'PATCH',
                                                         headers: { 'Content-Type': 'application/json' },
                                                         body: JSON.stringify({ orderId }) // use DB orderId
                                                     });
@@ -849,7 +849,7 @@
                 async function removeCoupon() {
                     const input = document.getElementById("couponCode");
                     fetch("/coupons/remove", {
-                        method: "POST",
+                        method: "DELETE",
                         headers: { "Content-Type": "application/json" },
                     })
                         .then(res => res.json())

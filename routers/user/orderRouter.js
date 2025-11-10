@@ -7,15 +7,15 @@ router.get('/', userAuth, orderController.loadMyOrder);
 
 router.get('/details', userAuth, orderController.loadOrderDetails);
 
-router.post(
+router.patch(
   '/:orderId/item/:itemId/cancel',
   userAuth,
   orderController.cancelProduct,
 );
 
-router.post('/:orderId/cancel', userAuth, orderController.cancelOrder);
+router.patch('/:orderId/cancel', userAuth, orderController.cancelOrder);
 
-router.post('/:orderId/return', userAuth, orderController.returnOrder);
+router.patch('/:orderId/return', userAuth, orderController.returnOrder);
 
 router.patch(
   '/:orderId/item/:itemId/return',

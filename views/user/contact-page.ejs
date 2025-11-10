@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - GiftHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+       
+
+
+       
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .contact-info,
+        .contact-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-info h2,
+        .contact-form h2 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .info-item {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item h3 {
+            color: #764ba2;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .info-item p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .info-item a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .info-item a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #eee;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        #send-message {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .faq-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .faq-section h2 {
+            color: #667eea;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .faq-item h4 {
+            color: #764ba2;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .faq-item h4:hover {
+            color: #667eea;
+        }
+
+        .faq-item p {
+            color: #666;
+            margin-left: 0;
+            font-size: 0.95rem;
+        }
+
+      
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%-include('../partials/user/newheader.ejs') %>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <!-- Contact Information -->
+            <div class="contact-info">
+                <h2>Get in Touch</h2>
+
+                <div class="info-item">
+                    <h3>📍 Address</h3>
+                    <p>123 Gift Street<br>
+                        Shopping District<br>
+                        New York, NY 10001<br>
+                        United States</p>
+                </div>
+
+                <div class="info-item">
+                    <h3>📞 Phone</h3>
+                    <p><a href="tel:+1-800-123-4567">+1 (800) 123-4567</a><br>
+                        Available Monday - Friday, 9 AM - 6 PM EST</p>
+                </div>
+
+                <div class="info-item">
+                    <h3>✉️ Email</h3>
+                    <p><a href="mailto:support@gifthub.com">support@gifthub.com</a><br>
+                        <a href="mailto:orders@gifthub.com">orders@gifthub.com</a><br>
+                        We typically respond within 24 hours
+                    </p>
+                </div>
+
+                <div class="info-item">
+                    <h3>🌐 Follow Us</h3>
+                    <p><a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">Twitter</a><br>
+                        Connect with us on social media for special offers!</p>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form">
+                <h2>Send us a Message</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Subject *</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">Select a subject...</option>
+                            <option value="order">Order Inquiry</option>
+                            <option value="delivery">Delivery Question</option>
+                            <option value="return">Return & Refund</option>
+                            <option value="gift-wrapping">Gift Wrapping</option>
+                            <option value="custom">Custom Order</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+
+                    <button id="send-message" type="submit">Send Message</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+
+            <div class="faq-item">
+                <h4>❓ How long does delivery take?</h4>
+                <p>Standard delivery typically takes 5-7 business days. We also offer express shipping (2-3 days) and
+                    priority shipping (next day) for an additional fee.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>❓ Do you offer gift wrapping?</h4>
+                <p>Yes! We provide complimentary gift wrapping with ribbon and a personalized message card with every
+                    order. Premium gift wrapping options are also available.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>❓ What's your return policy?</h4>
+                <p>We offer a 30-day return policy on all items. If you're not satisfied, simply contact our support
+                    team to initiate a return. Refunds are processed within 5-7 business days.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>❓ Can I place a custom order?</h4>
+                <p>Absolutely! For custom gifts and bulk orders, please email us at <a
+                        href="mailto:orders@gifthub.com">orders@gifthub.com</a> or call our team to discuss your
+                    specific needs.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>❓ Do you ship internationally?</h4>
+                <p>Yes, we ship to over 50 countries worldwide. Shipping costs and delivery times vary by location.
+                    Contact us for international shipping rates.</p>
+            </div>
+        </div>
+    </div>
+
+    <%-include('../partials/user/footer.ejs') %>
+</body>
+
+</html>

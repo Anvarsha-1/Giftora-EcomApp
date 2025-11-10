@@ -19,6 +19,7 @@ const AdminCoupon = require('./routers/admin/admin-coupon-management');
 const userCoupon = require('./routers/user/userCouponRouter');
 const adminSales = require('./routers/admin/adminSalesReportRouter');
 const errorHandler = require('./helpers/error-handler-middleware');
+const { searchVisibility }= require('./middlewares/showSearchbar')
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -77,6 +78,8 @@ app.set('views', [
   path.join(__dirname, 'views/admin'),
   path.join(__dirname, 'views/partials'),
 ]);
+
+app.use(searchVisibility)
 
 // Routes
 //User

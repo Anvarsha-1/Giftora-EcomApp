@@ -36,11 +36,11 @@ router.get('/addresses', userAuth, userAddress.loadAddressDetails);
 
 router.get('/add/addresses', userAuth, userAddress.loadAddAddresses);
 
-router.post('/add/addresses', userAuth, userAddress.UpdateAddresses);
+router.post('/add/addresses', userAuth, userAddress.addAddresses);
 
 router.get('/edit/addresses/:id', userAuth, userAddress.loadEditAddress);
 
-router.put('/edit/addresses/:id', userAuth, userAddress.editAddress);
+router.patch('/edit/addresses/:id', userAuth, userAddress.editAddress);
 
 router.delete('/delete/addresses/:id', userAuth, userAddress.deleteAddress);
 

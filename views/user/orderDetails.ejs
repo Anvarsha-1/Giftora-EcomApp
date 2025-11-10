@@ -413,7 +413,7 @@
                         }).then((result) => {
                             if (result.isConfirmed && result.value) {
                                 fetch(`/orders/${orderId}/cancel`, {
-                                    method: 'POST',
+                                    method: 'PATCH',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ reason: result.value })
                                 })
@@ -493,7 +493,7 @@
                         }).then((result) => {
                             if (result.isConfirmed && result.value) {
                                 fetch(`/orders/${orderId}/item/${itemId}/cancel`, {
-                                    method: 'POST',
+                                    method: 'PATCH',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ reason: result.value })
                                 })
@@ -621,7 +621,7 @@
                         }).then((result) => {
                             if (result.isConfirmed && result.value) {
                                 fetch(`/orders/${orderId}/return`, {
-                                    method: 'POST',
+                                    method: 'PATCH',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({ reason: result.value })
                                 })

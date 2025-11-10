@@ -559,42 +559,38 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4">
-                        <div>
-                            <h3 class="text-sm font-medium text-gray-900 mb-2">Quantity</h3>
-                            <div class="quantity-selector">
-                                <button class="quantity-btn" id="decreaseQty" title="Decrease quantity">
-                                    <i data-lucide="minus">-</i>
-                                </button>
-                                <span class="quantity-display" id="quantityDisplay">1</span>
-                                <button class="quantity-btn" id="increaseQty" title="Increase quantity">
-                                    <i data-lucide="plus">+</i>
-                                </button>
+                    <% if (product.status === 'Available' && product.quantity > 0) { %>
+                        <!-- Quantity Selector and Add to Cart - Shown only when available -->
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-900 mb-2">Quantity</h3>
+                                <div class="quantity-selector">
+                                    <button class="quantity-btn" id="decreaseQty" title="Decrease quantity">
+                                        <i data-lucide="minus">-</i>
+                                    </button>
+                                    <span class="quantity-display" id="quantityDisplay">1</span>
+                                    <button class="quantity-btn" id="increaseQty" title="Increase quantity">
+                                        <i data-lucide="plus">+</i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Buttons Section -->
-                    <div class="flex items-center gap-3 mt-4">
-                        <!-- Add to Cart -->
-                        <button type="button" data-id="<%= product._id %>" class="add-to-cart flex-grow text-lg">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>Add to Cart</span>
-                        </button>
-
-
-                        <!-- Wishlist -->
-                        <button type="button" onclick="addWishlist('<%= product._id %>', this)"
-                            class="wishlist-btn w-12 h-12 bg-yellow-100 border border-yellow-300 rounded flex items-center justify-center shadow <%= (wishlistId && wishlistId.includes(product._id.toString())) ? 'bg-yellow-200 border-yellow-500' : '' %>">
-
-                            <% if (wishlistId && wishlistId.includes(product._id.toString())) { %>
-                                <i class="fas fa-heart text-red-600 text-xl"></i>
-                                <% } else { %>
-                                    <i class="far fa-heart text-red-400 text-xl"></i>
-                                    <% } %>
-                        </button>
-
-                    </div>
+                        <div class="flex items-center gap-3 mt-4">
+                            <button type="button" data-id="<%= product._id %>" class="add-to-cart flex-grow text-lg">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span>Add to Cart</span>
+                            </button>
+                            <button type="button" onclick="addWishlist('<%= product._id %>', this)" class="wishlist-btn">
+                                <i class="<%= (wishlistId && wishlistId.includes(product._id.toString())) ? 'fas' : 'far' %> fa-heart text-red-500 text-xl"></i>
+                            </button>
+                        </div>
+                    <% } else { %>
+                        <!-- Unavailable UI -->
+                        <div class="mt-6 p-4 border-l-4 border-red-400 bg-red-50 rounded-lg">
+                            <h3 class="text-lg font-bold text-red-800">Currently unavailable.</h3>
+                            <p class="text-red-700 mt-1">We don't know when or if this item will be back in stock.</p>
+                        </div>
+                    <% } %>
 
                     <!-- Description replacing Product Features -->
                     <div class="border-t pt-6">
@@ -878,7 +874,7 @@
 
             <section class="mb-16">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">You Might Also Like</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 related-products-container">
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 related-products-container">
                     <% if (relatedProducts && relatedProducts.length> 0) { %>
                         <% for (let i=0; i < relatedProducts.length; i++) { %>
                             <div
@@ -928,12 +924,20 @@
                                             <% } %>
                                 </div>
                                 <!-- Discount Badge -->
-                                <% if (relatedProducts[i].bestOffer> 0) { %>
-                                    <div
-                                        class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md">
-                                        <%= relatedProducts[i].bestOffer %>% OFF
-                                    </div>
-                                    <% } %>
+                                <% const product=relatedProducts[i]; const isOutOfStock=product.quantity===0 || product.isBlocked || product.isDeleted;
+                                    %>
+                                
+                                    <% if (isOutOfStock) { %>
+                                        <div
+                                            class="absolute top-3 left-3 bg-gray-700 text-white text-xs font-bold px-2 py-1 rounded-md discount-badge out-of-stock">
+                                            Out of Stock
+                                        </div>
+                                        <% } else if (product.bestOffer> 0) { %>
+                                            <div
+                                                class="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md discount-badge">
+                                                <%= product.bestOffer %>% OFF
+                                            </div>
+                                            <% } %>
                                         <!-- Wishlist Button -->
                                         <button type="button"
                                             onclick="addWishlist('<%= relatedProducts[i]._id %>', this)"
@@ -972,51 +976,54 @@
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
             <script>
-                // Initialize Lucide icons
                 document.addEventListener("DOMContentLoaded", function () {
+                    // Initialize Lucide icons
                     lucide.createIcons();
-                });
 
-                // Quantity Selector
-                document.addEventListener('DOMContentLoaded', function () {
+                    // --- Quantity Selector Logic ---
                     const decreaseBtn = document.getElementById('decreaseQty');
                     const increaseBtn = document.getElementById('increaseQty');
                     const quantityDisplay = document.getElementById('quantityDisplay');
-                    const addToCartBtns = document.querySelectorAll('.add-to-cart');
-                    const maxStock = '<%= product.quantity %>';
+                    const maxStock = parseInt('<%= product.quantity %>');
                     let quantity = 1;
 
-                    // Update button states based on quantity
                     function updateButtonStates() {
-                        decreaseBtn.disabled = quantity <= 1;
-                        increaseBtn.disabled = quantity >= maxStock;
+                        if (decreaseBtn && increaseBtn) {
+                            decreaseBtn.disabled = quantity <= 1;
+                            increaseBtn.disabled = quantity >= maxStock;
+                        }
                     }
 
-                    updateButtonStates();
+                    if (decreaseBtn && increaseBtn && quantityDisplay) {
+                        updateButtonStates();
 
-                    // Decrease quantity
-                    decreaseBtn.addEventListener('click', function () {
-                        if (quantity > 1) {
-                            quantity--;
-                            quantityDisplay.textContent = quantity;
-                            updateButtonStates();
-                        }
-                    });
+                        decreaseBtn.addEventListener('click', function () {
+                            if (quantity > 1) {
+                                quantity--;
+                                quantityDisplay.textContent = quantity;
+                                updateButtonStates();
+                            }
+                        });
 
-                    // Increase quantity
-                    increaseBtn.addEventListener('click', function () {
-                        if (quantity < maxStock) {
-                            quantity++;
-                            quantityDisplay.textContent = quantity;
-                            updateButtonStates();
-                        } else {
-                            SwalToast.fire({
-                                icon: 'error',
-                                title: 'Reached maximum stock'
-                            });
-                        }
-                    });
+                        increaseBtn.addEventListener('click', function () {
+                            if (quantity < maxStock) {
+                                quantity++;
+                                quantityDisplay.textContent = quantity;
+                                updateButtonStates();
+                            } else {
+                                Swal.fire({
+                                    toast: true,
+                                    icon: 'error',
+                                    title: 'Maximum stock reached',
+                                    position: 'top-end',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                            }
+                        });
+                    }
 
+                    // Add to Cart functionality
                     const SwalToast = Swal.mixin({
                         toast: true,
                         position: 'bottom-end',
@@ -1029,10 +1036,12 @@
                         }
                     });
 
+                    const addToCartBtns = document.querySelectorAll('.add-to-cart');
                     // Add to Cart
                     addToCartBtns.forEach(btn => {
                         btn.addEventListener('click', async function () {
                             const productId = this.getAttribute('data-id');
+                            const currentQuantity = parseInt(document.getElementById('quantityDisplay')?.textContent || '1');
                             try {
                                 const response = await fetch('/cart', {
                                     method: 'POST',
@@ -1040,7 +1049,7 @@
                                         'Content-Type': 'application/json',
                                         'Accept': 'application/json'
                                     },
-                                    body: JSON.stringify({ productId, quantity })
+                                    body: JSON.stringify({ productId, quantity: currentQuantity })
                                 });
                                 const data = await response.json();
 
@@ -1094,7 +1103,7 @@
                                         'Content-Type': 'application/json',
                                         'Accept': 'application/json'
                                     },
-                                    body: JSON.stringify({ productId, quantity: 1 })
+                                    body: JSON.stringify({ productId: productId, quantity: 1 })
                                 });
                                 const data = await response.json();
 
@@ -1135,8 +1144,6 @@
                             }
                         }
                     });
-
-                    // ✅ Closing brace added here
                 });
 
                 // Related Products Show More
@@ -1185,7 +1192,7 @@
                     // Function to bind zoom
                     function initZoom() {
                         imageContainer.trigger('zoom.destroy'); // Destroy existing
-                        imageContainer.zoom({ magnify: 2.5 });   // Re-initialize
+                        imageContainer.zoom({ magnify: 1.5 });   // Re-initialize
                     }
 
                     // Initialize on first load
@@ -1281,6 +1288,7 @@
                     }
                 });
             </script>
+
             <script>
                 const Toast = Swal.mixin({
                     toast: true,
@@ -1293,8 +1301,8 @@
                         toast.addEventListener('mouseleave', Swal.resumeTimer)
                     }
                 });
-                window.isLoggedIn = <% - !!user %>
-
+                window.isLoggedIn = <%- !!user %>
+            
                     async function addWishlist(productId, btn) {
                         try {
                             if (!window.isLoggedIn) {

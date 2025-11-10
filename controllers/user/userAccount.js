@@ -19,8 +19,35 @@ const myAccountDetails = async (req, res) => {
 
     const result = await Wishlist.aggregate([
       { $match: { userId: new mongoose.Types.ObjectId(id) } },
-      { $project: { userId: 1, WishlistCount: { $size: '$products' } } },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'products.productId',     
+          foreignField: '_id',
+          as: 'productDetails',
+        },
+      },
+      {
+        $project: {
+          WishlistCount: {
+            $size: {
+              $filter: {
+                input: '$productDetails',
+                as: 'p',
+                cond: {
+                  $and: [
+                    { $eq: ['$$p.isDeleted', false] },
+                    { $eq: ['$$p.isBlocked', false] },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
     ]);
+
+  
 
     const wishlistCount = result[0]?.WishlistCount || 0;
 

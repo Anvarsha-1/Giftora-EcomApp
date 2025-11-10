@@ -181,73 +181,8 @@
             padding-right: 2rem;
         }
 
-        .toggle-button {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .toggle-button.active {
-            background-color: #2563eb;
-            color: #ffffff;
-        }
-
-        .toggle-button.inactive {
-            background-color: #e5e7eb;
-            color: #374151;
-        }
-
-        .toggle-button:hover {
-            filter: brightness(90%);
-        }
-
-        .category-list,
-        .product-list {
-            background-color: #f9fafb;
-            border-radius: 0.5rem;
-            padding: 1rem;
-        }
-
-        .category-list.hidden,
-        .product-list.hidden {
-            display: none;
-        }
-
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            font-size: 0.875rem;
-        }
-
-        .checkbox {
-            border: 1px solid #d1d5db;
-            border-radius: 0.25rem;
-            accent-color: #2563eb;
-        }
-
-        .product-search {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-        }
-
-        .product-checkboxes {
-            max-height: 12rem;
-            overflow-y: auto;
-        }
+       
+       
 
         .button {
             display: flex;
@@ -535,63 +470,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="ri-price-tag-3-line"></i>
-                            Applicable Categories *
-                        </label>
-                        <div id="allCategoriesBtn" class="toggle-button active" onclick="toggleCategories()">
-                            <i class="ri-checkbox-circle-line"></i>
-                            <i class="ri-folder-line"></i>
-                            <span>Apply to All Categories</span>
-                        </div>
-                        <div id="categoryList" class="category-list hidden">
-                            <div class="row">
-                                <% if(category && category.length > 0){ %>
-                                    <% category.forEach((cat)=>{%>
-                                        <label class="checkbox-label">
-                                            <input type="checkbox" class="checkbox" value="<%=cat._id %>" data-name="<%=cat.name %>">
-                                            <span>
-                                                <%=cat.name %>
-                                            </span>
-                                        </label>
-                                        <% }) %>
-                                            <% } %>
-                            </div>
-                            <p id="categoryListError" class="error-message">At least one category must be selected.</p>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="ri-shopping-cart-line"></i>
-                            Applicable Products *
-                        </label>
-                        <div id="allProductsBtn" class="toggle-button active" onclick="toggleProducts()">
-                            <i class="ri-checkbox-circle-line"></i>
-                            <i class="ri-shopping-bag-line"></i>
-                            <span>Apply to All Products</span>
-                        </div>
-                        <div id="productList" class="product-list hidden">
-                            <div class="product-search">
-                                <input type="text" placeholder="Search products..." class="form-control"
-                                    id="productSearch" oninput="filterProducts()">
-                            </div>
-                            <div id="productCheckboxes" class="product-checkboxes mt-2">
-                                <% if(product && product.length > 0){ %>
-                                    <% product.forEach((pro)=>{%>
-                                        <label class="checkbox-label product-item" data-id="<%= pro._id %>" data-name="<%= pro.productName %>">
-                                            <input type="checkbox" class="checkbox" value="<%= pro._id %>">
-                                            <span>
-                                                <%= pro.productName %>
-                                            </span>
-                                        </label>
-                                        <% }) %>
-                                            <% } %>
-                            </div>
-                            <p id="productListError" class="error-message">At least one product must be selected.</p>
-                        </div>
-                    </div>
 
                     <div class="form-group">
                         <h3 class="form-label" style="font-size: 1.125rem; margin-bottom: 1rem;">
@@ -623,18 +501,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="radio-label">
-                            <input type="checkbox" id="activeStatus" checked class="sr-only"
-                                onchange="toggleActiveStatus()">
-                            <div id="statusToggle" class="toggle-button active">
-                                <i class="ri-checkbox-circle-line"></i>
-                                <i class="ri-check-line"></i>
-                                <span>Active Status</span>
-                            </div>
-                        </label>
-                    </div>
-
+                   
                     <div class="d-flex justify-content-end gap-2 mt-4">
                         <button type="button" class="btn btn-outline-secondary" onclick="goBack()">
                             <i class="ri-arrow-left-line"></i>
@@ -681,84 +548,9 @@
             }
         }
 
-        function toggleCategories() {
-            const categoryList = document.getElementById('categoryList');
-            const allCategoriesBtn = document.getElementById('allCategoriesBtn');
+        
 
-            if (categoryList.classList.contains('hidden')) {
-                categoryList.classList.remove('hidden');
-                allCategoriesBtn.className = 'toggle-button inactive';
-                allCategoriesBtn.innerHTML = `
-                    <i class="ri-folder-line"></i>
-                    <span>Select Specific Categories</span>
-                `;
-            } else {
-                categoryList.classList.add('hidden');
-                allCategoriesBtn.className = 'toggle-button active';
-                allCategoriesBtn.innerHTML = `
-                    <i class="ri-checkbox-circle-line"></i>
-                    <i class="ri-folder-line"></i>
-                    <span>Apply to All Categories</span>
-                `;
-            }
-        }
-
-        function toggleProducts() {
-            const productList = document.getElementById('productList');
-            const allProductsBtn = document.getElementById('allProductsBtn');
-
-            if (productList.classList.contains('hidden')) {
-                productList.classList.remove('hidden');
-                allProductsBtn.className = 'toggle-button inactive';
-                allProductsBtn.innerHTML = `
-                    <i class="ri-shopping-bag-line"></i>
-                    <span>Select Specific Products</span>
-                `;
-            } else {
-                productList.classList.add('hidden');
-                allProductsBtn.className = 'toggle-button active';
-                allProductsBtn.innerHTML = `
-                    <i class="ri-checkbox-circle-line"></i>
-                    <i class="ri-shopping-bag-line"></i>
-                    <span>Apply to All Products</span>
-                `;
-            }
-        }
-
-        function filterProducts() {
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            const productItems = document.querySelectorAll('.product-item');
-
-            productItems.forEach(item => {
-                const nameAttr = item.getAttribute('data-name') || '';
-                const productName = nameAttr.toLowerCase();
-                if (productName.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function toggleActiveStatus() {
-            const statusToggle = document.getElementById('statusToggle');
-            const activeStatus = document.getElementById('activeStatus');
-
-            if (activeStatus.checked) {
-                statusToggle.className = 'toggle-button active';
-                statusToggle.innerHTML = `
-                    <i class="ri-checkbox-circle-line"></i>
-                    <i class="ri-check-line"></i>
-                    <span>Active Status</span>
-                `;
-            } else {
-                statusToggle.className = 'toggle-button inactive';
-                statusToggle.innerHTML = `
-                    <i class="ri-close-circle-line"></i>
-                    <span>Inactive Status</span>
-                `;
-            }
-        }
+       
 
         function goBack() {
             window.location.href = '/admin/coupons'
@@ -862,7 +654,6 @@
             const expirationDate = document.getElementById('expirationDate').value;
             const maxUsesPerUser = parseInt(document.getElementById('maxUsesPerUser').value);
             const totalUsageLimit = document.getElementById('totalUsageLimit').value.trim() === '' ? null : parseInt(document.getElementById('totalUsageLimit').value);
-            const activeStatus = document.getElementById('activeStatus').checked;
 
             let hasError = false;
 
@@ -910,23 +701,9 @@
                 hasError = true;
             }
 
-            const categoryList = document.getElementById('categoryList');
-            if (!categoryList.classList.contains('hidden')) {
-                const selectedCategories = document.querySelectorAll('#categoryList input[type="checkbox"]:checked');
-                if (selectedCategories.length === 0) {
-                    document.getElementById('categoryListError').style.display = 'block';
-                    hasError = true;
-                }
-            }
+            
 
-            const productList = document.getElementById('productList');
-            if (!productList.classList.contains('hidden')) {
-                const selectedProducts = document.querySelectorAll('#productList input[type="checkbox"]:checked');
-                if (selectedProducts.length === 0) {
-                    document.getElementById('productListError').style.display = 'block';
-                    hasError = true;
-                }
-            }
+           
 
             if (isNaN(maxUsesPerUser) || maxUsesPerUser < 1) {
                 document.getElementById('maxUsesPerUserError').style.display = 'block';
@@ -954,28 +731,9 @@
                 expirationDate,
                 maxUsesPerUser,
                 totalUsageLimit,
-                activeStatus
             };
 
-            if (!categoryList.classList.contains('hidden')) {
-                const selectedCategories = [];
-                document.querySelectorAll('#categoryList input[type="checkbox"]:checked').forEach(cb => {
-                    selectedCategories.push(cb.value);
-                });
-                formData.selectedCategories = selectedCategories;
-            } else {
-                formData.applicableCategories = 'all';
-            }
-
-            if (!productList.classList.contains('hidden')) {
-                const selectedProducts = [];
-                document.querySelectorAll('#productList input[type="checkbox"]:checked').forEach(cb => {
-                    selectedProducts.push(cb.value);
-                });
-                formData.selectedProducts = selectedProducts;
-            } else {
-                formData.applicableProducts = 'all';
-            }
+            
 
             try {
                 const response = await fetch('/admin/coupons/add', {
@@ -1026,7 +784,6 @@
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            toggleActiveStatus();
             document.getElementById('maxDiscountAmount').disabled = true;
         });
 

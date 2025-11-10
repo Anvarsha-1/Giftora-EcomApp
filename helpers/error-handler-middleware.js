@@ -21,7 +21,7 @@ const errorHandler = (err, req, res, next) => {
   if (statusCode === 404) {
     return res
       .status(404)
-      .render(isAdminRoute ? 'admin/admin-Page-404' : 'user/Page-404', {
+      .render(isAdminRoute ? 'admin/admin-404-page' : 'user/Page-404', {
         title: 404,
         message,
       });

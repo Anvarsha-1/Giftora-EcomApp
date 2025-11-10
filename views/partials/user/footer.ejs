@@ -10,21 +10,15 @@
             <div class="footer-column">
                 <h3>About Giftora</h3>
                 <p>Your premier destination for unique and thoughtful gifts for every occasion. We curate the finest selection to make every moment special.</p>
-                <div class="social-icons">
-                    <a href="https://www.instagram.com/anvar_sha_7/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.linkedin.com/in/anvarsha-b-78a049317/" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://github.com/Anvarsha-1" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                </div>
             </div>
             
             <!-- Quick Links Column -->
             <div class="footer-column">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="/shop">Shop All</a></li>
+                    <li><a href="/viewProducts">Shop All</a></li>
                     <li><a href="/about">About Us</a></li>
                     <li><a href="/contact">Contact</a></li>
-                    <li><a href="/faq">FAQ</a></li>
                 </ul>
             </div>
 
@@ -32,23 +26,18 @@
             <div class="footer-column">
                 <h3>Account & Help</h3>
                 <ul>
+                    <% if(user) {%>
                     <li><a href="/account">My Account</a></li>
-                    <li><a href="/login">Login / Register</a></li>
                     <li><a href="/cart">Shopping Cart</a></li>
-                    <li><a href="/privacy-policy">Privacy Policy</a></li>
-                    <li><a href="/terms-of-use">Terms Of Use</a></li>
+                    <% } else{%>
+                    <li><a href="/login">Login / Register</a></li>
+                    <% } %>
+                    
                 </ul>
             </div>
             
             <!-- Newsletter Column -->
-            <div class="footer-column">
-                <h3>Subscribe</h3>
-                <p>Get 10% off your first order and updates on new arrivals.</p>
-                <div class="email-signup">
-                    <input type="email" class="email-input" placeholder="Enter your email">
-                    <button class="email-btn" aria-label="Subscribe"><i class="fa-regular fa-paper-plane"></i></button>
-                </div>
-            </div>
+           
         </div>
         
         <div class="copyright">
@@ -58,7 +47,7 @@
                     <span id="current-time"></span>
                 </div>
             <div class="copyright">
-                <p>&copy; <span id="year"></span> Anvarsha. Built with passion and coffee ☕ | All rights reserved</p>
+                <p>&copy; <span id="year"></span> Giftora | All rights reserved</p>
             </div>
         </div>
     </div>

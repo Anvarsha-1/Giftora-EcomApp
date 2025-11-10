@@ -10,7 +10,7 @@ router.post('/verify-payment', userAuth, paymentController.verifyPayment);
 
 router.get('/get-key', userAuth, paymentController.getApiKey);
 
-router.post('/failure', userAuth, paymentController.paymentFailureHandler);
+router.patch('/failure', userAuth, paymentController.paymentFailureHandler);
 
 router.get(
   '/failure-page/:orderId',

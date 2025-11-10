@@ -228,17 +228,9 @@
         filter: brightness(90%);
     }
 
-    .category-list,
-    .product-list {
-        background-color: #f9fafb;
-        border-radius: 0.5rem;
-        padding: 1rem;
-    }
+   
 
-    .category-list.hidden,
-    .product-list.hidden {
-        display: none;
-    }
+    
 
     .checkbox-grid {
         display: grid;
@@ -266,23 +258,9 @@
         accent-color: #2563eb;
     }
 
-    .product-search {
-        position: relative;
-        margin-bottom: 1rem;
-    }
+  
 
-    .search-icon {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-    }
-
-    .product-checkboxes {
-        max-height: 12rem;
-        overflow-y: auto;
-    }
+   
 
     .button-group {
         display: flex;
@@ -585,78 +563,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">
-                        <i class="ri-price-tag-3-line"></i>
-                        Applicable Categories *
-                    </label>
-                    <div id="allCategoriesBtn"
-                        class="toggle-button <%= coupon.applicableCategories.length === 0 ? 'active' : 'inactive' %>"
-                        onclick="toggleCategories()">
-                        <i
-                            class="ri-<%= coupon.applicableCategories.length === 0 ? 'checkbox-circle-line' : 'folder-line' %>"></i>
-                        <span>
-                            <%= coupon.applicableCategories.length===0 ? 'Apply to All Categories'
-                                : 'Select Specific Categories' %>
-                        </span>
-                    </div>
-                    <div id="categoryList"
-                        class="category-list <%= coupon.applicableCategories.length === 0 ? 'hidden' : '' %>">
-                        <div class="checkbox-grid">
-                            <% categories.forEach(category=> { %>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" name="applicableCategories" value="<%= category._id %>"
-                                        <%=coupon.applicableCategories.includes(category._id) ? 'checked' : '' %>
-                                    class="checkbox">
-                                    <span>
-                                        <%= category.name %>
-                                    </span>
-                                </label>
-                                <% }) %>
-                        </div>
-                        <p id="categoryListError" class="error-message">At least one category must be selected.</p>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="ri-shopping-cart-line"></i>
-                        Applicable Products *
-                    </label>
-                    <div id="allProductsBtn"
-                        class="toggle-button <%= coupon.applicableProducts.length === 0 ? 'active' : 'inactive' %>"
-                        onclick="toggleProducts()">
-                        <i
-                            class="ri-<%= coupon.applicableProducts.length === 0 ? 'checkbox-circle-line' : 'shopping-bag-line' %>"></i>
-                        <span>
-                            <%= coupon.applicableProducts.length===0 ? 'Apply to All Products'
-                                : 'Select Specific Products' %>
-                        </span>
-                    </div>
-                    <div id="productList"
-                        class="product-list <%= coupon.applicableProducts.length === 0 ? 'hidden' : '' %>">
-                        <div class="product-search">
-                            <i class="ri-search-line search-icon"></i>
-                            <input type="text" placeholder="Search products..." class="form-input input-with-prefix"
-                                id="productSearch" oninput="filterProducts()">
-                        </div>
-                        <div id="productCheckboxes" class="checkbox-grid product-checkboxes">
-                            <% products.forEach(product=> { %>
-                                <label class="checkbox-label product-item"
-                                    data-product="<%= product.productName.toLowerCase() %>">
-                                    <input type="checkbox" name="applicableProducts" value="<%= product._id %>"
-                                        <%=coupon.applicableProducts.includes(product._id) ? 'checked' : '' %>
-                                    class="checkbox">
-                                    <span>
-                                        <%= product.productName %>
-                                    </span>
-                                </label>
-                                <% }) %>
-                        </div>
-                        <p id="productListError" class="error-message">At least one product must be selected.</p>
-                    </div>
-                </div>
-
-                <div class="form-group">
                     <h3 class="form-label" style="font-size: 1.125rem; margin-bottom: 1rem;">
                         <i class="ri-list-check"></i>
                         Usage Limits
@@ -750,49 +656,11 @@
             }
         }
 
-        function toggleCategories() {
-            const categoryList = document.getElementById('categoryList');
-            const allCategoriesBtn = document.getElementById('allCategoriesBtn');
+      
 
-            if (categoryList.classList.contains('hidden')) {
-                categoryList.classList.remove('hidden');
-                allCategoriesBtn.className = 'toggle-button inactive';
-                allCategoriesBtn.innerHTML = `<i class="ri-folder-line"></i><span>Select Specific Categories</span>`;
-            } else {
-                categoryList.classList.add('hidden');
-                allCategoriesBtn.className = 'toggle-button active';
-                allCategoriesBtn.innerHTML = `<i class="ri-checkbox-circle-line"></i><i class="ri-folder-line"></i><span>Apply to All Categories</span>`;
-            }
-        }
+      
 
-        function toggleProducts() {
-            const productList = document.getElementById('productList');
-            const allProductsBtn = document.getElementById('allProductsBtn');
-
-            if (productList.classList.contains('hidden')) {
-                productList.classList.remove('hidden');
-                allProductsBtn.className = 'toggle-button inactive';
-                allProductsBtn.innerHTML = `<i class="ri-shopping-bag-line"></i><span>Select Specific Products</span>`;
-            } else {
-                productList.classList.add('hidden');
-                allProductsBtn.className = 'toggle-button active';
-                allProductsBtn.innerHTML = `<i class="ri-checkbox-circle-line"></i><i class="ri-shopping-bag-line"></i><span>Apply to All Products</span>`;
-            }
-        }
-
-        function filterProducts() {
-            const searchTerm = document.getElementById('productSearch').value.toLowerCase();
-            const productItems = document.querySelectorAll('.product-item');
-
-            productItems.forEach(item => {
-                const productName = item.getAttribute('data-product').toLowerCase();
-                if (productName.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
+       
 
         function toggleActiveStatus() {
             const statusToggle = document.getElementById('statusToggle');
@@ -947,33 +815,7 @@
                 hasError = true;
             }
 
-            const categoryList = document.getElementById('categoryList');
-            let applicableCategories = [];
-            if (!categoryList.classList.contains('hidden')) {
-                const selectedCategories = document.querySelectorAll('#categoryList input[type="checkbox"]:checked');
-                if (selectedCategories.length === 0) {
-                    document.getElementById('categoryListError').style.display = 'block';
-                    hasError = true;
-                } else {
-                    selectedCategories.forEach(cb => {
-                        applicableCategories.push(cb.value);
-                    });
-                }
-            }
 
-            const productList = document.getElementById('productList');
-            let applicableProducts = [];
-            if (!productList.classList.contains('hidden')) {
-                const selectedProducts = document.querySelectorAll('#productList input[type="checkbox"]:checked');
-                if (selectedProducts.length === 0) {
-                    document.getElementById('productListError').style.display = 'block';
-                    hasError = true;
-                } else {
-                    selectedProducts.forEach(cb => {
-                        applicableProducts.push(cb.value);
-                    });
-                }
-            }
 
             if (isNaN(maxUsesPerUser) || maxUsesPerUser < 1) {
                 document.getElementById('maxUsesPerUserError').style.display = 'block';
@@ -1001,8 +843,6 @@
                 userUsageLimit: maxUsesPerUser,
                 usageLimit: totalUsageLimit,
                 isActive: activeStatus,
-                applicableCategories,
-                applicableProducts
             };
 
             try {

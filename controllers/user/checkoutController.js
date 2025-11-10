@@ -18,6 +18,7 @@ const loadCheckoutPage = async (req, res) => {
     const addresses = (await Address.find({ userId })) || [];
 
     const wallet = await Wallet.findOne({ userId });
+    let FiveMin = 5 * 60 * 1000;
 
     let offer = 0;
 
@@ -74,7 +75,24 @@ const loadCheckoutPage = async (req, res) => {
     });
 
     const shipping = subTotal >= 1000 ? parseInt(0) : parseInt(50);
-    const total = Number(subTotal + shipping);
+    let total = Number(subTotal + shipping);
+    let couponCode = null
+    const couponDiscount = req.session?.applyCoupon?.discount || 0
+    
+    if (req.session?.applyCoupon?.appliedAt){
+      let age = Date.now() - req.session?.applyCoupon?.appliedAt
+    if (age < FiveMin) {
+      if (req.session.applyCoupon) {
+        couponCode = req.session?.applyCoupon?.Code
+      }
+      
+      if (couponDiscount > 0 && couponDiscount < total) {
+        total = total - couponDiscount
+      }
+    }else{
+      delete req.session.applyCoupon
+    }
+  }
 
     return res.render('user/checkout', {
       user,
@@ -85,7 +103,8 @@ const loadCheckoutPage = async (req, res) => {
       total,
       wallet,
       offer: offer || 0,
-      discount: 0,
+      discount: couponDiscount,
+      couponCode
     });
   } catch (error) {
     console.error('Error loading checkout page:', error.message);

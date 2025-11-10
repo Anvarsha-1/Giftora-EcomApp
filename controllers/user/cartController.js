@@ -109,6 +109,7 @@ const addToCart = async (req, res) => {
     const userId = req.session.user;
 
     const { productId, quantity } = req.body;
+    console.log("productId",productId,"quantity",quantity)
 
     if (!userId) {
       return res.json({ success: false, message: 'User not logged in' });

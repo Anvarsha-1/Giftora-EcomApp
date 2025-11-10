@@ -84,7 +84,6 @@ const addProduct = async (req, res) => {
       category,
       quantity,
       regularPrice,
-      status,
       offerPercentage,
     } = req.body;
 
@@ -178,25 +177,6 @@ const addProduct = async (req, res) => {
       });
     }
 
-    if (status === 'Available' && quantity <= 0) {
-      await deleteUploadedImages(req.files);
-      return res.status(400).json({
-        success: false,
-        error: 'Quantity must be greater than 0 when status is Available',
-        formData: req.body,
-        cat: await Category.find({ isListed: true, isDeleted: false }),
-      });
-    }
-
-    if (status !== 'Available' && quantity > 0) {
-      await deleteUploadedImages(req.files);
-      return res.status(400).json({
-        success: false,
-        error: 'Quantity must be 0 when product is not Available',
-        formData: req.body,
-        cat: await Category.find({ isListed: true, isDeleted: false }),
-      });
-    }
 
     console.log(
       req.files.map((file) => ({
@@ -223,7 +203,7 @@ const addProduct = async (req, res) => {
       quantity,
       salesPrice: finalPrice,
       productImage: images,
-      status: status || 'Available',
+      status:"Available",
       productOffer: offerPercentage || 0,
       bestOffer: appliedOffer,
     });
@@ -381,7 +361,7 @@ const uploadEditProduct = async (req, res) => {
       await deleteUploadedImages(req.files);
       return res.status(400).json({
         success: false,
-        error: 'Quantity must be 0 ',
+        error: 'change the status to available',
         formData: req.body,
         cat: categoryDoc,
       });

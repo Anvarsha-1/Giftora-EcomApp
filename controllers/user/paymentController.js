@@ -276,6 +276,7 @@ const verifyPayment = async (req, res) => {
     }
 
     await session.commitTransaction();
+    
 
     return res.json({
       success: true,
@@ -325,7 +326,7 @@ const paymentFailureHandler = async (req, res) => {
   try {
     session.startTransaction();
     const orderId = req.body.orderId;
-    // Find the order and populate the product details to access quantity
+  
     const order = await Order.findOne({ orderId })
       .populate('orderedItems.productId')
       .session(session);
@@ -335,7 +336,7 @@ const paymentFailureHandler = async (req, res) => {
         .status(400)
         .json({ success: false, message: 'Order not found' });
     }
-    // Only mark as failed if it's still pending. Avoids race conditions.
+   
     if (order.paymentStatus !== 'Pending') {
       return res.json({
         success: true,
@@ -423,7 +424,7 @@ const retryPayment = async (req, res) => {
 
     existingOrder.razorpayOrderId = razorpayOrder.id;
     await existingOrder.save();
-
+    delete req.session.applyCoupon
     res.json({
       success: true,
       order: razorpayOrder,
