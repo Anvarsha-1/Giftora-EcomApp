@@ -104,7 +104,7 @@ const loadMyOrder = async (req, res) => {
 const cancelProduct = async (req, res) => {
   try {
     const userId = req.session.user;
-    const reason = req.body.reason;
+    const reason = (req.body.reason || '').trim();
     const orderId = req.params.orderId;
     const itemId = req.params.itemId;
 
@@ -112,151 +112,75 @@ const cancelProduct = async (req, res) => {
       return res.json({ success: false, message: 'Invalid request' });
     }
 
-    if (!reason || reason.trim().length < 6 || reason.trim().length > 50) {
+    if (!reason || reason.length < 6 || reason.length > 50) {
       return res.json({
         success: false,
         message: 'Reason must be 6-50 characters',
       });
     }
 
-    const order = await Order.findOne({ orderId }).populate(
-      'orderedItems.productId',
-    );
-
+ 
+    const order = await Order.findOne({ orderId }).populate('orderedItems.productId');
     if (!order) {
       return res.json({ success: false, message: 'Order not found' });
     }
 
-    const item = order.orderedItems.find((i) => i._id.toString() === itemId);
-
+    const item = order.orderedItems.find(i => i._id.toString() === itemId);
     if (!item) {
-      return res.json({
-        success: false,
-        message: 'Ordered product not found in this order',
-      });
+      return res.json({ success: false, message: 'Ordered product not found in this order' });
     }
 
     if (item.status === 'Cancelled') {
       return res.json({ success: false, message: 'Item already cancelled' });
     } else if (item.status === 'Delivered') {
-      return res.json({
-        success: false,
-        message: 'Cannot cancel delivered item',
-      });
+      return res.json({ success: false, message: 'Cannot cancel delivered item' });
     }
 
-    const unitPrice = Number.isFinite(Number(item.price))
-      ? Number(item.price)
-      : Number(item.productId?.price) || 0;
+    
+    const unitPrice = Number.isFinite(Number(item.price)) ? Number(item.price) : Number(item.productId?.salesPrice) || 0;
     const quantity = Number(item.quantity) || 0;
     const itemTotal = unitPrice * quantity;
 
+   
     const activeSubtotal = order.orderedItems.reduce((sum, i) => {
       if (i.status === 'Cancelled') return sum;
-      const p = Number.isFinite(Number(i.price))
-        ? Number(i.price)
-        : Number(i.productId?.salesPrice) || 0;
+      const p = Number.isFinite(Number(i.price)) ? Number(i.price) : Number(i.productId?.salesPrice) || 0;
       const q = Number(i.quantity) || 0;
       return sum + p * q;
     }, 0);
 
     if (!Number.isFinite(itemTotal)) {
-      return res.json({
-        success: false,
-        message: 'Invalid item total for refund',
-      });
+      return res.json({ success: false, message: 'Invalid item total for refund' });
     }
     if (!Number.isFinite(activeSubtotal) || activeSubtotal <= 0) {
       return res.json({ success: false, message: 'Invalid order total' });
     }
 
-    const newBalanceSubtotal = activeSubtotal - itemTotal;
+  
+    const totalCouponDiscount = Number(order.couponDiscount || 0);
 
-    let baseRefund = itemTotal;
-    let subTotal = order.totalPrice;
+   
+    const couponShare = totalCouponDiscount > 0
+      ? Math.round((itemTotal / activeSubtotal) * totalCouponDiscount)
+      : 0;
+
+   
+    const baseRefund = Math.max(0, itemTotal - couponShare);
+
+    
     const amountPaidRemaining = Number(order.finalAmount) || 0;
-    const hadCouponApplied = !!order.couponApplied && !!order.couponCode;
-
-    let couponDoc = null;
-    if (hadCouponApplied) {
-      couponDoc = await Coupon.findOne({ code: order.couponCode }).lean();
-    }
-
-    let couponRevoked = false;
-    let newCouponDiscount = Number(order.couponDiscount || 0);
-
-    if (hadCouponApplied && couponDoc) {
-      if (newBalanceSubtotal < Number(couponDoc.minPurchase || 0)) {
-        // Block partial cancellation if it invalidates the coupon's minimum purchase requirement.
-        return res.json({
-          success: false,
-          message:
-            'Cannot cancel this item as it would invalidate the applied coupon. Please cancel the entire order instead.',
-        });
-      } else {
-        if (couponDoc.discountType === 'flat') {
-          const flat = Number(couponDoc.discount) || 0;
-
-          const couponShare = Math.ceil((itemTotal / activeSubtotal) * flat);
-          baseRefund = Math.max(0, itemTotal - couponShare);
-          newCouponDiscount = Math.max(
-            0,
-            Number(order.couponDiscount || 0) - couponShare,
-          );
-        } else {
-          const pct = Number(couponDoc.discount) || 0;
-          const couponShare = Math.ceil((pct / 100) * itemTotal);
-          baseRefund = Math.max(0, itemTotal - couponShare);
-          newCouponDiscount = Math.max(
-            0,
-            Number(order.couponDiscount || 0) - couponShare,
-          );
-        }
-      }
-    }
-
     const refundAmount = Math.min(baseRefund, amountPaidRemaining);
 
+    
+    const newBalanceSubtotal = activeSubtotal - itemTotal; 
     order.totalPrice = Math.max(0, newBalanceSubtotal);
     order.finalAmount = Math.max(0, amountPaidRemaining - refundAmount);
-    order.couponDiscount = newCouponDiscount;
-    order.discountPrice = newCouponDiscount;
 
-    if (couponRevoked) {
-      const prevCouponId = couponDoc?._id;
-      order.couponApplied = false;
-      order.couponDiscount = 0;
-      order.discountPrice = 0;
-      const prevCode = order.couponCode;
-      order.couponCode = null;
+   
+    order.couponDiscount = Math.max(0, totalCouponDiscount - couponShare);
+    order.discountPrice = order.couponDiscount;
 
-      if (prevCouponId) {
-        await Coupon.updateOne(
-          { _id: prevCouponId },
-          {
-            $pull: {
-              usedBy: {
-                userId: new mongoose.Types.ObjectId(userId),
-                orderId: order._id,
-              },
-            },
-          },
-        );
-      } else if (prevCode) {
-        await Coupon.updateOne(
-          { code: prevCode },
-          {
-            $pull: {
-              usedBy: {
-                userId: new mongoose.Types.ObjectId(userId),
-                orderId: order._id,
-              },
-            },
-          },
-        );
-      }
-    }
-
+    
     if (refundAmount > 0 && order.paymentMethod === 'ONLINE') {
       const walletUpdate = await Wallet.updateOne(
         { userId: new mongoose.Types.ObjectId(userId) },
@@ -271,40 +195,50 @@ const cancelProduct = async (req, res) => {
             },
           },
         },
-        { upsert: true },
+        { upsert: true }
       );
+
       if (!walletUpdate.acknowledged) {
         return res.json({ success: false, message: 'Failed to update wallet' });
       }
     }
 
+   
     item.status = 'Cancelled';
     item.cancellationReason = reason;
 
-    if (order.orderedItems.every((i) => i.status === 'Cancelled')) {
+   
+    if (order.orderedItems.every(i => i.status === 'Cancelled')) {
       order.status = 'Cancelled';
-      order.totalPrice = subTotal;
       order.finalAmount = 0;
     }
 
     await order.save();
 
+    
     if (item.productId) {
-      await Product.updateOne(
-        { _id: item.productId._id },
-        { $inc: { quantity: item.quantity } },
-      );
+      await Product.updateOne({ _id: item.productId._id }, { $inc: { quantity: item.quantity } });
     }
 
-    return res.json({ success: true });
+    const successMessage = `Item cancelled. A refund of ₹${refundAmount.toFixed(2)} will be processed. The item's coupon share of ₹${couponShare.toFixed(2)} has been adjusted.`;
+
+    return res.json({
+      success: true,
+      message: successMessage,
+      refundAmount,
+      couponShare,
+      remainingOrderFinalAmount: order.finalAmount,
+      remainingCouponDiscount: order.couponDiscount,
+    });
   } catch (error) {
-    console.error('Error in cancelProduct:', error.message);
+    console.error('Error in cancelProduct:', error);
     return res.json({
       success: false,
       message: 'Something went wrong. Please try again.',
     });
   }
 };
+
 
 const cancelOrder = async (req, res) => {
   try {
@@ -383,7 +317,7 @@ const cancelOrder = async (req, res) => {
     order.cancellationReason = reason;
 
     await order.save();
-    let refundAmount = order.finalAmount; // Use finalAmount to refund the actual amount paid
+    let refundAmount = order.finalAmount;
     if (order.paymentMethod === 'ONLINE') {
       const wallet = await Wallet.updateOne(
         { userId },
@@ -445,51 +379,75 @@ const downloadPdf = async (req, res, next) => {
 const returnOrder = async (req, res) => {
   try {
     const orderId = req.params.orderId;
+    const reason = (req.body.reason || '').trim();
 
-    const { reason } = req.body;
     if (!orderId) {
       return res.json({
         success: false,
-        message: 'Invalid request .Cannot return delivered Item',
+        message: 'Invalid request. Cannot return delivered item.',
       });
     }
+
     if (!reason || reason.length < 3 || reason.length > 50) {
       return res.json({
         success: false,
-        message: 'reason required or reason  must be 3-50 characters',
+        message: 'Reason required and must be 3-50 characters.',
       });
     }
 
-    const order = await Order.findOne({ orderId }).populate(
-      'orderedItems.productId',
-    );
+    const order = await Order.findOne({ orderId }).populate('orderedItems.productId');
 
     if (!order) {
-      return res({ success: false, message: 'Order not Found' });
+      return res.json({ success: false, message: 'Order not found' });
     }
 
-    let hasRejectedItem = order.orderedItems.some(
-      (val) => val.adminApprovalStatus === 'Rejected',
+   
+    const hasRejectedItem = order.orderedItems.some(
+      (val) => val.adminApprovalStatus === 'Rejected'
     );
     if (hasRejectedItem) {
       return res.json({
         success: false,
-        message: 'Product return request rejected already rejected',
+        message: 'Product return request already rejected for one or more items.',
       });
     }
 
+ 
+    const eligibleItems = order.orderedItems.filter((it) => it.status === 'Delivered');
+
+    if (eligibleItems.length === 0) {
+      return res.json({
+        success: false,
+        message: 'No delivered items available to request a return for.',
+      });
+    }
+
+   
+    const now = new Date();
+
+    const changed = [];
+    eligibleItems.forEach((it) => {
+      it.status = 'Return Request';
+      it.returnReason = reason;
+      it.itemReturnRequestAt = now; 
+      it.adminApprovalStatus = 'Pending';
+      changed.push({ itemId: it._id.toString(), productId: it.productId?._id });
+    });
+
+    
     order.status = 'Return Request';
     order.returnReason = reason;
-    order.returnedAt = Date.now();
-    order.orderedItems.forEach((item) => {
-      ((item.status = 'Return Request'),
-        (item.returnReason = reason),
-        (item.itemReturnRequestAt = Date.now()));
-    });
+    order.returnedAt = now;
+
     await order.save();
-    return res.json({ success: true });
+
+    return res.json({
+      success: true,
+      message: 'Return request submitted for delivered items',
+      requestedFor: changed,
+    });
   } catch (error) {
-    console.error('error while return order', error.message);
+    console.error('error while return order', error);
     return res.json({ success: false, message: 'Something went wrong' });
   }
 };
@@ -527,7 +485,7 @@ const returnItemRequest = async (req, res) => {
       });
     }
 
-    // --- Coupon Invalidation Logic ---
+  
     const hadCouponApplied = !!order.couponApplied && !!order.couponCode;
     if (hadCouponApplied) {
       const couponDoc = await Coupon.findOne({ code: order.couponCode }).lean();
@@ -544,7 +502,7 @@ const returnItemRequest = async (req, res) => {
         const newBalanceSubtotal = activeSubtotal - itemTotal;
 
         if (newBalanceSubtotal < Number(couponDoc.minPurchase || 0)) {
-          // Block partial return if it invalidates the coupon's minimum purchase requirement.
+         
           return res.json({
             success: false,
             message:
@@ -553,7 +511,7 @@ const returnItemRequest = async (req, res) => {
         }
       }
     }
-    // --- End Coupon Logic ---
+  
 
     itemToReturn.status = 'Return Request';
     itemToReturn.returnReason = reason;

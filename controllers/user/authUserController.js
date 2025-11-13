@@ -12,6 +12,7 @@ const Wishlist = require('../../models/wishListSchema');
 const createUniqueReferralCode = require('../../helpers/generateReferralCode');
 const Wallet = require('../../models/walletSchema');
 const { awardReferralCoupon } = require('./referralController');
+const { applyReferralCode } = require('../../controllers/user/referralController')
 
 const PageNotFound = async (req, res) => {
   try {
@@ -49,6 +50,7 @@ const loadPLandingPage = async (req, res) => {
     const bestsellingData = productData.slice(4, 8);
     const flashSalesData = productData.slice(8, 12);
     const isHomePage = true
+    
     return res.render('user/Home-page', {
       user: null,
       firstName: null,
@@ -56,7 +58,7 @@ const loadPLandingPage = async (req, res) => {
       bestselling: bestsellingData,
       flashSales: flashSalesData,
       newProductData: newProductData,
-      isHomePage
+      isHomePage,
     });
   } catch (error) {
     console.log('Home page not found', error.message);
@@ -694,6 +696,31 @@ const liveSearch = async (req, res, next) => {
 }
 
 
+
+const checkGoogleUserReferralCode = async (req, res) => {
+  try {
+    const { code } = req.body
+    const newUserId = req.session.userId
+    await applyReferralCode(newUserId, code)
+    return res.json({ message: 'Referral applied — rewards added!' })
+  } catch (error) {
+    console.log("error happened while checking googleCouponCode")
+    return res.status(400).json({ message: error.message })
+  }
+}
+
+const skipReferral = async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.session.userId, { isFirstLogin: false })
+    return res.json({ message: "Skipped" })
+  } catch (error) {
+    console.error("Error while skip referral", error.message)
+    return res.json({ message: "An error occured" })
+  }
+}
+
+
+
 module.exports = {
   loadSignUp,
   signUp,
@@ -714,5 +741,7 @@ module.exports = {
   loadHomePage,
   loadContactPage,
   loadAboutPage,
-  liveSearch
+  liveSearch,
+  checkGoogleUserReferralCode,
+  skipReferral
 };

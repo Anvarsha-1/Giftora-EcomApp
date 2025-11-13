@@ -71,6 +71,7 @@ const loadCheckoutPage = async (req, res) => {
         totalPrice: itemTotal,
         offer: Math.abs(offer) || 0,
         discount: 0,
+        bestOffer: product.bestOffer || 0,
       };
     });
 

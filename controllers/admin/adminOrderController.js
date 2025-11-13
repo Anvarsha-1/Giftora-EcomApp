@@ -74,41 +74,158 @@ const loadOrderPage = async (req, res) => {
   }
 };
 
+const VALID_ORDER_STATUSES = [
+  'Pending',
+  'Processing',
+  'Shipped',
+  'Delivered',
+  'Cancelled',
+  'Return Request',
+  'Returned',
+];
+
+
+const DISALLOWED_TARGETS = ['Return Request', 'Returned'];
+
+
+const EDITABLE_ITEM_STATUSES = ['Pending', 'Processing', 'Shipped'];
+
+
 const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
-
     const { status } = req.body;
 
-    if (!orderId || !status)
-      return res
-        .status(400)
-        .json({ success: false, message: 'Invalid payload' });
-    const order = await Order.findOne({ orderId }).populate(
-      'orderedItems.productId',
-    );
-    if (!order)
-      return res
-        .status(404)
-        .json({ success: false, message: 'Order not found' });
-    order.status = status;
-    order.orderedItems.forEach((item) => {
-      if (
-        item.status !== 'Cancelled' &&
-        item.status !== 'Delivered' &&
-        item.status !== 'Return Request' &&
-        item.status !== 'Returned'
-      ) {
-        item.status = status;
+    if (!orderId || !status) {
+      return res.status(400).json({ success: false, message: 'Invalid payload' });
+    }
+
+    if (!VALID_ORDER_STATUSES.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid status value' });
+    }
+
+
+    if (DISALLOWED_TARGETS.includes(status)) {
+      return res.status(403).json({
+        success: false,
+        message: `Admin cannot set order status to "${status}". Use the proper return flow instead.`,
+      });
+    }
+
+    const order = await Order.findOne({ orderId }).populate('orderedItems.productId');
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+
+    if (order.status === 'Delivered' && status !== 'Delivered') {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot change status: order is already Delivered.',
+      });
+    }
+
+    const changedItems = [];
+    const skippedItems = [];
+
+    
+    for (const item of order.orderedItems) {
+      const current = item.status;
+
+     
+      if (['Cancelled', 'Return Request', 'Returned', 'Delivered'].includes(current)) {
+        skippedItems.push({
+          itemId: item._id,
+          productId: item.productId?._id,
+          from: current,
+          reason: `not editable (final state)`,
+        });
+        continue;
       }
-    });
+
+
+      if (!EDITABLE_ITEM_STATUSES.includes(current)) {
+        skippedItems.push({
+          itemId: item._id,
+          productId: item.productId?._id,
+          from: current,
+          reason: `current status "${current}" not allowed to be changed via this endpoint`,
+        });
+        continue;
+      }
+
+      if (status === 'Delivered' && current !== 'Shipped') {
+        skippedItems.push({
+          itemId: item._id,
+          productId: item.productId?._id,
+          from: current,
+          reason: 'item must be Shipped before marking as Delivered',
+        });
+        continue;
+      }
+
+      if (status === 'Cancelled' && current === 'Delivered') {
+        skippedItems.push({
+          itemId: item._id,
+          productId: item.productId?._id,
+          from: current,
+          reason: 'cannot cancel a delivered item',
+        });
+        continue;
+      }
+
+
+      if (current !== status) {
+        item.status = status;
+        changedItems.push({
+          itemId: item._id,
+          productId: item.productId?._id,
+          from: current,
+          to: status,
+        });
+      } else {
+        skippedItems.push({
+          itemId: item._id,
+          productId: item.productId?._id,
+          from: current,
+          reason: 'already in requested status',
+        });
+      }
+    }
+
+  
+    if (changedItems.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'No eligible items to update. Possible reasons: all items are Cancelled, Delivered, or in a return flow. Status not changed.',
+        skippedItems,
+      });
+    }
+
+
+    const nonCancelledItems = order.orderedItems.filter(i => i.status !== 'Cancelled');
+    const allSame = nonCancelledItems.length > 0 && nonCancelledItems.every(i => i.status === status);
+
+    if (allSame) {
+      order.status = status;
+    }
+   
     if (status === 'Delivered') {
       order.paymentStatus = 'Completed';
     }
+
     await order.save();
-    return res.json({ success: true, status: order.status });
+
+    return res.json({
+      success: true,
+      message: 'Order item statuses updated',
+      orderStatus: order.status,
+      changedItems,
+      skippedItems,
+    });
   } catch (error) {
-    console.log('error while updating order status', error.message);
+    console.error('error while updating order status', error);
     return res.status(500).json({ success: false, message: 'Update failed' });
   }
 };
@@ -151,57 +268,40 @@ const verifyOrderReturn = async (req, res) => {
   try {
     const { orderId, itemId } = req.params;
 
-    const order = await Order.findOne({ orderId }).populate(
-      'orderedItems.productId',
-    );
+    const order = await Order.findOne({ orderId }).populate('orderedItems.productId');
     if (!order) {
-      return res.json({
-        success: false,
-        message: 'Invalid request Order not found',
-      });
+      return res.json({ success: false, message: 'Invalid request: Order not found' });
     }
 
-    const item = order.orderedItems.find(
-      (i) => itemId.toString() === i._id.toString(),
-    );
+    const item = order.orderedItems.find(i => i._id.toString() === itemId);
     if (!item) {
-      return res.json({ success: false, message: 'Product not found' });
+      return res.json({ success: false, message: 'Product not found in order' });
     }
+
+ 
     if (item.status !== 'Return Request' && item.status !== 'Delivered') {
-      return res.json({
-        success: false,
-        message: 'Invalid return state for this item',
-      });
+      return res.json({ success: false, message: 'Invalid return state for this item' });
     }
 
     const userId = order.userId;
 
-    // Compute item total
+    
     const unitPrice = Number.isFinite(Number(item.price))
       ? Number(item.price)
       : Number(item.productId?.price) || 0;
     const quantity = Number(item.quantity) || 0;
     const itemTotal = unitPrice * quantity;
 
-    // Subtotal of all active (non-cancelled and non-returned) items before this approval
+
     const activeSubtotal = order.orderedItems.reduce((sum, i) => {
-      if (i._id.toString() === item._id.toString()) {
-        // include current item
-      } else if (i.status === 'Cancelled' || i.status === 'Returned') {
-        return sum;
-      }
-      const p = Number.isFinite(Number(i.price))
-        ? Number(i.price)
-        : Number(i.productId?.price) || 0;
+      if (i.status === 'Cancelled' || i.status === 'Returned') return sum;
+      const p = Number.isFinite(Number(i.price)) ? Number(i.price) : Number(i.productId?.price) || 0;
       const q = Number(i.quantity) || 0;
       return sum + p * q;
     }, 0);
 
     if (!Number.isFinite(itemTotal) || itemTotal <= 0) {
-      return res.json({
-        success: false,
-        message: 'Invalid item total for refund',
-      });
+      return res.json({ success: false, message: 'Invalid item total for refund' });
     }
     if (!Number.isFinite(activeSubtotal) || activeSubtotal <= 0) {
       return res.json({ success: false, message: 'Invalid order total' });
@@ -209,78 +309,33 @@ const verifyOrderReturn = async (req, res) => {
 
     const newBalanceSubtotal = activeSubtotal - itemTotal;
 
-    // Start from full item price, then adjust for coupon rules
+  
     let baseRefund = itemTotal;
-    const amountPaidRemaining = Number(order.finalAmount) || 0; // includes shipping already paid
-    const hadCouponApplied = !!order.couponApplied && !!order.couponCode;
+    const amountPaidRemaining = Number(order.finalAmount) || 0;
+    const totalCouponDiscount = Number(order.couponDiscount || 0);
 
-    let couponDoc = null;
-    if (hadCouponApplied) {
-      couponDoc = await Coupon.findOne({ code: order.couponCode }).lean();
-    }
 
-    let couponRevoked = false;
-    let newCouponDiscount = Number(order.couponDiscount || 0);
+    const couponShare = totalCouponDiscount > 0
+      ? Math.round((itemTotal / activeSubtotal) * totalCouponDiscount)
+      : 0;
 
-    if (hadCouponApplied && couponDoc) {
-      if (newBalanceSubtotal < Number(couponDoc.minPurchase || 0)) {
-        // Lose eligibility: the first return approval absorbs the full remaining coupon discount
-        baseRefund = Math.max(0, itemTotal - Number(order.couponDiscount || 0));
-        couponRevoked = true;
-        newCouponDiscount = 0;
-      } else {
-        // Still eligible: prorate discount on this item
-        if (couponDoc.discountType === 'flat') {
-          const flat = Number(couponDoc.discount) || 0;
-          const couponShare = Math.ceil((itemTotal / activeSubtotal) * flat);
-          baseRefund = Math.max(0, itemTotal - couponShare);
-          newCouponDiscount = Math.max(
-            0,
-            Number(order.couponDiscount || 0) - couponShare,
-          );
-        } else {
-          const pct = Number(couponDoc.discount) || 0;
-          const couponShare = Math.ceil((pct / 100) * itemTotal);
-          baseRefund = Math.max(0, itemTotal - couponShare);
-          newCouponDiscount = Math.max(
-            0,
-            Number(order.couponDiscount || 0) - couponShare,
-          );
-        }
-      }
-    }
+    const appliedCouponShare = Math.min(couponShare, itemTotal);
 
-    // Cap refund so cumulative refunds never exceed amount paid
+
+    baseRefund = Math.max(0, itemTotal - appliedCouponShare);
+
+    
     const refundAmount = Math.min(baseRefund, amountPaidRemaining);
 
-    // Update order monetary fields: keep shipping charge unchanged; lower payable by refund
+   
     order.totalPrice = Math.max(0, newBalanceSubtotal);
     order.finalAmount = Math.max(0, amountPaidRemaining - refundAmount);
-    order.couponDiscount = newCouponDiscount;
-    order.discountPrice = newCouponDiscount;
 
-    if (couponRevoked) {
-      const prevCode = order.couponCode;
-      order.couponApplied = false;
-      order.couponDiscount = 0;
-      order.discountPrice = 0;
-      order.couponCode = null;
-      if (prevCode) {
-        await Coupon.updateOne(
-          { code: prevCode },
-          {
-            $pull: {
-              usedBy: {
-                userId: new mongoose.Types.ObjectId(userId),
-                orderId: order._id,
-              },
-            },
-          },
-        );
-      }
-    }
+ 
+    order.couponDiscount = Math.max(0, totalCouponDiscount - appliedCouponShare);
+    order.discountPrice = order.couponDiscount;
 
-    // Always credit refund to wallet for returns, regardless of payment method
+  
     if (refundAmount > 0) {
       const walletUpdate = await Wallet.updateOne(
         { userId: new mongoose.Types.ObjectId(userId) },
@@ -295,51 +350,57 @@ const verifyOrderReturn = async (req, res) => {
             },
           },
         },
-        { upsert: true },
+        { upsert: true }
       );
+
       if (!walletUpdate.acknowledged) {
         return res.json({ success: false, message: 'Failed to update wallet' });
       }
     }
 
-    // Mark item returned
+   
     item.status = 'Returned';
     item.adminApprovalStatus = 'Approved';
+    item.returnedAt = new Date();
 
-    // Update order status rollup
-    const allOrderReturnCheck = order.orderedItems.every(
-      (i) => i.status === 'Returned',
-    );
-    const OrderDeliveredStatus = order.orderedItems.some(
-      (i) => i.status === 'Delivered',
-    );
 
-    if (allOrderReturnCheck) {
+    const allOrderReturned = order.orderedItems.every(i => i.status === 'Returned');
+    const anyDeliveredLeft = order.orderedItems.some(i => i.status === 'Delivered');
+
+    if (allOrderReturned) {
       order.status = 'Returned';
-      if (order.finalAmount === 0) {
-        order.paymentStatus = 'Refunded';
-      }
-    } else if (OrderDeliveredStatus) {
+      if (order.finalAmount === 0) order.paymentStatus = 'Refunded';
+    } else if (anyDeliveredLeft) {
       order.status = 'Delivered';
-    }
+    } 
 
     await order.save();
 
-    // Restore stock
+  
     if (item && item.productId) {
-      item.productId.quantity += item.quantity;
-      await item.productId.save();
+      await Product.updateOne(
+        { _id: item.productId._id },
+        { $inc: { quantity: item.quantity } }
+      );
     }
 
-    return res.json({ success: true });
+    return res.json({
+      success: true,
+      message: 'Return approved and refund processed',
+      refundAmount,
+      couponShare: appliedCouponShare,
+      remainingOrderFinalAmount: order.finalAmount,
+      remainingCouponDiscount: order.couponDiscount,
+    });
   } catch (error) {
-    console.log('error while updating verify orderReturn ', error.message);
+    console.error('error while updating verify orderReturn ', error);
     return res.json({
       success: false,
       message: 'Something went wrong please try again',
     });
   }
 };
+
 
 const cancelReturnRequest = async (req, res) => {
   try {

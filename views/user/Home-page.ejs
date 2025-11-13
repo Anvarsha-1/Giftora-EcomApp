@@ -784,6 +784,101 @@
                 opacity: 0;
             }
         }
+
+        /* Referral Modal Styles */
+        .referral-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001; /* Higher than other elements */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .referral-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .referral-modal-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-heavy);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .referral-modal-overlay.show .referral-modal-content {
+            transform: scale(1);
+        }
+
+        .referral-modal-content h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .referral-modal-content p {
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        #referralCodeInput {
+            width: 100%;
+            padding: 0.875rem;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .referral-error-message {
+            color: var(--accent-color);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            min-height: 1.2em; /* Reserve space to prevent layout shifts */
+        }
+
+        .referral-modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .referral-modal-buttons button {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        #submitReferralBtn {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        #skipReferralBtn {
+            background-color: transparent;
+            color: var(--medium-gray);
+            border-color: #ccc;
+        }
     </style>
 </head>
 
@@ -974,6 +1069,26 @@
             </section>
         </div>
         <%- include('../partials/user/footer.ejs') %>
+
+            <!-- Referral Modal -->
+             <% if(user && user.isFirstLogin){ %>
+            <div id="referralModal" class="referral-modal-overlay">
+                <div class="referral-modal-content">
+                    <h2>Have a Referral Code?</h2>
+                    <p>Enter a code from a friend to get a special reward!</p>
+                    <form id="referralForm" onsubmit="submitReferral(event)">
+                        <div id="referralError" class="referral-error-message"></div>
+                        <input type="text" id="referralCodeInput" placeholder="E.G. GIFT5136" maxlength="8"
+                            autocomplete="off">
+                        <div class="referral-modal-buttons">
+                            <button type="button" id="skipReferralBtn">Skip</button>
+                            <button type="submit" id="submitReferralBtn">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <% } %>
+
 
             <!-- Toast Container -->
             <div id="toastContainer" class="toast-container"></div>
@@ -1222,6 +1337,84 @@
                         });
                     }
                 }
+
+                // --- Referral Modal Logic ---
+                document.addEventListener('DOMContentLoaded', () => {
+                    const isFirstLogin = <%- (user && user.isFirstLogin) ? 'true' : 'false' %>;
+                    const referralModal = document.getElementById('referralModal');
+                    const skipButton = document.getElementById('skipReferralBtn');
+                    const referralForm = document.getElementById('referralForm');
+                    const referralError = document.getElementById('referralError');
+                    const referralInput = document.getElementById('referralCodeInput');
+
+                    if (isFirstLogin && referralModal) {
+                        setTimeout(() => {
+                            referralModal.classList.add('show');
+                        }, 1500); 
+                    }
+
+                    const closeModal = () => {
+                        if (referralModal) referralModal.classList.remove('show');
+                    };
+
+                    // Handle Skip
+                    skipButton?.addEventListener('click', async () => {
+                        try {
+                            await fetch('/api/referral/skip', { method: 'POST' });
+                        } catch (error) {
+                            console.error('Failed to call skip API:', error);
+                        } finally {
+                            closeModal();
+                        }
+                    });
+
+                    // Handle Submit
+                    window.submitReferral = async (event) => {
+                        event.preventDefault();
+                        const code = referralInput.value.trim().toUpperCase();
+                        referralError.textContent = ''; // Clear previous errors
+
+                        // Frontend Validation
+                        const validCodeRegex = /^[A-Z0-9]{8}$/;
+                        if (!code) {
+                            referralError.textContent = 'Please enter a referral code.';
+                            return;
+                        }
+                        if (code.length !== 8) {
+                            referralError.textContent = 'Referral code must be 8 characters long.';
+                            return;
+                        }
+                        if (!validCodeRegex.test(code)) {
+                            referralError.textContent = 'Invalid characters in code. Use letters and numbers only.';
+                            return;
+                        }
+
+                        try {
+                            const response = await fetch('/api/referral/claim', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ code })
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                Toast.fire({
+                                    icon: 'success',
+                                    title: result.message || 'Referral claimed successfully!'
+                                });
+                                closeModal();
+                            } else {
+                                referralError.textContent = result.message || 'An unknown error occurred.';
+                            }
+                        } catch (error) {
+                            console.error('Referral claim error:', error);
+                            referralError.textContent = 'Could not connect to the server. Please try again.';
+                        }
+                    };
+                });
+
+
             </script>
 </body>
 

@@ -162,6 +162,90 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #a8a8a8;
         }
+
+        /* Policy Section Styles */
+        .policy-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .policy-summary {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .policy-full {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .policy-full h5 {
+            color: #1e293b;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .policy-full p {
+            margin-bottom: 0.75rem;
+        }
+
+        .policy-full ul {
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+        }
+
+        .policy-full li {
+            margin-bottom: 0.25rem;
+        }
+
+        .policy-formula {
+            background: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            color: #334155;
+            margin-bottom: 0.75rem;
+        }
+
+        .policy-example {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .policy-example h6 {
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .policy-toggle {
+            cursor: pointer;
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .policy-toggle:hover {
+            color: #2563eb;
+        }
+
+        .collapse-icon {
+            transition: transform 0.2s ease;
+        }
+
+        .collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
     </style>
 </head>
 <%- include('../partials/user/newheader.ejs') %>
@@ -186,6 +270,83 @@
                         </div>
 
                         <div class="content-section">
+                            <!-- Coupon Policy Section -->
+                            <div class="policy-section stagger">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0 fw-semibold text-dark">
+                                        <i class="ri-information-line me-2"></i>Coupon Refund Policy
+                                    </h5>
+                                    <a href="#" class="policy-toggle" data-bs-toggle="collapse"
+                                        data-bs-target="#policyDetails" aria-expanded="false">
+                                        <i class="ri-arrow-down-s-line collapse-icon"></i> Details
+                                    </a>
+                                </div>
+
+                                <div class="policy-summary">
+                                    <strong>Short Summary:</strong> If a coupon was used, refunds for cancelled/returned
+                                    items are adjusted to reflect the coupon. The refund shown is the net amount
+                                    credited to your wallet.
+                                </div>
+
+                                <div class="collapse" id="policyDetails">
+                                    <div class="policy-full">
+                                        <h5>Coupon Refund Policy</h5>
+                                        <p>When a coupon was applied to your order, any refund for a cancelled or
+                                            returned product will be adjusted to account for the coupon discount used.
+                                            This ensures the coupon benefit is fairly distributed across the items in
+                                            your order and prevents negative or excessive refunds.</p>
+                                        <p>If the coupon provided a percentage discount (e.g., 10%), the item’s share of
+                                            the coupon is computed as that percentage of the item price.</p>
+                                        <p>If the coupon provided a fixed discount (e.g., ₹1000 off), the coupon amount
+                                            is distributed across the items — by default proportionally to item price.
+                                        </p>
+                                        <p>We will never deduct more than a product’s price. If a product’s share of the
+                                            coupon would exceed that product’s price, we cap it at the product price (no
+                                            negative refunds).</p>
+                                        <p>Refunds for online payments are credited to your wallet. Refunds cannot
+                                            exceed the amount you actually paid for the order.</p>
+
+                                        <h5>Business Rules</h5>
+                                        <ul>
+                                            <li><strong>Default:</strong> Proportional-by-price distribution of coupon
+                                                discount across active (non-cancelled) items.</li>
+                                            <li>If you prefer equal-per-item distribution, apply equal split but cap per
+                                                item at its price and keep leftover coupon balance on the order.</li>
+                                            <li>Always cap refunds at max(0, itemPrice − appliedCouponShare) and also at
+                                                remaining paid amount.</li>
+                                            <li>Update order.couponDiscount to reflect remaining discount after each
+                                                cancellation.</li>
+                                            <li>Record wallet transactions and coupon usage audits for traceability.
+                                            </li>
+                                        </ul>
+                                        <h5>Example — Real Numbers</h5>
+                                        <div class="policy-example">
+                                            <h6>Order Items:</h6>
+                                            <ul>
+                                                <li>Luxury Necklace = ₹7000</li>
+                                                <li>Dodge Metal Toy = ₹2800</li>
+                                                <li>Minimalist Clock = ₹1330</li>
+                                                <li>Blue Glass = ₹900</li>
+                                            </ul>
+                                            <p><strong>S = ₹7000 + 2800 + 1330 + 900 = ₹12,030</strong></p>
+                                            <p><strong>Coupon D = ₹1,000</strong></p>
+                                            <h6>For Luxury Necklace (₹7000):</h6>
+                                            <p>couponShare = round((7000 / 12030) * 1000) ≈ ₹582<br>
+                                                refund = 7000 - 582 = ₹6418</p>
+                                            <h6>For Dodge Metal Toy (₹2800):</h6>
+                                            <p>couponShare ≈ round((2800 / 12030) * 1000) ≈ ₹233<br>
+                                                refund = 2800 - 233 = ₹2567</p>
+                                            <h6>For Minimalist Clock (₹1330):</h6>
+                                            <p>couponShare ≈ ₹111 → refund ≈ ₹1219</p>
+                                            <h6>For Blue Glass (₹900):</h6>
+                                            <p>couponShare ≈ ₹75 → refund ≈ ₹825</p>
+                                            <p><em>These match the wallet credits you saw — this confirms the
+                                                    proportional-by-price logic.</em></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="mb-4">
                                 <p class="text-muted mb-4">Manage and track your available coupons and discount codes
                                 </p>
@@ -360,7 +521,8 @@
                                                                     </div>
                                                                     <div class="col-6 d-flex align-items-center gap-2">
                                                                         <i class="ri-refresh-line text-info"></i> Used
-                                                                        <%= coupon.usedCount %>x</div>
+                                                                        <%= coupon.usedCount %>x
+                                                                    </div>
                                                                 </div>
 
                                                                 <div class="mt-auto">

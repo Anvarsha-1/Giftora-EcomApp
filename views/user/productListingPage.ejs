@@ -581,10 +581,9 @@
                   <div class="col-6 col-md-4">
                     <div class="product-card h-100" data-id="<%= products[i]._id %>">
                       <div class="product-image">
-                        <% if (products[i].productImage) { const imageUrl=products[i].productImage; const
-                          transformedUrl=imageUrl.replace( '/upload/' , '/upload/dpr_auto,w_300,h_300,c_fill,g_auto,q_auto:best,f_auto/' ); %>
+                        <% if (products[i].productImage) { %>
                           <a href="/productsDetails/<%= products[i]._id %>">
-                            <img src="<%= transformedUrl %>" alt="<%= products[i].productName %>" class="product-img"
+                            <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>" class="product-img loading"
                               data-id="<%= products[i]._id %>">
                           </a>
                           <% } else { %>
@@ -924,7 +923,7 @@
             if (p.productImage) {
               let imgSrc = p.productImage;
               if (imgSrc.includes('/upload/')) {
-                imgSrc = imgSrc.replace('/upload/', '/upload/w_300,h_300,c_fill,g_auto,q_auto:best,f_auto/');
+                imgSrc = imgSrc
               }
               imageHtml = `
                 <a href="/productsDetails/${p._id}">

@@ -1,6 +1,7 @@
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const passport = require('passport');
 const User = require('../models/userSchema');
+const createUniqueReferralCode = require('../helpers/generateReferralCode')
 
 passport.use(
   new GoogleStrategy(
@@ -50,6 +51,7 @@ passport.use(
             url: profileImage,
           },
           phone: 'registered by google',
+          referralCode: await createUniqueReferralCode()
         });
 
         await newUser.save();

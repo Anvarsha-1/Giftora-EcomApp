@@ -3,6 +3,7 @@ const router = express.Router();
 const authUserController = require('../../controllers/user/authUserController');
 const userProductController = require('../../controllers/user/userProductController');
 const passport = require('passport');
+const {userAuth} = require('../../middlewares/auth')
 
 //USER AUTHENTICATION
 router.get('/', authUserController.loadPLandingPage);
@@ -67,5 +68,9 @@ router.get('/productsDetails/:id', userProductController.viewProductDetails);
 router.get('/contact',authUserController.loadContactPage)
 
 router.get('/about',authUserController.loadAboutPage)
+
+router.post('/api/referral/claim', userAuth,authUserController.checkGoogleUserReferralCode)
+
+router.post('/api/referral/skip', userAuth, authUserController.skipReferral)
 
 module.exports = router;

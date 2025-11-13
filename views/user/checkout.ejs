@@ -166,6 +166,11 @@
                                                 <div class="text-sm text-gray-700">₹<%= item.price.toLocaleString() %> x
                                                         <%= item.quantity %>
                                                 </div>
+                                                <% if (item.bestOffer > 0) { %>
+                                                    <div class="text-xs text-green-600 font-medium">
+                                                        <%= item.bestOffer %>% OFF
+                                                    </div>
+                                                <% } %>
                                                 <% } else { %>
                                                     <div class="text-sm text-red-500">Price not available</div>
                                                     <% } %>
@@ -370,15 +375,6 @@
                                             </span>
                                             <% } %>
                                 </div>
-
-                                <!-- ✅ New Discount row -->
-                                <!-- Product/Category Offer Discount -->
-                                <div class="flex justify-between text-blue-600 font-medium" id="offer-discount-row"
-                                    style='display:flex'>
-                                    <span>Product Offer Discount</span>
-                                    <span id="offer-discount-amount">- ₹<%= offer ? offer.toLocaleString() : 0 %></span>
-                                </div>
-
                                 <!-- Coupon Discount -->
                                 <div class="flex justify-between text-green-600 font-medium" id="coupon-discount-row"
                                     style="display:flex">
@@ -392,7 +388,7 @@
                                 <div class="flex justify-between font-semibold border-t border-gray-300 pt-2 mt-2">
                                     <span>Total</span>
                                     <span id="total-price" data-total-price="<%= total  %>">
-                                        ₹<%= (total ).toLocaleString() %>
+                                        ₹<%= (total).toLocaleString() %>
                                     </span>
                                 </div>
 
