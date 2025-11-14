@@ -271,8 +271,8 @@ const verifyOtp = async (req, res) => {
       await referrer.save();
     }
 
-    req.session.userOtp = null;
-    req.session.userData = null;
+    delete req.session.userOtp 
+    delete req.session.userData 
     req.session.save((err) => {
       if (err) console.error('Session save error:', err);
     });
@@ -700,6 +700,18 @@ const liveSearch = async (req, res, next) => {
 }
 
 
+const skipReferral = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    if (!userId) return res.status(401).json({ message: 'User not authenticated' });
+    await User.findByIdAndUpdate(userId, { isFirstLogin: false });
+    console.log("skipped the referral")
+    return res.json({ message: "Skipped" })
+  } catch (error) {
+    console.error("Error while skip referral", error.message)
+    return res.json({ message: "An error occured" })
+  }
+}
 
 const checkGoogleUserReferralCode = async (req, res) => {
   try {
@@ -710,17 +722,6 @@ const checkGoogleUserReferralCode = async (req, res) => {
   } catch (error) {
     console.log("error happened while checking googleCouponCode")
     return res.status(400).json({ message: error.message })
-  }
-}
-
-const skipReferral = async (req, res) => {
-  try {
-    await User.findByIdAndUpdate(req.session.userId, { isFirstLogin: false })
-    console.log("skipped the referral")
-    return res.json({ message: "Skipped" })
-  } catch (error) {
-    console.error("Error while skip referral", error.message)
-    return res.json({ message: "An error occured" })
   }
 }
 
@@ -748,5 +749,6 @@ module.exports = {
   loadAboutPage,
   liveSearch,
   checkGoogleUserReferralCode,
-  skipReferral
+  skipReferral,
+  
 };

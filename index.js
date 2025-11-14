@@ -21,6 +21,7 @@ const adminSales = require('./routers/admin/adminSalesReportRouter');
 const errorHandler = require('./helpers/error-handler-middleware');
 const { searchVisibility }= require('./middlewares/showSearchbar')
 
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 DB();
@@ -97,6 +98,8 @@ app.use('/admin', adminOrders);
 app.use('/payment', payment);
 app.use('/admin', AdminCoupon);
 app.use('/sales', adminSales);
+
+
 
 app.use((req, res, next) => {
   const err = new Error('Page not found');

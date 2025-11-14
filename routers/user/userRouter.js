@@ -68,8 +68,7 @@ router.get('/productsDetails/:id', userProductController.viewProductDetails);
 router.get('/contact',authUserController.loadContactPage)
 
 router.get('/about',authUserController.loadAboutPage)
-
-router.post('/api/referral/claim', userAuth,authUserController.checkGoogleUserReferralCode)
+router.post('/api/referral/claim', userAuth, authUserController.checkGoogleUserReferralCode)
 
 router.post('/api/referral/skip', userAuth, authUserController.skipReferral)
 

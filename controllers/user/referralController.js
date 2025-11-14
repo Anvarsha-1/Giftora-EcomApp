@@ -3,6 +3,7 @@ const UserCoupon = require('../../models/Referral-Coupon-Schema');
 const User = require('../../models/userSchema');
 const mongoose = require('mongoose');
 const Wallet = require('../../models/walletSchema')
+const logger = require('../../config/logger');
 
 const awardReferralCoupon = async (referrerId) => {
   try {
@@ -49,63 +50,65 @@ const awardReferralCoupon = async (referrerId) => {
   }
 };
 
-async function  applyReferralCode(newUserId, code) {
-  const session = await mongoose.startSession()
-  session.startTransaction()
+async function applyReferralCode(newUserId, code) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
-    const referrer = await User.find({ referralCode: code }).session(session)
-    if (referrer._id.toString() === newUserId.toString()) throw new Error('Cannot use your own referral')
+    const referrer = await User.findOne({ referralCode: code }).session(session);
+    if (!referrer) {
+      throw new Error('Invalid referral code.');
+    }
 
-    const newUser = await User.find({ userId: newUserId }).session(session)
+    if (referrer._id.toString() === newUserId.toString()) {
+      throw new Error('You cannot use your own referral code.');
+    }
 
-    if (!newUser) throw new Error('User not found')
-    if (newUser.invitedBy) throw new Error('Referral  already applied')
-    let bonusAmount = 50
+    const newUser = await User.findById(newUserId).session(session);
 
+    if (!newUser) throw new Error('New user not found.');
+    if (newUser.invitedBy) throw new Error('A referral code has already been applied to this account.');
 
+    const bonusAmount = 50;
 
-    const wallet = Wallet.updateOne({
-      userId: newUserId,
-      balance: bonusAmount || 0,
-      transactions: [
-        {
+    // Update wallet for the new user
+    await Wallet.updateOne(
+      { userId: newUserId },
+      {
+        $inc: { balance: bonusAmount },
+        $push: {
+          transactions: {
           type: 'credit',
           amount: bonusAmount,
           description: `Welcome bonus - invited by ${referrer.firstName}`,
+          },
         }
-      ]
-    },
-      { upsert: true, new: true, session }
-    )
+      },
+      { upsert: true, session }
+    );
 
     const now = new Date();
 
-    newUser.invitedBy = referrer.firstName
-    newUser.invitedAt = now
-    newUser.referralCreatedAt = now
-    newUser.isFirstLogin = false
+    // Update the new user's status
+    newUser.invitedBy = referrer._id;
+    newUser.invitedAt = now;
+    newUser.isFirstLogin = false;
+    await newUser.save({ session });
 
+    // Award the referrer
+    await awardReferralCoupon(referrer._id);
+    referrer.redeemedUser.push(newUserId);
+    await referrer.save({ session });
 
-    await newUser.save({ session })
-
-    if (referrer) {
-      awardReferralCoupon(referrer._id)
-      referrer.redeemedUser.push(newUserId)
-      await referrer.save()
-    }
     await session.commitTransaction();
-    return { referrerId: referrer._Id }
-
+    return { success: true, message: 'Referral applied! Your reward is in your wallet.' };
   } catch (error) {
     await session.abortTransaction();
+    logger.error("Something crashed",error)
     throw error;
   } finally {
     session.endSession();
   }
 }
-
-
-
 
 module.exports = {
   awardReferralCoupon,
