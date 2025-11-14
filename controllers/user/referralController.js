@@ -58,7 +58,7 @@ async function applyReferralCode(newUserId, code) {
     if (!referrer) {
       throw new Error('Invalid referral code.');
     }
-
+     console.log("referral user",referrer,"new user",newUserId)
     if (referrer._id.toString() === newUserId.toString()) {
       throw new Error('You cannot use your own referral code.');
     }
