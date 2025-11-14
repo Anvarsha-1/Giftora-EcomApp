@@ -95,7 +95,7 @@ async function applyReferralCode(newUserId, code) {
     await newUser.save({ session });
 
     // Award the referrer
-    await awardReferralCoupon(referrer._id);
+    await awardReferralCoupon(referrer._id, session);
     referrer.redeemedUser.push(newUserId);
     await referrer.save({ session });
 
