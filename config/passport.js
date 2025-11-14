@@ -51,7 +51,8 @@ passport.use(
             url: profileImage,
           },
           phone: 'registered by google',
-          referralCode: await createUniqueReferralCode()
+          referralCode: await createUniqueReferralCode(),
+          isFirstLogin :true
         });
 
         await newUser.save();

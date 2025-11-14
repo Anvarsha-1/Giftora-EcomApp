@@ -233,6 +233,7 @@ const verifyOtp = async (req, res) => {
     if (referralCode && referralCode.trim() !== '') {
       referrer = await User.findOne({ referralCode: referralCode.trim() });
     }
+    
 
     const newUser = new User({
       firstName,
@@ -243,7 +244,6 @@ const verifyOtp = async (req, res) => {
       referralCode: await createUniqueReferralCode(),
       invitedBy: referrer ? referrer._id : null,
       invitedAt: referrer ? Date.now() : null,
-      isFirstLogin:false
     });
     await newUser.save();
 
@@ -580,9 +580,12 @@ const loadHomePage = async (req, res, next) => {
       ? wishlist.products.map((item) => item.productId.toString())
       : [];
 
+    
+
     const isHomePage = true
     if (userId) {
       const userData = await User.findById(userId);
+      console.log("user first login", userData.isFirstLogin===true)
 
       return res.render('user/Home-page', {
         user: userData,
@@ -713,6 +716,7 @@ const checkGoogleUserReferralCode = async (req, res) => {
 const skipReferral = async (req, res) => {
   try {
     await User.findByIdAndUpdate(req.session.userId, { isFirstLogin: false })
+    console.log("skipped the referral")
     return res.json({ message: "Skipped" })
   } catch (error) {
     console.error("Error while skip referral", error.message)

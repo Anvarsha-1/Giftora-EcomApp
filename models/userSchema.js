@@ -98,7 +98,7 @@ const userSchema = new mongoose.Schema(
     },
     isFirstLogin:{
       type: Boolean,
-      default:true,
+      default:false,
     },
     searchHistory: [
       {
