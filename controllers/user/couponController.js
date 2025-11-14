@@ -7,7 +7,7 @@ const UserCoupon = require('../../models/Referral-Coupon-Schema');
 const loadCoupons = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const searchQuery = req.query.clear === '1' ? '' : req.query.search || '';
+    const searchQuery = (req.query.clear === '1' ? '' : req.query.search || '').trim();
     const limit = 4;
     const show = req.query.show;
     const sortOptions = req.query.sort;
@@ -15,11 +15,7 @@ const loadCoupons = async (req, res) => {
     const user = await User.findById(req.session.user);
 
     let baseFilter = {
-      $or: [
-        { code: { $regex: searchQuery, $options: 'i' } },
-        { description: { $regex: searchQuery, $options: 'i' } },
-      ],
-      isDeleted: false,
+       isDeleted: false,
       couponType: 'common',
     };
 
@@ -34,51 +30,61 @@ const loadCoupons = async (req, res) => {
       baseFilter.discountType = 'percentage';
     }
 
-    let sort = {};
-    switch (sortOptions) {
-      case 'oldest':
-        sort = { createdAt: 1 };
-        break;
-      case 'expiry-soon':
-        sort = { expiry: 1 };
-        break;
-      case 'most-used':
-        sort = { usedCount: -1 };
-        break;
-      default:
-        sort = { createdAt: -1 };
+    if (searchQuery) {
+      baseFilter.$or = [
+        { code: { $regex: searchQuery, $options: 'i' } },
+        { description: { $regex: searchQuery, $options: 'i' } },
+      ];
     }
 
-    const commonCoupons = await Coupon.find(baseFilter)
-      .sort(sort)
-      .skip((page - 1) * limit)
-      .limit(limit);
+    // 1. Fetch all matching common coupons (no pagination/sorting yet)
+    const commonCoupons = await Coupon.find(baseFilter);
 
     let allCoupons = [...commonCoupons];
 
-    if (user.redeemedUser && user.redeemedUser.length > 0) {
-      const userCoupons = await UserCoupon.find({ userId: user._id }).populate(
-        'couponId',
-      );
+    // 2. Fetch all matching referral coupons for the user
+    const userCoupons = await UserCoupon.find({ userId: user._id }).populate({
+      path: 'couponId',
+      match: { isDeleted: false },
+    });
 
-      for (const uc of userCoupons) {
-        const referralCoupon = uc.couponId;
-        if (
-          referralCoupon &&
-          !allCoupons.some((c) => c._id.equals(referralCoupon._id))
-        ) {
-          // Apply search filter to referral coupons as well
-          const searchRegex = new RegExp(searchQuery, 'i');
-          if (
-            searchQuery === '' ||
-            searchRegex.test(referralCoupon.code) ||
-            searchRegex.test(referralCoupon.description)
-          ) {
-            allCoupons.push(referralCoupon);
-          }
+    const searchRegex = new RegExp(searchQuery, 'i');
+    for (const uc of userCoupons) {
+      const referralCoupon = uc.couponId;
+      if (referralCoupon && !allCoupons.some((c) => c._id.equals(referralCoupon._id))) {
+        // Apply filters to referral coupons
+        const matchesSearch = searchQuery === '' || searchRegex.test(referralCoupon.code) || searchRegex.test(referralCoupon.description);
+        const matchesShow = 
+          (show === 'active' && referralCoupon.isActive && referralCoupon.expiry > new Date()) ||
+          (show === 'expired' && referralCoupon.expiry < new Date()) ||
+          (show === 'flat' && referralCoupon.discountType === 'flat') ||
+          (show === 'percentage' && referralCoupon.discountType === 'percentage') ||
+          !show;
+
+        if (matchesSearch && matchesShow) {
+          allCoupons.push(referralCoupon);
         }
       }
     }
+
+    // 3. Sort the combined array in memory
+    allCoupons.sort((a, b) => {
+      switch (sortOptions) {
+        case 'oldest':
+          return new Date(a.createdAt) - new Date(b.createdAt);
+        case 'expiry-soon':
+          return new Date(a.expiry) - new Date(b.expiry);
+        case 'most-used':
+          return b.usedCount - a.usedCount;
+        default: // newest
+          return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+    });
+
+    // 4. Paginate the sorted array
+    const TotalCouponCount = allCoupons.length;
+    const totalPages = Math.ceil(TotalCouponCount / limit);
+    const paginatedCoupons = allCoupons.slice((page - 1) * limit, page * limit);
 
     const expiredCount = await Coupon.countDocuments({
       expiry: { $lt: new Date() },
@@ -87,13 +93,11 @@ const loadCoupons = async (req, res) => {
       isActive: true,
       expiry: { $gt: Date.now() },
     });
-    const TotalCouponCount = allCoupons.length;
-
-    const totalPages = Math.ceil(TotalCouponCount / limit);
 
     if (req.xhr) {
       return res.json({
-        coupons: allCoupons,
+        // Send the paginated slice for AJAX requests
+        coupons: paginatedCoupons,
         pagination: {
           currentPage: page,
           totalPages: totalPages,
@@ -105,7 +109,7 @@ const loadCoupons = async (req, res) => {
    
 
     return res.render('coupon-listing-page', {
-      coupon: allCoupons,
+      coupon: paginatedCoupons, // Pass the paginated coupons to the template
       couponIsActive,
       TotalCouponCount,
       totalPages,
