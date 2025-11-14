@@ -54,7 +54,7 @@ async function  applyReferralCode(newUserId, code) {
   session.startTransaction()
   try {
     const referrer = await User.find({ referralCode: code }).session(session)
-    if (string(referrer._id) === string(newUserId)) throw new Error('Cannot use your own referral')
+    if (referrer._id.toString() === newUserId.toString()) throw new Error('Cannot use your own referral')
 
     const newUser = await User.find({ userId: newUserId }).session(session)
 
