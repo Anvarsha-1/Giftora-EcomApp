@@ -50,7 +50,7 @@ const awardReferralCoupon = async (referrerId) => {
 };
 
 async function  applyReferralCode(newUserId, code) {
-  const session = mongoose.startSession()
+  const session = await mongoose.startSession()
   session.startTransaction()
   try {
     const referrer = await User.find({ referralCode: code }).session(session)

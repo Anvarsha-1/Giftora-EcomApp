@@ -1071,7 +1071,7 @@
         <%- include('../partials/user/footer.ejs') %>
 
             <!-- Referral Modal -->
-             <% if(user && user.isFirstLogin){ %>
+             <% if(user && user.isFirstLogin===true){ %>
             <div id="referralModal" class="referral-modal-overlay">
                 <div class="referral-modal-content">
                     <h2>Have a Referral Code?</h2>
@@ -1340,14 +1340,19 @@
 
                 // --- Referral Modal Logic ---
                 document.addEventListener('DOMContentLoaded', () => {
-                    const isFirstLogin = <%- (user && user.isFirstLogin) ? 'true' : 'false' %>;
+                    const isFirstLogin = <%- (user && user.isFirstLogin===true) ? 'true' : 'false' %>;
+                    const hasInteractedWithReferralModal = sessionStorage.getItem('hasInteractedWithReferralModal');
                     const referralModal = document.getElementById('referralModal');
                     const skipButton = document.getElementById('skipReferralBtn');
                     const referralForm = document.getElementById('referralForm');
                     const referralError = document.getElementById('referralError');
                     const referralInput = document.getElementById('referralCodeInput');
 
-                    if (isFirstLogin && referralModal) {
+                    // Only show the modal if it's the first login AND the user hasn't interacted with it yet in this session
+                    // This client-side check helps prevent the modal from reappearing on refresh if the server's isFirstLogin state is delayed.
+                    if (isFirstLogin && referralModal && !hasInteractedWithReferralModal) {
+                        // Add a small delay to ensure the page is loaded before showing the modal
+                        // and to prevent it from flashing on page load.
                         setTimeout(() => {
                             referralModal.classList.add('show');
                         }, 1500); 
@@ -1355,6 +1360,7 @@
 
                     const closeModal = () => {
                         if (referralModal) referralModal.classList.remove('show');
+                        sessionStorage.setItem('hasInteractedWithReferralModal', 'true'); // Mark as interacted for this session
                     };
 
                     // Handle Skip

@@ -243,6 +243,7 @@ const verifyOtp = async (req, res) => {
       referralCode: await createUniqueReferralCode(),
       invitedBy: referrer ? referrer._id : null,
       invitedAt: referrer ? Date.now() : null,
+      isFirstLogin:false
     });
     await newUser.save();
 
