@@ -585,7 +585,7 @@ const loadHomePage = async (req, res, next) => {
     const isHomePage = true
     if (userId) {
       const userData = await User.findById(userId);
-      console.log("user first login", userData.isFirstLogin===true)
+     
 
       return res.render('user/Home-page', {
         user: userData,
@@ -705,7 +705,7 @@ const skipReferral = async (req, res) => {
     const userId = req.session.user;
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
     await User.findByIdAndUpdate(userId, { isFirstLogin: false });
-    console.log("skipped the referral")
+    
     return res.json({ message: "Skipped" })
   } catch (error) {
     console.error("Error while skip referral", error.message)
@@ -718,7 +718,7 @@ const checkGoogleUserReferralCode = async (req, res) => {
     const { code } = req.body
     const newUserId = req.session.user
     await applyReferralCode(newUserId, code)
-    return res.json({ message: 'Referral applied — rewards added!' })
+    return res.json({ success:true})
   } catch (error) {
     console.log("error happened while checking googleCouponCode")
     return res.status(400).json({ message: error.message })
