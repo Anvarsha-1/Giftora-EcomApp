@@ -716,7 +716,7 @@ const skipReferral = async (req, res) => {
 const checkGoogleUserReferralCode = async (req, res) => {
   try {
     const { code } = req.body
-    const newUserId = req.session.userId
+    const newUserId = req.session.user
     await applyReferralCode(newUserId, code)
     return res.json({ message: 'Referral applied — rewards added!' })
   } catch (error) {

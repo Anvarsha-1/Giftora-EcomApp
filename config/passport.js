@@ -56,6 +56,7 @@ passport.use(
         });
 
         await newUser.save();
+        
         return done(null, newUser);
       } catch (err) {
         done(err);
