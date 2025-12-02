@@ -297,11 +297,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <!-- Toast Container -->
-        <div id="toastContainer" class="toast-container"></div>
-
-        <script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>        <script>
             document.addEventListener('DOMContentLoaded', () => {
                 lucide.createIcons();
 
@@ -321,32 +317,6 @@
                     });
                 });
             });
-
-            function showToast(message, type = 'success') {
-                const toastContainer = document.getElementById('toastContainer');
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-
-                const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
-                const iconColor = type === 'success' ? 'text-green-600' : 'text-red-600';
-
-                toast.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <i class="${icon} ${iconColor}"></i>
-                    <span class="text-gray-900 font-medium">${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-gray-400 hover:text-gray-600">
-                        <i class="ri-close-line"></i>
-                    </button>
-                </div>
-            `;
-
-                toastContainer.appendChild(toast);
-                setTimeout(() => toast.classList.add('show'), 100);
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                    setTimeout(() => toast.remove(), 300);
-                }, 4000);
-            }
 
             async function updateQuantity(itemId, newQuantity) {
                 try {
@@ -469,7 +439,15 @@
                             const result = await response.json();
 
                             if (result.success) {
-                                showToast('Item Removed', 'success');
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'success',
+                                    title: 'Item Removed',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    timerProgressBar: true
+                                });
                                 const itemRow = document.querySelector(`div[data-item-id="${productId}"]`);
                                 if (itemRow) {
                                     itemRow.remove();
@@ -487,25 +465,41 @@
                                     // Show empty cart message
                                     const emptyCartMessage = document.getElementById('emptyCartMessage');
                                     if (emptyCartMessage) {
-                                        emptyCartMessage.classList.remove('hidden');
+                                        emptyCartMessage.classList.remove('d-none');
                                     }
                                     // Update summary to zero
                                     document.getElementById('total-items').textContent = '0';
                                     document.getElementById('cart-subtotal').textContent = '₹0';
                                     document.getElementById('cart-shipping').textContent = '₹50';
                                     document.getElementById('cart-total').textContent = '₹50';
+
                                     // Disable checkout button
                                     const checkoutBtn = document.getElementById('checkoutBtn');
                                     checkoutBtn.disabled = true;
-                                    checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
                                 } else {
                                     window.location.reload(); // Reload to get correct totals if items remain
                                 }
                             } else {
-                                showToast(result.message || 'Failed to remove item', 'error');
+                                Swal.fire({
+                                    toast: true,
+                                    position: 'top-end',
+                                    icon: 'error',
+                                    title: result.message || 'Failed to remove item',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    timerProgressBar: true
+                                });
                             }
                         } catch (error) {
-                            showToast('Failed to remove item', 'error');
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Failed to remove item',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
                         }
                     }
                 });

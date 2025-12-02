@@ -92,8 +92,8 @@ const addProduct = async (req, res) => {
       !description ||
       !category ||
       !quantity ||
-      !regularPrice ||
-      !offerPercentage
+      !regularPrice 
+      
     ) {
       if (req.files && req.files.length > 0) {
         await deleteUploadedImages(req.files);
@@ -285,8 +285,7 @@ const uploadEditProduct = async (req, res) => {
       !description.trim() ||
       !category ||
       !quantity.trim() ||
-      !regularPrice.trim() ||
-      !offerPercentage.trim()
+      !regularPrice.trim() 
     ) {
       await deleteUploadedImages(req.files);
       return res.status(400).json({

@@ -1,7 +1,7 @@
 const Order = require('../../models/orderSchema');
 const Wallet = require('../../models/walletSchema.js');
 const User = require('../../models/userSchema');
-const Coupon = require('../../models/couponSchema.js');
+const Product = require('../../models/productSchema.js')
 const mongoose = require('mongoose');
 
 const loadOrderPage = async (req, res) => {
@@ -374,8 +374,7 @@ const verifyOrderReturn = async (req, res) => {
       order.status = 'Delivered';
     } 
 
-    await order.save();
-
+    await order.save(); 
   
     if (item && item.productId) {
       await Product.updateOne(

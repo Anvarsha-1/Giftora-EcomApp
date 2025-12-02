@@ -13,6 +13,7 @@ const createUniqueReferralCode = require('../../helpers/generateReferralCode');
 const Wallet = require('../../models/walletSchema');
 const { awardReferralCoupon } = require('./referralController');
 const { applyReferralCode } = require('../../controllers/user/referralController')
+const logger = require('../../config/logger')
 
 const PageNotFound = async (req, res) => {
   try {
@@ -21,6 +22,11 @@ const PageNotFound = async (req, res) => {
       message: "Oops! The page you're looking for doesn't exist.",
     });
   } catch (error) {
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
+
     console.error('Error rendering 404 page:', error.message);
     res.redirect('/pageNotFound');
   }
@@ -50,7 +56,7 @@ const loadPLandingPage = async (req, res) => {
     const bestsellingData = productData.slice(4, 8);
     const flashSalesData = productData.slice(8, 12);
     const isHomePage = true
-    
+
     return res.render('user/Home-page', {
       user: null,
       firstName: null,
@@ -61,6 +67,11 @@ const loadPLandingPage = async (req, res) => {
       isHomePage,
     });
   } catch (error) {
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
+
     console.log('Home page not found', error.message);
     res.status(500).redirect('/pageNotFound');
   }
@@ -80,6 +91,10 @@ const loadSignUp = async (req, res) => {
       referralCode,
     });
   } catch (error) {
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     console.log('Sign Up page not found', error.message);
     res.status(404).json({ message: 'Error loading signup page' });
   }
@@ -168,7 +183,10 @@ const signUp = async (req, res) => {
       return res.status(200).json({ success: true });
     });
   } catch (error) {
-    console.error('Error in signUp:', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     res.status(500).json({
       message: 'An error occurred. Please try again.',
       formData: req.body || {},
@@ -178,14 +196,15 @@ const signUp = async (req, res) => {
   }
 };
 
-const renderVerifyOtp = async (req, res) => {
+const renderVerifyOtp = async (req, res,next) => {
   if (req.session.user) return res.redirect('/Home');
   try {
     const email = req.session.userData?.email;
 
     if (!email) {
-      console.warn(
+      logger.warn(
         '[VERIFY ] No email found in session. Redirecting to /signup.',
+        { route: req.originalUrl }
       );
       return res.redirect('/signup');
     }
@@ -193,13 +212,15 @@ const renderVerifyOtp = async (req, res) => {
     console.info('[VERIFY OTP] Rendering page with email:', email);
     return res.render('verify-otp', { email });
   } catch (error) {
-    console.error(
-      '[VERIFY OTP] Failed to render verify-otp page:',
-      error.message,
-    );
-    return res.status(500).render('error', {
-      message: 'An unexpected error occurred. Please try again later.',
+
+    logger.error('Failed to render verify-otp page', {
+      email: req.session.userData?.email,
+      route: req.originalUrl,
+      message: error.message,
+      stack: error.stack
     });
+
+    return next(error)
   }
 };
 
@@ -233,7 +254,7 @@ const verifyOtp = async (req, res) => {
     if (referralCode && referralCode.trim() !== '') {
       referrer = await User.findOne({ referralCode: referralCode.trim() });
     }
-    
+
 
     const newUser = new User({
       firstName,
@@ -271,8 +292,8 @@ const verifyOtp = async (req, res) => {
       await referrer.save();
     }
 
-    delete req.session.userOtp 
-    delete req.session.userData 
+    delete req.session.userOtp
+    delete req.session.userData
     req.session.save((err) => {
       if (err) console.error('Session save error:', err);
     });
@@ -285,7 +306,10 @@ const verifyOtp = async (req, res) => {
       message: 'OTP verified successfully',
     });
   } catch (error) {
-    console.error('Error in verifyOtp:', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.status(500).json({
       success: false,
       message: 'An error occurred. Please try again.',
@@ -321,7 +345,10 @@ const resendOtp = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Error occured :', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.status(500).json({
       success: false,
       message: 'Internal Server Error. Please try again',
@@ -339,7 +366,10 @@ const loadLogin = async (req, res) => {
       error: error || [],
     });
   } catch (error) {
-    console.log('Error loading login page', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.redirect('/PageNotFound').status(404);
   }
 };
@@ -382,7 +412,10 @@ const login = async (req, res) => {
       redirectUrl: '/home',
     });
   } catch (error) {
-    console.error('login error', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     res.json({
       success: false,
       message: 'Login failed. Please try again later',
@@ -399,7 +432,10 @@ const forgotPassword = async (req, res) => {
       success: req.flash('success'),
     });
   } catch (error) {
-    console.log('error while loading forgot password:', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.status(500).render('user/error-page');
   }
 };
@@ -440,7 +476,10 @@ const forgotPasswordValidation = async (req, res) => {
 
     return res.redirect('/otp-forgot-password');
   } catch (error) {
-    console.log('Error while forgot password validation', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.status(500).render('user/error-page');
   }
 };
@@ -453,7 +492,10 @@ const otpForgotPassword = async (req, res) => {
       success: req.flash('success'),
     });
   } catch (error) {
-    console.log('error while loading otpForgotPassword', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.render('user/error-page');
   }
 };
@@ -487,7 +529,10 @@ const verifyForgotPasswordOtp = async (req, res) => {
     req.flash('success', 'OTP verified successfully!');
     return res.redirect('/reset-password');
   } catch (error) {
-    console.log('Error verifying OTP:', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.render('user/error-page');
   }
 };
@@ -501,7 +546,10 @@ const loadResetPassword = async (req, res) => {
       success: req.flash('success'),
     });
   } catch (error) {
-    console.log('Error in loadReset Password', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res
       .status(500)
       .json({ success: false, message: 'Internal server error' });
@@ -545,7 +593,10 @@ const validateResetPassword = async (req, res) => {
 
     res.redirect('/login');
   } catch (error) {
-    console.log('error while reset password', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.status(500).render('user/error-page');
   }
 };
@@ -580,12 +631,12 @@ const loadHomePage = async (req, res, next) => {
       ? wishlist.products.map((item) => item.productId.toString())
       : [];
 
-    
+
 
     const isHomePage = true
     if (userId) {
       const userData = await User.findById(userId);
-     
+
 
       return res.render('user/Home-page', {
         user: userData,
@@ -598,7 +649,7 @@ const loadHomePage = async (req, res, next) => {
       });
     }
 
-    
+
 
     return res.render('user/Home-page', {
       user: null,
@@ -609,7 +660,10 @@ const loadHomePage = async (req, res, next) => {
       isHomePage
     });
   } catch (error) {
-    console.log('error loading home page', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return next(error);
   }
 };
@@ -620,7 +674,10 @@ const logout = async (req, res) => {
     res.clearCookie('connect.sid');
     res.redirect('/login');
   } catch (error) {
-    console.log('server error while logout', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     res.render('user/error-page');
   }
 };
@@ -632,7 +689,10 @@ const loadContactPage = async (req, res, next) => {
       user
     })
   } catch (error) {
-    console.error("Server error while loading contact", error.message)
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return next(error)
   }
 }
@@ -640,12 +700,15 @@ const loadContactPage = async (req, res, next) => {
 const loadAboutPage = async (req, res, next) => {
   try {
     const user = req.session.user
-    
+
     return res.render('about-page', {
       user
     })
   } catch (error) {
-    console.error("Error while loading about page", error.message)
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     next(error)
   }
 }
@@ -663,7 +726,7 @@ const liveSearch = async (req, res, next) => {
     const results = await product.aggregate([
       {
         $lookup: {
-          from: 'categories', 
+          from: 'categories',
           localField: 'category',
           foreignField: '_id',
           as: 'categoryDetails'
@@ -681,20 +744,23 @@ const liveSearch = async (req, res, next) => {
           ]
         }
       },
-      { $limit: 10 }, 
+      { $limit: 10 },
       {
         $project: {
           _id: 1,
           name: '$productName',
           category: '$categoryDetails.name',
-          image: { $arrayElemAt: ['$productImage.url', 0] } 
+          image: { $arrayElemAt: ['$productImage.url', 0] }
         }
       }
     ]);
 
     return res.json({ results });
   } catch (error) {
-    console.error('Live search API error:', error.message);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     next(error);
   }
 }
@@ -705,10 +771,13 @@ const skipReferral = async (req, res) => {
     const userId = req.session.user;
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
     await User.findByIdAndUpdate(userId, { isFirstLogin: false });
-    
+
     return res.json({ message: "Skipped" })
   } catch (error) {
-    console.error("Error while skip referral", error.message)
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.json({ message: "An error occured" })
   }
 }
@@ -718,9 +787,12 @@ const checkGoogleUserReferralCode = async (req, res) => {
     const { code } = req.body
     const newUserId = req.session.user
     await applyReferralCode(newUserId, code)
-    return res.json({ success:true})
+    return res.json({ success: true })
   } catch (error) {
-    console.log("error happened while checking googleCouponCode")
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
     return res.status(400).json({ message: error.message })
   }
 }
@@ -750,5 +822,5 @@ module.exports = {
   liveSearch,
   checkGoogleUserReferralCode,
   skipReferral,
-  
+
 };

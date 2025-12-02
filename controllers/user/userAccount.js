@@ -51,7 +51,7 @@ const myAccountDetails = async (req, res) => {
 
     const wishlistCount = result[0]?.WishlistCount || 0;
 
-    const OrderResult = await Order.aggregate([
+    const OrderResult = await Order.aggregate([{$match:{userId:new mongoose.Types.ObjectId(id)}},
       { $group: { _id: '$id', Count: { $sum: 1 } } },
     ]);
 
@@ -213,31 +213,26 @@ const updateUserDetails = async (req, res) => {
     const phoneRegex = /^[6-9]\d{9}$/;
 
     if (!firstName || !lastName || !phone) {
-      return res.json({ success: false, message: 'All fields required' });
-    }
-    if (!validName.test(firstName) || !validName.test(lastName)) {
-      return res.json({
-        success: false,
-        message: 'Name should only contain alphabets',
-      });
+      return res.status(400).json({ success: false, message: 'All fields are required.' });
     }
     if (firstName.length < 4) {
-      return res.json({
+      return res.status(400).json({
         success: false,
-        message: 'First Name should be at least 4 letters',
+        message: 'First Name must be at least 4 letters.',
+      });
+    }
+    if (!validName.test(firstName) || !validName.test(lastName)) {
+      return res.status(400).json({
+        success: false,
+        message: 'First and Last Name should only contain alphabets.',
       });
     }
     if (!phoneRegex.test(phone)) {
-      return res.json({
+      return res.status(400).json({
         success: false,
-        message: 'Please enter a valid phone number',
+        message: 'Please enter a valid 10-digit phone number.',
       });
     }
-
-    // const existingPhone = await User.findOne({ phone, _id: { $ne: id } });
-    // if (existingPhone) {
-    //     return res.json({ success: false, message: "Number is already existing" });
-    // }
 
     const user = await User.findById(id);
     if (!user) {

@@ -21,6 +21,7 @@ const loadCheckoutPage = async (req, res) => {
     let FiveMin = 5 * 60 * 1000;
 
     let offer = 0;
+    let couponCode = null
 
     if (!cart || !cart.items || cart.items.length === 0) {
       return res.render('user/checkout', {
@@ -33,6 +34,7 @@ const loadCheckoutPage = async (req, res) => {
         wallet,
         offer: offer || 0,
         discount: 0,
+        couponCode
       });
     }
 
@@ -51,7 +53,7 @@ const loadCheckoutPage = async (req, res) => {
       if (item.productId.status === 'Out Of Stock') {
         return res.json({
           success: false,
-          message: `${item.productName} is out of stock`,
+          message: `${item.productName} Out of stock`,
         });
       }
       const product = item.productId;
@@ -72,12 +74,13 @@ const loadCheckoutPage = async (req, res) => {
         offer: Math.abs(offer) || 0,
         discount: 0,
         bestOffer: product.bestOffer || 0,
+        couponCode
       };
     });
 
     const shipping = subTotal >= 1000 ? parseInt(0) : parseInt(50);
     let total = Number(subTotal + shipping);
-    let couponCode = null
+    
     const couponDiscount = req.session?.applyCoupon?.discount || 0
     
     if (req.session?.applyCoupon?.appliedAt){
@@ -105,7 +108,7 @@ const loadCheckoutPage = async (req, res) => {
       wallet,
       offer: offer || 0,
       discount: couponDiscount,
-      couponCode
+      couponCode: couponCode || 0,
     });
   } catch (error) {
     console.error('Error loading checkout page:', error.message);
@@ -140,7 +143,7 @@ const validateCheckout = async (req, res) => {
       ) {
         outOfStockItems.push({
           name: product?.productName || 'unknown Product',
-          reason: product.isBlocked ? 'Blocked' : 'Out of stock',
+          reason: product.isBlocked ? 'Blocked' : `only ${product.quantity} product left!`,
         });
       }
     }

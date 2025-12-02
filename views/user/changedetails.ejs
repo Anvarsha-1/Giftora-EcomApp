@@ -226,7 +226,7 @@
                                     <div class="profile-image-container">
                                         <div class="image-wrapper">
                                             <img id="profileImagePreview"
-                                                src="<%= user.profileImage?.url || '/images/default-profile.png' %>"
+                                                src="<%= user.profileImage?.url || '../../../../images/header/no profile dark version.jpeg' %>"
                                                 alt="Profile Preview" class="profile-image-preview" />
 
                                             <div class="image-overlay"
@@ -252,6 +252,7 @@
                                     </div>
 
                                     <p class="text-xs text-gray-500 mt-3 text-center">Max file size: 2MB. Accepted
+                                        <p id="image-error" class="text-red-500 text-xs mt-2 text-center hidden"></p>
                                         formats: JPG, PNG</p>
                                 </div>
 
@@ -260,25 +261,21 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                                     <input type="text" id="editFirstName" value="<%= user.firstName %>"
                                         class="form-input w-full">
+                                    <span id="firstName-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
                                     <input type="text" id="editLastName" value="<%= user.lastName %>"
                                         class="form-input w-full">
+                                    <span id="lastName-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                 </div>
                                 <div class="md:col-span-2">
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
                                     <input type="tel" id="editPhone" value="<%= user.phone %>"
                                         class="form-input w-full">
+                                    <span id="phone-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                 </div>
                             </form>
-                            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
-                                <a href="/account/profile" class="cancel-btn">Cancel</a>
-                                <button onclick="saveProfileChanges()"
-                                    class="save-btn flex items-center justify-center gap-2">
-                                    Save Changes
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -286,10 +283,43 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+            <a href="/account/profile" class="cancel-btn">Cancel</a>
+            <button id="save-btn"
+                class="save-btn flex items-center justify-center gap-2">
+                Save Changes
+            </button>
+        </div>
+
 
         <script>
             let removeProfileImage = false;
+            const showError = (fieldId, message) => {
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.classList.remove('hidden');
+                }
+            };
+
+            const hideError = (fieldId) => {
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                if (errorElement) {
+                    errorElement.textContent = '';
+                    errorElement.classList.add('hidden');
+                }
+            };
+
+            const clearAllErrors = () => {
+                hideError('firstName');
+                hideError('lastName');
+                hideError('phone');
+                hideError('image');
+            };
+
+
             let hasCurrentImage = <%= user.profileImage?.url ? 'true' : 'false' %>;
+            const defaultProfileImage = '/images/header/no profile dark version.jpeg';
 
             document.addEventListener("DOMContentLoaded", function () {
                 const profileImageInput = document.getElementById('profileImage');
@@ -310,34 +340,18 @@
                     const file = this.files[0];
                     if (file) {
                         if (file.size > 2 * 1024 * 1024) {
-                            Swal.fire({
-                                toast: true,
-                                icon: 'error',
-                                position: 'top-end',
-                                title: 'File size exceeds 2MB',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                background: '#EF4444',
-                                color: '#fff'
-                            });
+                            showError('image', 'File size exceeds 2MB.');
                             this.value = '';
                             return;
                         }
 
-                        if (!file.type.startsWith('image/')) {
-                            Swal.fire({
-                                toast: true,
-                                icon: 'error',
-                                position: 'top-end',
-                                title: 'Invalid image format',
-                                showConfirmButton: false,
-                                timer: 3000,
-                                background: '#EF4444',
-                                color: '#fff'
-                            });
+                        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                        if (!allowedTypes.includes(file.type)) {
+                            showError('image', 'Invalid format. Only JPG, PNG, and JPEG are allowed.');
                             this.value = '';
                             return;
                         }
+                        hideError('image');
 
                         const reader = new FileReader();
                         reader.onload = function (e) {
@@ -361,7 +375,7 @@
                         confirmButtonText: 'Yes, remove it'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            profileImagePreview.src = '/images/default-profile.png';
+                            profileImagePreview.src = defaultProfileImage;
                             profileImageInput.value = '';
                             hasCurrentImage = false;
                             removeProfileImage = true;
@@ -383,14 +397,48 @@
                         chooseImageBtn.querySelector('i').className = 'ri-image-add-line';
                     }
                 }
+
+                const saveBtn = document.getElementById('save-btn');
+                if (saveBtn) {
+                    saveBtn.addEventListener('click', saveProfileChanges);
+                }
             });
 
+            const validateForm = () => {
+                clearAllErrors();
+                let isValid = true;
+
+                const firstName = document.getElementById('editFirstName').value.trim();
+                const lastName = document.getElementById('editLastName').value.trim();
+                const phone = document.getElementById('editPhone').value.trim();
+
+                if (!/^[A-Za-z\s]{4,}$/.test(firstName)) {
+                    showError('firstName', 'First Name must be at least 4 letters and contain only alphabets.');
+                    isValid = false;
+                }
+
+                if (!/^[A-Za-z\s]+$/.test(lastName)) {
+                    showError('lastName', 'Last Name must contain only alphabets.');
+                    isValid = false;
+                }
+
+                if (!/^[6-9]\d{9}$/.test(phone)) {
+                    showError('phone', 'Please enter a valid 10-digit phone number.');
+                    isValid = false;
+                }
+
+                return isValid;
+            };
+
             async function saveProfileChanges() {
+                if (!validateForm()) {
+                    return;
+                }
+
                 const firstName = document.getElementById('editFirstName').value.trim();
                 const lastName = document.getElementById('editLastName').value.trim();
                 const phone = document.getElementById('editPhone').value.trim();
                 const profileImage = document.getElementById('profileImage').files[0];
-
                 const saveBtn = document.querySelector('.save-btn');
                 const originalBtnHTML = saveBtn.innerHTML;
                 saveBtn.disabled = true;
@@ -428,16 +476,17 @@
                             window.location.href = "/account/profile"
                         });
                     } else {
-                        Swal.fire({
-                            toast: true,
-                            icon: 'error',
-                            title: data.message || 'Failed to update',
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            background: '#EF4444',
-                            color: '#fff'
-                        });
+                        // Display server-side validation errors inline
+                        const message = data.message.toLowerCase();
+                        if (message.includes('first name')) {
+                            showError('firstName', data.message);
+                        } else if (message.includes('last name') || message.includes('alphabets')) {
+                            showError('lastName', data.message);
+                        } else if (message.includes('phone') || message.includes('number')) {
+                            showError('phone', data.message);
+                        } else {
+                            showError('phone', data.message); // Show general errors near the last field
+                        }
                     }
                 } catch (error) {
                     Swal.fire({

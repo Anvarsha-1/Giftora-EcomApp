@@ -111,6 +111,7 @@
         </div>
         <div class="timer">
           <span id="countdown">0 : 60</span> seconds remaining
+          <span id="errorDisplay" style="color:red"></span>
         </div>
         <div class="buttons">
           <button type="button" class="go-back" onclick="window.location.href='/signup'">Go back</button>
@@ -126,6 +127,7 @@
     let resendCooldown = false;
     const countdownElement = document.getElementById('countdown');
     const resendButton = document.querySelector('.resend-btn');
+    const errorDisplay = document.getElementById('errorDisplay')
 
     function updateCountdown() {
       const minutes = Math.floor(timeLeft / 60);
@@ -135,10 +137,13 @@
       if (timeLeft > 0) {
         timeLeft--;
         resendButton.disabled = true;
+        errorDisplay.disabled = true;
       } else {
         countdownElement.textContent = '0 : 00';
         if (!resendCooldown) {
           resendButton.disabled = false;
+          errorDisplay.disabled = false;
+          errorDisplay.textContent = "OTP has been expired"
         }
         clearInterval(countdownInterval);
       }

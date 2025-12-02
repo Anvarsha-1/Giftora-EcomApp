@@ -462,9 +462,9 @@
                         <div class="profile-dropdown" id="profileDropdown">
                             <button class="profile-button" id="profileToggle" aria-label="Profile">
                                 <% if (user.profileImage?.url) { %>
-                                    <img src="<%= user.profileImage.url %>" alt="Profile" class="profile-img">
+                                    <img src="<%= user.profileImage.url  %>" alt="Profile" class="profile-img">
                                     <% } else { %>
-                                        <i class="fas fa-user"></i>
+                                        <img src="../../../images/header/no profile dark version.jpeg" alt="Profile" class="profile-img">
                                         <% } %>
                             </button>
                             <div class="dropdown-menu" id="dropdownMenu">

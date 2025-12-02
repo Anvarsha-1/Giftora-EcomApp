@@ -46,7 +46,10 @@ const awardReferralCoupon = async (referrerId) => {
 
     await userCouponLink.save();
   } catch (error) {
-    console.error('Error awarding referral coupon:', error);
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
   }
 };
 
@@ -103,7 +106,11 @@ async function applyReferralCode(newUserId, code) {
     return { success: true, message: 'Referral applied! Your reward is in your wallet.' };
   } catch (error) {
     await session.abortTransaction();
-    logger.error("Something crashed",error)
+    logger.error("Referral application crashed: %s", error.message, {
+      error: error,
+      stack: error.stack
+    });
+
     throw error;
   } finally {
     session.endSession();

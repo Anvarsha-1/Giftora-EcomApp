@@ -131,6 +131,7 @@
                                             <input type="text" id="fullName" name="fullName"
                                                 class="w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                                 placeholder="Enter your full name">
+                                            <span id="fullName-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                         </div>
                                     </div>
                                     <!-- Mobile Number -->
@@ -146,6 +147,7 @@
                                             <input type="tel" id="mobileNumber" name="mobileNumber"
                                                 class="w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                                 placeholder="Enter your mobile number">
+                                            <span id="mobileNumber-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                         </div>
                                     </div>
                                     <!-- City -->
@@ -161,6 +163,7 @@
                                             <input type="text" id="city" name="city"
                                                 class="w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                                 placeholder="Enter your city">
+                                            <span id="city-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                         </div>
                                     </div>
                                     <!-- State -->
@@ -169,46 +172,13 @@
                                             State <span class="text-red-500">*</span>
                                         </label>
                                         <div class="relative">
-                                            <select id="state" name="state"
-                                                class="w-full h-12 px-4 pr-8 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent appearance-none bg-white">
-                                                <option value="">Select a state</option>
-                                                <option value="andhra-pradesh">Andhra Pradesh</option>
-                                                <option value="arunachal-pradesh">Arunachal Pradesh</option>
-                                                <option value="assam">Assam</option>
-                                                <option value="bihar">Bihar</option>
-                                                <option value="chhattisgarh">Chhattisgarh</option>
-                                                <option value="goa">Goa</option>
-                                                <option value="gujarat">Gujarat</option>
-                                                <option value="haryana">Haryana</option>
-                                                <option value="himachal-pradesh">Himachal Pradesh</option>
-                                                <option value="jharkhand">Jharkhand</option>
-                                                <option value="karnataka">Karnataka</option>
-                                                <option value="kerala">Kerala</option>
-                                                <option value="madhya-pradesh">Madhya Pradesh</option>
-                                                <option value="maharashtra">Maharashtra</option>
-                                                <option value="manipur">Manipur</option>
-                                                <option value="meghalaya">Meghalaya</option>
-                                                <option value="mizoram">Mizoram</option>
-                                                <option value="nagaland">Nagaland</option>
-                                                <option value="odisha">Odisha</option>
-                                                <option value="punjab">Punjab</option>
-                                                <option value="rajasthan">Rajasthan</option>
-                                                <option value="sikkim">Sikkim</option>
-                                                <option value="tamil-nadu">Tamil Nadu</option>
-                                                <option value="telangana">Telangana</option>
-                                                <option value="tripura">Tripura</option>
-                                                <option value="uttar-pradesh">Uttar Pradesh</option>
-                                                <option value="uttarakhand">Uttarakhand</option>
-                                                <option value="west-bengal">West Bengal</option>
-                                            </select>
-                                            <div
-                                                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                                <div class="w-5 h-5 flex items-center justify-center">
-                                                    <i class="ri-arrow-down-s-line text-gray-400"></i>
-                                                </div>
-                                            </div>
+                                            <input type="text" id="state" name="state" placeholder="Enter state" class="w-full h-12 px-4 pr-8 border border-gray-300 rounded-md 
+                                                       focus:outline-none focus:ring-2 focus:ring-primary 
+                                                       focus:border-transparent bg-white" />
+                                            <span id="state-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                         </div>
                                     </div>
+
                                     <!-- District -->
                                     <div>
                                         <label for="district" class="block text-sm font-medium text-gray-700 mb-2">
@@ -222,6 +192,7 @@
                                                 class="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 hidden dropdown-content">
                                                 <div id="district-options" class="py-1"></div>
                                             </div>
+                                            <span id="district-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                         </div>
                                     </div>
                                     <!-- Pincode -->
@@ -237,6 +208,7 @@
                                             <input type="text" id="pinCode" name="pincode" maxlength="6"
                                                 class="w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                                 placeholder="Enter 6-digit pincode">
+                                            <span id="pinCode-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                         </div>
                                     </div>
                                     <!-- Landmark -->
@@ -252,6 +224,7 @@
                                             <input type="text" id="landmark" name="landmark"
                                                 class="w-full h-12 pl-10 pr-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                                                 placeholder="Enter nearby landmark (optional)">
+                                            <span id="landmark-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                         </div>
                                     </div>
                                     <!-- Address -->
@@ -267,6 +240,7 @@
                                             <textarea id="address" name="address"
                                                 class="w-full h-20 pl-10 pr-4 pt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
                                                 placeholder="Enter your full address (e.g., House No., Street, Area)"></textarea>
+                                            <span id="address-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                         </div>
                                     </div>
                                     <!-- Address Type -->
@@ -291,6 +265,7 @@
                                                 <span class="text-sm text-gray-700">Other</span>
                                             </label>
                                         </div>
+                                        <span id="addressType-error" class="text-red-500 text-sm mt-1 hidden"></span>
                                     </div>
                                     <!-- Form Actions -->
                                     <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
@@ -315,199 +290,233 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        document.getElementById('address-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            addAddress();
-        });
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('address-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                addAddress();
+            });
 
-        const addAddress = async () => {
-            const fullName = document.getElementById('fullName').value;
-            const mobileNumber = document.getElementById("mobileNumber").value;
-            const city = document.getElementById("city").value;
-            const state = document.getElementById("state").value;
-            const district = document.getElementById("district").value;
-            const pinCode = document.getElementById("pinCode").value;
-            const landmark = document.getElementById("landmark").value;
-            const address = document.getElementById("address").value;
-            const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+            const showError = (fieldId, message) => {
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                if (errorElement) {
+                    errorElement.textContent = message;
+                    errorElement.classList.remove('hidden');
+                }
+            };
 
-            if (!fullName || !mobileNumber || !city || !state || !district || !pinCode || !address || !addressType) {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Please fill in all required fields.',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    background: '#ffffff',
-                    color: '#333',
-                    customClass: {
-                        popup: 'shadow-lg rounded-xl text-sm p-4',
-                        title: 'font-medium',
-                        timerProgressBar: 'bg-primary'
+            const hideError = (fieldId) => {
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                if (errorElement) {
+                    errorElement.textContent = '';
+                    errorElement.classList.add('hidden');
+                }
+            };
+
+            const validateForm = () => {
+                let isValid = true;
+                const fieldsToClear = ['fullName', 'mobileNumber', 'city', 'state', 'district', 'pinCode', 'landmark', 'address', 'addressType'];
+                fieldsToClear.forEach(hideError);
+
+                // Field values
+                const fullName = document.getElementById('fullName').value.trim();
+                const mobileNumber = document.getElementById('mobileNumber').value.trim();
+                const city = document.getElementById('city').value.trim();
+                const state = document.getElementById('state').value.trim();
+                const district = document.getElementById('district').value.trim();
+                const pinCode = document.getElementById('pinCode').value.trim();
+                const landmark = document.getElementById('landmark').value.trim();
+                const address = document.getElementById('address').value.trim();
+                const addressType = document.querySelector('input[name="addressType"]:checked');
+
+                // Full Name Validation
+                if (!/^[a-zA-Z\s'-]{3,50}$/.test(fullName)) {
+                    showError('fullName', 'Full Name must be 3-50 characters and contain only letters, spaces, or hyphens.');
+                    isValid = false;
+                }
+
+                // Mobile Number Validation
+                if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
+                    showError('mobileNumber', 'Must be a valid 10-digit number starting with 6, 7, 8, or 9.');
+                    isValid = false;
+                }
+
+                // City, State, District Validation
+                if (!/^[a-zA-Z\s'-]{2,30}$/.test(city)) {
+                    showError('city', 'City must be 2-30 characters and contain only letters, spaces, or hyphens.');
+                    isValid = false;
+                }
+                if (!/^[a-zA-Z\s'-]{2,30}$/.test(state)) {
+                    showError('state', 'State must be 2-30 characters and contain only letters, spaces, or hyphens.');
+                    isValid = false;
+                }
+                if (!/^[a-zA-Z\s'-]{2,30}$/.test(district)) {
+                    showError('district', 'District must be 2-30 characters and contain only letters, spaces, or hyphens.');
+                    isValid = false;
+                }
+
+                // Pincode Validation
+                if (!/^\d{6}$/.test(pinCode)) {
+                    showError('pinCode', 'Pin Code must be a valid 6-digit number.');
+                    isValid = false;
+                }
+
+                // Landmark Validation (Optional)
+                if (landmark && !/^[a-zA-Z0-9\s',.-]{0,100}$/.test(landmark)) {
+                    showError('landmark', 'Landmark contains invalid characters.');
+                    isValid = false;
+                }
+
+                // Address Validation
+                if (address.length < 5 || address.length > 200) {
+                    showError('address', 'Address must be between 5 and 200 characters long.');
+                    isValid = false;
+                }
+
+                // Address Type Validation
+                if (!addressType) {
+                    showError('addressType', 'Please select an address type.');
+                    isValid = false;
+                }
+
+                return isValid;
+            };
+
+            const addAddress = async () => {
+                if (!validateForm()) {
+                    return; // Stop submission if validation fails
+                }
+
+                const fullName = document.getElementById('fullName').value;
+                const mobileNumber = document.getElementById("mobileNumber").value;
+                const city = document.getElementById("city").value;
+                const state = document.getElementById("state").value;
+                const district = document.getElementById("district").value;
+                const pinCode = document.getElementById("pinCode").value;
+                const landmark = document.getElementById("landmark").value;
+                const address = document.getElementById("address").value;
+                const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+
+                const submitBtn = document.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Saving...';
+                submitBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/account/add/addresses', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            fullName,
+                            mobileNumber,
+                            city,
+                            state,
+                            district,
+                            pinCode,
+                            landmark,
+                            address,
+                            addressType
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Address added successfully!',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            timerProgressBar: true,
+                            background: '#ffffff',
+                            color: '#333',
+                            customClass: {
+                                popup: 'shadow-lg rounded-xl text-sm p-4',
+                                title: 'font-medium',
+                                timerProgressBar: 'bg-primary'
+                            }
+                        });
+
+                        setTimeout(() => {
+                            window.location.href = "/account/addresses";
+                        }, 1500);
+                    } else {
+                        // This part is for server-side errors. We can show a generic inline error or a toast.
+                        // For now, we'll show it near the button.
+                        showError('addressType', data.message || 'Failed to add address. Please try again.');
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
                     }
-                });
-                return;
-            }
-
-            const submitBtn = document.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Saving...';
-            submitBtn.disabled = true;
-
-            try {
-                const response = await fetch('/account/add/addresses', {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        fullName,
-                        mobileNumber,
-                        city,
-                        state,
-                        district,
-                        pinCode,
-                        landmark,
-                        address,
-                        addressType
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Address added successfully!',
-                        showConfirmButton: false,
-                        timer: 1500,
-                        timerProgressBar: true,
-                        background: '#ffffff',
-                        color: '#333',
-                        customClass: {
-                            popup: 'shadow-lg rounded-xl text-sm p-4',
-                            title: 'font-medium',
-                            timerProgressBar: 'bg-primary'
-                        }
-                    });
-
-                    setTimeout(() => {
-                        window.location.href = "/account/addresses";
-                    }, 1500);
-                } else {
-                    Swal.fire({
-                        toast: true,
-                        position: 'top-end',
-                        icon: 'error',
-                        title: data.message || 'Failed to add address. Please try again.',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        timerProgressBar: true,
-                        background: '#ffffff',
-                        color: '#333',
-                        customClass: {
-                            popup: 'shadow-lg rounded-xl text-sm p-4',
-                            title: 'font-medium',
-                            timerProgressBar: 'bg-primary'
-                        }
-                    });
+                } catch (error) {
+                    showError('addressType', 'Something went wrong. Please try again.');
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
                 }
-            } catch (error) {
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'error',
-                    title: 'Something went wrong. Please try again.',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    background: '#ffffff',
-                    color: '#333',
-                    customClass: {
-                        popup: 'shadow-lg rounded-xl text-sm p-4',
-                        title: 'font-medium',
-                        timerProgressBar: 'bg-primary'
-                    }
-                });
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }
-        };
-    </script>
-
-    <script id="district-autocomplete">
-        document.addEventListener('DOMContentLoaded', function () {
-            const stateSelect = document.getElementById('state');
-            const districtInput = document.getElementById('district');
-            const districtDropdown = document.getElementById('district-dropdown');
-            const districtOptions = document.getElementById('district-options');
-            const stateDistricts = {
-                'maharashtra': ['Mumbai', 'Pune', 'Nashik', 'Nagpur', 'Aurangabad', 'Solapur', 'Kolhapur', 'Sangli', 'Satara', 'Ahmednagar'],
-                'karnataka': ['Bangalore', 'Mysore', 'Hubli', 'Mangalore', 'Belgaum', 'Gulbarga', 'Davangere', 'Bellary', 'Bijapur', 'Shimoga'],
-                'tamil-nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tirunelveli', 'Tiruppur', 'Vellore', 'Erode', 'Thoothukudi'],
-                'gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Junagadh', 'Gandhinagar', 'Anand', 'Bharuch'],
-                'rajasthan': ['Jaipur', 'Jodhpur', 'Kota', 'Bikaner', 'Ajmer', 'Udaipur', 'Bhilwara', 'Alwar', 'Bharatpur', 'Sikar'],
-                'uttar-pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Meerut', 'Allahabad', 'Bareilly', 'Aligarh', 'Moradabad'],
-                'west-bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Bardhaman', 'Malda', 'Baharampur', 'Habra', 'Kharagpur'],
-                'telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Khammam', 'Karimnagar', 'Ramagundam', 'Mahbubnagar', 'Nalgonda', 'Adilabad', 'Suryapet'],
-                'andhra-pradesh': ['Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Rajahmundry', 'Tirupati', 'Kadapa', 'Kakinada', 'Anantapur'],
-                'kerala': ['Thiruvananthapuram', 'Kozhikode', 'Thrissur', 'Kollam', 'Palakkad', 'Alappuzha', 'Malappuram', 'Kannur', 'Kasaragod', 'Pathanamthitta', 'Wayanad', 'Idukki', 'Ernakulam', 'Kottayam'],
-                'punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali', 'Firozpur', 'Hoshiarpur', 'Batala', 'Pathankot'],
-                'haryana': ['Faridabad', 'Gurgaon', 'Panipat', 'Ambala', 'Yamunanagar', 'Rohtak', 'Hisar', 'Karnal', 'Sonipat', 'Panchkula'],
-                'bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Darbhanga', 'Bihar Sharif', 'Arrah', 'Begusarai', 'Katihar'],
-                'odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Brahmapur', 'Sambalpur', 'Puri', 'Balasore', 'Bhadrak', 'Baripada', 'Jharsuguda'],
-                'assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur', 'Bongaigaon', 'Dhubri', 'Diphu'],
-                'jharkhand': ['Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro', 'Deoghar', 'Phusro', 'Hazaribagh', 'Giridih', 'Ramgarh', 'Medininagar'],
-                'madhya-pradesh': ['Bhopal', 'Indore', 'Jabalpur', 'Gwalior', 'Ujjain', 'Sagar', 'Dewas', 'Satna', 'Ratlam', 'Rewa'],
-                'chhattisgarh': ['Raipur', 'Bhilai', 'Korba', 'Bilaspur', 'Durg', 'Rajnandgaon', 'Jagdalpur', 'Raigarh', 'Ambikapur', 'Mahasamund'],
-                'uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Rudrapur', 'Kashipur', 'Rishikesh', 'Kotdwar', 'Ramnagar', 'Manglaur'],
-                'himachal-pradesh': ['Shimla', 'Dharamshala', 'Solan', 'Mandi', 'Palampur', 'Baddi', 'Nahan', 'Paonta Sahib', 'Sundernagar', 'Chamba'],
-                'goa': ['Panaji', 'Vasco da Gama', 'Margao', 'Mapusa', 'Ponda', 'Bicholim', 'Curchorem', 'Sanquelim', 'Cuncolim', 'Quepem']
             };
-            let currentDistricts = [];
-            stateSelect.addEventListener('change', function () {
-                const selectedState = this.value;
-                currentDistricts = stateDistricts[selectedState] || [];
-                districtInput.value = '';
-                districtDropdown.classList.add('hidden');
-            });
-            districtInput.addEventListener('input', function () {
-                const query = this.value.toLowerCase();
-                if (query.length === 0) {
-                    districtDropdown.classList.add('hidden');
-                    return;
+
+            function debounce(fn, delay = 500) {
+                let timer;
+                return (...args) => {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => fn.apply(this, args), delay);
+                };
+            }
+
+
+            async function handlePinCodeInput(e) {
+                const pinCode = e.target.value.trim()
+
+                if (pinCode.length < 6) {
+                    hideError('pinCode');
+                    return
                 }
-                const filteredDistricts = currentDistricts.filter(district =>
-                    district.toLowerCase().includes(query)
-                );
-                if (filteredDistricts.length > 0) {
-                    districtOptions.innerHTML = filteredDistricts.map(district =>
-                        `<div class="px-4 py-2 hover:bg-gray-100 cursor-pointer" data-district="${district}">${district}</div>`
-                    ).join('');
-                    districtDropdown.classList.remove('hidden');
-                } else {
-                    districtDropdown.classList.add('hidden');
+                try {
+
+                    const response = await fetch(`https://api.postalpincode.in/pincode/${pinCode}`)
+                    const data = await response.json()
+
+                    if (data[0].Status === "Success") {
+                        const post = data[0].PostOffice[0]
+
+                        document.getElementById('city').value = post.Block === "NA" ? post.Name : post.Block || ""
+                        document.getElementById("state").value = post.State || ""
+                        document.getElementById("district").value = post.District || ""
+
+                        hideError('pinCode');
+                    } else {
+                        showError('pinCode', "Invalid Pincode.");
+
+                        document.getElementById('city').value = ""
+                        document.getElementById("state").value = ""
+                        document.getElementById("district").value = ""
+
+                    }
+
+                } catch (error) {
+                    console.log(error.message)
+                    showError("pinCode", "API error. Try again.");
                 }
-            });
-            districtOptions.addEventListener('click', function (e) {
-                if (e.target.dataset.district) {
-                    districtInput.value = e.target.dataset.district;
-                    districtDropdown.classList.add('hidden');
-                }
-            });
-            document.addEventListener('click', function (e) {
-                if (!districtInput.contains(e.target) && !districtDropdown.contains(e.target)) {
-                    districtDropdown.classList.add('hidden');
-                }
-            });
+            }
+
+            const validatePinCode = () => {
+                const pinCode = document.getElementById('pinCode').value.trim();
+                if (!/^\d{6}$/.test(pinCode)) {
+                    showError('pinCode', 'Pin Code must be a valid 6-digit number.');
+                } else { hideError('pinCode'); }
+            };
+
+            const pincodeField = document.getElementById("pinCode");
+            if (pincodeField) {
+                pincodeField.addEventListener("input", debounce(handlePinCodeInput, 500));
+            }
         });
     </script>
+
+
+    
 
     <script id="mobile-menu">
         document.addEventListener('DOMContentLoaded', function () {

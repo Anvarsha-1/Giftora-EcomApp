@@ -173,7 +173,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="offerPercentage">Offer Percentage (%)</label>
-                                        <input type="number" id="offerPercentage" name="offerPercentage" min="1"
+                                        <input type="number" id="offerPercentage" name="offerPercentage" min="0"
                                             max="100" step="1" value="<%= formData?.productOffer ?? '' %>"
                                             placeholder="Enter offer percentage (1-100)"/>
                                         <span class="error" id="offerPercentage-error"></span>
@@ -192,6 +192,7 @@
                                     <div class="form-group">
                                         <label>Product Images (3 required)</label>
                                         <span class="error" id="images-error"></span>
+                                        <span id="imageError" style="color:red;"></span>
                                         <div class="image-upload">
                                             <% for (let i=0; i < 3; i++) { const
                                                 existingImage=formData?.productImage?.[i] || null; %>
@@ -290,15 +291,17 @@
         document.querySelectorAll('input[type="file"]').forEach((input, index) => {
             input.addEventListener('change', (e) => {
                 const file = e.target.files[0];
+                
                 if (file) {
                     const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
                     if (!validTypes.includes(file.type)) {
-                        document.getElementById('images-error').textContent = 'Please upload a valid image (PNG, JPEG, JPG).';
+                
+                        document.getElementById('imageError').textContent = 'Please upload a valid image (PNG, JPEG, JPG).';
                         input.value = '';
                         validateImages();
                         return;
                     }
-                    document.getElementById('images-error').textContent = '';
+                    document.getElementById('imageError').textContent = '';
                     currentInputIndex = index + 1;
                     const reader = new FileReader();
                     reader.onload = (event) => {
@@ -453,7 +456,7 @@
             const offerPercentage = document.getElementById('offerPercentage');
             const offerValue = parseFloat(offerPercentage.value);
             console.log("frontend", offerValue)
-            if (!offerValue || offerValue < 1 || offerValue > 100 || isNaN(offerValue)) {
+            if ( offerValue < 0 || offerValue > 100 || isNaN(offerValue)) {
                 document.getElementById('offerPercentage-error').textContent = 'Please enter a valid offer percentage (1-100).';
                 valid = false;
             }

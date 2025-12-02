@@ -302,12 +302,12 @@
         valid = false;
       }
       const offerPercentage = document.getElementById('offerPercentage');
-      if (!offerPercentage.value || offerPercentage.value < 0 || offerPercentage.value > 100) {
+      if (offerPercentage.value < 0 || offerPercentage.value > 100) {
         document.getElementById('offerPercentage-error').textContent = 'Please enter a valid offer percentage (0-100).';
         valid = false;
       }
       const calculatedSalesPrice = document.getElementById('calculatedSalesPrice');
-      if (!calculatedSalesPrice.value || parseFloat(calculatedSalesPrice.value) >= parseFloat(regularPrice.value)) {
+      if (!calculatedSalesPrice.value || parseFloat(calculatedSalesPrice.value) > parseFloat(regularPrice.value)) {
         document.getElementById('offerPercentage-error').textContent = 'Offer percentage must result in a sales price less than regular price.';
         valid = false;
       }

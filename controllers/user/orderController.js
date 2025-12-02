@@ -181,7 +181,7 @@ const cancelProduct = async (req, res) => {
     order.discountPrice = order.couponDiscount;
 
     
-    if (refundAmount > 0 && order.paymentMethod === 'ONLINE') {
+    if (refundAmount > 0 && order.paymentMethod === 'ONLINE' || order.paymentMethod==="WALLET") {
       const walletUpdate = await Wallet.updateOne(
         { userId: new mongoose.Types.ObjectId(userId) },
         {
@@ -318,7 +318,7 @@ const cancelOrder = async (req, res) => {
 
     await order.save();
     let refundAmount = order.finalAmount;
-    if (order.paymentMethod === 'ONLINE') {
+    if (order.paymentMethod === 'ONLINE' || order.paymentMethod==="WALLET" ) {
       const wallet = await Wallet.updateOne(
         { userId },
         {

@@ -139,7 +139,7 @@ const addToCart = async (req, res) => {
     }
 
     if (qty > product.quantity) {
-      return res.json({ success: false, message: 'Quantity exceeds stock.' });
+      return res.json({ success: false, message: `Only ${product.quantity} quantity left!.` });
     }
     if (qty > 10) {
       return res.json({ success: false, message: 'Cart item limit reached.' });
@@ -179,7 +179,7 @@ const addToCart = async (req, res) => {
         } else if (newQty > product.quantity) {
           return res.json({
             success: false,
-            message: 'Quantity exceeds stock.',
+            message: `Only ${product.quantity} quantity left!.`,
           });
         } else {
           cart.items[itemIndex].quantity = newQty;
@@ -265,12 +265,7 @@ const updateCartQuantity = async (req, res) => {
       });
     }
 
-    if (newQuantity > product.quantity) {
-      return res.json({
-        success: false,
-        message: `only ${product.quantity} in stock.`,
-      });
-    }
+   
 
     item.quantity = newQuantity;
     item.totalPrice = product.salesPrice * quantity;

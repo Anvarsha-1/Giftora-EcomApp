@@ -265,11 +265,19 @@ const applyCoupon = async (req, res) => {
       });
     }
 
+
     if (coupon.minPurchase && total < coupon.minPurchase) {
       return res.status(400).json({
         success: false,
         message: `Minimum order value for this coupon is ₹${coupon.minPurchase}.`,
       });
+    }
+
+    if (coupon.discount >= total) {
+      return res.status(400).json({
+        success: false,
+        message: 'coupon discount amount is higher that total amount'
+      })
     }
 
    
