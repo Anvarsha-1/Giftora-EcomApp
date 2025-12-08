@@ -142,7 +142,7 @@ const addToCart = async (req, res) => {
       return res.json({ success: false, message: `Only ${product.quantity} quantity left!.` });
     }
     if (qty > 10) {
-      return res.json({ success: false, message: 'Cart item limit reached.' });
+      return res.json({ success: false, message: 'Cart item limit reached (10).' });
     }
 
     const price = product.salesPrice || product.regularPrice;
@@ -174,7 +174,7 @@ const addToCart = async (req, res) => {
         if (newQty > 10) {
           return res.json({
             success: false,
-            message: 'Cart item limit reached.',
+            message: `Cart item limit reached (10).`,
           });
         } else if (newQty > product.quantity) {
           return res.json({

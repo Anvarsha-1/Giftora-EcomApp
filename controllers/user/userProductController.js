@@ -7,24 +7,24 @@ const mongoose = require('mongoose');
 const loadProductListingPage = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 9;
+    const limit = 10;
     const skip = (page - 1) * limit;
 
     const clearFilter = req.query.clearFilter === '1';
     const clearSearch = req.query.clearSearch === '1';
-    console.log("clearSearch", clearSearch);
+    
 
     const search = clearSearch
       ? ''
       : decodeURIComponent(req.query.q || '').trim();
-    console.log('Search Query:', search);  
-
     
+
+
     let selectedCategory = clearFilter ? [] : req.query?.category || [];
     if (selectedCategory && !Array.isArray(selectedCategory)) {
       selectedCategory = [selectedCategory];
     }
-    
+
     selectedCategory = selectedCategory.filter(cat => cat);
 
     const minPrice = clearFilter ? 0 : parseFloat(req.query?.minPrice) || 0;
@@ -44,7 +44,7 @@ const loadProductListingPage = async (req, res) => {
       isListed: true,
       isDeleted: false,
     });
-    
+
     const wishlist = await Wishlist.findOne({ userId });
 
     let aggregation = [];
@@ -56,7 +56,7 @@ const loadProductListingPage = async (req, res) => {
           text: { query: search, path: 'productName', fuzzy: { maxEdits: 2 } },
         },
       });
-     
+
     }
 
     const match = {
@@ -74,7 +74,7 @@ const loadProductListingPage = async (req, res) => {
 
     let sortObj = { createdAt: -1 };
 
-    
+
     switch (sortOption) {
       case 'name-asc':
         aggregation.push({
@@ -139,7 +139,7 @@ const loadProductListingPage = async (req, res) => {
         totalPages: Math.ceil(total / limit),
       });
     }
-    const isHomePage =false
+    const isHomePage = false
 
     res.render('user/productListingPage', {
       user: userData || null,
@@ -167,6 +167,7 @@ const loadProductListingPage = async (req, res) => {
     });
   }
 };
+   
 
 const viewProductDetails = async (req, res) => {
   try {

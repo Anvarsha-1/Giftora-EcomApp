@@ -6,22 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giftora - Premium Lifestyle Store</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --success-color: #10b981;
-            --warning-color: #f39c12;
-            --light-gray: #f8f9fa;
-            --medium-gray: #6c757d;
-            --dark-gray: #343a40;
-            --white: #ffffff;
-            --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.05);
-            --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --shadow-heavy: 0 8px 30px rgba(0, 0, 0, 0.15);
+            --primary-color: #111827; /* Darker, more premium black/charcoal */
+            --accent-color: #c0392b; /* Subtle red for accents/sales */
+            --text-main: #374151;
+            --text-light: #6B7280;
+            --bg-body: #ffffff;
+            --bg-secondary: #f9fafb;
             --border-radius: 8px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
         }
 
         * {
@@ -31,447 +29,291 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
-            color: var(--dark-gray);
-            background-color: #fafbfc;
-            /* Reset any unwanted margins that might be inherited from other stylesheets */
-            margin: 0 !important;
-        }
-
-        .main-wrapper,
-        .content-wrapper {
-            margin-left: 0 !important;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .hero-section {
-            min-height: 90vh;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            position: relative;
-            display: flex;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 20% 50%, rgba(26, 35, 126, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(48, 63, 159, 0.03) 0%, transparent 50%);
-            pointer-events: none;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            -webkit-font-smoothing: antialiased;
         }
 
         .container {
             max-width: 1280px;
             margin: 0 auto;
-            width: 100%;
-            position: relative;
-            z-index: 1;
+            padding: 0 1.5rem;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background-color: var(--bg-secondary);
+            padding: 4rem 0;
+            margin-bottom: 4rem;
         }
 
         .hero-content {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
             align-items: center;
-            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr 1fr;
+                padding: 2rem 0;
+            }
         }
 
         .text-content {
-            animation: slideInLeft 0.8s ease-out;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .text-content {
+                text-align: left;
+            }
         }
 
         .main-headline {
             font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: #1A237E;
+            font-size: 2.5rem;
             line-height: 1.2;
+            color: var(--primary-color);
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #1A237E 0%, #303F9F 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        }
+
+        @media (min-width: 768px) {
+            .main-headline {
+                font-size: 3.5rem;
+            }
         }
 
         .subheading {
-            font-size: 1.5rem;
-            color: #6B7280;
-            margin-bottom: 2.5rem;
-            font-weight: 400;
-            line-height: 1.5;
+            font-size: 1.125rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @media (min-width: 768px) {
+            .subheading {
+                margin-left: 0;
+                margin-right: 0;
+            }
         }
 
         .cta-button {
             display: inline-flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, #1A237E 0%, #303F9F 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .cta-button:hover::before {
-            left: 100%;
+            justify-content: center;
+            padding: 0.875rem 2rem;
+            background-color: var(--primary-color);
+            color: #ffffff;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
         }
 
         .cta-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 25px rgba(26, 35, 126, 0.4);
+            background-color: #000000;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
-
-        .arrow-icon {
+        
+        .cta-arrow {
+            margin-left: 0.5rem;
             transition: transform 0.3s ease;
         }
-
-        .cta-button:hover .arrow-icon {
-            transform: translateX(5px);
+        
+        .cta-button:hover .cta-arrow {
+            transform: translateX(4px);
         }
 
-        .image-container {
+        .hero-image-wrapper {
             position: relative;
-            height: 300px;
-            animation: slideInRight 0.8s ease-out;
-        }
-
-        .featured-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
             border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            cursor: pointer;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
         }
 
-        .featured-image:hover {
-            transform: scale(1.02);
+        .hero-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
         }
 
-        .floating-elements {
-            display: none;
-        }
-
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px) rotate(0deg);
-            }
-
-            50% {
-                transform: translateY(-20px) rotate(180deg);
-            }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-50px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
+        /* Section Styling */
         .section {
-            margin-bottom: 4rem;
+            margin-bottom: 5rem;
         }
 
         .section-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #e9ecef;
-        }
-
-        .section-header-flex {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
+            margin-bottom: 3rem;
+            gap: 1rem;
+        }
+        
+        @media (min-width: 640px) {
+            .section-header {
+                flex-direction: row;
+                align-items: flex-end;
+            }
         }
 
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
+        .section-title h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
             color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .section-subtitle {
-            color: var(--medium-gray);
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
+            color: var(--text-light);
+            font-size: 1rem;
         }
 
-        .view-all-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: transparent;
-            color: var(--secondary-color);
-            padding: 0.75rem 1.5rem;
-            border: 2px solid var(--secondary-color);
-            border-radius: var(--border-radius);
-            text-decoration: none;
+        .view-all-link {
+            color: var(--primary-color);
             font-weight: 600;
-            transition: var(--transition);
+            font-size: 0.95rem;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s;
         }
 
-        .view-all-btn:hover {
-            background: var(--secondary-color);
-            color: var(--white);
-            transform: translateY(-1px);
+        .view-all-link:hover {
+            border-color: var(--primary-color);
         }
 
-        .flash-sale-banner {
-            background: linear-gradient(45deg, var(--accent-color), #c0392b);
-            color: var(--white);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .flash-sale-banner::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            animation: flash-shine 3s infinite;
-        }
-
-        @keyframes flash-shine {
-
-            0%,
-            100% {
-                left: -100%;
-            }
-
-            50% {
-                left: 100%;
-            }
-        }
-
-        .timer-display {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .timer-unit {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            min-width: 80px;
-        }
-
-        .timer-number {
-            font-size: 2rem;
-            font-weight: 700;
-            display: block;
-        }
-
-        .timer-label {
-            font-size: 0.875rem;
-            opacity: 0.8;
-        }
-
+        /* Product Grid */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1.5rem;
         }
 
+        @media (min-width: 640px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Product Card */
         .product-card {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            background: var(--white);
+            background: #fff;
+            border: 1px solid #f3f4f6;
             border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--shadow-light);
-            border: 1px solid #e9ecef;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
             position: relative;
         }
 
         .product-card:hover {
+            box-shadow: var(--shadow-hover);
             transform: translateY(-4px);
-            box-shadow: var(--shadow-heavy);
+            border-color: #e5e7eb;
         }
 
-        .product-image {
+        .product-image-container {
             position: relative;
-            aspect-ratio: 1 / 1;
-            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            aspect-ratio: 1;
+            background-color: #f3f4f6;
+            overflow: hidden;
         }
 
         .product-img {
-            width: 300px;
-            height: 300px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            object-position: center;
-            transition: transform 0.3s ease;
-            border: none;
-            outline: none;
+            transition: transform 0.5s ease;
         }
 
         .product-card:hover .product-img {
             transform: scale(1.05);
         }
 
-        .discount-badge {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: var(--accent-color);
-            color: var(--white);
-            padding: 0.375rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            z-index: 2;
-        }
-
         .wishlist-btn {
             position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: var(--white);
-            border: none;
+            top: 10px;
+            right: 10px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: var(--shadow-light);
-            z-index: 2;
+            color: var(--text-light);
+            z-index: 10;
         }
-
+        
         .wishlist-btn:hover {
-            background: var(--accent-color);
-            color: var(--white);
+            transform: scale(1.1);
         }
 
         .wishlist-btn.active {
-            color: var(--accent-color);
-            background-color: var(--white);
+            color: #ef4444; 
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: var(--accent-color);
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
         }
 
         .product-info {
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            flex-grow: 1;
-            padding: 1.5rem;
-        }
-
-        .product-brand {
-            color: var(--medium-gray);
-            font-size: 0.875rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
+            flex: 1;
         }
 
         .product-name {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--dark-gray);
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            height: 2.8em; /* Ensure consistent height */
         }
 
-        .product-rating {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .stars {
-            display: flex;
-            gap: 0.125rem;
-        }
-
-        .star {
-            color: #ffc107;
-            font-size: 0.875rem;
-        }
-
-        .star.empty {
-            color: #dee2e6;
-        }
-
-        .rating-count {
-            color: var(--medium-gray);
-            font-size: 0.875rem;
-        }
-
-        .product-prices {
+        .product-price {
             display: flex;
             align-items: center;
             gap: 0.75rem;
@@ -479,35 +321,26 @@
         }
 
         .current-price {
-            font-size: 1.0rem;
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 600;
             color: var(--primary-color);
         }
 
         .original-price {
-            font-size: 1rem;
-            color: var(--medium-gray);
+            font-size: 0.9rem;
+            color: var(--text-light);
             text-decoration: line-through;
         }
 
-        .price-savings {
-            background: var(--success-color);
-            color: var(--white);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .add-to-cart {
-            margin-top: auto;
+        .add-to-cart-btn {
+            margin-top: auto; /* Push to bottom */
             width: 100%;
-            background: var(--dark-gray);
-            color: var(--white);
-            border: none;
-            padding: 0.875rem;
+            padding: 0.75rem;
+            background-color: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
             border-radius: var(--border-radius);
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
             display: flex;
@@ -516,906 +349,451 @@
             gap: 0.5rem;
         }
 
-        .add-to-cart:hover {
-            background: var(--primary-color);
-            transform: translateY(-1px);
+        .add-to-cart-btn:hover {
+            background-color: var(--primary-color);
+            color: #fff;
         }
 
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .category-card {
-            background: var(--white);
-            border-radius: var(--border-radius);
-            padding: 2rem;
+        /* Empty State */
+        .empty-state {
+            grid-column: 1 / -1;
             text-align: center;
-            box-shadow: var(--shadow-light);
-            transition: var(--transition);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            padding: 4rem 1rem;
+            color: var(--text-light);
         }
-
-        .category-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .category-card:hover::before {
-            opacity: 0.05;
-        }
-
-        .category-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-heavy);
-        }
-
-        .category-icon {
+        
+        .empty-state i {
             font-size: 3rem;
-            color: var(--secondary-color);
             margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
+            opacity: 0.5;
         }
 
-        .category-name {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--dark-gray);
-            position: relative;
-            z-index: 1;
-        }
-
-        .category-count {
-            color: var(--medium-gray);
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Tablet and larger screens */
-        @media (min-width: 768px) {
-            .hero-section {
-                padding: 4rem 2rem;
-            }
-
-            .hero-content {
-                display: grid;
-                grid-template-columns: 45% 1fr;
-                align-items: center;
-                text-align: left;
-                gap: 2rem;
-            }
-
-            .text-content {
-                padding-right: 0;
-            }
-
-            .main-headline {
-                font-size: 2.5rem;
-            }
-
-            .subheading {
-                font-size: 1.1rem;
-            }
-
-            .image-container {
-                height: auto;
-                max-height: 450px;
-            }
-
-            .floating-elements {
-                display: block;
-            }
-
-            .section-header {
-                text-align: left;
-            }
-
-            .section-header-flex {
-                flex-direction: row;
-                align-items: center;
-            }
-        }
-
-        /* Large desktops */
-        @media (min-width: 1024px) {
-            .hero-content {
-                gap: 3rem;
-            }
-
-            .main-headline {
-                font-size: 3rem;
-            }
-
-            .subheading {
-                font-size: 1.5rem;
-            }
-
-            .image-container {
-                max-height: 500px;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .section-header-flex {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .timer-display {
-                flex-wrap: wrap;
-            }
-
-            .hero-section {
-                padding: 1rem;
-                min-height: auto;
-                padding-top: 2rem;
-                padding-bottom: 2rem;
-            }
-
-            .main-headline {
-                font-size: 2.25rem;
-                margin-bottom: 1rem;
-            }
-
-            .subheading {
-                font-size: 1.125rem;
-                margin-bottom: 1.5rem;
-            }
-
-            .cta-button {
-                padding: 0.875rem 1.5rem;
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 540px) {
-            .main-headline {
-                font-size: 1.75rem;
-            }
-
-            .subheading {
-                font-size: 1rem;
-            }
-
-            .image-container {
-                height: 250px;
-                max-height: none;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                gap: 1rem;
-            }
-        }
-
-        .loading {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-
-        @keyframes loading {
-            0% {
-                background-position: 200% 0;
-            }
-
-            100% {
-                background-position: -200% 0;
-            }
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--success-color);
-            color: var(--white);
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-medium);
-            z-index: 1000;
-            opacity: 0;
-            transform: translateX(100px);
-            transition: var(--transition);
-        }
-
-        .notification.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
+        /* Toast & Referral Overrides - keep functional but clean */
         .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
             z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
         }
 
-        .toast {
-            display: none;
-            padding: 12px 16px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 4s forwards;
-        }
-
-        .toast.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast.error {
-            border-left: 4px solid #ef4444;
-        }
-
-        .toast.show {
-            display: flex;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-            }
-
-            to {
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes fadeOut {
-            to {
-                opacity: 0;
-            }
-        }
-
-        /* Referral Modal Styles */
+        /* Referral Modal - Clean Design */
         .referral-modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+            z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10001; /* Higher than other elements */
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: all 0.3s;
         }
-
         .referral-modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
+            opacity: 1; visibility: visible;
         }
-
         .referral-modal-content {
-            background-color: #fff;
+            background: #fff;
             padding: 2rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-heavy);
+            border-radius: 12px;
             width: 90%;
-            max-width: 450px;
+            max-width: 400px;
             text-align: center;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
+            box-shadow: var(--shadow-hover);
         }
-
-        .referral-modal-overlay.show .referral-modal-content {
-            transform: scale(1);
+        .referral-modal-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
-
-        .referral-modal-content h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.75rem;
+        .referral-btn {
+            padding: 0.75rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            border: none;
         }
-
-        .referral-modal-content p {
-            color: var(--medium-gray);
-            margin-bottom: 1.5rem;
-        }
-
+        .referral-submit { background: var(--primary-color); color: #fff; }
+        .referral-skip { background: #e5e7eb; color: var(--text-main); }
+        
         #referralCodeInput {
             width: 100%;
-            padding: 0.875rem;
-            border: 1px solid #ccc;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
             border-radius: var(--border-radius);
-            font-size: 1rem;
+            margin-top: 1rem;
             text-align: center;
-            text-transform: uppercase;
+            font-size: 1.1rem;
             letter-spacing: 2px;
-            margin-bottom: 1rem;
         }
-
+        
         .referral-error-message {
-            color: var(--accent-color);
+            color: #ef4444;
             font-size: 0.875rem;
-            margin-bottom: 1rem;
-            min-height: 1.2em; /* Reserve space to prevent layout shifts */
+            margin-top: 0.5rem;
+            min-height: 1.25rem;
         }
 
-        .referral-modal-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .referral-modal-buttons button {
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--border-radius);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-
-        #submitReferralBtn {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-
-        #skipReferralBtn {
-            background-color: transparent;
-            color: var(--medium-gray);
-            border-color: #ccc;
-        }
     </style>
 </head>
 
 <body>
     <%- include('../partials/user/newheader.ejs') %>
 
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="container">
-                <div class="hero-content">
-                    <div class="text-content">
-                        <h1 class="main-headline">Transform Ordinary Moments into Extraordinary Memories</h1>
-                        <p class="subheading">Discover thoughtfully curated gifts that create lasting joy, handpicked
-                            just for your special someone</p>
-                        <a href="/viewProducts" class="cta-button">
-                            Shop Now
-                            <svg class="arrow-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="image-container">
-                        <img src="/images/header/Black and Brown Minimalist Birthday Gift YouTube Thumbnail.png"
-                            alt="Elegantly arranged gift items" class="featured-image">
-                        <div class="floating-elements">
-                            <div class="floating-element"></div>
-                            <div class="floating-element"></div>
-                            <div class="floating-element"></div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container hero-content">
+            <div class="text-content">
+                <h1 class="main-headline">Transform Moments into Memories</h1>
+                <p class="subheading">Thoughtfully curated gifts that bring joy to your loved ones.</p>
+                <a href="/viewProducts" class="cta-button">
+                    Shop Collection
+                    <svg class="cta-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
             </div>
-        </section>
-
-        <div class="container">
-            <!-- Flash Sales Section -->
-          
-
-
-            <!-- New Arrivals Section -->
-            <section class="section">
-                <div class="section-header section-header-flex">
-                    <div>
-                        <h2 class="section-title">
-                            <i class="fas fa-sparkles"></i>
-                            New Arrivals
-                        </h2>
-                        <p class="section-subtitle">Fresh additions to our collection</p>
-                    </div>
-                    <a href="/viewProducts" class="view-all-btn">
-                        <span>View All Products</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-                <div class="products-grid">
-                    <% if (products && products.length> 0) { %>
-                        <% for(let i=0; i<products.length; i++) { %>
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <% if (products[i].productImage) { %>
-                                        <a href="/productsDetails/<%=products[i]._id%>">
-                                            <img src="<%= products[i].productImage %>"
-                                                alt="<%= products[i].productName %>" class="product-img"></a>
-                                        <% } else { %>
-                                            <div
-                                                style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
-                                                <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
-                                            </div>
-                                            <% } %>
-                                                <div class="discount-badge">
-                                                    <%=products[i].bestOffer%>%
-                                                </div>
-                                                <% if (user) { %>
-                                                    <button type="button"
-                                                        onclick="addWishlist('<%= products[i]._id %>', this)"
-                                                        class="wishlist-btn <%= wishlistId.includes(products[i]._id.toString()) ? 'active' : '' %>">
-                                                        <i
-                                                            class="<%= wishlistId.includes(products[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
-                                                    </button>
-                                                    <% } else { %>
-                                                        <button type="button" onclick="handleWishlistClick()"
-                                                            class="wishlist-btn">
-                                                            <i class="far fa-heart"></i>
-                                                        </button>
-                                                        <% } %>
-                                </div>
-                                <div class="product-info">
-                                    <h3 class="product-name">
-                                        <%= products[i].productName %>
-                                    </h3>
-                                    <div class="product-prices">
-                                        <span class="current-price">₹<%= products[i].salesPrice %></span>
-                                        <span class="original-price">₹<%= products[i].regularPrice %></span>
-                                        <span class="price-savings">Save ₹<%= (products[i].regularPrice -
-                                                products[i].salesPrice).toFixed(0) %></span>
-                                    </div>
-                                    <button type="button" data-id="<%=products[i]._id%>" onclick="addToCart(this)"
-                                        class="add-to-cart">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        <span>Add to Cart</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <% } %>
-                                <% } else { %>
-                                    <div
-                                        style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
-                                        <i class="fas fa-box-open"
-                                            style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                                        <p style="font-size: 1.2rem;">No products available</p>
-                                    </div>
-                                    <% } %>
-                </div>
-            </section>
-
-            <!-- Best Selling Products Section -->
-            <section class="section">
-                <div class="section-header section-header-flex">
-                    <div>
-                        <h2 class="section-title">
-                            <i class="fas fa-trophy"></i>
-                            Best Selling Products
-                        </h2>
-                        <p class="section-subtitle">Customer favorites and top performers</p>
-                    </div>
-                </div>
-
-                <div class="products-grid">
-                    <% if (bestselling && bestselling.length> 0) { %>
-                        <% for(let i=0; i<bestselling.length; i++) { %>
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <% if (bestselling[i].productImage) { %>
-                                        <a href="/productsDetails/<%=bestselling[i]._id%>">
-                                            <img src="<%= bestselling[i].productImage %>"
-                                                alt="<%= bestselling[i].productName %>" class="product-img"></a>
-                                        <% } else { %>
-                                            <div
-                                                style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--medium-gray); font-size: 1.1rem;">
-                                                <i class="fas fa-image" style="font-size: 3rem; opacity: 0.3;"></i>
-                                            </div>
-                                            <% } %>
-                                                <div class="discount-badge">
-                                                    <%=bestselling[i].bestOffer%>%
-                                                </div>
-                                                <% if (user) { %>
-                                                    <button type="button"
-                                                        onclick="addWishlist('<%= bestselling[i]._id %>', this)"
-                                                        class="wishlist-btn <%= wishlistId.includes(bestselling[i]._id.toString()) ? 'active' : '' %>">
-                                                        <i
-                                                            class="<%= wishlistId.includes(bestselling[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
-                                                    </button>
-                                                    <% } else { %>
-                                                        <button type="button" onclick="handleWishlistClick()"
-                                                            class="wishlist-btn">
-                                                            <i class="far fa-heart"></i>
-                                                        </button>
-                                                        <% } %>
-                                </div>
-                                <div class="product-info">
-                                    <h3 class="product-name">
-                                        <%= bestselling[i].productName %>
-                                    </h3>
-                                    <div class="product-prices">
-                                        <span class="current-price">₹<%= bestselling[i].salesPrice %></span>
-                                        <span class="original-price">₹<%= bestselling[i].regularPrice %></span>
-                                        <span class="price-savings">Save ₹<%= (bestselling[i].regularPrice -
-                                                bestselling[i].salesPrice).toFixed(0) %></span>
-                                    </div>
-                                    <button type="button" data-id="<%=bestselling[i]._id%>" onclick="addToCart(this)"
-                                        class="add-to-cart">
-                                        <i class="fas fa-shopping-cart"></i>
-                                        <span>Add to Cart</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <% } %>
-                                <% } else { %>
-                                    <div
-                                        style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: var(--medium-gray);">
-                                        <i class="fas fa-box-open"
-                                            style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"></i>
-                                        <p style="font-size: 1.2rem;">No products available</p>
-                                    </div>
-                                    <% } %>
-                </div>
-            </section>
+            <div class="hero-image-wrapper">
+                <img src="/images/header/Black and Brown Minimalist Birthday Gift YouTube Thumbnail.png" alt="Gift Collection" class="hero-image">
+            </div>
         </div>
-        <%- include('../partials/user/footer.ejs') %>
+    </section>
 
-            <!-- Referral Modal -->
-             <% if(user && user.isFirstLogin===true){ %>
-            <div id="referralModal" class="referral-modal-overlay">
-                <div class="referral-modal-content">
-                    <h2>Have a Referral Code?</h2>
-                    <p>Enter a code from a friend to get a special reward!</p>
-                    <form id="referralForm" onsubmit="submitReferral(event)">
-                        <div id="referralError" class="referral-error-message"></div>
-                        <input type="text" id="referralCodeInput" placeholder="E.G. GIFT5136" maxlength="8"
-                            autocomplete="off">
-                        <div class="referral-modal-buttons">
-                            <button type="button" id="skipReferralBtn">Skip</button>
-                            <button type="submit" id="submitReferralBtn">Submit</button>
-                        </div>
-                    </form>
-                </div>
+    <!-- New Arrivals -->
+    <div class="container section">
+        <div class="section-header">
+            <div class="section-title">
+                <h2>New Arrivals</h2>
+                <p class="section-subtitle">Fresh additions to our exclusive collection</p>
             </div>
+            <a href="/viewProducts" class="view-all-link">View All Products &rarr;</a>
+        </div>
+
+        <div class="products-grid">
+            <% if (products && products.length > 0) { %>
+                <% for(let i=0; i < products.length; i++) { %>
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <% if (products[i].productImage) { %>
+                            <a href="/productsDetails/<%=products[i]._id%>">
+                                <img src="<%= products[i].productImage %>" alt="<%= products[i].productName %>" class="product-img">
+                            </a>
+                        <% } else { %>
+                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ccc;">
+                                <i class="fas fa-image" style="font-size: 2rem;"></i>
+                            </div>
+                        <% } %>
+
+                        <% if (products[i].bestOffer) { %>
+                            <span class="discount-badge">-<%= products[i].bestOffer %>%</span>
+                        <% } %>
+
+                        <% if (user) { %>
+                            <button type="button" onclick="addWishlist('<%= products[i]._id %>', this)" 
+                                class="wishlist-btn <%= wishlistId.includes(products[i]._id.toString()) ? 'active' : '' %>">
+                                <i class="<%= wishlistId.includes(products[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
+                            </button>
+                        <% } else { %>
+                            <button type="button" onclick="handleWishlistClick()" class="wishlist-btn">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        <% } %>
+                    </div>
+
+                    <div class="product-info">
+                        <h3 class="product-name"><%= products[i].productName %></h3>
+                        
+                        <div class="product-price">
+                            <span class="current-price">₹<%= products[i].salesPrice %></span>
+                            <span class="original-price">₹<%= products[i].regularPrice %></span>
+                        </div>
+
+                        <button type="button" data-id="<%=products[i]._id%>" onclick="addToCart(this)" class="add-to-cart-btn">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+                <% } %>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fas fa-box-open"></i>
+                    <p>No new arrivals at the moment.</p>
+                </div>
             <% } %>
+        </div>
+    </div>
 
+    <!-- Best Sellers -->
+    <div class="container section">
+        <div class="section-header">
+            <div class="section-title">
+                <h2>Best Sellers</h2>
+                <p class="section-subtitle">Our most loved products this season</p>
+            </div>
+            <!-- Optional: Link to best sellers specifically if route exists -->
+        </div>
 
-            <!-- Toast Container -->
-            <div id="toastContainer" class="toast-container"></div>
+        <div class="products-grid">
+            <% if (bestselling && bestselling.length > 0) { %>
+                <% for(let i=0; i < bestselling.length; i++) { %>
+                <div class="product-card">
+                    <div class="product-image-container">
+                        <% if (bestselling[i].productImage) { %>
+                            <a href="/productsDetails/<%=bestselling[i]._id%>">
+                                <img src="<%= bestselling[i].productImage %>" alt="<%= bestselling[i].productName %>" class="product-img">
+                            </a>
+                        <% } else { %>
+                            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ccc;">
+                                <i class="fas fa-image" style="font-size: 2rem;"></i>
+                            </div>
+                        <% } %>
 
-            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-            <script>
-                window.isLoggedIn = <%- !!user %>;
+                        <% if (bestselling[i].bestOffer) { %>
+                            <span class="discount-badge">-<%= bestselling[i].bestOffer %>%</span>
+                        <% } %>
 
+                        <% if (user) { %>
+                            <button type="button" onclick="addWishlist('<%= bestselling[i]._id %>', this)" 
+                                class="wishlist-btn <%= wishlistId.includes(bestselling[i]._id.toString()) ? 'active' : '' %>">
+                                <i class="<%= wishlistId.includes(bestselling[i]._id.toString()) ? 'fas' : 'far' %> fa-heart"></i>
+                            </button>
+                        <% } else { %>
+                            <button type="button" onclick="handleWishlistClick()" class="wishlist-btn">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        <% } %>
+                    </div>
 
+                    <div class="product-info">
+                        <h3 class="product-name"><%= bestselling[i].productName %></h3>
+                        
+                        <div class="product-price">
+                            <span class="current-price">₹<%= bestselling[i].salesPrice %></span>
+                            <span class="original-price">₹<%= bestselling[i].regularPrice %></span>
+                        </div>
 
-                function handleWishlistClick() {
-                    if (!window.isLoggedIn) {
-                        Swal.fire({
+                        <button type="button" data-id="<%=bestselling[i]._id%>" onclick="addToCart(this)" class="add-to-cart-btn">
+                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+                <% } %>
+            <% } else { %>
+                <div class="empty-state">
+                    <i class="fas fa-trophy"></i>
+                    <p>No best sellers yet.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include('../partials/user/footer.ejs') %>
+
+    <!-- Referral Modal -->
+    <% if(user && user.isFirstLogin===true){ %>
+    <div id="referralModal" class="referral-modal-overlay">
+        <div class="referral-modal-content">
+            <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary-color);">Have a Referral Code?</h2>
+            <p style="color: var(--text-light); font-size: 0.95rem;">Enter a code to claim your reward!</p>
+            <form id="referralForm" onsubmit="submitReferral(event)">
+                <div id="referralError" class="referral-error-message"></div>
+                <input type="text" id="referralCodeInput" placeholder="CODE123" maxlength="8" autocomplete="off">
+                <div class="referral-modal-buttons">
+                    <button type="button" id="skipReferralBtn" class="referral-btn referral-skip">Skip</button>
+                    <button type="submit" id="submitReferralBtn" class="referral-btn referral-submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <% } %>
+
+    <div id="toastContainer" class="toast-container" style="position: fixed; bottom: 20px; right: 20px;"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        window.isLoggedIn = <%- !!user %>;
+
+        // --- Scripts kept mostly identical but ensured references match new IDs/Classes ---
+
+        function handleWishlistClick() {
+            if (!window.isLoggedIn) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Login Required',
+                    text: 'Please login to add items to your wishlist',
+                    showCancelButton: true,
+                    confirmButtonText: 'Login',
+                    confirmButtonColor: '#111827',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '/login';
+                    }
+                });
+                return;
+            }
+        }
+
+        async function addToCart(button) {
+            const productId = button.getAttribute('data-id');
+            try {
+                const response = await fetch('/cart', {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ productId, quantity: 1 })
+                });
+
+                const contentType = response.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: "Login Required",
+                        text: "Please login to add items to your cart.",
+                        showCancelButton: true,
+                        confirmButtonText: "Login",
+                        confirmButtonColor: '#111827'
+                    }).then((result) => {
+                        if (result.isConfirmed) window.location.href = '/login';
+                    });
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    Toast.fire({ icon: 'success', title: 'Added to cart' });
+                    // Helper function to update cart count if it exists globally
+                    if(window.updateCartCount) await updateCartCount();
+                } else {
+                    if (data.message === 'Unauthorized: Please login') {
+                         Swal.fire({
                             icon: 'info',
-                            title: 'Login Required',
-                            text: 'Please login to add items to your wishlist',
+                            title: "Login Required",
+                            confirmButtonText: "Login",
                             showCancelButton: true,
-                            confirmButtonText: 'Login',
-                            cancelButtonText: 'Cancel'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '/login';
-                            }
+                            confirmButtonColor: '#111827'
+                        }).then((res) => {
+                            if (res.isConfirmed) window.location.href = "/login";
                         });
                         return;
                     }
-
-
+                    Toast.fire({ icon: 'error', title: data.message || 'Failed to add' });
                 }
+            } catch (err) {
+                console.error(err);
+                Toast.fire({ icon: 'error', title: 'Something went wrong' });
+            }
+        }
 
-
-                // Category filter function
-                function filterByCategory(category) {
-                    const categoryCards = document.querySelectorAll('.category-card');
-                    categoryCards.forEach(card => {
-                        card.style.transform = 'translateY(0)';
-                        card.style.boxShadow = 'var(--shadow-light)';
-                    });
-
-                    event.target.closest('.category-card').style.transform = 'translateY(-4px)';
-                    event.target.closest('.category-card').style.boxShadow = 'var(--shadow-heavy)';
-
-
-                }
-
-                // Image loading simulation
-                document.querySelectorAll('.product-img').forEach(img => {
-                    img.addEventListener('load', function () {
-                        this.classList.remove('loading');
-                    });
-
-                    setTimeout(() => {
-                        img.classList.remove('loading');
-                    }, 2000);
+        async function addWishlist(productId, button) {
+            try {
+                const res = await fetch(`/wishlist/add/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({ productId }),
                 });
-
-                // Smooth scrolling for navigation
-                document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        const target = document.querySelector(this.getAttribute('href'));
-                        if (target) {
-                            target.scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        }
-                    });
-                });
-
-                // Show custom toast notification
-                function showToast(message, type = 'success') {
-                    const toastContainer = document.getElementById('toastContainer');
-                    const toast = document.createElement('div');
-                    toast.className = `toast ${type}`;
-
-                    const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
-                    const iconColor = type === 'success' ? 'text-green-600' : 'text-red-600';
-
-                    toast.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <i class="${icon} ${iconColor}"></i>
-                    <span class="text-gray-900 font-medium">${message}</span>
-                    <button onclick="this.parentElement.parentElement.remove()" class="ml-auto text-gray-400 hover:text-gray-600">
-                        <i class="ri-close-line"></i>
-                    </button>
-                </div>
-            `;
-
-                    toastContainer.appendChild(toast);
-
-                    setTimeout(() => toast.classList.add('show'), 100);
-
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                        setTimeout(() => toast.remove(), 300);
-                    }, 4000);
+                const result = await res.json();
+                if (result.success) {
+                    const icon = button.querySelector("i.fa-heart");
+                    if (result.inWishlist) {
+                        icon.classList.remove("far");
+                        icon.classList.add("fas");
+                        button.classList.add("active");
+                    } else {
+                        icon.classList.remove("fas");
+                        icon.classList.add("far");
+                        button.classList.remove("active");
+                    }
+                     if(window.updateCartCount) await updateCartCount(); // Sometimes Wishlist count is also updated here
+                     Toast.fire({ icon: 'success', title: result.message || "Wishlist updated" });
+                } else {
+                     if (result.message === "user not found") {
+                        Swal.fire({
+                            icon: 'info',
+                            title: "Login Required",
+                            confirmButtonText: "Login",
+                            showCancelButton: true
+                        }).then((res) => { if (res.isConfirmed) window.location.href = "/login"; });
+                        return;
+                    }
+                    Toast.fire({ icon: 'error', title: result.message || 'Failed' });
                 }
+            } catch (err) {
+                console.error(err);
+                Toast.fire({ icon: 'error', title: 'Server error' });
+            }
+        }
 
-                async function addToCart(button) {
-                    const productId = button.getAttribute('data-id');
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
 
+        // Referral Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const isFirstLogin = <%- !!(user && user.isFirstLogin === true) %>;
+            const referralModal = document.getElementById('referralModal');
+            const skipButton = document.getElementById('skipReferralBtn');
+            const submitButton = document.getElementById('submitReferralBtn');
+            const referralError = document.getElementById('referralError');
+            const referralInput = document.getElementById('referralCodeInput');
+
+            if (isFirstLogin && referralModal) {
+                setTimeout(() => {
+                    referralModal.classList.add('show');
+                }, 1000);
+            }
+
+            const closeModal = () => {
+                if (referralModal) {
+                    referralModal.classList.remove('show');
+                    setTimeout(() => referralModal.style.display = 'none', 300);
+                }
+            };
+
+            if(skipButton) {
+                skipButton.addEventListener('click', async () => {
                     try {
-                        const response = await fetch('/cart', {
-                            method: "POST",
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ productId, quantity: 1 })
-                        });
-
-                        // Check if the response is JSON before trying to parse it
-                        const contentType = response.headers.get("content-type");
-                        if (!contentType || !contentType.includes("application/json")) {
-                            // If not JSON, it's likely a redirect to the login page
-                            Swal.fire({
-                                icon: 'info',
-                                title: "Login Required",
-                                text: "Please login to add items to your cart.",
-                                showCancelButton: true,
-                                confirmButtonText: "Login",
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = '/login';
-                                }
-                            });
-                            return;
-                        }
-
-                        const data = await response.json();
-
-                        if (data.success) {
-
-                            // ✅ Success toast
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Product added to cart'
-                            });
-                            await updateCartCount();
-
-                        } else {
-                            if (data.message === 'Unauthorized: Please login') {
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: "Login Required",
-                                    text: "Please login to continue",
-                                    showCancelButton: true,
-                                    confirmButtonText: "Login",
-                                    cancelButtonText: "Cancel",
-                                }).then((res) => {
-                                    if (res.isConfirmed) {
-                                        window.location.href = "/login";
-                                    }
-                                });
-                                return;
-                            }
-
-                            Toast.fire({
-                                icon: 'error',
-                                title: data.message || 'Failed to add to cart'
-                            });
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        // ❌ Error toast
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Something went wrong'
-                        });
-                    }
-                }
-
-
-
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'bottom-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer);
-                        toast.addEventListener('mouseleave', Swal.resumeTimer);
-                    }
+                        await fetch('/api/referral/skip', { method: 'POST' });
+                    } catch (error) { console.error(error); } 
+                    finally { closeModal(); }
                 });
+            }
 
-                async function addWishlist(productId, button) {
-                    try {
-                        const res = await fetch(`/wishlist/add/`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ productId }),
-                        });
+            window.submitReferral = async (event) => {
+                event.preventDefault();
+                const code = referralInput.value.trim().toUpperCase();
+                referralError.textContent = '';
 
-                        const result = await res.json();
-                        console.log(result)
-
-                        if (result.success) {
-                            const icon = button.querySelector("i.fa-heart");
-
-                            if (result.inWishlist) {
-                                icon.classList.remove("far");
-                                icon.classList.add("fas");
-                                button.classList.add("active");
-                            } else {
-                                icon.classList.remove("fas");
-                                icon.classList.add("far");
-                                button.classList.remove("active");
-                            }
-                            updateCartCount().then(() => {
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: result.message || "Wishlist updated"
-                                });
-                            });
-                        } else {
-                            if (result.message === "user not found") {
-                                Swal.fire({
-                                    icon: 'info',
-                                    title: "Login Required",
-                                    text: "Please login to continue",
-                                    showCancelButton: true,
-                                    confirmButtonText: "Login",
-                                    cancelButtonText: "Cancel",
-                                }).then((res) => {
-                                    if (res.isConfirmed) {
-                                        window.location.href = "/login";
-                                    }
-                                });
-                                return;
-                            }
-
-                            Toast.fire({
-                                icon: 'error',
-                                title: result.message || 'Failed to update wishlist'
-                            });
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        Toast.fire({
-                            icon: 'error',
-                            title: 'Server error'
-                        });
-                    }
+                if (!code || code.length !== 8) {
+                    referralError.textContent = 'Invalid code length (must be 8).';
+                    return;
                 }
 
-                // --- Referral Modal Logic ---
-                document.addEventListener('DOMContentLoaded', () => {
-                    const isFirstLogin = <%- !!(user && user.isFirstLogin === true) %>;
-                    const referralModal = document.getElementById('referralModal');
-                    const skipButton = document.getElementById('skipReferralBtn');
-                    const referralForm = document.getElementById('referralForm');
-                    const referralError = document.getElementById('referralError');
-                    const referralInput = document.getElementById('referralCodeInput');
-
-                    if (isFirstLogin && referralModal) {
-                        setTimeout(() => {
-                            referralModal.classList.add('show');
-                        }, 1500); 
-                    }
-
-                    const closeModal = () => {
-                        if (referralModal) referralModal.classList.remove('show');
-                    };
-
-                    // Handle Skip
-                    skipButton?.addEventListener('click', async () => {
-                        try {
-                            await fetch('/api/referral/skip', { method: 'POST' });
-                        } catch (error) {
-                            console.error('Failed to call skip API:', error);
-                        } finally {
-                            closeModal();
-                        }
+                try {
+                    const response = await fetch('/api/referral/claim', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ code })
                     });
-
-                    // Handle Submit
-                    window.submitReferral = async (event) => {
-                        event.preventDefault();
-                        const code = referralInput.value.trim().toUpperCase();
-                        referralError.textContent = ''; // Clear previous errors
-
-                        // Frontend Validation
-                        const validCodeRegex = /^[A-Z0-9]{8}$/;
-                        if (!code) {
-                            referralError.textContent = 'Please enter a referral code.';
-                            return;
-                        }
-                        if (code.length !== 8) {
-                            referralError.textContent = 'Referral code must be 8 characters long.';
-                            return;
-                        }
-                        if (!validCodeRegex.test(code)) {
-                            referralError.textContent = 'Invalid characters in code. Use letters and numbers only.';
-                            return;
-                        }
-
-                        try {
-                            const response = await fetch('/api/referral/claim', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ code })
-                            });
-
-                            const result = await response.json();
-
-                            if (result.success) {
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: result.message || 'Referral claimed successfully!'
-                                });
-                                closeModal();
-                            } else {
-                                referralError.textContent = result.message || 'An unknown error occurred.';
-                            }
-                        } catch (error) {
-                            console.error('Referral claim error:', error);
-                            referralError.textContent = 'Could not connect to the server. Please try again.';
-                        }
-                    };
-                });
-
-
-            </script>
+                    const result = await response.json();
+                    if (result.success) {
+                        Toast.fire({ icon: 'success', title: 'Referral claimed!' });
+                        closeModal();
+                    } else {
+                        referralError.textContent = result.message || 'Error claiming code.';
+                    }
+                } catch (error) {
+                    referralError.textContent = 'Connection error.';
+                }
+            };
+        });
+    </script>
 </body>
-
 </html>
