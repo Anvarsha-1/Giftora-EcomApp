@@ -830,8 +830,8 @@
 
       <script>
         // Initialize wishlistId and isLoggedIn
-        window.wishlistId = <% - JSON.stringify(wishlistId || []) %>;
-        window.isLoggedIn = <% - !!user %>;
+        window.wishlistId = <%- JSON.stringify(wishlistId || []) %>;
+        window.isLoggedIn = <%- !!user %>;
 
         const offcanvasFilter = new bootstrap.Offcanvas(document.getElementById('offcanvasFilters'));
 
