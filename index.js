@@ -27,6 +27,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 DB();
 
+app.set('trust proxy', 1);
+
 app.use(
   session({
     secret: process.env.SECRET_KEY,
@@ -35,7 +37,7 @@ app.use(
     cookie: {
       secure: isProduction, // Use secure cookies in production
       httpOnly: true,
-      sameSite: isProduction ? 'none' : 'lax', // 'lax' is a safe default for development
+      sameSite:'none' , // 'lax' is a safe default for development
       maxAge: 24 * 60 * 60 * 1000,
     },
   }),
