@@ -20,6 +20,7 @@ const userCoupon = require('./routers/user/userCouponRouter');
 const adminSales = require('./routers/admin/adminSalesReportRouter');
 const errorHandler = require('./helpers/error-handler-middleware');
 const { searchVisibility }= require('./middlewares/showSearchbar')
+const mongoose = require('mongoose');
 
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -110,6 +111,20 @@ app.use((req, res, next) => {
 //error handling middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server running at port ${PORT}`);
-});
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    
+
+    app.listen(PORT, () => {
+      console.log(`Server running at port ${PORT}`);  
+    });
+  } catch (error) {
+    console.error('DB Connection error', error);
+    process.exit(1);
+  }
+};  
+connectDB()
+
+

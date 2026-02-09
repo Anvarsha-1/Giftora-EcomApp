@@ -1,0 +1,8 @@
+2026-01-26T03:21:56.706Z error: Referral application crashed: Operation `categories.find()` buffering timed out after 10000ms - MongooseError: Operation `categories.find()` buffering timed out after 10000ms
+    at Timeout.<anonymous> (C:\Users\anvar\Downloads\GIFTORA-ECOM\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:187:23)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+2026-01-26T03:22:45.007Z error: Referral application crashed: Operation `categories.find()` buffering timed out after 10000ms - MongooseError: Operation `categories.find()` buffering timed out after 10000ms
+    at Timeout.<anonymous> (C:\Users\anvar\Downloads\GIFTORA-ECOM\node_modules\mongoose\lib\drivers\node-mongodb-native\collection.js:187:23)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
